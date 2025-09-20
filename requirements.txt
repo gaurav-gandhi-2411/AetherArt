@@ -1,0 +1,16 @@
+# core
+gradio>=3.24
+diffusers>=0.30.0
+transformers>=4.40.0
+accelerate>=0.18.0
+huggingface_hub[hf_xet]>=0.15.0
+safetensors
+Pillow
+torch>=2.1.0
+xformers
+
+# dev & testing
+pytest
+flake8
+black
+python-dotenv
