@@ -1,0 +1,22 @@
+# Hugging Face Space card metadata for AetherArt
+name: AetherArt
+sdk: gradio
+emoji: "🎨"
+license: mit
+tags:
+  - text-to-image
+  - stable-diffusion
+  - sd-xl
+  - ai-art
+  - gradio
+  - gpu
+  - huggingface
+sdk_version: gradio>=3.24
+repository: https://huggingface.co/spaces/gauravgandhi2411/AetherArt
+inference: false
+description: |
+  AetherArt — text-to-image generator with Stable Diffusion 2.1 and optional SDXL support.
+  Runs locally on GPU via Gradio or on Hugging Face Inference API.
+  - Adjustable generation: steps, guidance, width, height, seed
+  - VRAM optimizations: attention slicing, CPU offload, xformers
+  - Optional seed for reproducible generations

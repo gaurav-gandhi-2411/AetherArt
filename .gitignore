@@ -1,0 +1,13 @@
+```gitignore
+__pycache__/
+*.pyc
+.env
+.env.*
+.venv/
+.venv*/
+.vscode/
+.idea/
+.DS_Store
+*.log
+__pycache__/
+images/*.png

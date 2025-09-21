@@ -1,0 +1,6 @@
+-r requirements.txt
+
+# dev & testing
+pytest
+flake8
+black
