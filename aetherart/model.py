@@ -22,11 +22,7 @@ try:
 except Exception:
     InferenceClient = None
 
-from contextlib import contextmanager
-
-@contextmanager
-def nullcontext():
-    yield
+from contextlib import nullcontext
 
 def _preferred_dtype_kwarg(fn) -> Optional[str]:
     """
@@ -57,7 +53,7 @@ def _build_pretrained_kwargs(fn, dtype, hf_token: Optional[str]) -> Dict[str, An
     else:
         logger.debug("No dtype kwarg detected for function %s; loading without dtype kwarg", getattr(fn, "__name__", str(fn)))
     if hf_token:
-        kwargs["use_auth_token"] = hf_token
+        kwargs["token"] = hf_token
     return kwargs
 
 class AetherModel:
