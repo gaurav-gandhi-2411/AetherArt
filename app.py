@@ -2,6 +2,7 @@ import os
 import random
 import time
 import threading
+from pathlib import Path
 from typing import Any, Generator, Optional
 
 import gradio as gr
@@ -10,6 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 from aetherart.model import AetherModel
 from aetherart.logger import get_logger
 from aetherart.config import cfg
+from aetherart import metadata as meta
 
 logger = get_logger(__name__)
 
@@ -136,6 +138,7 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             pipe = MODEL.pipe
             out = pipe(
                 opts["prompt"],
+                negative_prompt=opts.get("negative_prompt") or None,
                 num_inference_steps=int(opts["steps"]),
                 guidance_scale=float(opts["guidance"]),
                 width=int(opts["width"]),
@@ -184,6 +187,7 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
 
 def _start_generation(
     prompt: str,
+    negative_prompt: str,
     model_choice: str,
     steps: int,
     guidance: float,
@@ -206,6 +210,7 @@ def _start_generation(
 
     opts: dict[str, Any] = {
         "prompt": prompt,
+        "negative_prompt": negative_prompt,
         "steps": steps,
         "guidance": guidance,
         "width": width,
@@ -262,6 +267,7 @@ def make_placeholder_image(
 
 def generate_stream(
     prompt: str,
+    negative_prompt: str,
     model_choice: str,
     steps: int,
     guidance: float,
@@ -269,7 +275,7 @@ def generate_stream(
     height: int,
     seed: Optional[int],
 ) -> Generator[tuple[Optional[Image.Image], str], None, None]:
-    """Stream generation progress and yield the final image."""
+    """Stream generation progress, save the result with metadata, and yield the final image."""
     try:
         if not prompt or not prompt.strip():
             yield None, "Please enter a prompt."
@@ -279,7 +285,9 @@ def generate_stream(
             return
 
         try:
-            _start_generation(prompt, model_choice, steps, guidance, width, height, seed)
+            _start_generation(
+                prompt, negative_prompt, model_choice, steps, guidance, width, height, seed
+            )
         except RuntimeError as e:
             yield None, str(e)
             return
@@ -291,7 +299,7 @@ def generate_stream(
             yield None, status_line
             time.sleep(0.5)
 
-        img, error, _gen_time, _vram = _state.get_result()
+        img, error, generation_time, vram_peak_mb = _state.get_result()
         if error:
             yield None, f"**Error:** {error}"
             return
@@ -299,9 +307,39 @@ def generate_stream(
             yield None, "**Error:** generation did not return an image."
             return
 
+        actual_seed = _state.gen_opts.get("seed", 0)
+        scheduler_name = "unknown"
+        if MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
+            try:
+                scheduler_name = MODEL.pipe.scheduler.__class__.__name__
+            except Exception:
+                pass
+
+        md: dict[str, Any] = {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt or "",
+            "seed": actual_seed,
+            "scheduler": scheduler_name,
+            "steps": steps,
+            "guidance": guidance,
+            "width": width,
+            "height": height,
+            "model_id": MODEL.model_id,
+            "lora_hash": "",
+            "git_commit": meta.get_git_commit(),
+            "generation_time_seconds": round(generation_time or 0.0, 2),
+            "vram_peak_mb": round(vram_peak_mb or 0.0, 1),
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        }
+
+        out_dir = Path("outputs")
+        out_dir.mkdir(exist_ok=True)
+        out_path = out_dir / f"{time.strftime('%Y%m%d_%H%M%S')}_{actual_seed}.png"
+        meta.save_image_with_metadata(img, out_path, md)
+
         compact = _state.compact_status()
         suffix = f"\n{compact}" if compact else ""
-        yield img, f"**Done — 100%**{suffix}"
+        yield img, f"**Done — 100%** — Saved: `{out_path}`{suffix}"
 
     except Exception as e:
         logger.exception("generate_stream failed")
@@ -318,6 +356,30 @@ def reload_model(choice: str) -> str:
         return f"Failed to load {choice}: {e}"
 
 
+def load_from_png(file_path: str | None) -> tuple:
+    """Read PNG metadata and return values to pre-fill the generation form."""
+    empty = ("", "", None, cfg.default_steps, cfg.default_guidance, cfg.default_width, cfg.default_height)
+    if file_path is None:
+        return empty
+    try:
+        md = meta.load_metadata_from_image(file_path)
+        if not md:
+            return empty
+        seed_val = int(md["seed"]) if md.get("seed") else None
+        return (
+            md.get("prompt", ""),
+            md.get("negative_prompt", ""),
+            seed_val,
+            int(md.get("steps", cfg.default_steps)),
+            float(md.get("guidance", cfg.default_guidance)),
+            int(md.get("width", cfg.default_width)),
+            int(md.get("height", cfg.default_height)),
+        )
+    except Exception as e:
+        logger.warning("Could not read PNG metadata: %s", e)
+        return empty
+
+
 _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appear here")
 
 with gr.Blocks() as demo:
@@ -332,6 +394,9 @@ with gr.Blocks() as demo:
             prompt = gr.Textbox(
                 placeholder="A modern studio portrait of an astronaut", label="Prompt", lines=2
             )
+            negative_prompt = gr.Textbox(
+                placeholder="blurry, low quality", label="Negative Prompt", lines=1
+            )
             steps = gr.Slider(10, 60, value=cfg.default_steps, label="Steps")
             guidance = gr.Slider(1.0, 15.0, value=cfg.default_guidance, step=0.5, label="Guidance")
             width = gr.Radio([512, 768, 1024], value=cfg.default_width, label="Width")
@@ -344,12 +409,22 @@ with gr.Blocks() as demo:
         with gr.Column(scale=4):
             out_img = gr.Image(label="Generated Image", value=_PLACEHOLDER, interactive=False)
 
+    with gr.Accordion("Recreate from PNG", open=False):
+        gr.Markdown("Upload a previously generated PNG to restore its prompt, seed, and settings.")
+        png_upload = gr.File(label="Upload PNG", file_types=[".png"], type="filepath")
+        load_btn = gr.Button("Load Settings from PNG")
+
     gen_btn.click(
         fn=generate_stream,
-        inputs=[prompt, model_choice, steps, guidance, width, height, seed],
+        inputs=[prompt, negative_prompt, model_choice, steps, guidance, width, height, seed],
         outputs=[out_img, status_md],
     )
     reload_btn.click(fn=reload_model, inputs=[model_choice], outputs=[status_md])
+    load_btn.click(
+        fn=load_from_png,
+        inputs=[png_upload],
+        outputs=[prompt, negative_prompt, seed, steps, guidance, width, height],
+    )
 
 
 def main() -> None:
