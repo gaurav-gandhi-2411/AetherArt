@@ -11,6 +11,6 @@ __pycache__/
 images/*.png
 outputs/
 .claude/
-reports/eval_charts/
+reports/eval_charts/*_2026*.png
 reports/eval_partial_latest.json
 reports/eval_run.log
