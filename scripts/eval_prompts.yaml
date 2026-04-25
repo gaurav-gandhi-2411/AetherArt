@@ -1,0 +1,212 @@
+# PartiPrompts evaluation subset — 30 prompts
+#
+# Source: nateraw/parti-prompts (HuggingFace)
+#   https://huggingface.co/datasets/nateraw/parti-prompts
+#
+# Selection criteria:
+#   - Balanced across 11 PartiPrompts categories
+#   - Three difficulty tiers (8 easy / 19 medium / 3 hard)
+#   - Easy:   single subject, Basic challenge level — tests core object/concept fidelity
+#   - Medium: multi-element scenes, Fine-grained Detail challenge — tests composition & detail
+#   - Hard:   surreal/stylistic combinations, Imagination challenge or conceptually unusual
+#     Fine-grained Detail — tests generalization limits
+#
+# Fields:
+#   id                 unique run ID (used as filename prefix)
+#   prompt             exact text from PartiPrompts
+#   category           PartiPrompts category
+#   parti_challenge    original PartiPrompts challenge label
+#   expected_difficulty  easy | medium | hard
+
+prompts:
+
+  # ── ABSTRACT ─────────────────────────────────────────────────────────────
+  - id: pp_001
+    prompt: "artificial intelligence"
+    category: Abstract
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  # ── ANIMALS ──────────────────────────────────────────────────────────────
+  - id: pp_002
+    prompt: "a shiba inu"
+    category: Animals
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_003
+    prompt: "a dragon"
+    category: Animals
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_004
+    prompt: "a shiba inu wearing a beret and black turtleneck"
+    category: Animals
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_005
+    prompt: "a corgi wearing a red bowtie and a purple party hat"
+    category: Animals
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_006
+    prompt: "an eagle swooping down to catch a mouse"
+    category: Animals
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_007
+    prompt: "an elephant using its trunk to blow into a tuba"
+    category: Animals
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_008
+    prompt: "a dolphin in an astronaut suit on saturn"
+    category: Animals
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: hard
+
+  # ── ARTS ─────────────────────────────────────────────────────────────────
+  - id: pp_009
+    prompt: "an oil painting of a sailboat at sunset"
+    category: Arts
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_010
+    prompt: "A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai."
+    category: Arts
+    parti_challenge: Imagination
+    expected_difficulty: hard
+
+  # ── ARTIFACTS ────────────────────────────────────────────────────────────
+  - id: pp_011
+    prompt: "a coffee mug"
+    category: Artifacts
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_012
+    prompt: "a red lego block"
+    category: Artifacts
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_013
+    prompt: "an ornate, high-backed mahogany chair with a red cushion"
+    category: Artifacts
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── FOOD & BEVERAGE ───────────────────────────────────────────────────────
+  - id: pp_014
+    prompt: "A bowl of Pho served with bean sprouts on top"
+    category: Food & Beverage
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_015
+    prompt: "a bloody mary cocktail next to a napkin"
+    category: Food & Beverage
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── INDOOR SCENES ─────────────────────────────────────────────────────────
+  - id: pp_016
+    prompt: "A bare kitchen has wood cabinets and white appliances"
+    category: Indoor Scenes
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_017
+    prompt: "a room with two chairs and a painting of the Statue of Liberty"
+    category: Indoor Scenes
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── OUTDOOR SCENES ────────────────────────────────────────────────────────
+  - id: pp_018
+    prompt: "waterfall"
+    category: Outdoor Scenes
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_019
+    prompt: "a fall landscape with a small cottage next to a lake"
+    category: Outdoor Scenes
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_020
+    prompt: "a professional photo of a sunset behind the grand canyon"
+    category: Outdoor Scenes
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_021
+    prompt: "a cityscape at night with a full moon"
+    category: Outdoor Scenes
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── PEOPLE ───────────────────────────────────────────────────────────────
+  - id: pp_022
+    prompt: "a young girl playing piano"
+    category: People
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_023
+    prompt: "a ballet dancer next to a waterfall"
+    category: People
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_024
+    prompt: "the Beatles crossing Abbey road"
+    category: People
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── PRODUCE & PLANTS ─────────────────────────────────────────────────────
+  - id: pp_025
+    prompt: "a bundle of blue and yellow flowers in a vase"
+    category: Produce & Plants
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── VEHICLES ─────────────────────────────────────────────────────────────
+  - id: pp_026
+    prompt: "a steam locomotive speeding through a desert"
+    category: Vehicles
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_027
+    prompt: "a large white yacht tossed about in a stormy sea"
+    category: Vehicles
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  # ── WORLD KNOWLEDGE ──────────────────────────────────────────────────────
+  - id: pp_028
+    prompt: "the Eiffel Tower"
+    category: World Knowledge
+    parti_challenge: Basic
+    expected_difficulty: easy
+
+  - id: pp_029
+    prompt: "The Statue of Liberty with the Manhattan skyline in the background."
+    category: World Knowledge
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: medium
+
+  - id: pp_030
+    prompt: "Golden Gate bridge on the surface of Mars"
+    category: World Knowledge
+    parti_challenge: Fine-grained Detail
+    expected_difficulty: hard
