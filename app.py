@@ -12,6 +12,7 @@ from aetherart.model import AetherModel
 from aetherart.logger import get_logger
 from aetherart.config import cfg
 from aetherart import metadata as meta
+from aetherart import controlnet as cn
 
 logger = get_logger(__name__)
 
@@ -135,17 +136,49 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             pass
 
         if MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
-            pipe = MODEL.pipe
-            out = pipe(
-                opts["prompt"],
-                negative_prompt=opts.get("negative_prompt") or None,
-                num_inference_steps=int(opts["steps"]),
-                guidance_scale=float(opts["guidance"]),
-                width=int(opts["width"]),
-                height=int(opts["height"]),
-                generator=opts.get("generator"),
-                callback_on_step_end=_callback_diffusers_on_step_end,
-            )
+            control_type = opts.get("control_type", "none")
+            control_image = opts.get("control_image")
+            use_controlnet = control_type != "none" and control_image is not None
+
+            if use_controlnet:
+                _state.push_status(f"Preprocessing control image ({control_type})...")
+                ctrl_img = control_image.resize(
+                    (int(opts["width"]), int(opts["height"])), Image.LANCZOS
+                )
+                ctrl_map = cn.preprocess(
+                    ctrl_img,
+                    control_type,
+                    canny_low=int(opts.get("canny_low", 100)),
+                    canny_high=int(opts.get("canny_high", 200)),
+                )
+                _state.push_status(f"Loading ControlNet pipeline ({control_type})...")
+                pipe = cn.get_pipeline(control_type)
+                _state.push_status("Running ControlNet generation...")
+                out = pipe(
+                    opts["prompt"],
+                    image=ctrl_map,
+                    negative_prompt=opts.get("negative_prompt") or None,
+                    num_inference_steps=int(opts["steps"]),
+                    guidance_scale=float(opts["guidance"]),
+                    width=int(opts["width"]),
+                    height=int(opts["height"]),
+                    generator=opts.get("generator"),
+                    controlnet_conditioning_scale=float(opts.get("control_scale", 1.0)),
+                    callback_on_step_end=_callback_diffusers_on_step_end,
+                )
+            else:
+                pipe = MODEL.pipe
+                out = pipe(
+                    opts["prompt"],
+                    negative_prompt=opts.get("negative_prompt") or None,
+                    num_inference_steps=int(opts["steps"]),
+                    guidance_scale=float(opts["guidance"]),
+                    width=int(opts["width"]),
+                    height=int(opts["height"]),
+                    generator=opts.get("generator"),
+                    callback_on_step_end=_callback_diffusers_on_step_end,
+                )
+
             images = getattr(out, "images", None)
             if images:
                 result_img = images[0]
@@ -194,6 +227,11 @@ def _start_generation(
     width: int,
     height: int,
     seed: Optional[int],
+    control_image: Optional[Any] = None,
+    control_type: str = "none",
+    control_scale: float = 1.0,
+    canny_low: int = 100,
+    canny_high: int = 200,
 ) -> None:
     """Validate, build opts, and launch the worker thread."""
     if _state.is_running():
@@ -217,6 +255,11 @@ def _start_generation(
         "height": height,
         "seed": actual_seed,
         "generator": generator,
+        "control_image": control_image,
+        "control_type": control_type,
+        "control_scale": control_scale,
+        "canny_low": canny_low,
+        "canny_high": canny_high,
     }
     _state.reset(total_steps=steps, opts=opts)
     threading.Thread(
@@ -274,6 +317,11 @@ def generate_stream(
     width: int,
     height: int,
     seed: Optional[int],
+    control_image: Optional[Any] = None,
+    control_type: str = "none",
+    control_scale: float = 1.0,
+    canny_low: int = 100,
+    canny_high: int = 200,
 ) -> Generator[tuple[Optional[Image.Image], str], None, None]:
     """Stream generation progress, save the result with metadata, and yield the final image."""
     try:
@@ -286,7 +334,9 @@ def generate_stream(
 
         try:
             _start_generation(
-                prompt, negative_prompt, model_choice, steps, guidance, width, height, seed
+                prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
+                control_image=control_image, control_type=control_type,
+                control_scale=control_scale, canny_low=canny_low, canny_high=canny_high,
             )
         except RuntimeError as e:
             yield None, str(e)
@@ -326,6 +376,8 @@ def generate_stream(
             "height": height,
             "model_id": MODEL.model_id,
             "lora_hash": "",
+            "controlnet_type": control_type if control_type != "none" else None,
+            "controlnet_scale": float(control_scale) if control_type != "none" else None,
             "git_commit": meta.get_git_commit(),
             "generation_time_seconds": round(generation_time or 0.0, 2),
             "vram_peak_mb": round(vram_peak_mb or 0.0, 1),
@@ -380,6 +432,23 @@ def load_from_png(file_path: str | None) -> tuple:
         return empty
 
 
+def preview_control_map(
+    image: Optional[Any],
+    control_type: str,
+    canny_low: int,
+    canny_high: int,
+) -> Optional[Image.Image]:
+    """Return the preprocessed control map for display, or None if not applicable."""
+    if image is None or control_type == "none":
+        return None
+    try:
+        pil_img = image if isinstance(image, Image.Image) else Image.fromarray(image)
+        return cn.preprocess(pil_img, control_type, int(canny_low), int(canny_high))
+    except Exception as e:
+        logger.warning("Control map preview failed: %s", e)
+        return None
+
+
 _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appear here")
 
 with gr.Blocks() as demo:
@@ -414,9 +483,41 @@ with gr.Blocks() as demo:
         png_upload = gr.File(label="Upload PNG", file_types=[".png"], type="filepath")
         load_btn = gr.Button("Load Settings from PNG")
 
+    with gr.Accordion("ControlNet Conditioning", open=False):
+        gr.Markdown(
+            "Upload a conditioning image to guide the generation. "
+            "**Canny** extracts edges; **Depth** estimates a depth map. "
+            "Leave type as *none* to use standard generation."
+        )
+        with gr.Row():
+            with gr.Column():
+                control_image = gr.Image(
+                    label="Conditioning Image", type="pil", sources=["upload"]
+                )
+                control_type = gr.Radio(
+                    ["none", "canny", "depth"], value="none", label="Conditioning Type"
+                )
+                control_scale = gr.Slider(
+                    0.1, 2.0, value=1.0, step=0.05, label="Conditioning Scale"
+                )
+            with gr.Column():
+                canny_low = gr.Slider(
+                    50, 200, value=100, step=10, label="Canny: Low Threshold"
+                )
+                canny_high = gr.Slider(
+                    100, 300, value=200, step=10, label="Canny: High Threshold"
+                )
+                control_preview = gr.Image(
+                    label="Control Map Preview", interactive=False
+                )
+                preview_btn = gr.Button("Preview Control Map")
+
     gen_btn.click(
         fn=generate_stream,
-        inputs=[prompt, negative_prompt, model_choice, steps, guidance, width, height, seed],
+        inputs=[
+            prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
+            control_image, control_type, control_scale, canny_low, canny_high,
+        ],
         outputs=[out_img, status_md],
     )
     reload_btn.click(fn=reload_model, inputs=[model_choice], outputs=[status_md])
@@ -424,6 +525,11 @@ with gr.Blocks() as demo:
         fn=load_from_png,
         inputs=[png_upload],
         outputs=[prompt, negative_prompt, seed, steps, guidance, width, height],
+    )
+    preview_btn.click(
+        fn=preview_control_map,
+        inputs=[control_image, control_type, canny_low, canny_high],
+        outputs=[control_preview],
     )
 
 
