@@ -15,7 +15,7 @@ _KNOWN_METADATA = {
     "guidance": 7.5,
     "width": 512,
     "height": 512,
-    "model_id": "stabilityai/stable-diffusion-2-1",
+    "model_id": "sd2-community/stable-diffusion-2-1",
     "lora_hash": "",
     "git_commit": "abc1234",
     "generation_time_seconds": 12.34,
