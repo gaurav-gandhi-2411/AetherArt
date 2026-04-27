@@ -16,3 +16,5 @@ reports/eval_partial_latest.json
 reports/eval_run.log
 data/lora/ukiyo-e/images/
 data/lora/ukiyo-e/metadata.jsonl
+data/lora/*/training_output/
+data/lora/*/*.safetensors
