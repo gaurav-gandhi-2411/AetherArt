@@ -13,6 +13,7 @@ from aetherart.logger import get_logger
 from aetherart.config import cfg
 from aetherart import metadata as meta
 from aetherart import controlnet as cn
+from aetherart import lora as lora_mod
 
 logger = get_logger(__name__)
 
@@ -100,6 +101,7 @@ class GenerationState:
 
 
 _state = GenerationState()
+_active_lora_name: str = "none"
 
 
 def _callback_diffusers_on_step_end(
@@ -127,6 +129,21 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             except Exception as e:
                 _state.push_status(f"Model reload warning: {e}")
 
+        lora_name = opts.get("lora_name", "none")
+        lora_alpha = float(opts.get("lora_alpha", 1.0))
+        auto_trigger = bool(opts.get("auto_trigger", True))
+        effective_prompt = opts["prompt"]
+        effective_negative = opts.get("negative_prompt") or ""
+        if lora_name != "none" and auto_trigger:
+            trigger = lora_mod.get_trigger_token(lora_name)
+            if trigger and trigger not in effective_prompt:
+                effective_prompt = f"{trigger} {effective_prompt}"
+            lora_neg = lora_mod.get_default_negative(lora_name)
+            if lora_neg:
+                effective_negative = (
+                    f"{effective_negative}, {lora_neg}" if effective_negative else lora_neg
+                )
+
         start_time = time.time()
         try:
             import torch
@@ -136,6 +153,18 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             pass
 
         if MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
+            global _active_lora_name
+            if _active_lora_name != lora_name:
+                action = "Loading" if lora_name != "none" else "Unloading"
+                _state.push_status(f"{action} LoRA ({lora_name})...")
+                lora_mod.load_lora(MODEL.pipe, lora_name, lora_alpha)
+                _active_lora_name = lora_name
+            elif lora_name != "none":
+                try:
+                    MODEL.pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
+                except Exception:
+                    pass
+
             control_type = opts.get("control_type", "none")
             control_image = opts.get("control_image")
             use_controlnet = control_type != "none" and control_image is not None
@@ -155,9 +184,9 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
                 pipe = cn.get_pipeline(control_type)
                 _state.push_status("Running ControlNet generation...")
                 out = pipe(
-                    opts["prompt"],
+                    effective_prompt,
                     image=ctrl_map,
-                    negative_prompt=opts.get("negative_prompt") or None,
+                    negative_prompt=effective_negative or None,
                     num_inference_steps=int(opts["steps"]),
                     guidance_scale=float(opts["guidance"]),
                     width=int(opts["width"]),
@@ -169,8 +198,8 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             else:
                 pipe = MODEL.pipe
                 out = pipe(
-                    opts["prompt"],
-                    negative_prompt=opts.get("negative_prompt") or None,
+                    effective_prompt,
+                    negative_prompt=effective_negative or None,
                     num_inference_steps=int(opts["steps"]),
                     guidance_scale=float(opts["guidance"]),
                     width=int(opts["width"]),
@@ -232,6 +261,9 @@ def _start_generation(
     control_scale: float = 1.0,
     canny_low: int = 100,
     canny_high: int = 200,
+    lora_name: str = "none",
+    lora_alpha: float = 1.0,
+    auto_trigger: bool = True,
 ) -> None:
     """Validate, build opts, and launch the worker thread."""
     if _state.is_running():
@@ -260,6 +292,9 @@ def _start_generation(
         "control_scale": control_scale,
         "canny_low": canny_low,
         "canny_high": canny_high,
+        "lora_name": lora_name,
+        "lora_alpha": lora_alpha,
+        "auto_trigger": auto_trigger,
     }
     _state.reset(total_steps=steps, opts=opts)
     threading.Thread(
@@ -322,6 +357,9 @@ def generate_stream(
     control_scale: float = 1.0,
     canny_low: int = 100,
     canny_high: int = 200,
+    lora_name: str = "none",
+    lora_alpha: float = 1.0,
+    auto_trigger: bool = True,
 ) -> Generator[tuple[Optional[Image.Image], str], None, None]:
     """Stream generation progress, save the result with metadata, and yield the final image."""
     try:
@@ -337,6 +375,7 @@ def generate_stream(
                 prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
                 control_image=control_image, control_type=control_type,
                 control_scale=control_scale, canny_low=canny_low, canny_high=canny_high,
+                lora_name=lora_name, lora_alpha=lora_alpha, auto_trigger=auto_trigger,
             )
         except RuntimeError as e:
             yield None, str(e)
@@ -375,7 +414,8 @@ def generate_stream(
             "width": width,
             "height": height,
             "model_id": MODEL.model_id,
-            "lora_hash": "",
+            "lora_name": lora_name if lora_name != "none" else None,
+            "lora_alpha": lora_alpha if lora_name != "none" else None,
             "controlnet_type": control_type if control_type != "none" else None,
             "controlnet_scale": float(control_scale) if control_type != "none" else None,
             "git_commit": meta.get_git_commit(),
@@ -512,11 +552,34 @@ with gr.Blocks() as demo:
                 )
                 preview_btn = gr.Button("Preview Control Map")
 
+    with gr.Accordion("LoRA Style", open=False):
+        gr.Markdown(
+            "Apply a fine-tuned style adapter. The trigger token and negative prompt "
+            "are managed automatically when *Auto-prepend trigger token* is checked."
+        )
+        lora_name = gr.Radio(
+            choices=["none", "ukiyo-e"],
+            value="none",
+            label="Style adapter",
+            info="ukiyo-e: Japanese woodblock print style (rank-8, SD 2.1, 80 images)",
+        )
+        lora_alpha = gr.Slider(
+            0.1, 1.5, value=1.0, step=0.1,
+            label="LoRA strength (alpha)",
+            info="1.0 = full strength · >1 = exaggerated style · <1 = subtle blend",
+        )
+        auto_trigger = gr.Checkbox(
+            value=True,
+            label="Auto-prepend trigger token",
+            info="Adds 'ukyowood' to your prompt and the LoRA's default negative automatically",
+        )
+
     gen_btn.click(
         fn=generate_stream,
         inputs=[
             prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
             control_image, control_type, control_scale, canny_low, canny_high,
+            lora_name, lora_alpha, auto_trigger,
         ],
         outputs=[out_img, status_md],
     )

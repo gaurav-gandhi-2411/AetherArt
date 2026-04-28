@@ -67,3 +67,31 @@ Evaluated against a 30-prompt PartiPrompts subset spanning 11 categories (Animal
 
 Run the full benchmark: `python scripts/eval.py`
 Smoke test (1 prompt, 1 scheduler): `python scripts/eval.py --prompts-subset pp_002 --schedulers DPM --steps 30`
+
+## LoRA Fine-tuning — Ukiyo-e Style
+
+AetherArt includes a rank-8 LoRA adapter fine-tuned on 80 WikiArt Ukiyo-e images using Stable Diffusion 2.1. The adapter transfers Japanese woodblock print aesthetics: flat colour planes, bold outlines, and traditional composition.
+
+**Adapter:** `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` (6.4 MB, checkpoint-1000 of 1500-step run)  
+**Training:** `python scripts/train_lora.py` — 1500 steps, 2:08:52 total, RTX 3070 8 GB, fp16, no OOM  
+**Trigger token:** `ukyowood` (auto-prepended when the adapter is active in the UI)  
+**Negative prompt:** `text, watermark, calligraphy, signature, words, letters` (suppresses training-data text artifact)
+
+### Base SD 2.1 vs Ukiyo-e LoRA
+
+![LoRA comparison gallery](reports/lora_comparison_gallery.png)
+
+*Left to right: samurai on horseback · Fuji with cherry blossoms · dragon over Tokyo · kimono in garden.  
+Top row: base SD 2.1. Bottom row: Ukiyo-e LoRA (alpha=1.0, trigger token added).*
+
+### Usage
+
+Enable the **LoRA Style** accordion in the UI, select **ukiyo-e**, and optionally adjust the alpha slider (1.0 = full strength). Trigger token and negative prompt are added automatically.
+
+To reproduce the fine-tuning:
+```bash
+python scripts/train_lora.py                     # full 1500-step run
+python scripts/train_lora.py --max-train-steps 5 # pre-flight smoke test
+```
+
+See `reports/lora_training_summary.md` for the full training log, loss curve, and checkpoint selection rationale.
