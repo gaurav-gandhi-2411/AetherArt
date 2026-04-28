@@ -95,3 +95,32 @@ python scripts/train_lora.py --max-train-steps 5 # pre-flight smoke test
 ```
 
 See `reports/lora_training_summary.md` for the full training log, loss curve, and checkpoint selection rationale.
+
+## ControlNet Conditioning (Phase 3)
+
+AetherArt supports **Canny edge** and **Depth map** conditioning via SD 2.1-compatible ControlNet models.
+
+| Mode | Model | Preprocessor |
+|---|---|---|
+| Canny | `thibaud/controlnet-sd21-canny-diffusers` | OpenCV Canny edge detection |
+| Depth | `thibaud/controlnet-sd21-depth-diffusers` | DPT-Hybrid-MiDaS (`Intel/dpt-hybrid-midas`) |
+
+Upload a reference image in the **ControlNet** tab, choose Canny or Depth, and the preprocessed conditioning map is computed automatically before generation. Works independently of the LoRA adapter.
+
+## Local Setup
+
+```bash
+git clone https://github.com/gaurav-gandhi-2411/AetherArt.git
+cd AetherArt
+
+conda create -n aetherart python=3.10 -y
+conda activate aetherart
+pip install -r requirements.txt
+
+# Optional: GPU torch (CUDA 12.4)
+pip install torch --index-url https://download.pytorch.org/whl/cu124
+
+python app.py
+```
+
+Set `USE_HF_INFERENCE=1` to route all generations through the Hugging Face Inference API instead of loading models locally.
