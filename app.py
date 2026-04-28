@@ -153,21 +153,25 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
             pass
 
         if MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
-            global _active_lora_name
-            if _active_lora_name != lora_name:
-                action = "Loading" if lora_name != "none" else "Unloading"
-                _state.push_status(f"{action} LoRA ({lora_name})...")
-                lora_mod.load_lora(MODEL.pipe, lora_name, lora_alpha)
-                _active_lora_name = lora_name
-            elif lora_name != "none":
-                try:
-                    MODEL.pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
-                except Exception:
-                    pass
-
             control_type = opts.get("control_type", "none")
             control_image = opts.get("control_image")
             use_controlnet = control_type != "none" and control_image is not None
+
+            if not use_controlnet:
+                # LoRA on MODEL.pipe is only managed for the non-ControlNet path.
+                # When ControlNet is active the LoRA is loaded directly into the
+                # ControlNet pipeline via cn.get_pipeline(), avoiding double-loading.
+                global _active_lora_name
+                if _active_lora_name != lora_name:
+                    action = "Loading" if lora_name != "none" else "Unloading"
+                    _state.push_status(f"{action} LoRA ({lora_name})...")
+                    lora_mod.load_lora(MODEL.pipe, lora_name, lora_alpha)
+                    _active_lora_name = lora_name
+                elif lora_name != "none":
+                    try:
+                        MODEL.pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
+                    except Exception:
+                        pass
 
             if use_controlnet:
                 _state.push_status(f"Preprocessing control image ({control_type})...")
@@ -180,8 +184,13 @@ def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str
                     canny_low=int(opts.get("canny_low", 100)),
                     canny_high=int(opts.get("canny_high", 200)),
                 )
-                _state.push_status(f"Loading ControlNet pipeline ({control_type})...")
-                pipe = cn.get_pipeline(control_type)
+                cn_lora = lora_name if lora_name != "none" else None
+                _state.push_status(
+                    f"Loading ControlNet pipeline ({control_type}"
+                    + (f" + LoRA {lora_name}" if cn_lora else "")
+                    + ")..."
+                )
+                pipe = cn.get_pipeline(control_type, lora_name=cn_lora, lora_alpha=lora_alpha)
                 _state.push_status("Running ControlNet generation...")
                 out = pipe(
                     effective_prompt,

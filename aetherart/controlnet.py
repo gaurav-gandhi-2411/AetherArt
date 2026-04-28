@@ -1,4 +1,6 @@
 from __future__ import annotations
+from collections import OrderedDict
+from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -36,8 +38,17 @@ CANNY_MODEL_ID = "thibaud/controlnet-sd21-canny-diffusers"
 DEPTH_MODEL_ID = "thibaud/controlnet-sd21-depth-diffusers"
 DEPTH_ESTIMATOR_ID = "Intel/dpt-hybrid-midas"
 
-_cn_pipelines: dict[str, "StableDiffusionControlNetPipeline"] = {}
+# LRU cache keyed by (ctype, lora_name, lora_alpha). Max 2 entries to avoid OOM.
+_MAX_CN_CACHE = 2
+_cn_pipelines: OrderedDict = OrderedDict()
 _depth_estimator = None
+
+
+def _make_cache_key(
+    ctype: str, lora_name: str | None, lora_alpha: float
+) -> tuple:
+    """Return a hashable cache key, normalising lora_alpha to 2 decimal places."""
+    return (ctype, lora_name or "none", round(lora_alpha, 2))
 
 
 def _get_dtype() -> torch.dtype:
@@ -93,10 +104,15 @@ def preprocess(
     raise ValueError(f"Unknown conditioning type: {ctype!r}")
 
 
-def get_pipeline(ctype: Literal["canny", "depth"]) -> "StableDiffusionControlNetPipeline":
+def get_pipeline(
+    ctype: Literal["canny", "depth"],
+    lora_name: str | None = None,
+    lora_alpha: float = 1.0,
+) -> "StableDiffusionControlNetPipeline":
     """
     Return a cached StableDiffusionControlNetPipeline for the given conditioning
-    type. Loads SD 2.1 + the ControlNet model from disk on first call.
+    type, optionally with a LoRA adapter loaded. Uses an LRU cache (max 2 entries)
+    keyed by (ctype, lora_name, lora_alpha) to avoid reloading unchanged combos.
     """
     if not _DIFFUSERS_CN_AVAILABLE:
         raise RuntimeError(
@@ -104,37 +120,64 @@ def get_pipeline(ctype: Literal["canny", "depth"]) -> "StableDiffusionControlNet
             "upgrade diffusers: pip install -U diffusers"
         )
 
-    if ctype not in _cn_pipelines:
-        cn_model_id = CANNY_MODEL_ID if ctype == "canny" else DEPTH_MODEL_ID
-        dtype = _get_dtype()
+    cache_key = _make_cache_key(ctype, lora_name, lora_alpha)
 
-        logger.info("Loading ControlNet weights: %s", cn_model_id)
-        controlnet = ControlNetModel.from_pretrained(cn_model_id, torch_dtype=dtype)
+    if cache_key in _cn_pipelines:
+        _cn_pipelines.move_to_end(cache_key)
+        return _cn_pipelines[cache_key]
 
-        logger.info("Building StableDiffusionControlNetPipeline (%s + %s)", cfg.default_model, ctype)
-        token_kwarg = {"token": cfg.hf_token} if cfg.hf_token else {}
-        pipe = StableDiffusionControlNetPipeline.from_pretrained(
-            cfg.default_model,
-            controlnet=controlnet,
-            torch_dtype=dtype,
-            **token_kwarg,
-        )
+    cn_model_id = CANNY_MODEL_ID if ctype == "canny" else DEPTH_MODEL_ID
+    dtype = _get_dtype()
 
-        if torch.cuda.is_available():
+    logger.info("Loading ControlNet weights: %s", cn_model_id)
+    controlnet = ControlNetModel.from_pretrained(cn_model_id, torch_dtype=dtype)
+
+    logger.info(
+        "Building StableDiffusionControlNetPipeline (%s + %s, lora=%s)",
+        cfg.default_model, ctype, lora_name or "none",
+    )
+    token_kwarg = {"token": cfg.hf_token} if cfg.hf_token else {}
+    pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        cfg.default_model,
+        controlnet=controlnet,
+        torch_dtype=dtype,
+        **token_kwarg,
+    )
+
+    # Load LoRA weights into this pipeline when requested
+    if lora_name and lora_name != "none":
+        from aetherart.lora import LORA_REGISTRY  # deferred to avoid circular import
+        config = LORA_REGISTRY.get(lora_name)
+        if config:
+            lora_path = Path(config["path"])
+            logger.info("Loading LoRA '%s' (alpha=%.2f) into ControlNet pipeline", lora_name, lora_alpha)
+            pipe.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name)
             try:
-                pipe.enable_model_cpu_offload()
-                logger.info("ControlNet pipeline (%s): model CPU offload enabled", ctype)
-            except Exception as exc:
-                logger.debug("CPU offload failed (%s); moving to cuda directly: %s", ctype, exc)
-                pipe = pipe.to("cuda")
+                pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
+            except Exception:
+                pass
+        else:
+            logger.warning("LoRA '%s' not found in registry — skipping", lora_name)
 
-        _cn_pipelines[ctype] = pipe
-        logger.info("ControlNet pipeline ready: %s", ctype)
+    if torch.cuda.is_available():
+        try:
+            pipe.enable_model_cpu_offload()
+            logger.info("ControlNet pipeline (%s, lora=%s): model CPU offload enabled", ctype, lora_name or "none")
+        except Exception as exc:
+            logger.debug("CPU offload failed; moving to cuda directly: %s", exc)
+            pipe = pipe.to("cuda")
 
-    return _cn_pipelines[ctype]
+    # LRU eviction: drop oldest entry when cache is at capacity
+    while len(_cn_pipelines) >= _MAX_CN_CACHE:
+        evicted_key, _ = _cn_pipelines.popitem(last=False)
+        logger.info("ControlNet cache eviction (LRU): %s", evicted_key)
+
+    _cn_pipelines[cache_key] = pipe
+    logger.info("ControlNet pipeline ready: %s (lora=%s)", ctype, lora_name or "none")
+    return pipe
 
 
 def invalidate_cache() -> None:
-    """Discard cached ControlNet pipelines (call when the base model changes)."""
+    """Discard all cached ControlNet pipelines."""
     _cn_pipelines.clear()
     logger.info("ControlNet pipeline cache cleared")

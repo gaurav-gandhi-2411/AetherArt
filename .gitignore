@@ -17,3 +17,5 @@ reports/eval_run.log
 data/lora/ukiyo-e/images/
 data/lora/*/training_output/
 reports/lora_comparison_gallery/
+docs/hero_gen.log
+docs/hero_tiles/
