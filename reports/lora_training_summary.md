@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-27 / 2026-04-28  
 **Run ID:** 20260427_230001  
-**Status:** COMPLETE — awaiting checkpoint selection and visual review
+**Status:** COMPLETE — checkpoint-1000 selected
 
 ---
 
@@ -38,23 +38,19 @@
 
 ## Loss Curve
 
-Loss values below are single-step readings at checkpoint time — noisy but indicative.
-
 | Checkpoint | Step loss | Notes |
 |---|---|---|
 | checkpoint-250 | 0.284 | |
 | checkpoint-500 | 0.295 | |
-| checkpoint-750 | 0.416 | Single-step spike, not a trend break |
+| checkpoint-750 | 0.416 | Single-step spike, recovered |
 | checkpoint-1000 | 0.323 | |
-| checkpoint-1250 | 0.268 | **Lowest checkpoint-time loss** |
-| checkpoint-1500 | 0.495–0.509 | Uptick — possible overfitting onset |
+| checkpoint-1250 | 0.268 | Lowest checkpoint-time loss |
+| checkpoint-1500 | 0.495–0.509 | Uptick vs 1250 |
 
 **Aggregate:**
 - First-400-readings avg: 0.4235
 - Last-400-readings avg: 0.4081
 - Last-100-readings avg: 0.4139
-
-Modest overall decline. High per-step variance is expected for a 80-image dataset.
 
 ---
 
@@ -66,7 +62,6 @@ Modest overall decline. High per-step variance is expected for a 80-image datase
 | VRAM total | 8.6 GB |
 | OOM events | **0** |
 | GPU temp (post-training) | 57 °C |
-| Peak VRAM | ~7–8 GB estimated (no OOM at fp16 + grad ckpt) |
 
 ---
 
@@ -74,54 +69,48 @@ Modest overall decline. High per-step variance is expected for a 80-image datase
 
 | File | Size | Notes |
 |---|---|---|
-| `training_output/pytorch_lora_weights.safetensors` | 6.4 MB | Final weights (step 1500) |
-| `training_output/checkpoint-{250,500,750,1000,1250,1500}/pytorch_lora_weights.safetensors` | 6.4 MB each | Per-checkpoint LoRA weights |
-| `training_output/checkpoint-*/` (full state) | 1.7 GB each | Optimizer + scheduler state |
-| `training_output/training.log` | 822 KB | Full training log |
-| **Total disk** | **9.9 GB** | Checkpoints gitignored |
+| `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` | **6.4 MB** | **Selected adapter (checkpoint-1000)** |
+| `training_output/pytorch_lora_weights.safetensors` | 6.4 MB | Final weights (step 1500, gitignored) |
+| `training_output/training.log` | 822 KB | Full training log (gitignored) |
 
-> **Note:** Validation images were NOT saved to disk. The diffusers script only sends validation images to trackers (TensorBoard/W&B), neither of which was installed. Visual quality must be assessed via manual inference using each checkpoint's `pytorch_lora_weights.safetensors`.
+All 6 checkpoint subdirectories were deleted after selection (freed ~10 GB).
 
 ---
 
-## Checkpoint Selection — PENDING REVIEW
+## Checkpoint Selection
 
-**Loss-based recommendation:** `checkpoint-1250` (lowest loss 0.268, step 1500 shows uptick suggesting overfitting onset)
+### Selected: `checkpoint-1000`
 
-**Suggested inspection order:**
-1. `checkpoint-500` — first real style signal, likely under-baked
-2. `checkpoint-750` — mid-training, often good balance
-3. `checkpoint-1000` — solid, loss recovered from 750 spike
-4. `checkpoint-1250` — lowest loss reading, recommended starting point
-5. `checkpoint-1500` — final weights, risk of overfitting
+**Rationale:**  
+Checkpoint-1000 produces the same structural style quality as checkpoint-750 — flat color planes, woodblock outlines, traditional composition — but with a warmer colour palette that more closely matches authentic Ukiyo-e references, specifically Hokusai's "Red Fuji" sunset compositions. The shift from cool-blue (750) to warm-amber (1000) tones is visible in the Fuji and samurai columns of the comparison grid.
 
-**What to look for:**
-- Flat color planes (ukiyo-e characteristic)
-- Woodblock-print texture and outline strokes
-- Traditional composition (not photorealistic)
-- Trigger word adherence (`ukyowood` in prompt)
+**Progression across checkpoints:**
 
-**To test a checkpoint:**
-```python
-from diffusers import StableDiffusionPipeline
-import torch
+| Checkpoint | Visual character |
+|---|---|
+| baseline | Painterly/photorealistic. No woodblock texture. SD 2.1 ukiyo-e prior from pretraining only. |
+| 500 | Style signal fully present. Flat colour banding, woodblock outlines, authentic composition. Colour palette slightly cold/neutral. |
+| **1000** | **Same structure as 500/750 with warmer amber tones. Best match to Hokusai sunset palette.** |
+| 1500 | Visually indistinguishable from 1000. No improvement; loss uptick (0.495 vs 0.268) suggests overfitting onset. |
 
-pipe = StableDiffusionPipeline.from_pretrained(
-    "sd2-community/stable-diffusion-2-1", torch_dtype=torch.float16
-).to("cuda")
-pipe.load_lora_weights(
-    "data/lora/ukiyo-e/training_output/checkpoint-1250/pytorch_lora_weights.safetensors"
-)
-img = pipe("ukyowood ukiyo-e print of Mount Fuji at sunset", num_inference_steps=30).images[0]
-img.save("test_1250.png")
+![Fuji progression: baseline → ckpt-500 → ckpt-1000 → ckpt-1500](lora_fuji_progression.png)
+
+*Left to right: baseline, ckpt-500, ckpt-1000 (selected), ckpt-1500. Prompt: "ukyowood ukiyo-e print of Mount Fuji at sunset"*
+
+---
+
+## Known Issue: WikiArt Text Overlay Artifact
+
+Several generated images show Japanese calligraphy text overlaid on the content. This is a training data artifact: the WikiArt source images included caption/signature text embedded in the artwork, and the LoRA absorbed this as part of the "ukiyo-e style" signal.
+
+**Mitigation:** Inference-time negative prompt:
 ```
+text, watermark, calligraphy, signature, words, letters
+```
+This is set as the default negative in `aetherart/lora.py` and auto-appended when the Ukiyo-e adapter is active.
 
 ---
 
-## Selected Checkpoint
+## Full Comparison Grid
 
-**To be filled after visual review.**
-
-- Selected checkpoint: `checkpoint-____`
-- Reason: _(visual quality notes)_
-- Copied to: `data/lora/ukiyo-e/ukiyo-e-lora.safetensors`
+See `reports/lora_checkpoint_comparison.png` — 6 rows (baseline + 5 checkpoints) × 6 prompts.
