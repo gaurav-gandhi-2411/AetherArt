@@ -1,0 +1,10 @@
+{
+  "prompt": "a lush mountain valley at dawn, mist rolling through the trees, sunrise",
+  "seed": 42,
+  "tier": "controlnet_depth",
+  "steps": 30,
+  "guidance": 7.5,
+  "conditioning_scale": 1.0,
+  "inference_time_rtx3070_s": 8.2,
+  "vram_peak_mb": 2550.0
+}

@@ -1,0 +1,10 @@
+{
+  "prompt": "a futuristic cyberpunk city at night, neon signs, rain-wet streets",
+  "seed": 42,
+  "tier": "controlnet_canny",
+  "steps": 30,
+  "guidance": 7.5,
+  "conditioning_scale": 1.0,
+  "inference_time_rtx3070_s": 13.43,
+  "vram_peak_mb": 2550.0
+}

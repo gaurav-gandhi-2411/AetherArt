@@ -1,15 +1,19 @@
-# AetherArt
+# AetherArt — Production-Grade Diffusion on Consumer GPUs
 
 [![Hugging Face Spaces](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> Stable Diffusion 2.1 fine-tuned with LoRA + ControlNet, with a PartiPrompts evaluation harness benchmarking 4 schedulers across 360 generations.
+> Demonstrating efficient diffusion inference — **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — optimised for an 8 GB consumer GPU. All benchmarks measured locally on an RTX 3070.
 
 ![Hero — Ukiyo-e LoRA showcase](docs/hero.png)
 *Ukiyo-e LoRA adapter · DPM-Solver++ · 50 steps · seed 42 · RTX 3070 8 GB*
 
-**[Try the live Space →](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)**
+<!-- Demo GIF — add after recording: ![AetherArt demo](docs/aetherart_demo.gif) -->
+<!-- Recording guide: docs/RECORDING_GUIDE.md -->
+
+**[Live Space (CPU architecture demo) →](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)**  
+*Runs on HF free CPU tier as an architecture demo — generation takes ~8–15 min. Clone and run locally for real-time GPU inference.*
 
 ---
 
@@ -19,11 +23,13 @@
 - [Architecture](#architecture)
 - [Models Used (and Why)](#models-used-and-why)
 - [Performance Trade-offs](#performance-trade-offs)
+- [Sample Outputs](#sample-outputs)
 - [LoRA Fine-tuning](#lora-fine-tuning)
 - [ControlNet Conditioning](#controlnet-conditioning)
 - [Benchmark Results](#benchmark-results)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
+- [Why CPU on the Live Space?](#why-cpu-on-the-live-space)
 - [Free-Tier Limitations](#free-tier-limitations)
 - [Future Improvements](#future-improvements)
 - [Citations](#citations)
@@ -171,6 +177,25 @@ LoRA adapter:                   6.4 MB (negligible)
 SDXL Turbo:                  ~6000 MB peak (separate SDXL-architecture model, no LoRA/CN)
 Total worst case (SD+CN fp16): ~6100 MB — fits in 8 GB with margin
 ```
+
+---
+
+## Sample Outputs
+
+Pre-generated on RTX 3070 8 GB, seed 42, 512×512. Visible in the **Sample Outputs** tab of the live Space.
+
+| Tier | RTX 3070 | VRAM |
+|---|---|---|
+| Standard fp16 | 3.2–3.7 s/img | ~3.1 GB |
+| LCM 4-step | 0.6–0.8 s/img | ~3.1 GB |
+| SDXL Turbo | 3.3 s/img | ~6.0 GB |
+| Ukiyo-e LoRA | 3.5–4.0 s/img | ~3.5 GB |
+| ControlNet Canny | 4–5 s/img | ~5.8 GB |
+| ControlNet Depth | 4–5 s/img | ~5.8 GB |
+| 8-bit INT8 | 9–14 s/img | **2.2 GB** |
+| 4-bit NF4 | 4.7 s/img | 2.8 GB |
+
+Sample images and sidecar metadata: `docs/samples/`. Run `python scripts/generate_samples.py` locally to regenerate.
 
 ---
 
@@ -327,6 +352,25 @@ AetherArt/
 ├── tests/                                  # pytest suite: imports, metadata, preprocessing, LCM, Turbo, quantization
 ├── requirements.txt
 └── runtime.txt                             # python-3.10.12
+```
+
+---
+
+## Why CPU on the Live Space?
+
+HF Spaces' free tier provides CPU-only compute. ZeroGPU (shared A10G access) requires a PRO subscription ($9/month). AetherArt is intentionally a **portfolio project demonstrating production-grade diffusion on consumer hardware** — most real-world AI deployments run on equivalently constrained hardware where memory footprint and inference latency matter. The local benchmarks are the real story; the live Space exists for architecture inspection, not interactive use.
+
+For interactive generation at real-time speeds, clone the repo and run locally:
+
+```bash
+git clone https://github.com/gaurav-gandhi-2411/AetherArt.git
+cd AetherArt
+conda create -n aetherart python=3.10 -y
+conda activate aetherart
+pip install -r requirements.txt
+pip install torch --index-url https://download.pytorch.org/whl/cu124  # CUDA 12.4
+python app.py
+# Open http://localhost:7860
 ```
 
 ---

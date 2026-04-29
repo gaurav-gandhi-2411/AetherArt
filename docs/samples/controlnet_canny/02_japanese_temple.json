@@ -1,0 +1,10 @@
+{
+  "prompt": "a Japanese temple complex at sunset, dramatic clouds, lanterns lit",
+  "seed": 42,
+  "tier": "controlnet_canny",
+  "steps": 30,
+  "guidance": 7.5,
+  "conditioning_scale": 1.0,
+  "inference_time_rtx3070_s": 10.38,
+  "vram_peak_mb": 2548.0
+}

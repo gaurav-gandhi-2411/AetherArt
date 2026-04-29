@@ -1,0 +1,10 @@
+{
+  "prompt": "a futuristic city at night, neon lights, rain-slicked streets, cyberpunk",
+  "negative_prompt": "blurry, low quality, artifacts, watermark",
+  "seed": 42,
+  "tier": "standard_fp16",
+  "steps": 30,
+  "guidance": 7.5,
+  "inference_time_rtx3070_s": 2.83,
+  "vram_peak_mb": 3097.0
+}

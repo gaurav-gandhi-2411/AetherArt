@@ -8,7 +8,6 @@ sdk_version: 5.46.1
 app_file: app.py
 pinned: false
 license: mit
-suggested_hardware: "zero-a10g"
 tags:
   - text-to-image
   - stable-diffusion

@@ -1,0 +1,10 @@
+{
+  "prompt": "a futuristic city at night, neon lights, rain-slicked streets, cyberpunk",
+  "seed": 42,
+  "tier": "turbo",
+  "model": "stabilityai/sdxl-turbo",
+  "steps": 1,
+  "guidance": 0.0,
+  "inference_time_rtx3070_s": 3.86,
+  "vram_peak_mb": 5082.0
+}

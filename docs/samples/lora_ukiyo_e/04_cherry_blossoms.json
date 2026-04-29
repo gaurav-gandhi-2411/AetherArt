@@ -1,0 +1,13 @@
+{
+  "prompt": "ukyowood cherry blossoms over a stone bridge, spring morning, soft golden light",
+  "original_prompt": "cherry blossoms over a stone bridge, spring morning, soft golden light",
+  "negative_prompt": "text, watermark, calligraphy, signature, words, letters, blurry",
+  "seed": 42,
+  "tier": "lora_ukiyo_e",
+  "lora": "ukiyo-e",
+  "lora_alpha": 1.0,
+  "steps": 30,
+  "guidance": 7.5,
+  "inference_time_rtx3070_s": 4.45,
+  "vram_peak_mb": 3100.0
+}

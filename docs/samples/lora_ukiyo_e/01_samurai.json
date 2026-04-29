@@ -1,0 +1,13 @@
+{
+  "prompt": "ukyowood a lone samurai standing in a misty forest, dramatic lighting, cinematic",
+  "original_prompt": "a lone samurai standing in a misty forest, dramatic lighting, cinematic",
+  "negative_prompt": "text, watermark, calligraphy, signature, words, letters, blurry",
+  "seed": 42,
+  "tier": "lora_ukiyo_e",
+  "lora": "ukiyo-e",
+  "lora_alpha": 1.0,
+  "steps": 30,
+  "guidance": 7.5,
+  "inference_time_rtx3070_s": 4.85,
+  "vram_peak_mb": 3100.0
+}

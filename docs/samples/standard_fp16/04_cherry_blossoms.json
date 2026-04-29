@@ -1,0 +1,10 @@
+{
+  "prompt": "cherry blossoms over a stone bridge, spring morning, soft golden light",
+  "negative_prompt": "blurry, low quality, artifacts, watermark",
+  "seed": 42,
+  "tier": "standard_fp16",
+  "steps": 30,
+  "guidance": 7.5,
+  "inference_time_rtx3070_s": 2.8,
+  "vram_peak_mb": 3097.0
+}

@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import time
@@ -20,29 +21,65 @@ from aetherart import quantization as quant_mod
 
 logger = get_logger(__name__)
 
-# ── ZeroGPU shim (no-op when running outside HF Spaces) ───────────────────
-try:
-    import spaces
+_HAS_GPU: bool = torch.cuda.is_available()
 
-    def _GPU(duration: int = 120):
-        return spaces.GPU(duration=duration)
-
-except ImportError:
-    def _GPU(duration: int = 120):
-        def decorator(fn):
-            return fn
-        return decorator
-
-# Model singletons — cached across requests for fast subsequent generations
+# Model singletons — cached across requests
 MODEL = AetherModel()
-_turbo_pipe = None          # SDXL Turbo pipeline (loaded lazily, ~6.7 GB)
-_quant_pipes: dict = {}     # keyed "8bit" / "4bit"; loaded lazily
+_turbo_pipe = None
+_quant_pipes: dict = {}
 _active_lora_name: str = "none"
 
+# ── Sample gallery data ─────────────────────────────────────────────────────
 
-# ── GPU-bound generation functions ────────────────────────────────────────
+_TIER_LABELS = {
+    "standard_fp16":    "Standard fp16 — 30-step DPM-Solver++",
+    "lcm":              "LCM 4-step — LCMScheduler",
+    "turbo":            "SDXL Turbo — 1-step adversarial diffusion",
+    "lora_ukiyo_e":     "Ukiyo-e LoRA — rank-8, checkpoint-1000",
+    "controlnet_canny": "ControlNet Canny — edge conditioning",
+    "controlnet_depth": "ControlNet Depth — depth conditioning",
+    "quantized_8bit":   "8-bit INT8 — bitsandbytes quantized U-Net",
+    "quantized_4bit":   "4-bit NF4 — bitsandbytes quantized U-Net",
+}
+_TIER_ORDER = list(_TIER_LABELS.keys())
 
-@_GPU(duration=60)
+
+def _load_samples() -> dict:
+    samples_dir = Path("docs/samples")
+    if not samples_dir.exists():
+        return {}
+    result = {}
+    for tier in _TIER_ORDER:
+        tier_dir = samples_dir / tier
+        if not tier_dir.is_dir():
+            continue
+        entries = []
+        for png_path in sorted(tier_dir.glob("*.png")):
+            stem = png_path.stem
+            if any(stem.endswith(s) for s in ("_source", "_canny_map", "_depth_map")):
+                continue
+            meta_file = png_path.with_suffix(".json")
+            caption = tier
+            if meta_file.exists():
+                try:
+                    m = json.loads(meta_file.read_text(encoding="utf-8"))
+                    t = m.get("inference_time_rtx3070_s", "?")
+                    v = m.get("vram_peak_mb", "?")
+                    p = m.get("original_prompt") or m.get("prompt", "")
+                    caption = f"{t}s / {v} MB VRAM — {p[:55]}"
+                except Exception:
+                    pass
+            entries.append((str(png_path), caption))
+        if entries:
+            result[tier] = entries
+    return result
+
+
+_SAMPLES = _load_samples()
+
+
+# ── GPU generation functions ────────────────────────────────────────────────
+
 def _run_sd21(
     prompt: str,
     negative_prompt: str,
@@ -70,7 +107,7 @@ def _run_sd21(
         torch.cuda.reset_peak_memory_stats()
     t0 = time.time()
 
-    # ── Pipeline selection ────────────────────────────────────────────────
+    # Select pipeline
     if memory_mode in ("8bit", "4bit"):
         bits = int(memory_mode[0])
         if memory_mode not in _quant_pipes:
@@ -90,9 +127,8 @@ def _run_sd21(
         active_pipe = MODEL.pipe if MODEL.backend == "local" else None
         use_lora = (MODEL.backend == "local")
 
-    # ── LCM scheduler applied to active_pipe (not MODEL.pipe) ────────────
-    # Note: no LCM-LoRA exists for SD 2.1 (only SD 1.5 / SDXL). Scheduler-only
-    # LCM is the only option here; 4-step quality is reduced but measurably faster.
+    # Apply / restore LCM scheduler on active_pipe (not MODEL.pipe)
+    # Note: no LCM-LoRA for SD 2.1 (only SD 1.5/SDXL); scheduler-only is correct here.
     if speed_mode == "fast_lcm":
         run_steps = lcm_mod.LCM_STEPS
         run_guidance = lcm_mod.LCM_GUIDANCE
@@ -104,7 +140,7 @@ def _run_sd21(
         if active_pipe is not None and lcm_mod.is_lcm_scheduler(active_pipe):
             lcm_mod.restore_standard_mode(active_pipe)
 
-    # ── LoRA trigger-token injection ──────────────────────────────────────
+    # LoRA trigger-token injection
     effective_prompt = prompt
     effective_negative = negative_prompt or ""
     if use_lora and lora_name != "none" and auto_trigger:
@@ -177,7 +213,6 @@ def _run_sd21(
     return img, gen_time, vram_mb
 
 
-@_GPU(duration=300)
 def _run_turbo(
     prompt: str,
     negative_prompt: str,
@@ -204,7 +239,8 @@ def _run_turbo(
             height=height,
         )
     except torch.cuda.OutOfMemoryError:
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         _turbo_pipe = None
         raise RuntimeError(
             "SDXL Turbo ran out of VRAM. Try Standard or LCM mode which require less memory."
@@ -215,7 +251,7 @@ def _run_turbo(
     return img, gen_time, vram_mb
 
 
-# ── Gradio event handlers ──────────────────────────────────────────────────
+# ── Gradio event handlers ───────────────────────────────────────────────────
 
 def generate_stream(
     prompt: str,
@@ -246,15 +282,25 @@ def generate_stream(
             yield None, "Requested image size too large. Choose a smaller size."
             return
 
+        if speed_mode == "turbo" and not _HAS_GPU:
+            yield None, "**SDXL Turbo requires a GPU and is not available on this CPU Space.**"
+            return
+        if memory_mode in ("8bit", "4bit") and not _HAS_GPU:
+            yield None, "**8-bit and 4-bit quantization require a CUDA GPU.**"
+            return
+
         actual_seed = int(seed) if seed is not None else random.randint(0, 2**32 - 1)
         mode_label = {"fast_lcm": "LCM 4-step", "turbo": "Turbo 1-step"}.get(
             speed_mode, f"{steps}-step"
         )
 
-        if speed_mode == "turbo" and _turbo_pipe is None:
-            yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait…**"
+        if not _HAS_GPU:
+            est = "~2–3 min" if speed_mode == "fast_lcm" else "~8–15 min"
+            yield None, f"**CPU generation in progress ({est}, {mode_label}). Please wait...**"
+        elif speed_mode == "turbo" and _turbo_pipe is None:
+            yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait...**"
         else:
-            yield None, f"**Generating ({mode_label}, seed {actual_seed})…**"
+            yield None, f"**Generating ({mode_label}, seed {actual_seed})...**"
 
         if speed_mode == "turbo":
             img, gen_time, vram_mb = _run_turbo(
@@ -330,9 +376,7 @@ def generate_stream(
     yield img, f"**Done — {mode_label} — {latency_str}{vram_str}** — Saved: `{out_path}`"
 
 
-@_GPU(duration=60)
 def reload_model(choice: str) -> str:
-    """Load the selected model pipeline."""
     try:
         MODEL.init(model_choice="sdxl" if choice == "sdxl" else None)
         return f"{'SDXL' if choice == 'sdxl' else 'SD 2.1'} loaded successfully."
@@ -342,7 +386,6 @@ def reload_model(choice: str) -> str:
 
 
 def load_from_png(file_path: str | None) -> tuple:
-    """Read PNG metadata and return values to pre-fill the generation form."""
     empty = ("", "", None, cfg.default_steps, cfg.default_guidance, cfg.default_width, cfg.default_height)
     if file_path is None:
         return empty
@@ -371,7 +414,6 @@ def preview_control_map(
     canny_low: int,
     canny_high: int,
 ) -> Optional[Image.Image]:
-    """Return the preprocessed control map for display, or None if not applicable."""
     if image is None or control_type == "none":
         return None
     try:
@@ -422,142 +464,230 @@ def make_placeholder_image(
     return img
 
 
+# ── UI ─────────────────────────────────────────────────────────────────────
+
 _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appear here")
 
+# Adjust defaults for CPU so first-time visitors don't wait 15 minutes
+_default_steps = cfg.default_steps if _HAS_GPU else 20
+_default_w     = cfg.default_width  if _HAS_GPU else 384
+_default_h     = cfg.default_height if _HAS_GPU else 384
+
+# Feature availability based on hardware
+_speed_choices = ["standard", "fast_lcm"] + (["turbo"] if _HAS_GPU else [])
+_memory_choices = ["fp16"] + (["8bit", "4bit"] if _HAS_GPU else [])
+
 with gr.Blocks() as demo:
-    gr.Markdown("# AetherArt — Stable Diffusion (2.1 default, SDXL optional)")
-    gr.Markdown(
-        "Runs SD2.1 on GPU via ZeroGPU (recommended). Switch to SDXL for higher quality (requires more VRAM)."
-    )
+    gr.Markdown("# AetherArt — Production-Grade Diffusion on Consumer GPUs")
 
-    with gr.Row():
-        with gr.Column(scale=3):
-            model_choice = gr.Dropdown(choices=["sd-2.1", "sdxl"], value="sd-2.1", label="Model")
-            prompt = gr.Textbox(
-                placeholder="A modern studio portrait of an astronaut", label="Prompt", lines=2
+    # ── CPU / GPU banner ────────────────────────────────────────────────
+    if not _HAS_GPU:
+        gr.Markdown(
+            "> **Architecture demo on free CPU hardware.**  "
+            "Real-time performance benchmarks were measured on a local **RTX 3070 8 GB** GPU "
+            "— see the [repository](https://github.com/gaurav-gandhi-2411/AetherArt) "
+            "for benchmark results, sample outputs, and a demo video.  \n"
+            ">  \n"
+            "> On this CPU Space, generation takes **~8–15 min / image** (Standard) "
+            "or **~2–3 min** (LCM 4-step). "
+            "Clone the repo and run locally for real-time GPU inference."
+        )
+    else:
+        gr.Markdown(
+            "SD 2.1 with Ukiyo-e LoRA · ControlNet (Canny + Depth) · "
+            "LCM 4-step fast generation · SDXL Turbo · 4-bit/8-bit quantization."
+        )
+
+    with gr.Tabs():
+        # ── Generate tab ──────────────────────────────────────────────
+        with gr.Tab("Generate"):
+            with gr.Row():
+                with gr.Column(scale=3):
+                    model_choice = gr.Dropdown(
+                        choices=["sd-2.1", "sdxl"], value="sd-2.1", label="Model"
+                    )
+                    prompt = gr.Textbox(
+                        placeholder="A modern studio portrait of an astronaut",
+                        label="Prompt", lines=2
+                    )
+                    negative_prompt = gr.Textbox(
+                        placeholder="blurry, low quality", label="Negative Prompt", lines=1
+                    )
+                    steps = gr.Slider(10, 60, value=_default_steps, label="Steps")
+                    guidance = gr.Slider(
+                        1.0, 15.0, value=cfg.default_guidance, step=0.5, label="Guidance"
+                    )
+                    width  = gr.Radio([384, 512, 768, 1024], value=_default_w, label="Width")
+                    height = gr.Radio([384, 512, 768, 1024], value=_default_h, label="Height")
+                    seed = gr.Number(value=None, label="Seed (blank = random)", precision=0)
+                    gen_btn = gr.Button("Generate", variant="primary")
+                    reload_btn = gr.Button("Reload Model")
+                    status_md = gr.Markdown("Ready.")
+
+                with gr.Column(scale=4):
+                    out_img = gr.Image(
+                        label="Generated Image", value=_PLACEHOLDER, interactive=False
+                    )
+
+            with gr.Accordion("Recreate from PNG", open=False):
+                gr.Markdown(
+                    "Upload a previously generated PNG to restore its prompt, seed, and settings."
+                )
+                png_upload = gr.File(
+                    label="Upload PNG", file_types=[".png"], type="filepath"
+                )
+                load_btn = gr.Button("Load Settings from PNG")
+
+            with gr.Accordion("ControlNet Conditioning", open=False):
+                gr.Markdown(
+                    "Upload a conditioning image to guide the generation. "
+                    "**Canny** extracts edges; **Depth** estimates a depth map. "
+                    "Leave type as *none* to use standard generation."
+                )
+                with gr.Row():
+                    with gr.Column():
+                        control_image = gr.Image(
+                            label="Conditioning Image", type="pil", sources=["upload"]
+                        )
+                        control_type = gr.Radio(
+                            ["none", "canny", "depth"], value="none",
+                            label="Conditioning Type"
+                        )
+                        control_scale = gr.Slider(
+                            0.1, 2.0, value=1.0, step=0.05, label="Conditioning Scale"
+                        )
+                    with gr.Column():
+                        canny_low = gr.Slider(
+                            50, 200, value=100, step=10, label="Canny: Low Threshold"
+                        )
+                        canny_high = gr.Slider(
+                            100, 300, value=200, step=10, label="Canny: High Threshold"
+                        )
+                        control_preview = gr.Image(
+                            label="Control Map Preview", interactive=False
+                        )
+                        preview_btn = gr.Button("Preview Control Map")
+
+            with gr.Accordion("LoRA Style", open=False):
+                gr.Markdown(
+                    "Apply a fine-tuned style adapter. The trigger token and negative prompt "
+                    "are managed automatically when *Auto-prepend trigger token* is checked. "
+                    "Not supported in Turbo mode."
+                )
+                lora_name = gr.Radio(
+                    choices=["none", "ukiyo-e"],
+                    value="none",
+                    label="Style adapter",
+                    info="ukiyo-e: Japanese woodblock print style (rank-8, SD 2.1, 80 images)",
+                )
+                lora_alpha = gr.Slider(
+                    0.1, 1.5, value=1.0, step=0.1,
+                    label="LoRA strength (alpha)",
+                    info="1.0 = full strength · >1 = exaggerated style · <1 = subtle blend",
+                )
+                auto_trigger = gr.Checkbox(
+                    value=True,
+                    label="Auto-prepend trigger token",
+                    info="Adds 'ukyowood' to your prompt and the LoRA's default negative",
+                )
+
+            with gr.Accordion("Memory / VRAM Mode", open=False):
+                _mem_desc = (
+                    "**fp16** (default) — full precision U-Net, ~4.5 GB VRAM peak.  \n"
+                    "**8-bit INT8** — bitsandbytes quantized U-Net, ~2.5 GB VRAM. *GPU only.*  \n"
+                    "**4-bit NF4** — aggressively quantized, ~1.5 GB VRAM. *GPU only.*  \n"
+                    "Quantized pipelines are cached after first load. LoRA is disabled in quantized mode."
+                )
+                if not _HAS_GPU:
+                    _mem_desc += (
+                        "\n\n> **8-bit and 4-bit modes are not available on this CPU Space.** "
+                        "Run locally with a CUDA GPU to use them."
+                    )
+                gr.Markdown(_mem_desc)
+                memory_mode = gr.Radio(
+                    choices=_memory_choices,
+                    value="fp16",
+                    label="U-Net precision",
+                    info="fp16: default quality"
+                    + (" · 8bit: balanced memory · 4bit: minimum VRAM" if _HAS_GPU else
+                       " (8bit/4bit require GPU)"),
+                )
+
+            with gr.Accordion("Generation Speed Mode", open=True):
+                _speed_desc = (
+                    "**Standard** — 30-step DPM-Solver++, best quality"
+                    + (" (~3 s on A10G / ~12 s on RTX 3070)." if _HAS_GPU
+                       else " (~8–15 min on CPU).")
+                    + "  \n"
+                    "**Fast (LCM)** — 4-step LCMScheduler, ~7× faster, moderate quality reduction. "
+                    "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1).  \n"
+                )
+                if _HAS_GPU:
+                    _speed_desc += (
+                        "**Turbo (SDXL)** — 1-step adversarial diffusion. "
+                        "Requires first-use download (~6.7 GB). LoRA/ControlNet not supported."
+                    )
+                else:
+                    _speed_desc += (
+                        "**Turbo (SDXL)** — requires GPU; not available on this CPU Space."
+                    )
+                gr.Markdown(_speed_desc)
+                speed_mode = gr.Radio(
+                    choices=_speed_choices,
+                    value="standard",
+                    label="Speed mode",
+                    info="standard: 30-step DPM++"
+                    + " · fast_lcm: 4-step LCM"
+                    + (" · turbo: 1-step SDXL Turbo (GPU)" if _HAS_GPU else ""),
+                )
+
+            # Event wiring
+            gen_btn.click(
+                fn=generate_stream,
+                inputs=[
+                    prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
+                    control_image, control_type, control_scale, canny_low, canny_high,
+                    lora_name, lora_alpha, auto_trigger, speed_mode, memory_mode,
+                ],
+                outputs=[out_img, status_md],
+                concurrency_limit=1,
             )
-            negative_prompt = gr.Textbox(
-                placeholder="blurry, low quality", label="Negative Prompt", lines=1
+            reload_btn.click(fn=reload_model, inputs=[model_choice], outputs=[status_md])
+            load_btn.click(
+                fn=load_from_png,
+                inputs=[png_upload],
+                outputs=[prompt, negative_prompt, seed, steps, guidance, width, height],
             )
-            steps = gr.Slider(10, 60, value=cfg.default_steps, label="Steps")
-            guidance = gr.Slider(1.0, 15.0, value=cfg.default_guidance, step=0.5, label="Guidance")
-            width = gr.Radio([512, 768, 1024], value=cfg.default_width, label="Width")
-            height = gr.Radio([512, 768, 1024], value=cfg.default_height, label="Height")
-            seed = gr.Number(value=None, label="Seed (blank = random)", precision=0)
-            gen_btn = gr.Button("Generate", variant="primary")
-            reload_btn = gr.Button("Reload Model")
-            status_md = gr.Markdown("Ready.")
+            preview_btn.click(
+                fn=preview_control_map,
+                inputs=[control_image, control_type, canny_low, canny_high],
+                outputs=[control_preview],
+            )
 
-        with gr.Column(scale=4):
-            out_img = gr.Image(label="Generated Image", value=_PLACEHOLDER, interactive=False)
-
-    with gr.Accordion("Recreate from PNG", open=False):
-        gr.Markdown("Upload a previously generated PNG to restore its prompt, seed, and settings.")
-        png_upload = gr.File(label="Upload PNG", file_types=[".png"], type="filepath")
-        load_btn = gr.Button("Load Settings from PNG")
-
-    with gr.Accordion("ControlNet Conditioning", open=False):
-        gr.Markdown(
-            "Upload a conditioning image to guide the generation. "
-            "**Canny** extracts edges; **Depth** estimates a depth map. "
-            "Leave type as *none* to use standard generation."
-        )
-        with gr.Row():
-            with gr.Column():
-                control_image = gr.Image(
-                    label="Conditioning Image", type="pil", sources=["upload"]
+        # ── Sample Outputs tab ────────────────────────────────────────
+        with gr.Tab("Sample Outputs"):
+            gr.Markdown(
+                "## Pre-generated samples\n"
+                "All images generated locally on **RTX 3070 8 GB** with seed 42, 512×512. "
+                "Caption format: `time / VRAM — prompt`."
+            )
+            if _SAMPLES:
+                for tier, entries in _SAMPLES.items():
+                    label = _TIER_LABELS.get(tier, tier)
+                    with gr.Accordion(label, open=(tier == "standard_fp16")):
+                        gr.Gallery(
+                            value=entries,
+                            label=label,
+                            show_label=False,
+                            columns=4,
+                            height=340,
+                            object_fit="contain",
+                        )
+            else:
+                gr.Markdown(
+                    "Sample images not yet generated.  \n"
+                    "Run `python scripts/generate_samples.py` locally to populate this tab."
                 )
-                control_type = gr.Radio(
-                    ["none", "canny", "depth"], value="none", label="Conditioning Type"
-                )
-                control_scale = gr.Slider(
-                    0.1, 2.0, value=1.0, step=0.05, label="Conditioning Scale"
-                )
-            with gr.Column():
-                canny_low = gr.Slider(
-                    50, 200, value=100, step=10, label="Canny: Low Threshold"
-                )
-                canny_high = gr.Slider(
-                    100, 300, value=200, step=10, label="Canny: High Threshold"
-                )
-                control_preview = gr.Image(
-                    label="Control Map Preview", interactive=False
-                )
-                preview_btn = gr.Button("Preview Control Map")
-
-    with gr.Accordion("LoRA Style", open=False):
-        gr.Markdown(
-            "Apply a fine-tuned style adapter. The trigger token and negative prompt "
-            "are managed automatically when *Auto-prepend trigger token* is checked. "
-            "Not supported in Turbo mode."
-        )
-        lora_name = gr.Radio(
-            choices=["none", "ukiyo-e"],
-            value="none",
-            label="Style adapter",
-            info="ukiyo-e: Japanese woodblock print style (rank-8, SD 2.1, 80 images)",
-        )
-        lora_alpha = gr.Slider(
-            0.1, 1.5, value=1.0, step=0.1,
-            label="LoRA strength (alpha)",
-            info="1.0 = full strength · >1 = exaggerated style · <1 = subtle blend",
-        )
-        auto_trigger = gr.Checkbox(
-            value=True,
-            label="Auto-prepend trigger token",
-            info="Adds 'ukyowood' to your prompt and the LoRA's default negative automatically",
-        )
-
-    with gr.Accordion("Memory / VRAM Mode", open=False):
-        gr.Markdown(
-            "**fp16** (default) — full precision U-Net, ~4.5 GB VRAM peak.  \n"
-            "**8-bit INT8** — bitsandbytes quantized U-Net, ~2.5 GB VRAM.  \n"
-            "**4-bit NF4** — aggressively quantized U-Net, ~1.5 GB VRAM. Enables SD 2.1 on GPUs with ≥ 4 GB.  \n"
-            "Quantized pipelines are cached after first load. LoRA is disabled in quantized mode."
-        )
-        memory_mode = gr.Radio(
-            choices=["fp16", "8bit", "4bit"],
-            value="fp16",
-            label="U-Net precision",
-            info="fp16: default quality · 8bit: balanced memory · 4bit: minimum VRAM",
-        )
-
-    with gr.Accordion("Generation Speed Mode", open=True):
-        gr.Markdown(
-            "**Standard** — 30-step DPM-Solver++, best quality (~3 s on A10G / ~12 s on RTX 3070).  \n"
-            "**Fast (LCM)** — 4-step LCMScheduler, ~7× faster, moderate quality reduction. "
-            "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1; LCM-LoRA only covers SD 1.5 / SDXL).  \n"
-            "**Turbo (SDXL)** — 1-step adversarial diffusion, requires first-use download (~6.7 GB). "
-            "LoRA and ControlNet not supported in Turbo mode."
-        )
-        speed_mode = gr.Radio(
-            choices=["standard", "fast_lcm", "turbo"],
-            value="standard",
-            label="Speed mode",
-            info="standard: 30-step DPM++ · fast_lcm: 4-step LCM · turbo: 1-step SDXL Turbo",
-        )
-
-    gen_btn.click(
-        fn=generate_stream,
-        inputs=[
-            prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
-            control_image, control_type, control_scale, canny_low, canny_high,
-            lora_name, lora_alpha, auto_trigger, speed_mode, memory_mode,
-        ],
-        outputs=[out_img, status_md],
-        concurrency_limit=1,
-    )
-    reload_btn.click(fn=reload_model, inputs=[model_choice], outputs=[status_md])
-    load_btn.click(
-        fn=load_from_png,
-        inputs=[png_upload],
-        outputs=[prompt, negative_prompt, seed, steps, guidance, width, height],
-    )
-    preview_btn.click(
-        fn=preview_control_map,
-        inputs=[control_image, control_type, canny_low, canny_high],
-        outputs=[control_preview],
-    )
 
 
 def main() -> None:

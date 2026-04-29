@@ -1,0 +1,9 @@
+{
+  "prompt": "cherry blossoms over a stone bridge, spring morning, soft golden light",
+  "seed": 42,
+  "tier": "lcm",
+  "steps": 4,
+  "guidance": 1.5,
+  "inference_time_rtx3070_s": 0.71,
+  "vram_peak_mb": 3097.0
+}

@@ -1,0 +1,9 @@
+{
+  "prompt": "a serene mountain lake at sunrise, reflected peaks, peaceful atmosphere",
+  "seed": 42,
+  "tier": "lcm",
+  "steps": 4,
+  "guidance": 1.5,
+  "inference_time_rtx3070_s": 0.74,
+  "vram_peak_mb": 3097.0
+}

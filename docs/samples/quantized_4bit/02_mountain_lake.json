@@ -1,0 +1,10 @@
+{
+  "prompt": "a serene mountain lake at sunrise, reflected peaks, peaceful atmosphere",
+  "seed": 42,
+  "tier": "quantized_4bit",
+  "steps": 30,
+  "guidance": 7.5,
+  "precision": "4bit_nf4",
+  "inference_time_rtx3070_s": 6.99,
+  "vram_peak_mb": 2760.0
+}

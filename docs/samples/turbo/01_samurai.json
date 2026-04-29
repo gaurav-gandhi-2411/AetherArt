@@ -1,0 +1,10 @@
+{
+  "prompt": "a lone samurai standing in a misty forest, dramatic lighting, cinematic",
+  "seed": 42,
+  "tier": "turbo",
+  "model": "stabilityai/sdxl-turbo",
+  "steps": 1,
+  "guidance": 0.0,
+  "inference_time_rtx3070_s": 16.26,
+  "vram_peak_mb": 5082.0
+}
