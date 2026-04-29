@@ -78,6 +78,9 @@ User Prompt
 | ControlNet (Depth) | `thibaud/controlnet-sd21-depth-diffusers` | Depth-conditioned generation |
 | LoRA adapter | `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` | Ukiyo-e style transfer (rank-8) |
 | Scheduler | DPMSolverMultistepScheduler | Best CLIP/latency trade-off in benchmark |
+| LCM mode | `LCMScheduler` (diffusers) | 4-step fast generation (~5× speedup) |
+| SDXL Turbo | `stabilityai/sdxl-turbo` | 1-step adversarial diffusion (~30× speedup) |
+| Quantization | bitsandbytes (4-bit NF4 / 8-bit INT8) | Memory-efficient U-Net for ≥ 4 GB GPUs |
 | Evaluator | `openai/clip-vit-base-patch32` | Prompt-image similarity scoring |
 
 All components run on a single RTX 3070 8 GB via model CPU offload (fp16). LoRA and ControlNet pipelines share a 2-entry LRU cache to manage the ~3 GB per-pipeline VRAM footprint.
@@ -124,13 +127,49 @@ This project runs on:
 
 The 10–15 s local generation time reflects hardware constraints, not bad code. With a paid Spaces GPU instance (A10G, $0.60/hr) it drops to 4–6 s.
 
+### Generation speed tiers
+
+All tiers are selectable in the UI without restarting the server.
+
+| Mode | Steps | RTX 3070 (local) | HF CPU Space (est.) | Quality |
+|------|------:|------------------|---------------------|---------|
+| Standard fp16 | 30 | **3.2 s/img** | ~5–8 min | Full baseline |
+| LCM fast (4-step) | 4 | **0.6 s/img — 5.8× faster** | ~60–90 s | Moderate reduction |
+| SDXL Turbo (1-step) | 1 | **3.3 s/img** — same as standard | ~30–60 s | Lower; SDXL model (~2.6B vs 865M params) |
+
+> **SDXL Turbo note**: On RTX 3070 (8 GB), one pass through SDXL's 2.6B-parameter U-Net takes the same wall time as 30 passes through SD 2.1's 865M-parameter U-Net. Real Turbo speedup (10–30×) shows on A100/H100 with ~6.7 GB VRAM for the SDXL model.
+
+### Memory / VRAM trade-offs (quantization)
+
+Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
+
+| Precision | Peak VRAM (measured) | vs fp16 | Avg latency | When to use |
+|-----------|---------------------:|---------|-------------|-------------|
+| fp16 (default) | 3097 MB | — | 3.2 s/img | 8 GB GPU — best quality |
+| 8-bit INT8 | **2210 MB** | −887 MB | 9.6 s/img | 4–6 GB GPU — best VRAM savings |
+| 4-bit NF4 | 2761 MB | −336 MB | 4.7 s/img | Smallest stored weights; inference peak inflated by compute buffer |
+
+> LCM and quantization are independent axes — combine them for speed *and* VRAM savings simultaneously.
+
+![Four-tier showcase — Standard / LCM / 8-bit / SDXL Turbo](docs/four_tier_showcase.png)
+*Row 1: Standard fp16 (2.9 s/img) · Row 2: LCM 4-step (0.5 s/img, 5.8× faster) · Row 3: 8-bit INT8 (9.4 s/img, 2210 MB VRAM) · Row 4: SDXL Turbo (9.3 s/img, SDXL architecture). Seed 42.*
+
+![Standard vs LCM vs SDXL Turbo — three-tier speed comparison](docs/three_tier_comparison.png)
+*Row 1: Standard 30-step DPM++ (3.2 s/img) · Row 2: LCM 4-step (0.6 s/img) · Row 3: SDXL Turbo 1-step (3.3 s/img — see note above). Same seed 42.*
+
+![LCM vs Standard side-by-side](docs/lcm_comparison.png)
+*Left: Standard 30-step DPM-Solver++ (3.2 s/img) — Right: LCM 4-step (0.6 s/img). Seed 42.*
+
 ### VRAM breakdown
 
 ```
-SD 2.1 U-Net (fp16):         ~4.5 GB peak (with model CPU offload)
-ControlNet pipeline:          ~3.0 GB additional (separate pipeline object)
-LoRA adapter:                  6.4 MB (negligible)
-Total worst case (base + CN): ~7.5 GB — fits in 8 GB
+SD 2.1 U-Net (fp16):        3097 MB peak  (measured, RTX 3070, 30 steps, model CPU offload)
+SD 2.1 U-Net (8-bit INT8):  2210 MB peak  (best VRAM savings; 3.5× slower due to dequant)
+SD 2.1 U-Net (4-bit NF4):   2761 MB peak  (bitsandbytes compute buffer inflates inference peak)
+ControlNet pipeline:         ~3000 MB additional (separate pipeline object)
+LoRA adapter:                   6.4 MB (negligible)
+SDXL Turbo:                  ~6000 MB peak (separate SDXL-architecture model, no LoRA/CN)
+Total worst case (SD+CN fp16): ~6100 MB — fits in 8 GB with margin
 ```
 
 ---
@@ -250,11 +289,14 @@ Set `USE_HF_INFERENCE=1` to route generation through the Hugging Face Inference 
 
 ```
 AetherArt/
-├── app.py                                  # Gradio UI — generation, ControlNet, LoRA, metadata
+├── app.py                                  # Gradio UI — generation, ControlNet, LoRA, speed/memory modes
 ├── aetherart/
 │   ├── model.py                            # SD 2.1 / SDXL pipeline + VRAM optimisations
 │   ├── controlnet.py                       # ControlNet preprocessing + LRU-cached pipelines
 │   ├── lora.py                             # LoRA registry, load/unload helpers
+│   ├── lcm.py                              # LCM scheduler switching (4-step fast generation)
+│   ├── sdxl_turbo.py                       # SDXL Turbo pipeline (1-step adversarial diffusion)
+│   ├── quantization.py                     # 4-bit NF4 / 8-bit INT8 U-Net via bitsandbytes
 │   ├── metadata.py                         # PNG tEXt + sidecar JSON
 │   └── config.py                           # env-driven config (model IDs, defaults)
 ├── data/lora/ukiyo-e/
@@ -264,19 +306,25 @@ AetherArt/
 │   ├── eval.py                             # 360-run CLIP benchmark harness
 │   ├── train_lora.py                       # LoRA training wrapper (accelerate launch)
 │   ├── generate_hero_image.py              # 2×2 Ukiyo-e showcase grid for README
+│   ├── generate_lcm_comparison.py          # Standard vs LCM side-by-side (docs/lcm_comparison.png)
+│   ├── generate_three_tier_comparison.py   # Standard + LCM + Turbo 3-row grid
+│   ├── benchmark_quantization.py           # fp16 vs 8-bit vs 4-bit VRAM + CLIP + latency
 │   ├── compare_lora_checkpoints.py         # 6×6 checkpoint comparison grid
 │   ├── build_lora_comparison_gallery.py    # base vs LoRA comparison gallery
 │   └── prepare_lora_dataset.py             # WikiArt dataset prep + caption generation
 ├── docs/
-│   └── hero.png                            # 2×2 Ukiyo-e LoRA showcase (README header)
+│   ├── hero.png                            # 2×2 Ukiyo-e LoRA showcase (README header)
+│   ├── lcm_comparison.png                  # Standard vs LCM side-by-side
+│   └── three_tier_comparison.png           # Standard + LCM + Turbo (generated on first run)
 ├── reports/
 │   ├── eval_charts/                        # 4 benchmark PNGs
 │   ├── lora_comparison_gallery.png         # base vs LoRA, 4 prompts
 │   ├── lora_fuji_progression.png           # baseline → ckpt-1500 progression strip
-│   └── lora_training_summary.md           # full training log + checkpoint selection rationale
+│   ├── lora_training_summary.md            # full training log + checkpoint selection rationale
+│   └── quantization_benchmark.md          # fp16 vs 8-bit vs 4-bit results (generated on first run)
 ├── spaces/
 │   └── README.md                           # HF Space version (with YAML frontmatter)
-├── tests/                                  # pytest suite: imports, metadata, preprocessing, cache keys
+├── tests/                                  # pytest suite: imports, metadata, preprocessing, LCM, Turbo, quantization
 ├── requirements.txt
 └── runtime.txt                             # python-3.10.12
 ```
@@ -289,12 +337,13 @@ What couldn't be done on the Hugging Face Spaces free tier:
 
 | Limitation | Impact | Workaround |
 |---|---|---|
-| No GPU | 30–60 s generation vs 4–6 s on A10G | Acceptable for demo |
+| No GPU | 30–60 s generation vs 4–6 s on A10G | LCM 4-step mode gives ~5× speedup on CPU |
 | 10 MB binary file limit | Blocked `git push` for benchmark PNGs | Git LFS migration |
 | 16 GB RAM, shared | Limits ControlNet + LoRA caching | 2-entry LRU eviction |
 | Cold start ~30 s | Bad first impression | "Always on" requires paid tier |
 | No TensorRT | 3–5× slower than optimised builds | Not possible on free tier |
 | XetHub binary requirement | `git push` fails for any PNG | Worked around with `huggingface_hub.upload_folder` |
+| 4 GB GPU tier (T4 small) | SD 2.1 fp16 doesn't fit | 4-bit NF4 quantization reduces U-Net to ~1.5 GB |
 
 ---
 
@@ -302,15 +351,16 @@ What couldn't be done on the Hugging Face Spaces free tier:
 
 Realistic next steps if I were to invest more in this:
 
-| Improvement | Effort | Gain |
-|---|---|---|
-| LCM / SDXL Turbo | 1 day | 4–8× faster inference, 1–4 step generation |
-| 4-bit quantisation (GGUF/GPTQ) | 1 day | Halve VRAM, enable larger batch |
-| Train LoRA on cleaner data | 2 days | Reduce calligraphy artifact, broader style range |
-| Multi-LoRA composition | 1 day | Blend multiple style adapters at inference time |
-| DreamBooth for subject personalisation | 3 days | "Generate images of [specific person/object]" |
-| Paid GPU Space (A10G) | $/hour | 10× speedup, production-viable latency |
-| TensorRT compilation | 1 week | 3–5× speedup on equivalent hardware |
+| Improvement | Effort | Gain | Status |
+|---|---|---|---|
+| ~~LCM fast generation~~ | ~~1 day~~ | ~~~5× faster (4-step LCMScheduler)~~ | **Done** |
+| ~~SDXL Turbo~~ | ~~1 day~~ | ~~1-step adversarial generation~~ | **Done** |
+| ~~4-bit/8-bit quantization~~ | ~~1 day~~ | ~~Halve VRAM, enables 4 GB GPUs~~ | **Done** |
+| Train LoRA on cleaner data | 2 days | Reduce calligraphy artifact, broader style range | Planned |
+| Multi-LoRA composition | 1 day | Blend multiple style adapters at inference time | Planned |
+| DreamBooth for subject personalisation | 3 days | "Generate images of [specific person/object]" | Planned |
+| Paid GPU Space (A10G) | $/hour | 10× speedup, production-viable latency | Planned |
+| TensorRT compilation | 1 week | 3–5× speedup on equivalent hardware | Planned |
 
 What I would **not** do:
 - Train from scratch — compute-prohibitive without 8× A100s and weeks of time

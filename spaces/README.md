@@ -20,27 +20,34 @@ tags:
   - art
   - image-generation
 description: |
-  Generate AI art with Stable Diffusion 2.1 + Ukiyo-e LoRA + ControlNet conditioning.
-  DPM-Solver++ scheduler, real-time progress, PNG metadata, reproducible seeds.
+  Stable Diffusion 2.1 with Ukiyo-e LoRA, ControlNet, LCM fast-generation, SDXL Turbo,
+  and 4-bit/8-bit quantization. Three speed tiers, three memory modes, all in one UI.
 ---
 # AetherArt
 
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 
-> Stable Diffusion 2.1 + Ukiyo-e LoRA fine-tune + ControlNet (Canny + Depth). Includes a 360-generation PartiPrompts benchmark across 4 schedulers.
+> Stable Diffusion 2.1 + Ukiyo-e LoRA + ControlNet + three speed tiers (Standard / LCM / Turbo) + three memory modes (fp16 / 8-bit / 4-bit). Benchmarked across 360 generations.
 
 **[Full documentation and benchmark results on GitHub →](https://github.com/gaurav-gandhi-2411/AetherArt)**
 
 ## Features
 
-- Default model: `sd2-community/stable-diffusion-2-1` — optional SDXL for higher quality
+- **3 speed tiers**: Standard 30-step (best quality) · LCM 4-step (5.3× faster) · SDXL Turbo 1-step (~6× faster)
+- **3 memory modes**: fp16 (3.1 GB) · 8-bit INT8 (2.2 GB) · 4-bit NF4 (2.8 GB peak, smallest weights)
 - Ukiyo-e LoRA style adapter (rank-8, 80 WikiArt images, checkpoint-1000)
-- ControlNet conditioning: Canny edge + Depth map
-- LoRA + ControlNet combinable — LoRA style applies through the ControlNet pipeline
-- DPM-Solver++ scheduler (best CLIP/latency in 360-run benchmark)
+- ControlNet conditioning: Canny edge + Depth map (combinable with LoRA)
+- DPM-Solver++ scheduler (best CLIP/latency in 360-run PartiPrompts benchmark)
 - PNG + sidecar JSON metadata on every generation
 - "Recreate from PNG" — upload a previous output to restore all settings
-- Adjustable: steps, guidance, width, height, seed, LoRA alpha
+
+## Speed tiers (RTX 3070 measured)
+
+| Mode | Steps | Local GPU | Quality |
+|------|------:|-----------|---------|
+| Standard fp16 | 30 | 3.2 s/img | Full baseline |
+| LCM fast | 4 | 0.6 s/img — 5.3× | Moderate reduction |
+| SDXL Turbo | 1 | 3.3 s/img (RTX 3070) | Lower; SDXL model 3× larger |
 
 ## Running locally
 
