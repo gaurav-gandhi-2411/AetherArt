@@ -1,11 +1,11 @@
 import os
 import random
 import time
-import threading
 from pathlib import Path
 from typing import Any, Generator, Optional
 
 import gradio as gr
+import torch
 from PIL import Image, ImageDraw, ImageFont
 
 from aetherart.model import AetherModel
@@ -20,305 +20,30 @@ from aetherart import quantization as quant_mod
 
 logger = get_logger(__name__)
 
-# Model instance — .init() is deferred to first generation or explicit reload
+# ── ZeroGPU shim (no-op when running outside HF Spaces) ───────────────────
+try:
+    import spaces
+
+    def _GPU(duration: int = 120):
+        return spaces.GPU(duration=duration)
+
+except ImportError:
+    def _GPU(duration: int = 120):
+        def decorator(fn):
+            return fn
+        return decorator
+
+# Model singletons — cached across requests for fast subsequent generations
 MODEL = AetherModel()
-_turbo_pipe = None  # loaded on first Turbo request, cached thereafter
-_quant_pipes: dict = {}  # keyed by "8bit" or "4bit"; loaded lazily, cached
-
-
-class GenerationState:
-    """Thread-safe container for a single in-flight generation."""
-
-    def __init__(self) -> None:
-        self._lock = threading.Lock()
-        self.running: bool = False
-        self.percent: int = 0
-        self.step: int = 0
-        self.total_steps: int = cfg.default_steps
-        self.status_msgs: list[str] = []
-        self.result_image: Optional[Any] = None
-        self.error: Optional[str] = None
-        self.generation_time: Optional[float] = None
-        self.vram_peak_mb: Optional[float] = None
-        self.gen_opts: dict[str, Any] = {}
-
-    def push_status(self, msg: str) -> None:
-        ts = time.strftime("%H:%M:%S")
-        with self._lock:
-            self.status_msgs.append(f"[{ts}] {msg}")
-            self.status_msgs = self.status_msgs[-12:]
-        logger.info(msg)
-
-    def reset(self, total_steps: int, opts: dict[str, Any]) -> None:
-        with self._lock:
-            self.running = True
-            self.percent = 0
-            self.step = 0
-            self.total_steps = total_steps
-            self.status_msgs = []
-            self.result_image = None
-            self.error = None
-            self.generation_time = None
-            self.vram_peak_mb = None
-            self.gen_opts = dict(opts)
-        self.push_status(f"Queued generation: {total_steps} steps.")
-
-    def is_running(self) -> bool:
-        with self._lock:
-            return self.running
-
-    def compact_status(self) -> str:
-        with self._lock:
-            msgs = list(self.status_msgs[-10:])
-        parts = [m.split("] ", 1)[1] if "] " in m else m for m in msgs]
-        return " ⦿ ".join(parts)
-
-    def get_percent(self) -> int:
-        with self._lock:
-            return self.percent
-
-    def get_step_info(self) -> tuple[int, int, int]:
-        with self._lock:
-            return self.step, self.total_steps, self.percent
-
-    def update_step(self, step: int) -> None:
-        with self._lock:
-            total = self.total_steps or 1
-            self.step = step
-            self.percent = int((step / total) * 100)
-
-    def finish(self, image: Any, generation_time: float, vram_peak_mb: float) -> None:
-        with self._lock:
-            self.result_image = image
-            self.generation_time = generation_time
-            self.vram_peak_mb = vram_peak_mb
-            self.percent = 100
-            self.running = False
-
-    def fail(self, error: str) -> None:
-        with self._lock:
-            self.error = error
-            self.running = False
-
-    def get_result(self) -> tuple[Optional[Any], Optional[str], Optional[float], Optional[float]]:
-        with self._lock:
-            return self.result_image, self.error, self.generation_time, self.vram_peak_mb
-
-
-_state = GenerationState()
+_turbo_pipe = None          # SDXL Turbo pipeline (loaded lazily, ~6.7 GB)
+_quant_pipes: dict = {}     # keyed "8bit" / "4bit"; loaded lazily
 _active_lora_name: str = "none"
-_current_speed_mode: str = "standard"  # "standard" | "fast_lcm" | "turbo"
 
 
-def _callback_diffusers_on_step_end(
-    pipe: Any, step: int, timestep: int, callback_kwargs: dict
-) -> dict:
-    try:
-        _state.update_step(step)
-        _step, total, pct = _state.get_step_info()
-        if step % max(1, total // 10) == 0 or pct in (0, 50, 75):
-            _state.push_status(f"Progress: {pct}% (step {step}/{total})")
-    except Exception as e:
-        logger.debug("Progress callback error: %s", e)
-    return callback_kwargs
+# ── GPU-bound generation functions ────────────────────────────────────────
 
-
-def _run_pipeline_in_thread(prompt: str, opts: dict[str, Any], model_choice: str) -> None:
-    try:
-        _state.push_status("Starting generation thread...")
-
-        speed_mode = opts.get("speed_mode", "standard")
-
-        import torch
-        try:
-            if torch.cuda.is_available():
-                torch.cuda.reset_peak_memory_stats()
-        except Exception:
-            pass
-        start_time = time.time()
-
-        # ── SDXL Turbo path ────────────────────────────────────────────────
-        if speed_mode == "turbo":
-            global _turbo_pipe
-            if _turbo_pipe is None:
-                _state.push_status("Loading SDXL Turbo (first use — downloading ~6.7 GB)...")
-                _turbo_pipe = turbo_mod.load_turbo_pipeline()
-            _state.push_status("Running SDXL Turbo (1 step)...")
-            actual_seed = int(opts.get("seed", 42))
-            result_img, _ = turbo_mod.generate_turbo(
-                _turbo_pipe,
-                prompt=opts["prompt"],
-                negative_prompt=opts.get("negative_prompt") or "",
-                seed=actual_seed,
-                width=int(opts["width"]),
-                height=int(opts["height"]),
-            )
-
-        # ── SD 2.1 path (standard or LCM) ──────────────────────────────────
-        else:
-            memory_mode = opts.get("memory_mode", "fp16")
-
-            # Quantized U-Net path (8-bit INT8 or 4-bit NF4)
-            if memory_mode in ("8bit", "4bit"):
-                global _quant_pipes
-                if memory_mode not in _quant_pipes:
-                    bits = int(memory_mode[0])  # "8bit" → 8, "4bit" → 4
-                    _state.push_status(f"Loading {memory_mode} quantized SD 2.1 U-Net (first use)...")
-                    _quant_pipes[memory_mode] = quant_mod.load_sd21_quantized(bits=bits)
-                    from diffusers import DPMSolverMultistepScheduler
-                    _quant_pipes[memory_mode].scheduler = DPMSolverMultistepScheduler.from_config(
-                        _quant_pipes[memory_mode].scheduler.config
-                    )
-                active_pipe = _quant_pipes[memory_mode]
-                use_lora_for_quant = False
-            else:
-                current_model = MODEL.optimizations.get("model_loaded", "")
-                need_init = MODEL.backend is None or (model_choice == "sdxl") != (current_model == "sdxl")
-                if need_init:
-                    try:
-                        MODEL.init(model_choice="sdxl" if model_choice == "sdxl" else None)
-                    except Exception as e:
-                        _state.push_status(f"Model reload warning: {e}")
-                active_pipe = MODEL.pipe if MODEL.backend == "local" else None
-                use_lora_for_quant = True
-
-            # Prompt/negative injection for LoRA trigger token
-            lora_name = opts.get("lora_name", "none")
-            lora_alpha = float(opts.get("lora_alpha", 1.0))
-            auto_trigger = bool(opts.get("auto_trigger", True))
-            effective_prompt = opts["prompt"]
-            effective_negative = opts.get("negative_prompt") or ""
-            if lora_name != "none" and auto_trigger:
-                trigger = lora_mod.get_trigger_token(lora_name)
-                if trigger and trigger not in effective_prompt:
-                    effective_prompt = f"{trigger} {effective_prompt}"
-                lora_neg = lora_mod.get_default_negative(lora_name)
-                if lora_neg:
-                    effective_negative = (
-                        f"{effective_negative}, {lora_neg}" if effective_negative else lora_neg
-                    )
-
-            # Resolve step / guidance overrides for LCM mode
-            if speed_mode == "fast_lcm":
-                run_steps = lcm_mod.LCM_STEPS
-                run_guidance = lcm_mod.LCM_GUIDANCE
-                if MODEL.pipe is not None and not lcm_mod.is_lcm_scheduler(MODEL.pipe):
-                    _state.push_status("Switching to LCM scheduler (4-step mode)...")
-                    lcm_mod.apply_lcm_mode(MODEL.pipe)
-                    global _current_speed_mode
-                    _current_speed_mode = "fast_lcm"
-            else:
-                run_steps = int(opts["steps"])
-                run_guidance = float(opts["guidance"])
-                if MODEL.pipe is not None and lcm_mod.is_lcm_scheduler(MODEL.pipe):
-                    _state.push_status("Restoring DPM-Solver++ scheduler...")
-                    lcm_mod.restore_standard_mode(MODEL.pipe)
-                    _current_speed_mode = "standard"
-
-            control_type = opts.get("control_type", "none")
-            control_image = opts.get("control_image")
-            use_controlnet = control_type != "none" and control_image is not None
-
-            if active_pipe is not None:
-                if not use_controlnet and use_lora_for_quant:
-                    global _active_lora_name
-                    if _active_lora_name != lora_name:
-                        action = "Loading" if lora_name != "none" else "Unloading"
-                        _state.push_status(f"{action} LoRA ({lora_name})...")
-                        lora_mod.load_lora(active_pipe, lora_name, lora_alpha)
-                        _active_lora_name = lora_name
-                    elif lora_name != "none":
-                        try:
-                            active_pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
-                        except Exception:
-                            pass
-
-                if use_controlnet:
-                    _state.push_status(f"Preprocessing control image ({control_type})...")
-                    ctrl_img = control_image.resize(
-                        (int(opts["width"]), int(opts["height"])), Image.LANCZOS
-                    )
-                    ctrl_map = cn.preprocess(
-                        ctrl_img,
-                        control_type,
-                        canny_low=int(opts.get("canny_low", 100)),
-                        canny_high=int(opts.get("canny_high", 200)),
-                    )
-                    cn_lora = lora_name if lora_name != "none" and use_lora_for_quant else None
-                    _state.push_status(
-                        f"Loading ControlNet pipeline ({control_type}"
-                        + (f" + LoRA {lora_name}" if cn_lora else "")
-                        + ")..."
-                    )
-                    pipe = cn.get_pipeline(control_type, lora_name=cn_lora, lora_alpha=lora_alpha)
-                    _state.push_status("Running ControlNet generation...")
-                    out = pipe(
-                        effective_prompt,
-                        image=ctrl_map,
-                        negative_prompt=effective_negative or None,
-                        num_inference_steps=run_steps,
-                        guidance_scale=run_guidance,
-                        width=int(opts["width"]),
-                        height=int(opts["height"]),
-                        generator=opts.get("generator"),
-                        controlnet_conditioning_scale=float(opts.get("control_scale", 1.0)),
-                        callback_on_step_end=_callback_diffusers_on_step_end,
-                    )
-                else:
-                    mode_suffix = (
-                        "LCM 4-step" if speed_mode == "fast_lcm"
-                        else f"{run_steps}-step {memory_mode}"
-                    )
-                    _state.push_status(f"Running SD 2.1 ({mode_suffix})...")
-                    out = active_pipe(
-                        effective_prompt,
-                        negative_prompt=effective_negative or None,
-                        num_inference_steps=run_steps,
-                        guidance_scale=run_guidance,
-                        width=int(opts["width"]),
-                        height=int(opts["height"]),
-                        generator=opts.get("generator"),
-                        callback_on_step_end=_callback_diffusers_on_step_end,
-                    )
-
-                images = getattr(out, "images", None)
-                if images:
-                    result_img = images[0]
-                elif isinstance(out, (list, tuple)) and out:
-                    result_img = out[0]
-                else:
-                    raise RuntimeError("Unexpected pipeline output structure.")
-
-            elif MODEL.backend == "inference" and getattr(MODEL, "inference_client", None) is not None:
-                _state.push_status("Using Hugging Face Inference API (simulated progress).")
-                total = run_steps
-                for s in range(1, total + 1):
-                    time.sleep(0.03)
-                    _state.update_step(s)
-                result_img = MODEL.inference_client.text_to_image(opts["prompt"], model=MODEL.model_id)
-            else:
-                raise RuntimeError("No model backend available.")
-
-        generation_time = time.time() - start_time
-        try:
-            vram_peak_mb = (
-                torch.cuda.max_memory_allocated() / 1024**2
-                if torch.cuda.is_available()
-                else 0.0
-            )
-        except Exception:
-            vram_peak_mb = 0.0
-
-        _state.finish(result_img, generation_time, vram_peak_mb)
-        _state.push_status("Generation complete.")
-
-    except Exception as e:
-        logger.exception("Generation error")
-        _state.fail(str(e))
-        _state.push_status(f"ERROR: {e}")
-
-
-def _start_generation(
+@_GPU(duration=60)
+def _run_sd21(
     prompt: str,
     negative_prompt: str,
     model_choice: str,
@@ -326,103 +51,171 @@ def _start_generation(
     guidance: float,
     width: int,
     height: int,
-    seed: Optional[int],
-    control_image: Optional[Any] = None,
-    control_type: str = "none",
-    control_scale: float = 1.0,
-    canny_low: int = 100,
-    canny_high: int = 200,
-    lora_name: str = "none",
-    lora_alpha: float = 1.0,
-    auto_trigger: bool = True,
-    speed_mode: str = "standard",
-    memory_mode: str = "fp16",
-) -> None:
-    """Validate, build opts, and launch the worker thread."""
-    if _state.is_running():
-        raise RuntimeError("Another generation is already running. Please wait.")
+    seed: int,
+    lora_name: str,
+    lora_alpha: float,
+    auto_trigger: bool,
+    speed_mode: str,
+    memory_mode: str,
+    control_type: str,
+    control_image: Optional[Any],
+    control_scale: float,
+    canny_low: int,
+    canny_high: int,
+) -> tuple:
+    """SD 2.1 generation (standard / LCM / quantized). Returns (PIL.Image, gen_time_s, vram_mb)."""
+    global _quant_pipes, _active_lora_name
 
-    actual_seed = int(seed) if seed is not None else random.randint(0, 2**32 - 1)
-    generator = None
-    if speed_mode != "turbo":
-        try:
-            import torch
-            device = "cuda" if (MODEL.backend == "local" and torch.cuda.is_available()) else "cpu"
-            generator = torch.Generator(device=device).manual_seed(actual_seed)
-        except Exception:
-            pass
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    t0 = time.time()
 
-    # LCM overrides user step/guidance settings
-    effective_steps = lcm_mod.LCM_STEPS if speed_mode == "fast_lcm" else (
-        1 if speed_mode == "turbo" else steps
-    )
+    # ── Pipeline selection ────────────────────────────────────────────────
+    if memory_mode in ("8bit", "4bit"):
+        bits = int(memory_mode[0])
+        if memory_mode not in _quant_pipes:
+            _quant_pipes[memory_mode] = quant_mod.load_sd21_quantized(bits=bits)
+            from diffusers import DPMSolverMultistepScheduler
+            _quant_pipes[memory_mode].scheduler = DPMSolverMultistepScheduler.from_config(
+                _quant_pipes[memory_mode].scheduler.config
+            )
+        active_pipe = _quant_pipes[memory_mode]
+        use_lora = False
+    else:
+        if MODEL.backend is None:
+            try:
+                MODEL.init(model_choice="sdxl" if model_choice == "sdxl" else None)
+            except Exception as e:
+                logger.warning("Model init warning: %s", e)
+        active_pipe = MODEL.pipe if MODEL.backend == "local" else None
+        use_lora = (MODEL.backend == "local")
 
-    opts: dict[str, Any] = {
-        "prompt": prompt,
-        "negative_prompt": negative_prompt,
-        "steps": effective_steps,
-        "guidance": guidance,
-        "width": width,
-        "height": height,
-        "seed": actual_seed,
-        "generator": generator,
-        "control_image": control_image,
-        "control_type": control_type,
-        "control_scale": control_scale,
-        "canny_low": canny_low,
-        "canny_high": canny_high,
-        "lora_name": lora_name,
-        "lora_alpha": lora_alpha,
-        "auto_trigger": auto_trigger,
-        "speed_mode": speed_mode,
-        "memory_mode": memory_mode,
-    }
-    _state.reset(total_steps=effective_steps, opts=opts)
-    threading.Thread(
-        target=_run_pipeline_in_thread, args=(prompt, opts, model_choice), daemon=True
-    ).start()
+    # ── LCM scheduler applied to active_pipe (not MODEL.pipe) ────────────
+    # Note: no LCM-LoRA exists for SD 2.1 (only SD 1.5 / SDXL). Scheduler-only
+    # LCM is the only option here; 4-step quality is reduced but measurably faster.
+    if speed_mode == "fast_lcm":
+        run_steps = lcm_mod.LCM_STEPS
+        run_guidance = lcm_mod.LCM_GUIDANCE
+        if active_pipe is not None and not lcm_mod.is_lcm_scheduler(active_pipe):
+            lcm_mod.apply_lcm_mode(active_pipe)
+    else:
+        run_steps = steps
+        run_guidance = guidance
+        if active_pipe is not None and lcm_mod.is_lcm_scheduler(active_pipe):
+            lcm_mod.restore_standard_mode(active_pipe)
+
+    # ── LoRA trigger-token injection ──────────────────────────────────────
+    effective_prompt = prompt
+    effective_negative = negative_prompt or ""
+    if use_lora and lora_name != "none" and auto_trigger:
+        trigger = lora_mod.get_trigger_token(lora_name)
+        if trigger and trigger not in effective_prompt:
+            effective_prompt = f"{trigger} {effective_prompt}"
+        lora_neg = lora_mod.get_default_negative(lora_name)
+        if lora_neg:
+            effective_negative = (
+                f"{effective_negative}, {lora_neg}" if effective_negative else lora_neg
+            )
+
+    use_controlnet = control_type != "none" and control_image is not None
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    generator = torch.Generator(device=device).manual_seed(seed)
+
+    if active_pipe is not None:
+        if not use_controlnet and use_lora:
+            if _active_lora_name != lora_name:
+                lora_mod.load_lora(active_pipe, lora_name, lora_alpha)
+                _active_lora_name = lora_name
+            elif lora_name != "none":
+                try:
+                    active_pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
+                except Exception:
+                    pass
+
+        if use_controlnet:
+            ctrl_img = control_image.resize((width, height), Image.LANCZOS)
+            ctrl_map = cn.preprocess(ctrl_img, control_type, canny_low, canny_high)
+            cn_lora = lora_name if lora_name != "none" and use_lora else None
+            pipe = cn.get_pipeline(control_type, lora_name=cn_lora, lora_alpha=lora_alpha)
+            out = pipe(
+                effective_prompt,
+                image=ctrl_map,
+                negative_prompt=effective_negative or None,
+                num_inference_steps=run_steps,
+                guidance_scale=run_guidance,
+                width=width,
+                height=height,
+                generator=generator,
+                controlnet_conditioning_scale=float(control_scale),
+            )
+        else:
+            out = active_pipe(
+                effective_prompt,
+                negative_prompt=effective_negative or None,
+                num_inference_steps=run_steps,
+                guidance_scale=run_guidance,
+                width=width,
+                height=height,
+                generator=generator,
+            )
+
+        images = getattr(out, "images", None)
+        if images:
+            img = images[0]
+        elif isinstance(out, (list, tuple)) and out:
+            img = out[0]
+        else:
+            raise RuntimeError("Unexpected pipeline output structure.")
+
+    elif MODEL.backend == "inference" and getattr(MODEL, "inference_client", None) is not None:
+        img = MODEL.inference_client.text_to_image(prompt, model=MODEL.model_id)
+    else:
+        raise RuntimeError("No model backend available. Check logs for details.")
+
+    gen_time = time.time() - t0
+    vram_mb = (torch.cuda.max_memory_allocated() / 1024**2) if torch.cuda.is_available() else 0.0
+    return img, gen_time, vram_mb
 
 
-def make_placeholder_image(
-    w: int = 512, h: int = 512, text: str = "Your generated image will appear here"
-) -> Image.Image:
-    """Create a decorative grey placeholder with centred text."""
-    img = Image.new("RGB", (w, h), color=(230, 230, 230))
-    draw = ImageDraw.Draw(img)
-    for i in range(h):
-        shade = 230 - int(i * (30 / h))
-        draw.line([(0, i), (w, i)], fill=(shade, shade, shade))
+@_GPU(duration=300)
+def _run_turbo(
+    prompt: str,
+    negative_prompt: str,
+    seed: int,
+    width: int,
+    height: int,
+) -> tuple:
+    """SDXL Turbo 1-step generation. Returns (PIL.Image, gen_time_s, vram_mb)."""
+    global _turbo_pipe
 
-    border_color = (180, 180, 180)
-    margin = 20
-    for x in range(margin, w - margin, 15):
-        draw.line([(x, margin), (x + 8, margin)], fill=border_color)
-        draw.line([(x, h - margin), (x + 8, h - margin)], fill=border_color)
-    for y in range(margin, h - margin, 15):
-        draw.line([(margin, y), (margin, y + 8)], fill=border_color)
-        draw.line([(w - margin, y), (w - margin, y + 8)], fill=border_color)
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    t0 = time.time()
 
     try:
-        font_size = max(14, int(min(w, h) / 20))
-        font = ImageFont.truetype("arial.ttf", font_size)
-    except Exception:
-        font = ImageFont.load_default()
+        if _turbo_pipe is None:
+            _turbo_pipe = turbo_mod.load_turbo_pipeline()
+        img, _ = turbo_mod.generate_turbo(
+            _turbo_pipe,
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            seed=seed,
+            width=width,
+            height=height,
+        )
+    except torch.cuda.OutOfMemoryError:
+        torch.cuda.empty_cache()
+        _turbo_pipe = None
+        raise RuntimeError(
+            "SDXL Turbo ran out of VRAM. Try Standard or LCM mode which require less memory."
+        )
 
-    lines = text.split("\n")
-    line_heights = []
-    for line in lines:
-        bbox = draw.textbbox((0, 0), line, font=font)
-        line_heights.append(bbox[3] - bbox[1])
+    gen_time = time.time() - t0
+    vram_mb = (torch.cuda.max_memory_allocated() / 1024**2) if torch.cuda.is_available() else 0.0
+    return img, gen_time, vram_mb
 
-    y = (h - sum(line_heights)) // 2
-    for i, line in enumerate(lines):
-        bbox = draw.textbbox((0, 0), line, font=font)
-        x = (w - (bbox[2] - bbox[0])) // 2
-        draw.text((x, y), line, fill=(60, 60, 60), font=font)
-        y += line_heights[i]
 
-    return img
-
+# ── Gradio event handlers ──────────────────────────────────────────────────
 
 def generate_stream(
     prompt: str,
@@ -444,7 +237,7 @@ def generate_stream(
     speed_mode: str = "standard",
     memory_mode: str = "fp16",
 ) -> Generator[tuple[Optional[Image.Image], str], None, None]:
-    """Stream generation progress, save the result with metadata, and yield the final image."""
+    """Stream a status message, run generation, yield the final image."""
     try:
         if not prompt or not prompt.strip():
             yield None, "Please enter a prompt."
@@ -453,79 +246,91 @@ def generate_stream(
             yield None, "Requested image size too large. Choose a smaller size."
             return
 
-        try:
-            _start_generation(
-                prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
-                control_image=control_image, control_type=control_type,
-                control_scale=control_scale, canny_low=canny_low, canny_high=canny_high,
-                lora_name=lora_name, lora_alpha=lora_alpha, auto_trigger=auto_trigger,
-                speed_mode=speed_mode, memory_mode=memory_mode,
-            )
-        except RuntimeError as e:
-            yield None, str(e)
-            return
-
-        while _state.is_running():
-            pct = _state.get_percent()
-            compact = _state.compact_status()
-            status_line = f"**Progress:** {pct}% — {compact}" if compact else f"**Progress:** {pct}%"
-            yield None, status_line
-            time.sleep(0.5)
-
-        img, error, generation_time, vram_peak_mb = _state.get_result()
-        if error:
-            yield None, f"**Error:** {error}"
-            return
-        if img is None:
-            yield None, "**Error:** generation did not return an image."
-            return
-
-        actual_seed = _state.gen_opts.get("seed", 0)
-        scheduler_name = "unknown"
-        if MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
-            try:
-                scheduler_name = MODEL.pipe.scheduler.__class__.__name__
-            except Exception:
-                pass
-
-        md: dict[str, Any] = {
-            "prompt": prompt,
-            "negative_prompt": negative_prompt or "",
-            "seed": actual_seed,
-            "scheduler": scheduler_name,
-            "steps": steps,
-            "guidance": guidance,
-            "width": width,
-            "height": height,
-            "model_id": MODEL.model_id,
-            "lora_name": lora_name if lora_name != "none" else None,
-            "lora_alpha": lora_alpha if lora_name != "none" else None,
-            "controlnet_type": control_type if control_type != "none" else None,
-            "controlnet_scale": float(control_scale) if control_type != "none" else None,
-            "git_commit": meta.get_git_commit(),
-            "generation_time_seconds": round(generation_time or 0.0, 2),
-            "vram_peak_mb": round(vram_peak_mb or 0.0, 1),
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        }
-
-        out_dir = Path("outputs")
-        out_dir.mkdir(exist_ok=True)
-        out_path = out_dir / f"{time.strftime('%Y%m%d_%H%M%S')}_{actual_seed}.png"
-        meta.save_image_with_metadata(img, out_path, md)
-
-        compact = _state.compact_status()
-        suffix = f"\n{compact}" if compact else ""
-        latency_str = f"{generation_time:.1f}s" if generation_time else "?"
+        actual_seed = int(seed) if seed is not None else random.randint(0, 2**32 - 1)
         mode_label = {"fast_lcm": "LCM 4-step", "turbo": "Turbo 1-step"}.get(
-            _state.gen_opts.get("speed_mode", "standard"), f"{_state.gen_opts.get('steps', '?')}-step"
+            speed_mode, f"{steps}-step"
         )
-        yield img, f"**Done — {mode_label} — {latency_str}** — Saved: `{out_path}`{suffix}"
+
+        if speed_mode == "turbo" and _turbo_pipe is None:
+            yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait…**"
+        else:
+            yield None, f"**Generating ({mode_label}, seed {actual_seed})…**"
+
+        if speed_mode == "turbo":
+            img, gen_time, vram_mb = _run_turbo(
+                prompt=prompt,
+                negative_prompt=negative_prompt or "",
+                seed=actual_seed,
+                width=int(width),
+                height=int(height),
+            )
+        else:
+            effective_steps = lcm_mod.LCM_STEPS if speed_mode == "fast_lcm" else int(steps)
+            img, gen_time, vram_mb = _run_sd21(
+                prompt=prompt,
+                negative_prompt=negative_prompt or "",
+                model_choice=model_choice,
+                steps=effective_steps,
+                guidance=float(guidance),
+                width=int(width),
+                height=int(height),
+                seed=actual_seed,
+                lora_name=lora_name,
+                lora_alpha=float(lora_alpha),
+                auto_trigger=bool(auto_trigger),
+                speed_mode=speed_mode,
+                memory_mode=memory_mode,
+                control_type=control_type,
+                control_image=control_image,
+                control_scale=float(control_scale),
+                canny_low=int(canny_low),
+                canny_high=int(canny_high),
+            )
 
     except Exception as e:
         logger.exception("generate_stream failed")
-        yield None, f"Unexpected error: {e}"
+        yield None, f"**Error:** {e}"
+        return
+
+    # Save image with sidecar metadata
+    scheduler_name = "ADD-1step" if speed_mode == "turbo" else "unknown"
+    if speed_mode != "turbo" and MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
+        try:
+            scheduler_name = MODEL.pipe.scheduler.__class__.__name__
+        except Exception:
+            pass
+
+    md: dict[str, Any] = {
+        "prompt": prompt,
+        "negative_prompt": negative_prompt or "",
+        "seed": actual_seed,
+        "scheduler": scheduler_name,
+        "steps": steps,
+        "guidance": guidance,
+        "width": width,
+        "height": height,
+        "model_id": MODEL.model_id,
+        "lora_name": lora_name if lora_name != "none" else None,
+        "lora_alpha": lora_alpha if lora_name != "none" else None,
+        "controlnet_type": control_type if control_type != "none" else None,
+        "controlnet_scale": float(control_scale) if control_type != "none" else None,
+        "git_commit": meta.get_git_commit(),
+        "generation_time_seconds": round(gen_time, 2),
+        "vram_peak_mb": round(vram_mb, 1),
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+    out_dir = Path("outputs")
+    out_dir.mkdir(exist_ok=True)
+    out_path = out_dir / f"{time.strftime('%Y%m%d_%H%M%S')}_{actual_seed}.png"
+    meta.save_image_with_metadata(img, out_path, md)
+
+    latency_str = f"{gen_time:.1f}s"
+    vram_str = f" — VRAM: {vram_mb:.0f} MB" if vram_mb > 0 else ""
+    yield img, f"**Done — {mode_label} — {latency_str}{vram_str}** — Saved: `{out_path}`"
 
 
+@_GPU(duration=60)
 def reload_model(choice: str) -> str:
     """Load the selected model pipeline."""
     try:
@@ -577,12 +382,52 @@ def preview_control_map(
         return None
 
 
+def make_placeholder_image(
+    w: int = 512, h: int = 512, text: str = "Your generated image will appear here"
+) -> Image.Image:
+    img = Image.new("RGB", (w, h), color=(230, 230, 230))
+    draw = ImageDraw.Draw(img)
+    for i in range(h):
+        shade = 230 - int(i * (30 / h))
+        draw.line([(0, i), (w, i)], fill=(shade, shade, shade))
+
+    border_color = (180, 180, 180)
+    margin = 20
+    for x in range(margin, w - margin, 15):
+        draw.line([(x, margin), (x + 8, margin)], fill=border_color)
+        draw.line([(x, h - margin), (x + 8, h - margin)], fill=border_color)
+    for y in range(margin, h - margin, 15):
+        draw.line([(margin, y), (margin, y + 8)], fill=border_color)
+        draw.line([(w - margin, y), (w - margin, y + 8)], fill=border_color)
+
+    try:
+        font_size = max(14, int(min(w, h) / 20))
+        font = ImageFont.truetype("arial.ttf", font_size)
+    except Exception:
+        font = ImageFont.load_default()
+
+    lines = text.split("\n")
+    line_heights = []
+    for line in lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        line_heights.append(bbox[3] - bbox[1])
+
+    y = (h - sum(line_heights)) // 2
+    for i, line in enumerate(lines):
+        bbox = draw.textbbox((0, 0), line, font=font)
+        x = (w - (bbox[2] - bbox[0])) // 2
+        draw.text((x, y), line, fill=(60, 60, 60), font=font)
+        y += line_heights[i]
+
+    return img
+
+
 _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appear here")
 
 with gr.Blocks() as demo:
     gr.Markdown("# AetherArt — Stable Diffusion (2.1 default, SDXL optional)")
     gr.Markdown(
-        "Runs SD2.1 locally on GPU (recommended). Switch to SDXL for higher quality (requires more VRAM)."
+        "Runs SD2.1 on GPU via ZeroGPU (recommended). Switch to SDXL for higher quality (requires more VRAM)."
     )
 
     with gr.Row():
@@ -679,11 +524,11 @@ with gr.Blocks() as demo:
 
     with gr.Accordion("Generation Speed Mode", open=True):
         gr.Markdown(
-            "**Standard** — 30-step DPM-Solver++, best quality (~12 s on RTX 3070).  \n"
+            "**Standard** — 30-step DPM-Solver++, best quality (~3 s on A10G / ~12 s on RTX 3070).  \n"
             "**Fast (LCM)** — 4-step LCMScheduler, ~7× faster, moderate quality reduction. "
-            "No LCM LoRA exists for SD 2.1; uses LCMScheduler-only fast generation.  \n"
-            "**Turbo (SDXL)** — 1-step adversarial diffusion, ~30× faster, lowest fidelity. "
-            "Requires first-use download (~6.7 GB). LoRA and ControlNet not supported in Turbo mode."
+            "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1; LCM-LoRA only covers SD 1.5 / SDXL).  \n"
+            "**Turbo (SDXL)** — 1-step adversarial diffusion, requires first-use download (~6.7 GB). "
+            "LoRA and ControlNet not supported in Turbo mode."
         )
         speed_mode = gr.Radio(
             choices=["standard", "fast_lcm", "turbo"],
@@ -700,6 +545,7 @@ with gr.Blocks() as demo:
             lora_name, lora_alpha, auto_trigger, speed_mode, memory_mode,
         ],
         outputs=[out_img, status_md],
+        concurrency_limit=1,
     )
     reload_btn.click(fn=reload_model, inputs=[model_choice], outputs=[status_md])
     load_btn.click(
@@ -719,7 +565,7 @@ def main() -> None:
     port = int(os.getenv("PORT", "7860"))
     share = os.getenv("SHARE", "false").lower() == "true"
     logger.info("Starting Gradio app on http://%s:%d (share=%s)", host, port, share)
-    demo.queue()
+    demo.queue(default_concurrency_limit=1, max_size=20)
     demo.launch(server_name=host, server_port=port, share=share)
 
 

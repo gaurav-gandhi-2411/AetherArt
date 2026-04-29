@@ -37,7 +37,7 @@ def build_grid(rows: list[tuple[str, list]]) -> Image.Image:
     pad = 4
     n_rows = len(rows)
     n_cols = len(PROMPTS)
-    label_col_w = 110
+    label_col_w = 180
     w = label_col_w + n_cols * (THUMB_W + pad)
     h = n_rows * (THUMB_H + LABEL_H + pad)
     grid = Image.new("RGB", (w, h), (20, 20, 20))
