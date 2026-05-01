@@ -22,3 +22,6 @@ docs/hero_tiles/
 
 # Local model caches (loaded by app at runtime if present, else HF Hub is used)
 models/
+
+# Hero image generation candidates (scratch outputs, not for tracking)
+docs/hero_candidates/
