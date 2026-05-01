@@ -19,3 +19,6 @@ data/lora/*/training_output/
 reports/lora_comparison_gallery/
 docs/hero_gen.log
 docs/hero_tiles/
+
+# Local model caches (loaded by app at runtime if present, else HF Hub is used)
+models/
