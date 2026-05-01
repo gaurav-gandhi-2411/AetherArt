@@ -1,10 +1,10 @@
-# AetherArt — Production-Grade Diffusion on Consumer GPUs
+# AetherArt — Diffusion Inference on a Laptop GPU
 
 [![Hugging Face Spaces](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> Demonstrating efficient diffusion inference — **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — optimised for an 8 GB consumer GPU. All benchmarks measured locally on an RTX 3070.
+> I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
 
 ![Hero — Ukiyo-e LoRA showcase](docs/hero.png)
 *Ukiyo-e LoRA adapter · DPM-Solver++ · 50 steps · seed 42 · RTX 3070 8 GB*
@@ -31,8 +31,8 @@
 - [Project Structure](#project-structure)
 - [Why CPU on the Live Space?](#why-cpu-on-the-live-space)
 - [Free-Tier Limitations](#free-tier-limitations)
-- [Future Improvements](#future-improvements)
-- [Citations](#citations)
+- [What's Next (if I had more compute)](#whats-next-if-i-had-more-compute)
+- [References & Inspiration](#references--inspiration)
 - [Acknowledgments](#acknowledgments)
 
 ---
@@ -46,7 +46,7 @@ I wanted to deeply understand modern image generation by building one end-to-end
 - ControlNet — how spatial conditioning interacts with the diffusion process
 - Evaluation methodology — how to measure that any of this actually improves anything
 
-This README documents the engineering decisions made, including the ones that didn't work.
+This README documents the engineering decisions I made, including the ones that didn't work.
 
 ---
 
@@ -89,7 +89,7 @@ User Prompt
 | Quantization | bitsandbytes (4-bit NF4 / 8-bit INT8) | Memory-efficient U-Net for ≥ 4 GB GPUs |
 | Evaluator | `openai/clip-vit-base-patch32` | Prompt-image similarity scoring |
 
-All components run on a single RTX 3070 8 GB via model CPU offload (fp16). LoRA and ControlNet pipelines share a 2-entry LRU cache to manage the ~3 GB per-pipeline VRAM footprint.
+I run all components on a single RTX 3070 8 GB via model CPU offload (fp16). LoRA and ControlNet pipelines share a 2-entry LRU cache to manage the ~3 GB per-pipeline VRAM footprint.
 
 ---
 
@@ -103,7 +103,7 @@ When Stability AI deprecated `stabilityai/stable-diffusion-2-1` in early 2026 (E
 
 ### Why ControlNet 2.1 and not the SDXL versions?
 
-ControlNet checkpoints must match the base model's U-Net architecture and resolution. The `thibaud/controlnet-sd21-*` family is the matching pair for SD 2.1. Using an SDXL ControlNet on an SD 2.1 pipeline fails silently — the conditioning map is silently ignored because the cross-attention dimensions don't match.
+ControlNet checkpoints must match the base model's U-Net architecture and resolution. The `thibaud/controlnet-sd21-*` family is the matching pair for SD 2.1. Using an SDXL ControlNet on an SD 2.1 pipeline fails silently — the conditioning map is ignored because the cross-attention dimensions don't match.
 
 ### Why LoRA at rank 8?
 
@@ -125,7 +125,7 @@ Commercial text-to-image services run on:
 - **Distilled models** (SDXL Turbo, FLUX schnell) — 1–4 step generation vs 30 steps
 - **Batched inference** — fixed per-request overhead amortised over hundreds of concurrent users
 
-This project runs on:
+I'm running on:
 - **RTX 3070 Laptop 8 GB** — ~12× less memory bandwidth than an A100
 - **PyTorch eager mode** — no TensorRT, no kernel fusion
 - **Full SD 2.1** — not distilled, 30 steps to convergence
@@ -135,19 +135,19 @@ The 10–15 s local generation time reflects hardware constraints, not bad code.
 
 ### Generation speed tiers
 
-All tiers are selectable in the UI without restarting the server.
+I added three speed modes to actually feel the trade-offs rather than just read about them. Swapping to the LCM scheduler dropped inference from 3.2 s to 0.6 s — about 5.8×. The catch is that LCM-LoRA doesn't exist for SD 2.1, so I'm using scheduler-only LCM, which trades some quality for speed. All tiers are selectable in the UI without restarting the server.
 
 | Mode | Steps | RTX 3070 (local) | HF CPU Space (est.) | Quality |
 |------|------:|------------------|---------------------|---------|
 | Standard fp16 | 30 | **3.2 s/img** | ~5–8 min | Full baseline |
-| LCM fast (4-step) | 4 | **0.6 s/img — 5.8× faster** | ~60–90 s | Moderate reduction |
-| SDXL Turbo (1-step) | 1 | **3.3 s/img** — same as standard | ~30–60 s | Lower; SDXL model (~2.6B vs 865M params) |
+| LCM fast (4-step) | 4 | **0.6 s/img — 5.8× faster** | GPU only | Moderate reduction |
+| SDXL Turbo (1-step) | 1 | **3.3 s/img** — same as standard | GPU only | Lower; SDXL model (~2.6B vs 865M params) |
 
 > **SDXL Turbo note**: On RTX 3070 (8 GB), one pass through SDXL's 2.6B-parameter U-Net takes the same wall time as 30 passes through SD 2.1's 865M-parameter U-Net. Real Turbo speedup (10–30×) shows on A100/H100 with ~6.7 GB VRAM for the SDXL model.
 
 ### Memory / VRAM trade-offs (quantization)
 
-Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
+I added three memory modes because I wanted to feel the actual trade-offs, not just read about them. What surprised me: 4-bit quantization saves about 36% VRAM compared to fp16 but slows generation by 50%. The compute cost of dequantization at inference time exceeds the bandwidth savings on a laptop GPU — that kind of detail isn't in any blog post I read. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
 
 | Precision | Peak VRAM (measured) | vs fp16 | Avg latency | When to use |
 |-----------|---------------------:|---------|-------------|-------------|
@@ -201,7 +201,7 @@ Sample images and sidecar metadata: `docs/samples/`. Run `python scripts/generat
 
 ## LoRA Fine-tuning
 
-Rank-8 LoRA adapter fine-tuned on 80 WikiArt Ukiyo-e images using the diffusers `train_text_to_image_lora.py` script. The adapter modifies the U-Net's self- and cross-attention projection weights, leaving the rest of the model frozen.
+I fine-tuned a rank-8 LoRA adapter on 80 WikiArt Ukiyo-e images using the diffusers `train_text_to_image_lora.py` script. The adapter modifies the U-Net's self- and cross-attention projection weights, leaving the rest of the model frozen.
 
 | Parameter | Value |
 |---|---|
@@ -218,7 +218,7 @@ Rank-8 LoRA adapter fine-tuned on 80 WikiArt Ukiyo-e images using the diffusers 
 ![Fuji progression: baseline → ckpt-500 → ckpt-1000 → ckpt-1500](reports/lora_fuji_progression.png)
 *Left to right: baseline · ckpt-500 · ckpt-1000 (selected) · ckpt-1500 · Prompt: "ukyowood ukiyo-e print of Mount Fuji at sunset"*
 
-Checkpoint-1000 was selected over 1250 and 1500 for its warmer amber palette matching Hokusai's sunset compositions. Loss at 1500 ticks up from 0.268 (at 1250) to 0.495, indicating overfitting onset.
+I picked checkpoint-1000 over 1250 and 1500 for its warmer amber palette matching Hokusai's sunset compositions. Loss at 1500 ticks up from 0.268 (at 1250) to 0.495, indicating overfitting onset.
 
 ### Base SD 2.1 vs Ukiyo-e LoRA
 
@@ -244,7 +244,7 @@ See `reports/lora_training_summary.md` for the full training log, loss curve, an
 
 ## ControlNet Conditioning
 
-Canny and Depth conditioning via SD 2.1-compatible ControlNet models. LoRA and ControlNet can now be combined — the LoRA is loaded directly into the ControlNet pipeline rather than the base SD 2.1 pipeline, avoiding weight conflicts.
+I wired in Canny and Depth conditioning via SD 2.1-compatible ControlNet models. One thing that took work: getting LoRA and ControlNet to combine — I load the LoRA directly into the ControlNet pipeline rather than the base SD 2.1 pipeline, which avoids weight conflicts.
 
 | Mode | Model | Preprocessor |
 |---|---|---|
@@ -259,7 +259,7 @@ Upload a reference image in the **ControlNet** accordion, choose Canny or Depth,
 
 ## Benchmark Results
 
-Evaluated against a 30-prompt PartiPrompts subset spanning 11 categories. Metric: CLIP score (`openai/clip-vit-base-patch32`). 360 generations: 4 schedulers × 3 step counts × 30 prompts, seed = 42, RTX 3070 8 GB.
+I evaluated against a 30-prompt PartiPrompts subset spanning 11 categories. Metric: CLIP score (`openai/clip-vit-base-patch32`). 360 generations: 4 schedulers × 3 step counts × 30 prompts, seed = 42, RTX 3070 8 GB.
 
 ### Scheduler comparison
 
@@ -358,7 +358,9 @@ AetherArt/
 
 ## Why CPU on the Live Space?
 
-HF Spaces' free tier provides CPU-only compute. ZeroGPU (shared A10G access) requires a PRO subscription ($9/month). AetherArt is intentionally a **portfolio project demonstrating production-grade diffusion on consumer hardware** — most real-world AI deployments run on equivalently constrained hardware where memory footprint and inference latency matter. The local benchmarks are the real story; the live Space exists for architecture inspection, not interactive use.
+HF Spaces' free tier is CPU-only. ZeroGPU (shared A10G access) requires a PRO subscription ($9/month). The local benchmarks are the real story — the Space exists for architecture inspection, not interactive use.
+
+On the live Space (free CPU tier), only Standard mode is available — LCM and Turbo modes need a real GPU to produce useful output. The Sample Outputs tab shows what they generate on my RTX 3070.
 
 For interactive generation at real-time speeds, clone the repo and run locally:
 
@@ -377,11 +379,11 @@ python app.py
 
 ## Free-Tier Limitations
 
-What couldn't be done on the Hugging Face Spaces free tier:
+What I couldn't do on the HF Spaces free tier:
 
 | Limitation | Impact | Workaround |
 |---|---|---|
-| No GPU | 30–60 s generation vs 4–6 s on A10G | LCM 4-step mode gives ~5× speedup on CPU |
+| No GPU | 30–60 s generation vs 4–6 s on A10G | Standard mode only on the live Space |
 | 10 MB binary file limit | Blocked `git push` for benchmark PNGs | Git LFS migration |
 | 16 GB RAM, shared | Limits ControlNet + LoRA caching | 2-entry LRU eviction |
 | Cold start ~30 s | Bad first impression | "Always on" requires paid tier |
@@ -391,57 +393,33 @@ What couldn't be done on the Hugging Face Spaces free tier:
 
 ---
 
-## Future Improvements
+## What's Next (if I had more compute)
 
-Realistic next steps if I were to invest more in this:
+These are the items I'd genuinely tackle next, all blocked by needing GPU time beyond what consumer hardware or free tiers provide:
 
-| Improvement | Effort | Gain | Status |
-|---|---|---|---|
-| ~~LCM fast generation~~ | ~~1 day~~ | ~~~5× faster (4-step LCMScheduler)~~ | **Done** |
-| ~~SDXL Turbo~~ | ~~1 day~~ | ~~1-step adversarial generation~~ | **Done** |
-| ~~4-bit/8-bit quantization~~ | ~~1 day~~ | ~~Halve VRAM, enables 4 GB GPUs~~ | **Done** |
-| Train LoRA on cleaner data | 2 days | Reduce calligraphy artifact, broader style range | Planned |
-| Multi-LoRA composition | 1 day | Blend multiple style adapters at inference time | Planned |
-| DreamBooth for subject personalisation | 3 days | "Generate images of [specific person/object]" | Planned |
-| Paid GPU Space (A10G) | $/hour | 10× speedup, production-viable latency | Planned |
-| TensorRT compilation | 1 week | 3–5× speedup on equivalent hardware | Planned |
-
-What I would **not** do:
-- Train from scratch — compute-prohibitive without 8× A100s and weeks of time
-- Reimplement diffusion sampling math — it's well-solved; the engineering value is elsewhere
+| Direction | What it would unlock | Why it's blocked |
+|---|---|---|
+| Train Ukiyo-e LoRA on cleaner curated data | Reduce calligraphy artifacts, broader stylistic range | Needs ~10-20 hours of A10G time to iterate over multiple training runs |
+| Multi-LoRA composition | Blend Ukiyo-e + sketch + watercolor at inference | Architecture is straightforward; the blocker is curating training data for 2-3 additional styles |
+| DreamBooth for subject personalisation | Generate images of a specific person or object | DreamBooth full fine-tuning needs ~16GB VRAM and 30-60 min per subject |
+| TensorRT compilation | 3-5x additional speedup on equivalent hardware | NVIDIA TensorRT toolchain has steep setup; meaningful only with consistent production traffic to amortise the build time |
+| Distillation to a smaller student model | Run-anywhere model under 1GB | Needs a teacher inference budget I don't have on free GPU tiers |
 
 ---
 
-## Citations
+## References & Inspiration
 
-- Rombach et al. — [High-Resolution Image Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2112.10752) (CVPR 2022)
-- Hu et al. — [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685) (ICLR 2022)
-- Zhang, Rao, Agrawala — [Adding Conditional Control to Text-to-Image Diffusion Models](https://arxiv.org/abs/2302.05543) (ControlNet, ICCV 2023)
-- Lu et al. — [DPM-Solver++: Fast Solver for Guided Sampling of Diffusion Probabilistic Models](https://arxiv.org/abs/2211.01095) (NeurIPS 2022)
-- Yu et al. — [Scaling Autoregressive Models for Content-Rich Text-to-Image Generation](https://arxiv.org/abs/2206.10789) (PartiPrompts, TMLR 2022)
-- Ho, Jain, Abbeel — [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239) (NeurIPS 2020)
-- Radford et al. — [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020) (CLIP, ICML 2021)
+Papers and projects that shaped this work:
 
-```bibtex
-@inproceedings{rombach2022latent,
-  title     = {High-Resolution Image Synthesis with Latent Diffusion Models},
-  author    = {Rombach, Robin and Blattmann, Andreas and Lorenz, Dominik and Esser, Patrick and Ommer, Bj{\"o}rn},
-  booktitle = {CVPR},
-  year      = {2022}
-}
-@article{hu2021lora,
-  title   = {LoRA: Low-Rank Adaptation of Large Language Models},
-  author  = {Hu, Edward J and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
-  journal = {ICLR},
-  year    = {2022}
-}
-@article{zhang2023controlnet,
-  title   = {Adding Conditional Control to Text-to-Image Diffusion Models},
-  author  = {Zhang, Lvmin and Rao, Anyi and Agrawala, Maneesh},
-  journal = {ICCV},
-  year    = {2023}
-}
-```
+- [High-Resolution Image Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2112.10752) — Rombach et al., CVPR 2022. The Stable Diffusion paper.
+- [Latent Consistency Models](https://arxiv.org/abs/2310.04378) — Luo et al., 2023. The basis for LCM scheduler.
+- [SDXL Turbo: Adversarial Diffusion Distillation](https://stability.ai/research/adversarial-diffusion-distillation) — Stability AI, 2023.
+- [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685) — Hu et al., ICLR 2022.
+- [Adding Conditional Control to Text-to-Image Diffusion Models](https://arxiv.org/abs/2302.05543) — Zhang et al., ICCV 2023. ControlNet.
+- [PartiPrompts: A Prompt Set for Text-to-Image Generation](https://github.com/google-research/parti) — Google Research, used as the eval benchmark.
+- [bitsandbytes: 8-bit and 4-bit quantization](https://github.com/TimDettmers/bitsandbytes) — Tim Dettmers et al.
+
+For BibTeX entries, see [CITATIONS.bib](CITATIONS.bib).
 
 ---
 

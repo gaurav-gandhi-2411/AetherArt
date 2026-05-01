@@ -282,6 +282,9 @@ def generate_stream(
             yield None, "Requested image size too large. Choose a smaller size."
             return
 
+        if speed_mode == "fast_lcm" and not _HAS_GPU:
+            yield None, "**LCM Fast mode requires a GPU and is not available on this CPU Space.**"
+            return
         if speed_mode == "turbo" and not _HAS_GPU:
             yield None, "**SDXL Turbo requires a GPU and is not available on this CPU Space.**"
             return
@@ -473,8 +476,9 @@ _default_steps = cfg.default_steps if _HAS_GPU else 20
 _default_w     = cfg.default_width  if _HAS_GPU else 384
 _default_h     = cfg.default_height if _HAS_GPU else 384
 
-# Feature availability based on hardware
-_speed_choices = ["standard", "fast_lcm"] + (["turbo"] if _HAS_GPU else [])
+# Feature availability based on hardware — LCM on CPU produces blurry output
+# (no SD 2.1 LCM-LoRA exists; scheduler-only at 4 steps + float32 fallback degrades quality)
+_speed_choices = ["standard"] + (["fast_lcm", "turbo"] if _HAS_GPU else [])
 _memory_choices = ["fp16"] + (["8bit", "4bit"] if _HAS_GPU else [])
 
 with gr.Blocks() as demo:
@@ -488,9 +492,10 @@ with gr.Blocks() as demo:
             "— see the [repository](https://github.com/gaurav-gandhi-2411/AetherArt) "
             "for benchmark results, sample outputs, and a demo video.  \n"
             ">  \n"
-            "> On this CPU Space, generation takes **~8–15 min / image** (Standard) "
-            "or **~2–3 min** (LCM 4-step). "
-            "Clone the repo and run locally for real-time GPU inference."
+            "> On this CPU Space, **Standard mode only** — generation takes ~8–15 min / image.  \n"
+            "> LCM Fast and SDXL Turbo modes available locally only — "
+            "see the **Sample Outputs** tab for examples generated on RTX 3070.  \n"
+            "> Clone the repo and run locally for real-time GPU inference."
         )
     else:
         gr.Markdown(
@@ -619,17 +624,18 @@ with gr.Blocks() as demo:
                     + (" (~3 s on A10G / ~12 s on RTX 3070)." if _HAS_GPU
                        else " (~8–15 min on CPU).")
                     + "  \n"
-                    "**Fast (LCM)** — 4-step LCMScheduler, ~7× faster, moderate quality reduction. "
-                    "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1).  \n"
                 )
                 if _HAS_GPU:
                     _speed_desc += (
+                        "**Fast (LCM)** — 4-step LCMScheduler, ~5.8× faster, moderate quality reduction. "
+                        "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1).  \n"
                         "**Turbo (SDXL)** — 1-step adversarial diffusion. "
                         "Requires first-use download (~6.7 GB). LoRA/ControlNet not supported."
                     )
                 else:
                     _speed_desc += (
-                        "**Turbo (SDXL)** — requires GPU; not available on this CPU Space."
+                        "LCM Fast and SDXL Turbo modes available locally only — "
+                        "see the **Sample Outputs** tab for examples generated on RTX 3070."
                     )
                 gr.Markdown(_speed_desc)
                 speed_mode = gr.Radio(
