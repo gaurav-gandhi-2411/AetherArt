@@ -6,8 +6,8 @@
 
 > I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
 
-![Hero — Ukiyo-e LoRA showcase](docs/hero.png)
-*Ukiyo-e LoRA adapter · DPM-Solver++ · 50 steps · seed 42 · RTX 3070 8 GB*
+![Hero — futuristic Tokyo street at night, neon reflections in rain](docs/hero.png)
+*Standard fp16 · DPM-Solver++ · 50 steps · 768×768 · seed 1337 · RTX 3070 8 GB*
 
 <!-- Demo GIF — add after recording: ![AetherArt demo](docs/aetherart_demo.gif) -->
 <!-- Recording guide: docs/RECORDING_GUIDE.md -->
@@ -338,7 +338,7 @@ AetherArt/
 │   ├── build_lora_comparison_gallery.py    # base vs LoRA comparison gallery
 │   └── prepare_lora_dataset.py             # WikiArt dataset prep + caption generation
 ├── docs/
-│   ├── hero.png                            # 2×2 Ukiyo-e LoRA showcase (README header)
+│   ├── hero.png                            # Hero image (Tokyo neon rain, README header)
 │   ├── lcm_comparison.png                  # Standard vs LCM side-by-side
 │   └── three_tier_comparison.png           # Standard + LCM + Turbo (generated on first run)
 ├── reports/
