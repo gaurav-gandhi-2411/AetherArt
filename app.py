@@ -253,6 +253,13 @@ def _run_turbo(
 
 # ── Gradio event handlers ───────────────────────────────────────────────────
 
+def estimate_cpu_time(width: int, height: int, num_steps: int) -> int:
+    """Rough CPU generation time estimate in minutes (calibrated at 512×512×20 ≈ 12 min)."""
+    pixel_factor = (width * height) / (512 * 512)
+    step_factor = num_steps / 20
+    return max(1, int(12 * pixel_factor * step_factor))
+
+
 def generate_stream(
     prompt: str,
     negative_prompt: str,
@@ -292,14 +299,28 @@ def generate_stream(
             yield None, "**8-bit and 4-bit quantization require a CUDA GPU.**"
             return
 
+        _MIN_SIZE_CPU = 512
+        if not _HAS_GPU and (int(width) < _MIN_SIZE_CPU or int(height) < _MIN_SIZE_CPU):
+            yield gr.update(value=None), (
+                f"⚠️ Resolution too low for SD 2.1 on CPU. "
+                f"Minimum: {_MIN_SIZE_CPU}×{_MIN_SIZE_CPU}. "
+                f"SD 2.1 was trained at 768×768; outputs below 512 produce incoherent results "
+                f"due to cross-attention mismatch. Please raise resolution or use the "
+                f"**Sample Outputs** tab for examples."
+            )
+            return
+
         actual_seed = int(seed) if seed is not None else random.randint(0, 2**32 - 1)
         mode_label = {"fast_lcm": "LCM 4-step", "turbo": "Turbo 1-step"}.get(
             speed_mode, f"{steps}-step"
         )
 
         if not _HAS_GPU:
-            est = "~2–3 min" if speed_mode == "fast_lcm" else "~8–15 min"
-            yield None, f"**CPU generation in progress ({est}, {mode_label}). Please wait...**"
+            est_min = estimate_cpu_time(int(width), int(height), int(steps))
+            yield gr.update(value=None), (
+                f"⏳ Estimated wait: ~{est_min} minutes on CPU. "
+                f"Generation in progress… please don't refresh."
+            )
         elif speed_mode == "turbo" and _turbo_pipe is None:
             yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait...**"
         else:
@@ -473,8 +494,8 @@ _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appea
 
 # Adjust defaults for CPU so first-time visitors don't wait 15 minutes
 _default_steps = cfg.default_steps if _HAS_GPU else 20
-_default_w     = cfg.default_width  if _HAS_GPU else 384
-_default_h     = cfg.default_height if _HAS_GPU else 384
+_default_w     = cfg.default_width  if _HAS_GPU else 512
+_default_h     = cfg.default_height if _HAS_GPU else 512
 
 # Feature availability based on hardware — LCM on CPU produces blurry output
 # (no SD 2.1 LCM-LoRA exists; scheduler-only at 4 steps + float32 fallback degrades quality)
@@ -487,15 +508,16 @@ with gr.Blocks() as demo:
     # ── CPU / GPU banner ────────────────────────────────────────────────
     if not _HAS_GPU:
         gr.Markdown(
-            "> **Architecture demo on free CPU hardware.**  "
-            "Real-time performance benchmarks were measured on a local **RTX 3070 8 GB** GPU "
-            "— see the [repository](https://github.com/gaurav-gandhi-2411/AetherArt) "
-            "for benchmark results, sample outputs, and a demo video.  \n"
+            "> ℹ️ **Free CPU tier** — generation works but is slow (~12–15 min at 512×512).  \n"
             ">  \n"
-            "> On this CPU Space, **Standard mode only** — generation takes ~8–15 min / image.  \n"
-            "> LCM Fast and SDXL Turbo modes available locally only — "
-            "see the **Sample Outputs** tab for examples generated on RTX 3070.  \n"
-            "> Clone the repo and run locally for real-time GPU inference."
+            "> SD 2.1 was trained at 768×768; defaults here are set to **512×512** "
+            "(minimum for coherent output). Higher resolution = better quality but "
+            "proportionally longer wait.  \n"
+            ">  \n"
+            "> See the **Sample Outputs** tab for instant viewing of 24 results from a local "
+            "RTX 3070, or clone the "
+            "[repo](https://github.com/gaurav-gandhi-2411/AetherArt) "
+            "for full GPU acceleration."
         )
     else:
         gr.Markdown(
@@ -522,8 +544,12 @@ with gr.Blocks() as demo:
                     guidance = gr.Slider(
                         1.0, 15.0, value=cfg.default_guidance, step=0.5, label="Guidance"
                     )
-                    width  = gr.Radio([384, 512, 768, 1024], value=_default_w, label="Width")
-                    height = gr.Radio([384, 512, 768, 1024], value=_default_h, label="Height")
+                    if not _HAS_GPU:
+                        width  = gr.Slider(minimum=512, maximum=768, value=_default_w, step=64, label="Width")
+                        height = gr.Slider(minimum=512, maximum=768, value=_default_h, step=64, label="Height")
+                    else:
+                        width  = gr.Slider(minimum=512, maximum=1024, value=_default_w, step=64, label="Width")
+                        height = gr.Slider(minimum=512, maximum=1024, value=_default_h, step=64, label="Height")
                     seed = gr.Number(value=None, label="Seed (blank = random)", precision=0)
                     gen_btn = gr.Button("Generate", variant="primary")
                     reload_btn = gr.Button("Reload Model")
@@ -622,7 +648,7 @@ with gr.Blocks() as demo:
                 _speed_desc = (
                     "**Standard** — 30-step DPM-Solver++, best quality"
                     + (" (~3 s on A10G / ~12 s on RTX 3070)." if _HAS_GPU
-                       else " (~8–15 min on CPU).")
+                       else " (~12–15 min at 512×512 on CPU).")
                     + "  \n"
                 )
                 if _HAS_GPU:
