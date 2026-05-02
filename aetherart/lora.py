@@ -29,11 +29,8 @@ def load_lora(pipeline: StableDiffusionPipeline, lora_name: str, alpha: float = 
     if config is None:
         return
     lora_path = Path(config["path"])
-    pipeline.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name)
-    try:
-        pipeline.set_adapters(["default"], adapter_weights=[alpha])
-    except Exception:
-        pass  # set_adapters not critical — weights are loaded at full scale by default
+    pipeline.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name, adapter_name="ukiyo_e")
+    pipeline.set_adapters(["ukiyo_e"], adapter_weights=[alpha])
 
 
 def unload_lora(pipeline: StableDiffusionPipeline) -> None:

@@ -23,6 +23,7 @@
 - [Architecture](#architecture)
 - [Models Used (and Why)](#models-used-and-why)
 - [Performance Trade-offs](#performance-trade-offs)
+- [Gallery](#gallery)
 - [Sample Outputs](#sample-outputs)
 - [LoRA Fine-tuning](#lora-fine-tuning)
 - [ControlNet Conditioning](#controlnet-conditioning)
@@ -157,14 +158,6 @@ I added three memory modes because I wanted to feel the actual trade-offs, not j
 
 > LCM and quantization are independent axes — combine them for speed *and* VRAM savings simultaneously.
 
-![Four-tier showcase — Standard / LCM / 8-bit / SDXL Turbo](docs/four_tier_showcase.png)
-*Row 1: Standard fp16 (2.9 s/img) · Row 2: LCM 4-step (0.5 s/img, 5.8× faster) · Row 3: 8-bit INT8 (9.4 s/img, 2210 MB VRAM) · Row 4: SDXL Turbo (9.3 s/img, SDXL architecture). Seed 42.*
-
-![Standard vs LCM vs SDXL Turbo — three-tier speed comparison](docs/three_tier_comparison.png)
-*Row 1: Standard 30-step DPM++ (3.2 s/img) · Row 2: LCM 4-step (0.6 s/img) · Row 3: SDXL Turbo 1-step (3.3 s/img — see note above). Same seed 42.*
-
-![LCM vs Standard side-by-side](docs/lcm_comparison.png)
-*Left: Standard 30-step DPM-Solver++ (3.2 s/img) — Right: LCM 4-step (0.6 s/img). Seed 42.*
 
 ### VRAM breakdown
 
@@ -177,6 +170,56 @@ LoRA adapter:                   6.4 MB (negligible)
 SDXL Turbo:                  ~6000 MB peak (separate SDXL-architecture model, no LoRA/CN)
 Total worst case (SD+CN fp16): ~6100 MB — fits in 8 GB with margin
 ```
+
+---
+
+## Gallery
+
+A small selection of outputs across AetherArt's four major capabilities. All generated locally on an RTX 3070 8 GB. Generation parameters are in the metadata sidecar files.
+
+### Hero — Photorealistic SD 2.1
+
+![Hero — Mount Fuji at golden hour with cherry blossoms](docs/gallery/01_hero_fuji_blossom.png)
+
+> *"Mount Fuji at golden hour, reflections in a perfectly still lake, foreground cherry blossom branches, traditional Japanese woodblock print fused with photorealism, ultra detailed, cinematic, masterpiece"*  
+> Seed 1337 · 50 steps · DPM-Solver++ · 768×768 · fp16 · 23.7s · [metadata](docs/gallery/01_hero_fuji_blossom.json)
+
+### Standard SD 2.1 — Fantasy Composition
+
+![Standard — wizard reading by candlelight](docs/gallery/02_standard_wizard.png)
+
+> *"a wise old wizard reading an ancient leather-bound book by candlelight, intricate magical symbols floating around him, warm golden light, photorealistic fantasy, ultra detailed, dramatic shadows"*  
+> Seed 888 · 50 steps · DPM-Solver++ · 768×768 · fp16 · 24.0s · [metadata](docs/gallery/02_standard_wizard.json)
+
+### Custom Ukiyo-e LoRA — Fine-Tuned on RTX 3070
+
+![LoRA — samurai warrior in ukiyo-e style](docs/gallery/03_lora_samurai.png)
+
+> *"a samurai warrior in flowing silk robes against a blazing sunset, traditional ukiyo-e woodblock style, bold graphic lines, rich colors, atmospheric"*  
+> Seed 1337 · 50 steps · DPM-Solver++ · 768×768 · fp16 · LoRA: `ukiyo-e-lora.safetensors` (weight 1.0) · [metadata](docs/gallery/03_lora_samurai.json)
+>
+> Trained for 2 hours on the RTX 3070 with [training pipeline](aetherart/training/). The LoRA produces distinct woodblock-print outputs — characteristic figure rendering, reduced palette, bold outlines — that differ meaningfully from SD 2.1 base + style prompt alone. See the [LoRA Fine-tuning](#lora-fine-tuning) section for a side-by-side comparison.
+
+### ControlNet — Canny Edge Conditioning
+
+![Canny — ornate temple gates in mountain mist](docs/gallery/04_canny_temple.png)
+
+> *"an ornate ancient temple in mystical mountain mist, fantasy art, ultra detailed, atmospheric, dramatic lighting, cinematic"*  
+> ControlNet: Canny · Source: [edge image](docs/gallery/04_canny_source.png) · Seed 1337 · 50 steps · 768×768 · [metadata](docs/gallery/04_canny_temple.json)
+
+### ControlNet — Depth Conditioning
+
+![Depth — cyberpunk neon street with rain reflections](docs/gallery/05_depth_cyberpunk.png)
+
+> *"a futuristic neon-lit Asian metropolis at night, cyberpunk aesthetic, rain-slicked streets reflecting holographic advertisements, ultra detailed, cinematic"*  
+> ControlNet: Depth · Source: [depth image](docs/gallery/05_depth_source.png) · Seed 1337 · 50 steps · 768×768 · [metadata](docs/gallery/05_depth_cyberpunk.json)
+
+### SDXL Turbo — 1-Step Adversarial Generation
+
+![Turbo — bioluminescent underwater palace](docs/gallery/06_turbo_bioluminescent.png)
+
+> *"an underwater city of bioluminescent coral and ancient ruins, mystical sea creatures, divine light rays, ultra detailed fantasy, epic"*  
+> Model: SDXL Turbo · Steps: 1 · Seed 1337 · 512×512 · 4.0s · [metadata](docs/gallery/06_turbo_bioluminescent.json)
 
 ---
 
@@ -330,17 +373,14 @@ AetherArt/
 ├── scripts/
 │   ├── eval.py                             # 360-run CLIP benchmark harness
 │   ├── train_lora.py                       # LoRA training wrapper (accelerate launch)
-│   ├── generate_hero_image.py              # 2×2 Ukiyo-e showcase grid for README
-│   ├── generate_lcm_comparison.py          # Standard vs LCM side-by-side (docs/lcm_comparison.png)
-│   ├── generate_three_tier_comparison.py   # Standard + LCM + Turbo 3-row grid
+│   ├── generate_hero_image.py              # hero image generation script
 │   ├── benchmark_quantization.py           # fp16 vs 8-bit vs 4-bit VRAM + CLIP + latency
 │   ├── compare_lora_checkpoints.py         # 6×6 checkpoint comparison grid
 │   ├── build_lora_comparison_gallery.py    # base vs LoRA comparison gallery
 │   └── prepare_lora_dataset.py             # WikiArt dataset prep + caption generation
 ├── docs/
 │   ├── hero.png                            # Hero image (Tokyo neon rain, README header)
-│   ├── lcm_comparison.png                  # Standard vs LCM side-by-side
-│   └── three_tier_comparison.png           # Standard + LCM + Turbo (generated on first run)
+│   └── gallery/                            # Hand-picked outputs across all capabilities
 ├── reports/
 │   ├── eval_charts/                        # 4 benchmark PNGs
 │   ├── lora_comparison_gallery.png         # base vs LoRA, 4 prompts

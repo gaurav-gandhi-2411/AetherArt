@@ -1,0 +1,16 @@
+{
+  "prompt": "an ornate ancient temple in mystical mountain mist, fantasy art, ultra detailed, atmospheric, dramatic lighting, cinematic",
+  "negative_prompt": "blurry, low quality, deformed, distorted, ugly, bad anatomy, watermark, signature, text, cropped, out of frame",
+  "seed": 1337,
+  "steps": 50,
+  "scheduler": "DPM-Solver++",
+  "guidance_scale": 7.5,
+  "width": 768,
+  "height": 768,
+  "model": "sd2-community/stable-diffusion-2-1",
+  "controlnet": "Canny",
+  "controlnet_source": "docs/gallery/04_canny_source.png",
+  "generation_time_seconds": 33.0,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}
