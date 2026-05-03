@@ -209,7 +209,7 @@ A small selection of outputs across AetherArt's four major capabilities. All gen
 > *"a samurai warrior in flowing silk robes against a blazing sunset, traditional ukiyo-e woodblock style, bold graphic lines, rich colors, atmospheric"*  
 > Seed 1337 · 50 steps · DPM-Solver++ · 768×768 · fp16 · LoRA: `ukiyo-e-lora.safetensors` (weight 1.0) · [metadata](docs/gallery/03_lora_samurai.json)
 >
-> Trained for 2 hours on the RTX 3070 with [training pipeline](aetherart/training/). The LoRA produces distinct woodblock-print outputs — characteristic figure rendering, reduced palette, bold outlines — that differ meaningfully from SD 2.1 base + style prompt alone. See the [LoRA Fine-tuning](#lora-fine-tuning) section for a side-by-side comparison.
+> Trained for 2 hours on the RTX 3070 with [`scripts/train_lora.py`](scripts/train_lora.py). The LoRA produces distinct woodblock-print outputs — characteristic figure rendering, reduced palette, bold outlines — that differ meaningfully from SD 2.1 base + style prompt alone. See the [LoRA Fine-tuning](#lora-fine-tuning) section for a side-by-side comparison.
 
 ### ControlNet — Canny Edge Conditioning
 
