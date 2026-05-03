@@ -1,4 +1,5 @@
 from __future__ import annotations
+import gc
 from collections import OrderedDict
 from pathlib import Path
 from typing import Literal
@@ -167,10 +168,16 @@ def get_pipeline(
             logger.debug("CPU offload failed; moving to cuda directly: %s", exc)
             pipe = pipe.to("cuda")
 
-    # LRU eviction: drop oldest entry when cache is at capacity
+    # LRU eviction: drop oldest entry when cache is at capacity.
+    # Explicitly delete and force gc + VRAM release; do not .to("cpu") first —
+    # we're evicting because we don't want it and CPU RAM may also be tight.
     while len(_cn_pipelines) >= _MAX_CN_CACHE:
-        evicted_key, _ = _cn_pipelines.popitem(last=False)
+        evicted_key, evicted_pipe = _cn_pipelines.popitem(last=False)
         logger.info("ControlNet cache eviction (LRU): %s", evicted_key)
+        del evicted_pipe
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     _cn_pipelines[cache_key] = pipe
     logger.info("ControlNet pipeline ready: %s (lora=%s)", ctype, lora_name or "none")
