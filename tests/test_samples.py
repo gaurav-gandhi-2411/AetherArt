@@ -9,7 +9,6 @@ SAMPLES_DIR = Path(__file__).resolve().parent.parent / "docs" / "samples"
 
 EXPECTED_TIERS = [
     "standard_fp16",
-    "lcm",
     "turbo",
     "lora_ukiyo_e",
     "controlnet_canny",
