@@ -1,8 +1,9 @@
 """Diagnose LoRA adapter name at load time and test full application."""
 
-import torch
-from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 from pathlib import Path
+
+import torch
+from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 
 LORA_PATH = Path("data/lora/ukiyo-e/ukiyo-e-lora.safetensors")
 MODEL = "sd2-community/stable-diffusion-2-1"

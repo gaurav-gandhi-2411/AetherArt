@@ -5,10 +5,10 @@ import sys
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent.parent))
 
 from scripts.generate_samples import (
-    generate_controlnet_depth,
-    generate_quantized_8bit,
-    generate_quantized_4bit,
     SAMPLES_DIR,
+    generate_controlnet_depth,
+    generate_quantized_4bit,
+    generate_quantized_8bit,
 )
 
 generate_controlnet_depth()

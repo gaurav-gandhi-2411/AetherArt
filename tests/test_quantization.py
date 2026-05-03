@@ -8,8 +8,9 @@ import pytest
 def _bnb_capable():
     """Check if bitsandbytes is fully installed (importable AND has metadata)."""
     try:
-        import bitsandbytes  # noqa: F401
         import importlib.metadata
+
+        import bitsandbytes  # noqa: F401
 
         importlib.metadata.version("bitsandbytes")
         from transformers import BitsAndBytesConfig
@@ -45,6 +46,7 @@ class TestQuantizationImports:
 class TestQuantizationAPI:
     def test_load_signature(self):
         import inspect
+
         from aetherart.quantization import load_sd21_quantized
 
         sig = inspect.signature(load_sd21_quantized)

@@ -3,13 +3,13 @@ Tests for ControlNet preprocessing functions.
 No GPU or model downloads required — only cv2 + numpy.
 """
 
-import pytest
 import numpy as np
+import pytest
 from PIL import Image
 
 pytest.importorskip("cv2", reason="opencv-python not installed")
 
-from aetherart.controlnet import preprocess_canny, preprocess  # noqa: E402
+from aetherart.controlnet import preprocess, preprocess_canny  # noqa: E402
 
 
 def _solid(w=64, h=64, color=(128, 128, 128)) -> Image.Image:

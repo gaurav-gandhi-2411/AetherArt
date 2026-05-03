@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 import gc
 from collections import OrderedDict
 from pathlib import Path
 from typing import Literal
 
 import numpy as np
-from PIL import Image
 import torch
+from PIL import Image
 
 from .config import cfg
 from .logger import get_logger

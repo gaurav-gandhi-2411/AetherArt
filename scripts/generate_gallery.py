@@ -7,6 +7,7 @@ Usage:
 """
 
 from __future__ import annotations
+
 import json
 import time
 from pathlib import Path
@@ -48,7 +49,7 @@ def _save(img: Image.Image, meta: dict, path: Path):
 
 
 def _load_sd21():
-    from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
+    from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 
     print("Loading SD 2.1...")
     pipe = StableDiffusionPipeline.from_pretrained(
@@ -217,10 +218,13 @@ def gen_lora(pipe):
 
 def gen_canny(pipe):
     print("\n=== CATEGORY 4: ControlNet Canny ===")
-    from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
-    from diffusers import DPMSolverMultistepScheduler
     import cv2
     import numpy as np
+    from diffusers import (
+        ControlNetModel,
+        DPMSolverMultistepScheduler,
+        StableDiffusionControlNetPipeline,
+    )
 
     cn_id = "thibaud/controlnet-sd21-canny-diffusers"
     print(f"  Loading ControlNet ({cn_id})...")
@@ -301,8 +305,11 @@ def gen_canny(pipe):
 
 def gen_depth(pipe):
     print("\n=== CATEGORY 5: ControlNet Depth ===")
-    from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
-    from diffusers import DPMSolverMultistepScheduler
+    from diffusers import (
+        ControlNetModel,
+        DPMSolverMultistepScheduler,
+        StableDiffusionControlNetPipeline,
+    )
 
     cn_id = "thibaud/controlnet-sd21-depth-diffusers"
     print(f"  Loading ControlNet ({cn_id})...")

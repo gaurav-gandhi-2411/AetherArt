@@ -13,13 +13,13 @@ import time
 from pathlib import Path
 
 import torch
-from PIL import Image, ImageDraw
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
+from PIL import Image, ImageDraw
 
-from aetherart.lcm import apply_lcm_mode, LCM_STEPS, LCM_GUIDANCE
+from aetherart import controlnet as cn
+from aetherart.lcm import LCM_GUIDANCE, LCM_STEPS, apply_lcm_mode
 from aetherart.lora import load_lora
 from aetherart.quantization import load_sd21_quantized
-from aetherart import controlnet as cn
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SAMPLES_DIR = REPO_ROOT / "docs" / "samples"
@@ -171,7 +171,8 @@ def generate_lcm():
 
 def generate_turbo():
     print("\n[samples] SDXL Turbo — 1-step ADD")
-    from aetherart.sdxl_turbo import load_turbo_pipeline, generate_turbo as _turbo_gen
+    from aetherart.sdxl_turbo import generate_turbo as _turbo_gen
+    from aetherart.sdxl_turbo import load_turbo_pipeline
 
     pipe = load_turbo_pipeline()
     if hasattr(pipe, "set_progress_bar_config"):

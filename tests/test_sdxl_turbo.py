@@ -2,7 +2,7 @@
 No actual model loading — verifies constants and API shape only.
 """
 
-from aetherart.sdxl_turbo import TURBO_MODEL_ID, TURBO_STEPS, TURBO_GUIDANCE
+from aetherart.sdxl_turbo import TURBO_GUIDANCE, TURBO_MODEL_ID, TURBO_STEPS
 
 
 class TestTurboConstants:
@@ -19,6 +19,7 @@ class TestTurboConstants:
 class TestTurboAPI:
     def test_generate_turbo_signature(self):
         import inspect
+
         from aetherart.sdxl_turbo import generate_turbo
 
         sig = inspect.signature(generate_turbo)
@@ -32,6 +33,7 @@ class TestTurboAPI:
     def test_free_pipeline_handles_none(self):
         """free_turbo_pipeline should not crash if called with a mock."""
         from unittest.mock import MagicMock
+
         from aetherart.sdxl_turbo import free_turbo_pipeline
 
         mock_pipe = MagicMock()

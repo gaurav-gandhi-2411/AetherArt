@@ -77,8 +77,8 @@ _blip_pipe = None
 def _load_blip():
     global _blip_pipe
     if _blip_pipe is None:
-        from transformers import pipeline as hf_pipeline
         import torch
+        from transformers import pipeline as hf_pipeline
 
         device = 0 if torch.cuda.is_available() else -1
         print(f"Loading BLIP ({BLIP_MODEL_ID}) on {'GPU' if device == 0 else 'CPU'}...", flush=True)

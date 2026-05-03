@@ -1,7 +1,9 @@
-from contextlib import nullcontext
-from typing import Optional, Dict, Any
 import inspect
+from contextlib import nullcontext
+from typing import Any, Dict, Optional
+
 import torch
+
 from .config import cfg
 from .logger import get_logger
 

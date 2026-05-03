@@ -14,7 +14,7 @@ import torch
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from PIL import Image, ImageDraw, ImageFont
 
-from aetherart.lcm import LCM_STEPS, LCM_GUIDANCE, apply_lcm_mode, restore_standard_mode
+from aetherart.lcm import LCM_GUIDANCE, LCM_STEPS, apply_lcm_mode, restore_standard_mode
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_PATH = REPO_ROOT / "docs" / "lcm_comparison.png"

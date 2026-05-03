@@ -11,7 +11,7 @@ avoid loading both SD 2.1 and Turbo simultaneously.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import torch
 

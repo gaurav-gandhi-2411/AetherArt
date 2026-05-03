@@ -4,12 +4,13 @@ Also produces a WITH vs WITHOUT LoRA comparison pair at seed 42 for verification
 """
 
 from __future__ import annotations
+
 import json
 import time
 from pathlib import Path
 
 import torch
-from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
+from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 
 LORA_PATH = "data/lora/ukiyo-e/ukiyo-e-lora.safetensors"
 SD21_MODEL = "sd2-community/stable-diffusion-2-1"
