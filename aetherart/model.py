@@ -18,17 +18,17 @@ logger = get_logger(__name__)
 try:
     from diffusers import StableDiffusionPipeline
 except Exception:
-    StableDiffusionPipeline = None
+    StableDiffusionPipeline = None  # type: ignore[assignment, misc]
 
 try:
     from diffusers import StableDiffusionXLPipeline
 except Exception:
-    StableDiffusionXLPipeline = None
+    StableDiffusionXLPipeline = None  # type: ignore[assignment, misc]
 
 try:
     from huggingface_hub import InferenceClient
 except Exception:
-    InferenceClient = None
+    InferenceClient = None  # type: ignore[assignment, misc]
 
 
 def _preferred_dtype_kwarg(fn) -> Optional[str]:

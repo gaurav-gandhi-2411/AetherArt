@@ -19,7 +19,7 @@ try:
 
     _CV2_AVAILABLE = True
 except ImportError:
-    cv2 = None
+    cv2 = None  # type: ignore[assignment]
     _CV2_AVAILABLE = False
 
 try:
@@ -27,8 +27,8 @@ try:
 
     _DIFFUSERS_CN_AVAILABLE = True
 except ImportError:
-    ControlNetModel = None
-    StableDiffusionControlNetPipeline = None
+    ControlNetModel = None  # type: ignore[assignment, misc]
+    StableDiffusionControlNetPipeline = None  # type: ignore[assignment, misc]
     _DIFFUSERS_CN_AVAILABLE = False
 
 try:
@@ -36,7 +36,7 @@ try:
 
     _TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    hf_pipeline = None
+    hf_pipeline = None  # type: ignore[assignment]
     _TRANSFORMERS_AVAILABLE = False
 
 CANNY_MODEL_ID = "thibaud/controlnet-sd21-canny-diffusers"
@@ -89,7 +89,7 @@ def preprocess_depth(image: Image.Image) -> Image.Image:
         raise RuntimeError("transformers is required for depth preprocessing")
     estimator = _load_depth_estimator()
     depth: Image.Image = estimator(image)["depth"]
-    return depth.resize(image.size, Image.LANCZOS).convert("RGB")
+    return depth.resize(image.size, Image.LANCZOS).convert("RGB")  # type: ignore[attr-defined]
 
 
 def preprocess(
@@ -110,7 +110,7 @@ def get_pipeline(
     ctype: Literal["canny", "depth"],
     lora_name: str | None = None,
     lora_alpha: float = 1.0,
-) -> "StableDiffusionControlNetPipeline":
+) -> Any:
     """
     Return a cached StableDiffusionControlNetPipeline for the given conditioning
     type, optionally with a LoRA adapter loaded. Uses an LRU cache (max 2 entries)

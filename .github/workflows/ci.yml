@@ -37,6 +37,10 @@ jobs:
         run: |
           isort --check-only aetherart/ app.py scripts/ tests/
 
+      - name: Type check (mypy)
+        run: |
+          mypy aetherart
+
       - name: Run tests
         run: |
           pytest --cov=aetherart --cov-report=term-missing --cov-report=xml -q

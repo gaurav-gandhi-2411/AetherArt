@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING, Any, Optional
 import torch
 
 if TYPE_CHECKING:
-    from diffusers import AutoPipelineForText2Image
     from PIL import Image
 
 TURBO_MODEL_ID = "stabilityai/sdxl-turbo"
@@ -35,7 +34,7 @@ def _model_source() -> str:
     return TURBO_MODEL_ID
 
 
-def load_turbo_pipeline() -> "AutoPipelineForText2Image":
+def load_turbo_pipeline() -> Any:
     """Load SDXL Turbo with fp16 + model CPU offload."""
     from diffusers import AutoPipelineForText2Image
 
@@ -54,7 +53,7 @@ def load_turbo_pipeline() -> "AutoPipelineForText2Image":
 
 
 def generate_turbo(
-    pipe: "AutoPipelineForText2Image",
+    pipe: Any,
     prompt: str,
     negative_prompt: str = "",
     seed: Optional[int] = None,
@@ -86,7 +85,7 @@ def generate_turbo(
     }
 
 
-def free_turbo_pipeline(pipe: "AutoPipelineForText2Image") -> None:
+def free_turbo_pipeline(pipe: Any) -> None:
     """Unload pipeline and release VRAM."""
     try:
         pipe.to("cpu")

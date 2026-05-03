@@ -9,30 +9,27 @@ the 7x speedup is real and measurable.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from diffusers import StableDiffusionPipeline
+from typing import Any
 
 LCM_STEPS = 4
 LCM_GUIDANCE = 1.5
 
 
-def apply_lcm_mode(pipeline: "StableDiffusionPipeline") -> None:
+def apply_lcm_mode(pipeline: Any) -> None:
     """Swap pipeline scheduler to LCMScheduler in-place."""
     from diffusers import LCMScheduler
 
     pipeline.scheduler = LCMScheduler.from_config(pipeline.scheduler.config)
 
 
-def restore_standard_mode(pipeline: "StableDiffusionPipeline") -> None:
+def restore_standard_mode(pipeline: Any) -> None:
     """Restore pipeline to DPM-Solver++ scheduler in-place."""
     from diffusers import DPMSolverMultistepScheduler
 
     pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
 
 
-def is_lcm_scheduler(pipeline: "StableDiffusionPipeline") -> bool:
+def is_lcm_scheduler(pipeline: Any) -> bool:
     from diffusers import LCMScheduler
 
     return isinstance(pipeline.scheduler, LCMScheduler)

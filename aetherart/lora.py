@@ -3,10 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from diffusers import StableDiffusionPipeline
+from typing import Any
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -21,7 +18,7 @@ LORA_REGISTRY: dict[str, dict[str, Any] | None] = {
 }
 
 
-def load_lora(pipeline: StableDiffusionPipeline, lora_name: str, alpha: float = 1.0) -> None:
+def load_lora(pipeline: Any, lora_name: str, alpha: float = 1.0) -> None:
     """Load a LoRA adapter onto pipeline in-place. Unloads any existing adapter first."""
     _unload_safe(pipeline)
     if lora_name == "none" or lora_name not in LORA_REGISTRY:
@@ -36,11 +33,11 @@ def load_lora(pipeline: StableDiffusionPipeline, lora_name: str, alpha: float = 
     pipeline.set_adapters(["ukiyo_e"], adapter_weights=[alpha])
 
 
-def unload_lora(pipeline: StableDiffusionPipeline) -> None:
+def unload_lora(pipeline: Any) -> None:
     _unload_safe(pipeline)
 
 
-def _unload_safe(pipeline: StableDiffusionPipeline) -> None:
+def _unload_safe(pipeline: Any) -> None:
     try:
         pipeline.unload_lora_weights()
     except Exception:
