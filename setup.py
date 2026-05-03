@@ -21,6 +21,7 @@ setup(
     name="aetherart",
     version="0.1.0",
     packages=find_packages(),
+    package_data={"aetherart": ["py.typed"]},
     python_requires=">=3.10",
     install_requires=_parse_requirements("requirements.txt"),
 )

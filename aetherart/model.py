@@ -1,8 +1,13 @@
+from __future__ import annotations
+
 import inspect
 from contextlib import nullcontext
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import torch
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 from .config import cfg
 from .logger import get_logger
@@ -68,17 +73,16 @@ class AetherModel:
     Encapsulates model init + generation with VRAM & performance mitigations.
     """
 
-    def __init__(self, model_id: Optional[str] = None):
-        self.model_id = model_id or cfg.default_model
-        self.hf_token = cfg.hf_token
-        self.use_inference = cfg.use_inference
-        self.pipe = None
-        self.backend = None  # 'local' or 'inference'
-        self.inference_client = None
-        # small record of what optimizations were applied (helpful for UI logs)
+    def __init__(self, model_id: Optional[str] = None) -> None:
+        self.model_id: str = model_id or cfg.default_model
+        self.hf_token: Optional[str] = cfg.hf_token
+        self.use_inference: bool = cfg.use_inference
+        self.pipe: Any = None  # diffusers pipeline; typed as Any (messy hierarchy)
+        self.backend: Optional[str] = None  # 'local' or 'inference'
+        self.inference_client: Any = None
         self.optimizations: Dict[str, str] = {}
 
-    def init(self, model_choice: str | None = None):
+    def init(self, model_choice: str | None = None) -> None:
         """
         Initialize the pipeline. model_choice can be 'sd-2.1' or 'sdxl'.
         This method tries the following, in order:
@@ -226,7 +230,7 @@ class AetherModel:
         width: int = cfg.default_width,
         height: int = cfg.default_height,
         seed: Optional[int] = None,
-    ):
+    ) -> "Image.Image":
         """
         Simple wrapper that runs the pipeline synchronously and returns a PIL image.
         Note: the app's generate stream uses MODEL.pipe directly to pass callback arguments

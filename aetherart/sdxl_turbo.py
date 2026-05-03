@@ -11,12 +11,13 @@ avoid loading both SD 2.1 and Turbo simultaneously.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import torch
 
 if TYPE_CHECKING:
     from diffusers import AutoPipelineForText2Image
+    from PIL import Image
 
 TURBO_MODEL_ID = "stabilityai/sdxl-turbo"
 TURBO_STEPS = 1
@@ -59,7 +60,7 @@ def generate_turbo(
     seed: Optional[int] = None,
     width: int = 512,
     height: int = 512,
-) -> tuple:
+) -> tuple["Image.Image", dict[str, Any]]:
     """Generate one image with SDXL Turbo (1 step, guidance=0.0).
 
     Returns (PIL.Image, metadata_dict).

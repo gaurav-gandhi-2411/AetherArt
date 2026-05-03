@@ -32,7 +32,7 @@ def _load() -> tuple:
     return _model, _processor, _device
 
 
-def score(image: "Image.Image", prompt: str) -> float:
+def score(image: Image, prompt: str) -> float:
     """Return cosine similarity between CLIP image embedding and prompt embedding."""
     model, processor, device = _load()
     with torch.no_grad():
@@ -49,7 +49,7 @@ def score(image: "Image.Image", prompt: str) -> float:
         return float((img_emb * txt_emb).sum())
 
 
-def score_batch(images: list["Image.Image"], prompts: list[str]) -> list[float]:
+def score_batch(images: list[Image], prompts: list[str]) -> list[float]:
     """Score a list of (image, prompt) pairs in one forward pass."""
     model, processor, device = _load()
     with torch.no_grad():

@@ -3,7 +3,7 @@ from __future__ import annotations
 import gc
 from collections import OrderedDict
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -45,11 +45,11 @@ DEPTH_ESTIMATOR_ID = "Intel/dpt-hybrid-midas"
 
 # LRU cache keyed by (ctype, lora_name, lora_alpha). Max 2 entries to avoid OOM.
 _MAX_CN_CACHE = 2
-_cn_pipelines: OrderedDict = OrderedDict()
-_depth_estimator = None
+_cn_pipelines: OrderedDict[tuple, Any] = OrderedDict()
+_depth_estimator: Any = None
 
 
-def _make_cache_key(ctype: str, lora_name: str | None, lora_alpha: float) -> tuple:
+def _make_cache_key(ctype: str, lora_name: str | None, lora_alpha: float) -> tuple[str, str, float]:
     """Return a hashable cache key, normalising lora_alpha to 2 decimal places."""
     return (ctype, lora_name or "none", round(lora_alpha, 2))
 
