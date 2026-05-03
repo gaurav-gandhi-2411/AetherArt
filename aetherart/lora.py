@@ -24,7 +24,7 @@ def load_lora(pipeline: Any, lora_name: str, alpha: float = 1.0) -> None:
     if lora_name == "none" or lora_name not in LORA_REGISTRY:
         return
     config = LORA_REGISTRY[lora_name]
-    if config is None:
+    if config is None:  # pragma: no cover — registry has no named null entries today
         return
     lora_path = Path(config["path"])
     pipeline.load_lora_weights(
