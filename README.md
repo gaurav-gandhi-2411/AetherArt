@@ -17,8 +17,22 @@
 
 > I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
 
-<!-- Demo GIF — add after recording: ![AetherArt demo](docs/aetherart_demo.gif) -->
-<!-- Recording guide: docs/RECORDING_GUIDE.md -->
+**What this demonstrates:**
+
+- [SD 2.1 inference on 8 GB VRAM](aetherart/model.py) via fp16 + model CPU offload — generation in 3.2 s on RTX 3070
+- [Custom Ukiyo-e LoRA](data/lora/ukiyo-e/) — rank-8 adapter, 80 images, 2 h 8 min training, 6.4 MB; [training details](reports/lora_training_summary.md)
+- [ControlNet Canny + Depth](aetherart/controlnet.py) — spatial conditioning with a 2-entry LRU pipeline cache
+- [LCM + SDXL Turbo speed tiers](aetherart/lcm.py) — [4-step (0.6 s)](aetherart/lcm.py) and [1-step (3.3 s)](aetherart/sdxl_turbo.py) generation modes
+- [INT8 + NF4 quantization](aetherart/quantization.py) via bitsandbytes — SD 2.1 on ≥ 4 GB GPUs; [measured results](reports/quantization_benchmark.md)
+- [360-run CLIP benchmark](reports/findings.md) — 4 schedulers × 3 step counts × 30 prompts; key finding: prompt choice matters 18× more than scheduler choice
+
+<!-- Demo GIF placeholder — record following docs/RECORDING_GUIDE.md and replace this block:
+![AetherArt demo — GPU generation across speed tiers](docs/aetherart_demo.gif)
+Target: < 5 MB, 12–15 fps, 720p, showing Standard / LCM / Turbo tiers back-to-back
+-->
+
+> **Demo:** No GIF yet — requires local RTX 3070 recording (see [`docs/RECORDING_GUIDE.md`](docs/RECORDING_GUIDE.md)).  
+> The gallery below shows what the GPU version produces. The [live Space](https://huggingface.co/spaces/gauravgandhi2411/AetherArt) runs on CPU (~8–15 min/image) and is an architecture demo, not a speed demo.
 
 **[Live Space (CPU architecture demo) →](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)**  
 *Runs on HF free CPU tier as an architecture demo — generation takes ~8–15 min. Clone and run locally for real-time GPU inference.*
@@ -35,6 +49,7 @@
 - [Sample Outputs](#sample-outputs)
 - [LoRA Fine-tuning](#lora-fine-tuning)
 - [ControlNet Conditioning](#controlnet-conditioning)
+- [Recreate from PNG](#recreate-from-png)
 - [Benchmark Results](#benchmark-results)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
@@ -295,9 +310,34 @@ Upload a reference image in the **ControlNet** accordion, choose Canny or Depth,
 
 ---
 
+## Recreate from PNG
+
+Every image AetherArt generates is saved with its full generation parameters embedded as PNG tEXt chunks and a sidecar `.json` file. The **Recreate from PNG** tab accepts any prior output and restores the exact settings used to produce it.
+
+**What's embedded:**
+
+| Field | Description |
+|---|---|
+| `prompt` / `negative_prompt` | Exact text used |
+| `seed` | Full integer seed — reproduced exactly if hardware is identical |
+| `steps`, `guidance_scale`, `scheduler` | All sampler settings |
+| `width`, `height` | Resolution |
+| `lora`, `lora_weight` | LoRA adapter name and alpha (if active) |
+| `controlnet` | Conditioning type (if active) |
+| `git_commit` | Short SHA at generation time — links output to the codebase version |
+| `vram_peak_mb`, `generation_time_seconds` | Performance metadata |
+
+**Why it matters:** PNG tEXt chunks survive most image hosts that don't strip metadata. A generated image shared anywhere that preserves metadata is self-documenting — you can drag it back into the UI months later and reproduce the output. This is useful for debugging (which settings produced an artifact?), for fine-tuning dataset curation (what were the exact parameters for this training image?), and for honest portfolio work (provenance is embedded, not claimed separately).
+
+The implementation is in [`aetherart/metadata.py`](aetherart/metadata.py). The git commit hash is included so you can `git checkout <sha>` to the exact codebase version that produced a given image — even if the model defaults have changed since.
+
+---
+
 ## Benchmark Results
 
 I evaluated against a 30-prompt PartiPrompts subset spanning 11 categories. Metric: CLIP score (`openai/clip-vit-base-patch32`). 360 generations: 4 schedulers × 3 step counts × 30 prompts, seed = 42, RTX 3070 8 GB.
+
+**[→ Full findings and analysis: `reports/findings.md`](reports/findings.md)**
 
 ### Scheduler comparison
 
@@ -310,15 +350,14 @@ I evaluated against a 30-prompt PartiPrompts subset spanning 11 categories. Metr
 
 ### Key findings
 
-- **30 steps is the sweet spot** — 20→50 steps shifts CLIP by < 0.002 while doubling compute
-- **VRAM is uniform at 4.50 GB** across all schedulers — model CPU offload is the binding constraint
-- **Outdoor photo-realism is SD 2.1's weak spot** — "a professional photo of a sunset behind the grand canyon" scored 0.20; use SDXL for landscape photography
-- **Styled characters score highest** — "a shiba inu wearing a beret and black turtleneck" hit 0.40 CLIP
+- **Prompt choice matters 18× more than scheduler choice** — prompt spread (0.130) dwarfs scheduler spread (0.007)
+- **DPM@20 steps matches DDIM@50 steps within noise** (Δ=0.0015, ~4% of σ) at half the latency — use DPM@20 for throughput
+- **30 steps is the sweet spot** — 20→50 steps shifts CLIP by < 0.002 while increasing latency 89%
+- **VRAM is flat at 4.50 GB** across all 360 runs — model CPU offload is the binding constraint, not scheduler
 
 | Chart | |
 |---|---|
-| ![Latency by scheduler](reports/eval_charts/latency_by_scheduler.png) | ![CLIP score by scheduler](reports/eval_charts/clip_score_by_scheduler.png) |
-| ![Pareto frontier](reports/eval_charts/pareto_frontier.png) | ![VRAM peak by scheduler](reports/eval_charts/vram_by_scheduler.png) |
+| ![Speed–quality Pareto](reports/eval_charts/pareto_scatter.png) | ![Prompt vs scheduler variance](reports/eval_charts/variance_decomposition.png) |
 
 ```bash
 python scripts/eval.py                                                           # full 360-run benchmark

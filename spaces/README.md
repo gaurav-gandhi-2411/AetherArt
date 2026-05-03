@@ -29,7 +29,10 @@ description: |
 
 > Stable Diffusion 2.1 + Ukiyo-e LoRA + ControlNet + three speed tiers (Standard / LCM / Turbo) + three memory modes (fp16 / 8-bit / 4-bit). Benchmarked across 360 generations.
 
-**[Full documentation and benchmark results on GitHub →](https://github.com/gaurav-gandhi-2411/AetherArt)**
+**[Full documentation and benchmark results on GitHub →](https://github.com/gaurav-gandhi-2411/AetherArt)**  
+**[→ 360-run scheduler benchmark findings](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/findings.md)**
+
+> **This Space runs on CPU** (~8–15 min per image). It demonstrates the architecture and lets you inspect the UI. For real-time generation, clone the repo and run locally with a CUDA GPU.
 
 ## Features
 
@@ -39,7 +42,7 @@ description: |
 - ControlNet conditioning: Canny edge + Depth map (combinable with LoRA)
 - DPM-Solver++ scheduler (best CLIP/latency in 360-run PartiPrompts benchmark)
 - PNG + sidecar JSON metadata on every generation
-- "Recreate from PNG" — upload a previous output to restore all settings
+- **Recreate from PNG** — every output embeds full generation parameters as PNG tEXt chunks; drag any prior output into the UI to restore exact settings
 
 ## Speed tiers (RTX 3070 measured)
 
