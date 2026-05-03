@@ -1,3 +1,4 @@
+import atexit
 import json
 import os
 import random
@@ -13,21 +14,20 @@ from aetherart import controlnet as cn
 from aetherart import lcm as lcm_mod
 from aetherart import lora as lora_mod
 from aetherart import metadata as meta
-from aetherart import quantization as quant_mod
 from aetherart import sdxl_turbo as turbo_mod
 from aetherart.config import cfg
 from aetherart.logger import get_logger
-from aetherart.model import AetherModel
+from aetherart.registry import ModelRegistry
 
 logger = get_logger(__name__)
 
 _HAS_GPU: bool = torch.cuda.is_available()
 
-# Model singletons — cached across requests
-MODEL = AetherModel()
-_turbo_pipe = None
-_quant_pipes: dict = {}
-_active_lora_name: str = "none"
+# Single registry owns all pipeline singletons
+REGISTRY = ModelRegistry()
+MODEL = REGISTRY.get_base()  # backward-compatible alias used in UI code below
+
+atexit.register(REGISTRY.release_all)
 
 # ── Sample gallery data ─────────────────────────────────────────────────────
 
@@ -102,8 +102,6 @@ def _run_sd21(
     step_callback: Optional[callable] = None,
 ) -> tuple:
     """SD 2.1 generation (standard / LCM / quantized). Returns (PIL.Image, gen_time_s, vram_mb)."""
-    global _active_lora_name
-
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
     t0 = time.time()
@@ -111,21 +109,13 @@ def _run_sd21(
     # Select pipeline
     if memory_mode in ("8bit", "4bit"):
         bits = int(memory_mode[0])
-        if memory_mode not in _quant_pipes:
-            _quant_pipes[memory_mode] = quant_mod.load_sd21_quantized(bits=bits)
-            from diffusers import DPMSolverMultistepScheduler
-
-            _quant_pipes[memory_mode].scheduler = DPMSolverMultistepScheduler.from_config(
-                _quant_pipes[memory_mode].scheduler.config
-            )
-        active_pipe = _quant_pipes[memory_mode]
+        active_pipe = REGISTRY.get_quantized(bits=bits)  # type: ignore[arg-type]
         use_lora = False
     else:
-        if MODEL.backend is None:
-            try:
-                MODEL.init(model_choice="sdxl" if model_choice == "sdxl" else None)
-            except Exception as e:
-                logger.warning("Model init warning: %s", e)
+        try:
+            REGISTRY.ensure_base(model_choice="sdxl" if model_choice == "sdxl" else None)
+        except RuntimeError as e:
+            logger.warning("Model init warning: %s", e)
         active_pipe = MODEL.pipe if MODEL.backend == "local" else None
         use_lora = MODEL.backend == "local"
 
@@ -166,9 +156,9 @@ def _run_sd21(
 
     if active_pipe is not None:
         if not use_controlnet and use_lora:
-            if _active_lora_name != lora_name:
+            if REGISTRY.active_lora != lora_name:
                 lora_mod.load_lora(active_pipe, lora_name, lora_alpha)
-                _active_lora_name = lora_name
+                REGISTRY.active_lora = lora_name
             elif lora_name != "none":
                 try:
                     active_pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
@@ -232,17 +222,14 @@ def _run_turbo(
     height: int,
 ) -> tuple:
     """SDXL Turbo 1-step generation. Returns (PIL.Image, gen_time_s, vram_mb)."""
-    global _turbo_pipe
-
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
     t0 = time.time()
 
     try:
-        if _turbo_pipe is None:
-            _turbo_pipe = turbo_mod.load_turbo_pipeline()
+        turbo_pipe = REGISTRY.get_turbo()
         img, _ = turbo_mod.generate_turbo(
-            _turbo_pipe,
+            turbo_pipe,
             prompt=prompt,
             negative_prompt=negative_prompt,
             seed=seed,
@@ -252,7 +239,7 @@ def _run_turbo(
     except torch.cuda.OutOfMemoryError:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-        _turbo_pipe = None
+        REGISTRY.release_turbo()
         raise RuntimeError(
             "SDXL Turbo ran out of VRAM. Try Standard or LCM mode which require less memory."
         )
@@ -334,7 +321,7 @@ def generate_stream(
                 f"⏳ Estimated wait: ~{est_min} minutes on CPU. "
                 f"Generation in progress… please don't refresh."
             )
-        elif speed_mode == "turbo" and _turbo_pipe is None:
+        elif speed_mode == "turbo" and REGISTRY._turbo is None:
             yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait...**"
         else:
             yield None, f"**Generating ({mode_label}, seed {actual_seed})...**"
@@ -426,7 +413,7 @@ def generate_stream(
 
 def reload_model(choice: str) -> str:
     try:
-        MODEL.init(model_choice="sdxl" if choice == "sdxl" else None)
+        REGISTRY.retry_base_init(model_choice="sdxl" if choice == "sdxl" else None)
         return f"{'SDXL' if choice == 'sdxl' else 'SD 2.1'} loaded successfully."
     except Exception as e:
         logger.exception("reload_model failed")
