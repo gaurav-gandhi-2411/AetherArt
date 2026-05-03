@@ -6,6 +6,11 @@
 # Note: torch is pinned with CUDA suffix; adjust for your platform:
 #   CPU:     torch==2.5.1
 #   CUDA124: torch==2.5.1+cu124  (needs --index-url pytorch.org/whl/cu124)
+#
+# opencv note: requirements.txt specifies opencv-python-headless (server-safe,
+# no GUI libs, saves ~200 MB). This lock file records opencv-python==4.12.0.88
+# (full build, present in the local conda env). Both expose identical cv2 APIs;
+# the headless variant is the correct choice for Space/server deployments.
 Markdown==3.9
 Pygments==2.19.2
 Werkzeug==3.1.3
