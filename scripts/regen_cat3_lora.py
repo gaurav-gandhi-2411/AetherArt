@@ -2,6 +2,7 @@
 
 Also produces a WITH vs WITHOUT LoRA comparison pair at seed 42 for verification.
 """
+
 from __future__ import annotations
 import json, time, shutil
 from pathlib import Path
@@ -43,6 +44,7 @@ COMPARE_PROMPT_NO_TRIGGER = (
     "traditional Japanese woodblock print, vibrant colors, bold outlines, masterpiece"
 )
 
+
 def _timer():
     t = time.time()
     return lambda: round(time.time() - t, 1)
@@ -51,9 +53,12 @@ def _timer():
 def _gen(pipe, prompt, seed):
     elapsed = _timer()
     img = pipe(
-        prompt, negative_prompt=NEG,
-        num_inference_steps=50, guidance_scale=7.5,
-        height=768, width=768,
+        prompt,
+        negative_prompt=NEG,
+        num_inference_steps=50,
+        guidance_scale=7.5,
+        height=768,
+        width=768,
         generator=torch.Generator("cuda").manual_seed(seed),
     ).images[0]
     return img, elapsed()
@@ -61,8 +66,10 @@ def _gen(pipe, prompt, seed):
 
 print("Loading SD 2.1 fp16...")
 pipe = StableDiffusionPipeline.from_pretrained(
-    SD21_MODEL, torch_dtype=torch.float16,
-    safety_checker=None, requires_safety_checker=False,
+    SD21_MODEL,
+    torch_dtype=torch.float16,
+    safety_checker=None,
+    requires_safety_checker=False,
 )
 pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
 pipe = pipe.to("cuda")
@@ -93,12 +100,21 @@ for slug, prompt in PROMPTS.items():
     for seed in SEEDS:
         img, t = _gen(pipe, prompt, seed)
         meta = dict(
-            prompt=prompt, negative_prompt=NEG, seed=seed,
-            steps=50, scheduler="DPM-Solver++",
-            guidance_scale=7.5, width=768, height=768,
+            prompt=prompt,
+            negative_prompt=NEG,
+            seed=seed,
+            steps=50,
+            scheduler="DPM-Solver++",
+            guidance_scale=7.5,
+            width=768,
+            height=768,
             model=SD21_MODEL,
-            lora=LORA_PATH, adapter_name="ukiyo_e", lora_weight=1.0,
-            generation_time_seconds=t, device="RTX 3070 8GB", dtype="fp16",
+            lora=LORA_PATH,
+            adapter_name="ukiyo_e",
+            lora_weight=1.0,
+            generation_time_seconds=t,
+            device="RTX 3070 8GB",
+            dtype="fp16",
         )
         p = OUT / f"{slug}_seed{seed}.png"
         img.save(p)

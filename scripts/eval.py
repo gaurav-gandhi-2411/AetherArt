@@ -128,7 +128,9 @@ def swap_scheduler(pipe: Any, name: str) -> None:
         pipe.scheduler = cls.from_config(pipe.scheduler.config)
     except Exception as e:
         logger.warning("from_config failed for %s (%s); retrying from_pretrained", name, e)
-        pipe.scheduler = cls.from_pretrained(pipe.scheduler.config.get("_name_or_path", ""), subfolder="scheduler")
+        pipe.scheduler = cls.from_pretrained(
+            pipe.scheduler.config.get("_name_or_path", ""), subfolder="scheduler"
+        )
 
 
 # ── Single generation ──────────────────────────────────────────────────────
@@ -174,9 +176,7 @@ def run_single(
             generator=generator,
         )
         latency = time.time() - t0
-        vram_peak_gb = (
-            torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0
-        )
+        vram_peak_gb = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0
 
         img = out.images[0]
         cs = clip_score(img, prompt_entry["prompt"])
@@ -185,30 +185,36 @@ def run_single(
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / f"{n_steps}steps.png"
 
-        save_image_with_metadata(img, out_path, {
-            "prompt": prompt_entry["prompt"],
-            "negative_prompt": "",
-            "seed": seed,
-            "scheduler": scheduler_name,
-            "steps": n_steps,
-            "guidance": DEFAULT_GUIDANCE,
-            "width": EVAL_WIDTH,
-            "height": EVAL_HEIGHT,
-            "model_id": model.model_id,
-            "lora_hash": "",
-            "git_commit": get_git_commit(),
-            "generation_time_seconds": round(latency, 2),
-            "vram_peak_gb": round(vram_peak_gb, 3),
-            "clip_score": round(cs, 4),
-            "timestamp": result_base["timestamp"],
-        })
+        save_image_with_metadata(
+            img,
+            out_path,
+            {
+                "prompt": prompt_entry["prompt"],
+                "negative_prompt": "",
+                "seed": seed,
+                "scheduler": scheduler_name,
+                "steps": n_steps,
+                "guidance": DEFAULT_GUIDANCE,
+                "width": EVAL_WIDTH,
+                "height": EVAL_HEIGHT,
+                "model_id": model.model_id,
+                "lora_hash": "",
+                "git_commit": get_git_commit(),
+                "generation_time_seconds": round(latency, 2),
+                "vram_peak_gb": round(vram_peak_gb, 3),
+                "clip_score": round(cs, 4),
+                "timestamp": result_base["timestamp"],
+            },
+        )
 
-        result_base.update({
-            "clip_score": round(cs, 4),
-            "latency_s": round(latency, 2),
-            "vram_peak_gb": round(vram_peak_gb, 3),
-            "image_path": str(out_path),
-        })
+        result_base.update(
+            {
+                "clip_score": round(cs, 4),
+                "latency_s": round(latency, 2),
+                "vram_peak_gb": round(vram_peak_gb, 3),
+                "image_path": str(out_path),
+            }
+        )
 
     except torch.cuda.OutOfMemoryError as e:
         logger.error("OOM for %s/%s/%d: %s", prompt_entry["id"], scheduler_name, n_steps, e)
@@ -227,6 +233,7 @@ def run_single(
 
 def generate_charts(results: list[dict], run_date: str) -> list[str]:
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
@@ -251,7 +258,9 @@ def generate_charts(results: list[dict], run_date: str) -> list[str]:
     fig, ax = plt.subplots(figsize=(9, 5))
     for sched in schedulers:
         ys = [
-            np.mean([r["latency_s"] for r in ok if r["scheduler"] == sched and r["steps"] == s] or [0])
+            np.mean(
+                [r["latency_s"] for r in ok if r["scheduler"] == sched and r["steps"] == s] or [0]
+            )
             for s in steps_list
         ]
         ax.plot(steps_list, ys, marker="o", label=sched, color=sched_color[sched])
@@ -266,7 +275,9 @@ def generate_charts(results: list[dict], run_date: str) -> list[str]:
     fig, ax = plt.subplots(figsize=(9, 5))
     for sched in schedulers:
         ys = [
-            np.mean([r["clip_score"] for r in ok if r["scheduler"] == sched and r["steps"] == s] or [0])
+            np.mean(
+                [r["clip_score"] for r in ok if r["scheduler"] == sched and r["steps"] == s] or [0]
+            )
             for s in steps_list
         ]
         ax.plot(steps_list, ys, marker="o", label=sched, color=sched_color[sched])
@@ -284,13 +295,24 @@ def generate_charts(results: list[dict], run_date: str) -> list[str]:
         ax.scatter(
             [r["latency_s"] for r in sub],
             [r["clip_score"] for r in sub],
-            label=sched, alpha=0.55, color=sched_color[sched], s=40,
+            label=sched,
+            alpha=0.55,
+            color=sched_color[sched],
+            s=40,
         )
         if sub:
             mx = np.mean([r["latency_s"] for r in sub])
             my = np.mean([r["clip_score"] for r in sub])
-            ax.scatter([mx], [my], marker="*", s=220, color=sched_color[sched],
-                       edgecolors="black", linewidths=0.6, zorder=6)
+            ax.scatter(
+                [mx],
+                [my],
+                marker="*",
+                s=220,
+                color=sched_color[sched],
+                edgecolors="black",
+                linewidths=0.6,
+                zorder=6,
+            )
             ax.annotate(sched, (mx, my), textcoords="offset points", xytext=(6, 4), fontsize=8)
     ax.set_xlabel("Latency (s)")
     ax.set_ylabel("CLIP Score")
@@ -307,8 +329,14 @@ def generate_charts(results: list[dict], run_date: str) -> list[str]:
     ]
     bars = ax.bar(schedulers, avg_vram, color=[sched_color[s] for s in schedulers])
     for bar, val in zip(bars, avg_vram):
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.005,
-                f"{val:.2f} GB", ha="center", va="bottom", fontsize=9)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.005,
+            f"{val:.2f} GB",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
     ax.set_ylabel("Avg Peak VRAM (GB)")
     ax.set_title("Peak VRAM Usage by Scheduler")
     ax.set_ylim(0, max(avg_vram) * 1.2 + 0.1 if avg_vram else 1)
@@ -391,7 +419,9 @@ def generate_report(
     if errors:
         lines += ["", "## Errors", ""]
         for r in errors:
-            lines.append(f"- `{r['prompt_id']}` / {r['scheduler']} / {r['steps']} steps: {r['error']}")
+            lines.append(
+                f"- `{r['prompt_id']}` / {r['scheduler']} / {r['steps']} steps: {r['error']}"
+            )
 
     # Charts
     lines += ["", "## Charts", ""]
@@ -412,25 +442,35 @@ def generate_report(
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="PartiPrompts × scheduler × steps benchmark")
-    p.add_argument("--schedulers", default=None,
-                   help=f"Comma-separated schedulers (default: {','.join(DEFAULT_SCHEDULERS)})")
-    p.add_argument("--steps", default=None,
-                   help=f"Comma-separated step counts (default: {','.join(str(s) for s in DEFAULT_STEPS)})")
-    p.add_argument("--prompts-subset", default=None,
-                   help="Comma-separated prompt IDs to run (default: all 30)")
-    p.add_argument("--seed", type=int, default=DEFAULT_SEED,
-                   help=f"Global RNG seed (default: {DEFAULT_SEED})")
-    p.add_argument("--resume", action="store_true",
-                   help="Resume from the latest partial results file")
-    p.add_argument("--model", default=None,
-                   help="Model choice: sd-2.1 (default) or sdxl")
+    p.add_argument(
+        "--schedulers",
+        default=None,
+        help=f"Comma-separated schedulers (default: {','.join(DEFAULT_SCHEDULERS)})",
+    )
+    p.add_argument(
+        "--steps",
+        default=None,
+        help=f"Comma-separated step counts (default: {','.join(str(s) for s in DEFAULT_STEPS)})",
+    )
+    p.add_argument(
+        "--prompts-subset", default=None, help="Comma-separated prompt IDs to run (default: all 30)"
+    )
+    p.add_argument(
+        "--seed", type=int, default=DEFAULT_SEED, help=f"Global RNG seed (default: {DEFAULT_SEED})"
+    )
+    p.add_argument(
+        "--resume", action="store_true", help="Resume from the latest partial results file"
+    )
+    p.add_argument("--model", default=None, help="Model choice: sd-2.1 (default) or sdxl")
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    schedulers = [s.strip() for s in args.schedulers.split(",")] if args.schedulers else DEFAULT_SCHEDULERS
+    schedulers = (
+        [s.strip() for s in args.schedulers.split(",")] if args.schedulers else DEFAULT_SCHEDULERS
+    )
     steps_list = [int(s.strip()) for s in args.steps.split(",")] if args.steps else DEFAULT_STEPS
 
     for sched in schedulers:
@@ -453,8 +493,13 @@ def main() -> None:
     }
 
     logger.info("=== AetherArt Eval — run %s ===", run_id)
-    logger.info("Schedulers: %s | Steps: %s | Prompts: %d | Total: %d",
-                schedulers, steps_list, len(prompts), total_combos)
+    logger.info(
+        "Schedulers: %s | Steps: %s | Prompts: %d | Total: %d",
+        schedulers,
+        steps_list,
+        len(prompts),
+        total_combos,
+    )
 
     # Resume
     if args.resume:
@@ -463,12 +508,7 @@ def main() -> None:
         results, completed = [], set()
 
     # Build ordered list of combinations
-    combos = [
-        (p, sched, steps)
-        for p in prompts
-        for sched in schedulers
-        for steps in steps_list
-    ]
+    combos = [(p, sched, steps) for p in prompts for sched in schedulers for steps in steps_list]
 
     # Init model once
     logger.info("Loading model...")
@@ -477,11 +517,14 @@ def main() -> None:
     logger.info("Model loaded: backend=%s", model.backend)
 
     if model.backend != "local" or model.pipe is None:
-        sys.exit("Eval requires a local pipeline — set USE_HF_INFERENCE=0 and ensure diffusers is installed.")
+        sys.exit(
+            "Eval requires a local pipeline — set USE_HF_INFERENCE=0 and ensure diffusers is installed."
+        )
 
     # Prime CLIP scorer (downloads weights once)
     logger.info("Loading CLIP scorer...")
     from aetherart.clip_scorer import _load as clip_load
+
     clip_load()
     logger.info("CLIP scorer ready.")
 
@@ -501,31 +544,59 @@ def main() -> None:
         completed.add(key)
         save_partial(run_id, run_date, config, results)
 
-        status = "ERROR" if result.get("error") else f"clip={result['clip_score']:.4f} lat={result['latency_s']:.1f}s vram={result['vram_peak_gb']:.2f}GB"
-        logger.info("[%d/%d] %s / %s / %dsteps — %s",
-                    done + skipped, total_combos,
-                    prompt_entry["id"], scheduler_name, n_steps, status)
+        status = (
+            "ERROR"
+            if result.get("error")
+            else f"clip={result['clip_score']:.4f} lat={result['latency_s']:.1f}s vram={result['vram_peak_gb']:.2f}GB"
+        )
+        logger.info(
+            "[%d/%d] %s / %s / %dsteps — %s",
+            done + skipped,
+            total_combos,
+            prompt_entry["id"],
+            scheduler_name,
+            n_steps,
+            status,
+        )
 
         # Progress log every 30 completions
         if done % 30 == 0:
             elapsed = time.time() - t_start
             rate = done / elapsed
             eta_s = (total_combos - done - skipped) / rate if rate > 0 else 0
-            logger.info("--- Progress: %d/%d done | %.0f min elapsed | ETA ~%.0f min ---",
-                        done, total_combos, elapsed / 60, eta_s / 60)
+            logger.info(
+                "--- Progress: %d/%d done | %.0f min elapsed | ETA ~%.0f min ---",
+                done,
+                total_combos,
+                elapsed / 60,
+                eta_s / 60,
+            )
 
     total_elapsed = time.time() - t_start
     ok_results = [r for r in results if not r.get("error")]
-    logger.info("=== Generation complete: %d ok, %d errors, %.1f min total ===",
-                len(ok_results), len(results) - len(ok_results), total_elapsed / 60)
+    logger.info(
+        "=== Generation complete: %d ok, %d errors, %.1f min total ===",
+        len(ok_results),
+        len(results) - len(ok_results),
+        total_elapsed / 60,
+    )
 
     # Save final JSON
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     final_json = REPORTS_DIR / f"eval_results_{run_id}.json"
     with final_json.open("w", encoding="utf-8") as f:
-        json.dump({"run_id": run_id, "run_date": run_date, "config": config,
-                   "results": results, "completed_at": datetime.now().isoformat()},
-                  f, indent=2, default=str)
+        json.dump(
+            {
+                "run_id": run_id,
+                "run_date": run_date,
+                "config": config,
+                "results": results,
+                "completed_at": datetime.now().isoformat(),
+            },
+            f,
+            indent=2,
+            default=str,
+        )
     logger.info("Results JSON: %s", final_json)
 
     # Charts
@@ -551,7 +622,9 @@ def main() -> None:
                 avg_clip = np.mean([r["clip_score"] for r in sub])
                 avg_lat = np.mean([r["latency_s"] for r in sub])
                 avg_vram = np.mean([r["vram_peak_gb"] for r in sub])
-                print(f"  {sched:8s}: CLIP={avg_clip:.4f}  lat={avg_lat:.1f}s  vram={avg_vram:.2f}GB")
+                print(
+                    f"  {sched:8s}: CLIP={avg_clip:.4f}  lat={avg_lat:.1f}s  vram={avg_vram:.2f}GB"
+                )
     print(f"\nJSON:   {final_json}")
     print(f"Report: {report_path}")
     print("Charts:", ", ".join(Path(p).name for p in chart_paths))

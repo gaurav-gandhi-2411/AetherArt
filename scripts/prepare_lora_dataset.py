@@ -31,23 +31,24 @@ from PIL import Image
 # -- constants ----------------------------------------------------------------
 
 UKIYO_E_STYLE_IDX = 26
-HF_CACHE_GLOB     = (
+HF_CACHE_GLOB = (
     "C:/Users/gaura/.cache/huggingface/hub/"
     "datasets--huggan--wikiart/snapshots/*/data/train-*.parquet"
 )
-TRIGGER_TOKEN     = "ukyowood"
-TARGET_MAX        = 80
+TRIGGER_TOKEN = "ukyowood"
+TARGET_MAX = 80
 MIN_SHORTEST_EDGE = 512
-MIN_ASPECT        = 0.7
-MAX_ASPECT        = 1.4
-OUTPUT_SIZE       = (512, 512)
-OUT_DIR           = Path("data/lora/ukiyo-e")
-BLIP_MODEL_ID     = "Salesforce/blip-image-captioning-large"
+MIN_ASPECT = 0.7
+MAX_ASPECT = 1.4
+OUTPUT_SIZE = (512, 512)
+OUT_DIR = Path("data/lora/ukiyo-e")
+BLIP_MODEL_ID = "Salesforce/blip-image-captioning-large"
 
 # wikiart artist label names (index = artist int)
 ARTIST_NAMES: list[str] = []  # populated on first use
 
 # -- image helpers ------------------------------------------------------------─
+
 
 def qualifies(img: Image.Image) -> bool:
     w, h = img.size
@@ -78,9 +79,9 @@ def _load_blip():
     if _blip_pipe is None:
         from transformers import pipeline as hf_pipeline
         import torch
+
         device = 0 if torch.cuda.is_available() else -1
-        print(f"Loading BLIP ({BLIP_MODEL_ID}) on {'GPU' if device == 0 else 'CPU'}...",
-              flush=True)
+        print(f"Loading BLIP ({BLIP_MODEL_ID}) on {'GPU' if device == 0 else 'CPU'}...", flush=True)
         _blip_pipe = hf_pipeline("image-to-text", model=BLIP_MODEL_ID, device=device)
         print("BLIP ready.", flush=True)
     return _blip_pipe
@@ -102,11 +103,12 @@ def caption_template(artist_int: int) -> str:
 
 # -- main ----------------------------------------------------------------------
 
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dry-run",  action="store_true")
-    ap.add_argument("--no-blip",  action="store_true")
-    ap.add_argument("--max",      type=int, default=TARGET_MAX)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-blip", action="store_true")
+    ap.add_argument("--max", type=int, default=TARGET_MAX)
     args = ap.parse_args()
 
     use_blip = not args.no_blip and not args.dry_run
@@ -115,14 +117,17 @@ def main():
     shards = sorted(glob.glob(HF_CACHE_GLOB))
     if not shards:
         print("ERROR: no cached wikiart parquet shards found at:", HF_CACHE_GLOB, file=sys.stderr)
-        print("Run: from datasets import load_dataset; load_dataset('huggan/wikiart', split='train')",
-              file=sys.stderr)
+        print(
+            "Run: from datasets import load_dataset; load_dataset('huggan/wikiart', split='train')",
+            file=sys.stderr,
+        )
         sys.exit(1)
     print(f"Found {len(shards)} cached parquet shards.", flush=True)
 
     # -- populate artist names ------------------------------------------------
     try:
         from datasets import load_dataset
+
         ds_tmp = load_dataset("huggan/wikiart", split="train", streaming=True)
         ARTIST_NAMES.extend(ds_tmp.features["artist"].names)
         print(f"Artist names loaded ({len(ARTIST_NAMES)} artists).", flush=True)
@@ -133,10 +138,10 @@ def main():
     if not args.dry_run:
         img_dir.mkdir(parents=True, exist_ok=True)
 
-    t0             = time.time()
+    t0 = time.time()
     records: list[dict] = []
-    total_scanned  = 0
-    total_ukiyoe   = 0
+    total_scanned = 0
+    total_ukiyoe = 0
     total_filtered = 0
 
     print(f"Scanning {len(shards)} shards for Ukiyo-e (style={UKIYO_E_STYLE_IDX})...", flush=True)
@@ -147,9 +152,9 @@ def main():
 
         shard_name = Path(shard_path).name
         table = pq.read_table(shard_path, columns=["image", "artist", "style"])
-        styles  = table["style"].to_pylist()
+        styles = table["style"].to_pylist()
         artists = table["artist"].to_pylist()
-        images  = table["image"].to_pylist()
+        images = table["image"].to_pylist()
 
         shard_ukiyo = 0
         for style, artist_int, img_struct in zip(styles, artists, images):
@@ -158,7 +163,9 @@ def main():
                 continue
             total_ukiyoe += 1
 
-            raw_bytes = img_struct["bytes"] if isinstance(img_struct, dict) else bytes(img_struct["bytes"])
+            raw_bytes = (
+                img_struct["bytes"] if isinstance(img_struct, dict) else bytes(img_struct["bytes"])
+            )
             try:
                 img = bytes_to_pil(raw_bytes)
             except Exception as e:
@@ -169,7 +176,7 @@ def main():
                 total_filtered += 1
                 continue
 
-            idx      = len(records) + 1
+            idx = len(records) + 1
             filename = f"{idx:03d}.jpg"
 
             if not args.dry_run:
@@ -187,9 +194,12 @@ def main():
 
             if len(records) % 10 == 0 or len(records) == 1:
                 elapsed = time.time() - t0
-                print(f"  [{elapsed:5.0f}s] {len(records):3d} collected | "
-                      f"shard {shard_name} | scanned {total_scanned} | "
-                      f"ukiyo-e so far {total_ukiyoe}", flush=True)
+                print(
+                    f"  [{elapsed:5.0f}s] {len(records):3d} collected | "
+                    f"shard {shard_name} | scanned {total_scanned} | "
+                    f"ukiyo-e so far {total_ukiyoe}",
+                    flush=True,
+                )
 
             if len(records) >= args.max:
                 break
@@ -199,7 +209,10 @@ def main():
     print(f"  Shards scanned : {len(shards)}", flush=True)
     print(f"  Total scanned  : {total_scanned}", flush=True)
     print(f"  Ukiyo-e found  : {total_ukiyoe}", flush=True)
-    print(f"  Filtered out   : {total_filtered} (res<{MIN_SHORTEST_EDGE}px or aspect out of range)", flush=True)
+    print(
+        f"  Filtered out   : {total_filtered} (res<{MIN_SHORTEST_EDGE}px or aspect out of range)",
+        flush=True,
+    )
     print(f"  Collected      : {len(records)} images", flush=True)
 
     if args.dry_run:

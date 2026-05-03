@@ -1,4 +1,5 @@
 """LoRA adapter registry and load/unload helpers."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -29,7 +30,9 @@ def load_lora(pipeline: StableDiffusionPipeline, lora_name: str, alpha: float = 
     if config is None:
         return
     lora_path = Path(config["path"])
-    pipeline.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name, adapter_name="ukiyo_e")
+    pipeline.load_lora_weights(
+        str(lora_path.parent), weight_name=lora_path.name, adapter_name="ukiyo_e"
+    )
     pipeline.set_adapters(["ukiyo_e"], adapter_weights=[alpha])
 
 

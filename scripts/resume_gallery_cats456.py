@@ -1,6 +1,8 @@
 """Resume gallery generation — categories 4, 5, 6 only (1-3 already complete)."""
+
 from __future__ import annotations
 import sys, os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import everything from generate_gallery and run only cats 4-6

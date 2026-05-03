@@ -2,6 +2,7 @@
 Tests for ControlNet preprocessing functions.
 No GPU or model downloads required — only cv2 + numpy.
 """
+
 import pytest
 import numpy as np
 from PIL import Image
@@ -66,30 +67,40 @@ class TestGetPipelineCacheKey:
 
     def test_no_lora_key(self):
         from aetherart.controlnet import _make_cache_key
+
         key = _make_cache_key("canny", None, 1.0)
         assert key == ("canny", "none", 1.0)
 
     def test_lora_key_differs_from_no_lora(self):
         from aetherart.controlnet import _make_cache_key
+
         base = _make_cache_key("canny", None, 1.0)
         lora = _make_cache_key("canny", "ukiyo-e", 1.0)
         assert base != lora
 
     def test_alpha_included_in_key(self):
         from aetherart.controlnet import _make_cache_key
+
         k1 = _make_cache_key("canny", "ukiyo-e", 0.5)
         k2 = _make_cache_key("canny", "ukiyo-e", 1.0)
         assert k1 != k2
 
     def test_alpha_rounded_to_two_decimals(self):
         from aetherart.controlnet import _make_cache_key
-        assert _make_cache_key("canny", "ukiyo-e", 1.001) == _make_cache_key("canny", "ukiyo-e", 1.002)
-        assert _make_cache_key("canny", "ukiyo-e", 0.994) != _make_cache_key("canny", "ukiyo-e", 1.006)
+
+        assert _make_cache_key("canny", "ukiyo-e", 1.001) == _make_cache_key(
+            "canny", "ukiyo-e", 1.002
+        )
+        assert _make_cache_key("canny", "ukiyo-e", 0.994) != _make_cache_key(
+            "canny", "ukiyo-e", 1.006
+        )
 
     def test_ctype_included_in_key(self):
         from aetherart.controlnet import _make_cache_key
+
         assert _make_cache_key("canny", None, 1.0) != _make_cache_key("depth", None, 1.0)
 
     def test_empty_string_lora_normalised_to_none(self):
         from aetherart.controlnet import _make_cache_key
+
         assert _make_cache_key("canny", "", 1.0) == _make_cache_key("canny", None, 1.0)

@@ -7,6 +7,7 @@ SD 2.1 and does not support LoRA adapters or ControlNet conditioning.
 VRAM: ~6-8 GB peak with fp16 + model_cpu_offload. On an 8 GB GPU,
 avoid loading both SD 2.1 and Turbo simultaneously.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -41,9 +41,9 @@ def test_save_and_load_roundtrip():
         for key, expected in _KNOWN_METADATA.items():
             if key == "timestamp":
                 continue
-            assert str(expected) == loaded.get(key), (
-                f"Field '{key}' mismatch: expected {expected!r}, got {loaded.get(key)!r}"
-            )
+            assert str(expected) == loaded.get(
+                key
+            ), f"Field '{key}' mismatch: expected {expected!r}, got {loaded.get(key)!r}"
 
 
 def test_sidecar_json_is_valid():

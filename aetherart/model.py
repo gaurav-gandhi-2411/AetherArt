@@ -24,6 +24,7 @@ except Exception:
 
 from contextlib import nullcontext
 
+
 def _preferred_dtype_kwarg(fn) -> Optional[str]:
     """
     Inspect a callable (usually Pipeline.from_pretrained) and decide whether it
@@ -40,6 +41,7 @@ def _preferred_dtype_kwarg(fn) -> Optional[str]:
         logger.debug("Could not inspect signature for %s", getattr(fn, "__name__", str(fn)))
     return None
 
+
 def _build_pretrained_kwargs(fn, dtype, hf_token: Optional[str]) -> Dict[str, Any]:
     """
     Build kwargs for from_pretrained that use the right dtype kwarg name
@@ -51,10 +53,14 @@ def _build_pretrained_kwargs(fn, dtype, hf_token: Optional[str]) -> Dict[str, An
     if kw_name:
         kwargs[kw_name] = dtype
     else:
-        logger.debug("No dtype kwarg detected for function %s; loading without dtype kwarg", getattr(fn, "__name__", str(fn)))
+        logger.debug(
+            "No dtype kwarg detected for function %s; loading without dtype kwarg",
+            getattr(fn, "__name__", str(fn)),
+        )
     if hf_token:
         kwargs["token"] = hf_token
     return kwargs
+
 
 class AetherModel:
     """
@@ -93,7 +99,9 @@ class AetherModel:
         # Use Inference API if user forces it
         if self.use_inference and InferenceClient is not None:
             try:
-                self.inference_client = InferenceClient(token=self.hf_token) if self.hf_token else InferenceClient()
+                self.inference_client = (
+                    InferenceClient(token=self.hf_token) if self.hf_token else InferenceClient()
+                )
                 self.backend = "inference"
                 logger.info("Initialized Hugging Face InferenceClient")
                 self.optimizations["backend"] = "inference"
@@ -105,12 +113,16 @@ class AetherModel:
         if model_to_load == cfg.sdxl_model and StableDiffusionXLPipeline is not None:
             try:
                 dtype_val = torch.float16 if torch.cuda.is_available() else torch.float32
-                kwargs = _build_pretrained_kwargs(StableDiffusionXLPipeline.from_pretrained, dtype_val, self.hf_token)
+                kwargs = _build_pretrained_kwargs(
+                    StableDiffusionXLPipeline.from_pretrained, dtype_val, self.hf_token
+                )
                 self.pipe = StableDiffusionXLPipeline.from_pretrained(model_to_load, **kwargs)
                 # Apply optimizations (below)
                 self._apply_optimizations()
                 self.backend = "local"
-                logger.info("Loaded SDXL pipeline on %s", "cuda" if torch.cuda.is_available() else "cpu")
+                logger.info(
+                    "Loaded SDXL pipeline on %s", "cuda" if torch.cuda.is_available() else "cpu"
+                )
                 self.optimizations["model_loaded"] = "sdxl"
                 return
             except Exception as e:
@@ -120,11 +132,15 @@ class AetherModel:
         if StableDiffusionPipeline is not None:
             try:
                 dtype_val = torch.float16 if torch.cuda.is_available() else torch.float32
-                kwargs = _build_pretrained_kwargs(StableDiffusionPipeline.from_pretrained, dtype_val, self.hf_token)
+                kwargs = _build_pretrained_kwargs(
+                    StableDiffusionPipeline.from_pretrained, dtype_val, self.hf_token
+                )
                 self.pipe = StableDiffusionPipeline.from_pretrained(model_to_load, **kwargs)
                 self._apply_optimizations()
                 self.backend = "local"
-                logger.info("Loaded SD 2.1 pipeline on %s", "cuda" if torch.cuda.is_available() else "cpu")
+                logger.info(
+                    "Loaded SD 2.1 pipeline on %s", "cuda" if torch.cuda.is_available() else "cpu"
+                )
                 self.optimizations["model_loaded"] = "sd-2.1"
                 return
             except Exception as e:
@@ -133,7 +149,9 @@ class AetherModel:
         # Final fallback: try InferenceClient if available
         if InferenceClient is not None:
             try:
-                self.inference_client = InferenceClient(token=self.hf_token) if self.hf_token else InferenceClient()
+                self.inference_client = (
+                    InferenceClient(token=self.hf_token) if self.hf_token else InferenceClient()
+                )
                 self.backend = "inference"
                 logger.info("Falling back to Hugging Face Inference API")
                 self.optimizations["backend"] = "inference"
@@ -141,7 +159,9 @@ class AetherModel:
             except Exception as e:
                 logger.error("InferenceClient init failed as final fallback: %s", e)
 
-        raise RuntimeError("No available backend: check diffusers install, HF token, or set USE_HF_INFERENCE=1")
+        raise RuntimeError(
+            "No available backend: check diffusers install, HF token, or set USE_HF_INFERENCE=1"
+        )
 
     def _apply_optimizations(self) -> None:
         """
@@ -197,8 +217,15 @@ class AetherModel:
         except Exception:
             pass
 
-    def generate(self, prompt: str, steps: int = cfg.default_steps, guidance: float = cfg.default_guidance,
-                 width: int = cfg.default_width, height: int = cfg.default_height, seed: Optional[int] = None):
+    def generate(
+        self,
+        prompt: str,
+        steps: int = cfg.default_steps,
+        guidance: float = cfg.default_guidance,
+        width: int = cfg.default_width,
+        height: int = cfg.default_height,
+        seed: Optional[int] = None,
+    ):
         """
         Simple wrapper that runs the pipeline synchronously and returns a PIL image.
         Note: the app's generate stream uses MODEL.pipe directly to pass callback arguments
@@ -211,12 +238,14 @@ class AetherModel:
                 generator = torch.Generator(device=device).manual_seed(int(seed))
             ctx = torch.autocast("cuda") if torch.cuda.is_available() else nullcontext()
             with ctx:
-                out = self.pipe(prompt,
-                                num_inference_steps=int(steps),
-                                guidance_scale=float(guidance),
-                                width=int(width),
-                                height=int(height),
-                                generator=generator)
+                out = self.pipe(
+                    prompt,
+                    num_inference_steps=int(steps),
+                    guidance_scale=float(guidance),
+                    width=int(width),
+                    height=int(height),
+                    generator=generator,
+                )
                 images = getattr(out, "images", None)
                 if images:
                     return images[0]

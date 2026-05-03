@@ -31,7 +31,9 @@ def _env_float(key: str, default: float) -> float:
 class Config:
     default_model: str = os.environ.get("HF_MODEL_ID", "sd2-community/stable-diffusion-2-1")
     sdxl_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
-    hf_token: str | None = os.environ.get("HUGGINGFACEHUB_API_TOKEN") or os.environ.get("HF_API_TOKEN")
+    hf_token: str | None = os.environ.get("HUGGINGFACEHUB_API_TOKEN") or os.environ.get(
+        "HF_API_TOKEN"
+    )
     use_inference: bool = os.environ.get("USE_HF_INFERENCE", "0") == "1"
     default_width: int = _env_int("DEFAULT_WIDTH", 512)
     default_height: int = _env_int("DEFAULT_HEIGHT", 512)

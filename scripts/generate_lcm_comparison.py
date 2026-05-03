@@ -16,9 +16,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 from aetherart.lcm import LCM_STEPS, LCM_GUIDANCE, apply_lcm_mode, restore_standard_mode
 
-REPO_ROOT  = Path(__file__).resolve().parent.parent
-OUT_PATH   = REPO_ROOT / "docs" / "lcm_comparison.png"
-MODEL_ID   = "sd2-community/stable-diffusion-2-1"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+OUT_PATH = REPO_ROOT / "docs" / "lcm_comparison.png"
+MODEL_ID = "sd2-community/stable-diffusion-2-1"
 
 PROMPTS = [
     "a samurai warrior on horseback, dramatic lighting, cinematic",
@@ -49,8 +49,13 @@ def build_grid(rows: list[tuple[str, list]]) -> Image.Image:
 
     for i, (row_label, images) in enumerate(rows):
         y = i * (THUMB_H + LABEL_H + pad)
-        draw.text((label_col_w // 2, y + THUMB_H // 2), row_label,
-                  fill=(200, 200, 200), font=font, anchor="mm")
+        draw.text(
+            (label_col_w // 2, y + THUMB_H // 2),
+            row_label,
+            fill=(200, 200, 200),
+            font=font,
+            anchor="mm",
+        )
         for j, img in enumerate(images):
             x = label_col_w + j * (THUMB_W + pad)
             grid.paste(img.resize((THUMB_W, THUMB_H), Image.LANCZOS), (x, y))
@@ -59,9 +64,7 @@ def build_grid(rows: list[tuple[str, list]]) -> Image.Image:
 
 def main() -> None:
     print(f"[lcm] Loading {MODEL_ID}")
-    pipe = StableDiffusionPipeline.from_pretrained(
-        MODEL_ID, torch_dtype=torch.float16
-    ).to("cuda")
+    pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16).to("cuda")
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     pipe.set_progress_bar_config(disable=True)
 
@@ -84,7 +87,8 @@ def main() -> None:
                 num_inference_steps=n_steps,
                 guidance_scale=guidance,
                 generator=torch.Generator(device="cuda").manual_seed(SEED),
-                height=IMG_SIZE, width=IMG_SIZE,
+                height=IMG_SIZE,
+                width=IMG_SIZE,
             ).images[0]
             images.append(img)
         elapsed = time.monotonic() - t0

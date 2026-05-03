@@ -15,6 +15,7 @@ logger = get_logger(__name__)
 
 try:
     import cv2
+
     _CV2_AVAILABLE = True
 except ImportError:
     cv2 = None
@@ -22,6 +23,7 @@ except ImportError:
 
 try:
     from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
+
     _DIFFUSERS_CN_AVAILABLE = True
 except ImportError:
     ControlNetModel = None
@@ -30,6 +32,7 @@ except ImportError:
 
 try:
     from transformers import pipeline as hf_pipeline
+
     _TRANSFORMERS_AVAILABLE = True
 except ImportError:
     hf_pipeline = None
@@ -45,9 +48,7 @@ _cn_pipelines: OrderedDict = OrderedDict()
 _depth_estimator = None
 
 
-def _make_cache_key(
-    ctype: str, lora_name: str | None, lora_alpha: float
-) -> tuple:
+def _make_cache_key(ctype: str, lora_name: str | None, lora_alpha: float) -> tuple:
     """Return a hashable cache key, normalising lora_alpha to 2 decimal places."""
     return (ctype, lora_name or "none", round(lora_alpha, 2))
 
@@ -73,8 +74,7 @@ def preprocess_canny(
     """Produce a 3-channel Canny edge map from a PIL image."""
     if not _CV2_AVAILABLE:
         raise RuntimeError(
-            "opencv-python is required for Canny preprocessing. "
-            "Run: pip install opencv-python"
+            "opencv-python is required for Canny preprocessing. " "Run: pip install opencv-python"
         )
     img_rgb = np.array(image.convert("RGB"))
     gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
@@ -135,7 +135,9 @@ def get_pipeline(
 
     logger.info(
         "Building StableDiffusionControlNetPipeline (%s + %s, lora=%s)",
-        cfg.default_model, ctype, lora_name or "none",
+        cfg.default_model,
+        ctype,
+        lora_name or "none",
     )
     token_kwarg = {"token": cfg.hf_token} if cfg.hf_token else {}
     pipe = StableDiffusionControlNetPipeline.from_pretrained(
@@ -148,10 +150,13 @@ def get_pipeline(
     # Load LoRA weights into this pipeline when requested
     if lora_name and lora_name != "none":
         from aetherart.lora import LORA_REGISTRY  # deferred to avoid circular import
+
         config = LORA_REGISTRY.get(lora_name)
         if config:
             lora_path = Path(config["path"])
-            logger.info("Loading LoRA '%s' (alpha=%.2f) into ControlNet pipeline", lora_name, lora_alpha)
+            logger.info(
+                "Loading LoRA '%s' (alpha=%.2f) into ControlNet pipeline", lora_name, lora_alpha
+            )
             pipe.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name)
             try:
                 pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
@@ -163,7 +168,11 @@ def get_pipeline(
     if torch.cuda.is_available():
         try:
             pipe.enable_model_cpu_offload()
-            logger.info("ControlNet pipeline (%s, lora=%s): model CPU offload enabled", ctype, lora_name or "none")
+            logger.info(
+                "ControlNet pipeline (%s, lora=%s): model CPU offload enabled",
+                ctype,
+                lora_name or "none",
+            )
         except Exception as exc:
             logger.debug("CPU offload failed; moving to cuda directly: %s", exc)
             pipe = pipe.to("cuda")

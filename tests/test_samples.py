@@ -1,4 +1,5 @@
 """Tests for the docs/samples/ pre-generated sample directory."""
+
 import json
 import os
 from pathlib import Path
@@ -34,8 +35,11 @@ class TestSamplesDirectory:
             tier_dir = SAMPLES_DIR / tier
             if not tier_dir.exists():
                 continue
-            pngs = [p for p in tier_dir.glob("*.png")
-                    if not any(p.stem.endswith(s) for s in ("_source", "_canny_map", "_depth_map"))]
+            pngs = [
+                p
+                for p in tier_dir.glob("*.png")
+                if not any(p.stem.endswith(s) for s in ("_source", "_canny_map", "_depth_map"))
+            ]
             assert len(pngs) >= 1, f"Tier '{tier}' has no output PNG files"
 
 
@@ -76,9 +80,7 @@ class TestSampleMetadata:
                 continue
             data = json.loads(json_path.read_text(encoding="utf-8"))
             missing_keys = REQUIRED_META_KEYS - set(data.keys())
-            assert not missing_keys, (
-                f"{json_path.name} missing keys: {missing_keys}"
-            )
+            assert not missing_keys, f"{json_path.name} missing keys: {missing_keys}"
 
     def test_inference_time_is_positive_number(self):
         for png in self._output_pngs():
@@ -87,9 +89,9 @@ class TestSampleMetadata:
                 continue
             data = json.loads(json_path.read_text(encoding="utf-8"))
             t = data.get("inference_time_rtx3070_s")
-            assert isinstance(t, (int, float)) and t > 0, (
-                f"{json_path.name}: inference_time_rtx3070_s={t!r} must be a positive number"
-            )
+            assert (
+                isinstance(t, (int, float)) and t > 0
+            ), f"{json_path.name}: inference_time_rtx3070_s={t!r} must be a positive number"
 
     def test_seed_matches_expected(self):
         """All samples use seed 42 by convention."""
@@ -98,6 +100,6 @@ class TestSampleMetadata:
             if not json_path.exists():
                 continue
             data = json.loads(json_path.read_text(encoding="utf-8"))
-            assert data.get("seed") == 42, (
-                f"{json_path.name}: expected seed=42, got {data.get('seed')!r}"
-            )
+            assert (
+                data.get("seed") == 42
+            ), f"{json_path.name}: expected seed=42, got {data.get('seed')!r}"

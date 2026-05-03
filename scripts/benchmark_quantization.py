@@ -15,9 +15,9 @@ import torch
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from PIL import Image
 
-REPO_ROOT  = Path(__file__).resolve().parent.parent
-OUT_PATH   = REPO_ROOT / "reports" / "quantization_benchmark.md"
-MODEL_ID   = "sd2-community/stable-diffusion-2-1"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+OUT_PATH = REPO_ROOT / "reports" / "quantization_benchmark.md"
+MODEL_ID = "sd2-community/stable-diffusion-2-1"
 
 PROMPTS = [
     "a samurai warrior on horseback, dramatic lighting, cinematic",
@@ -25,27 +25,28 @@ PROMPTS = [
     "a tiger prowling through a bamboo forest",
     "cherry blossoms falling over a stone bridge at night",
 ]
-STEPS     = 30
-GUIDANCE  = 7.5
-SEED      = 42
-IMG_SIZE  = 512
+STEPS = 30
+GUIDANCE = 7.5
+SEED = 42
+IMG_SIZE = 512
 
 
 def measure_clip_score(images: list, prompts: list) -> float:
     """Return mean CLIP cosine similarity for the image-text pairs."""
     try:
         import clip
+
         model, preprocess = clip.load("ViT-B/32", device="cuda")
         import numpy as np
 
         scores = []
         for img, text in zip(images, prompts):
             img_t = preprocess(img).unsqueeze(0).to("cuda")
-            tok   = clip.tokenize([text], truncate=True).to("cuda")
+            tok = clip.tokenize([text], truncate=True).to("cuda")
             with torch.no_grad():
-                img_f  = model.encode_image(img_t)
+                img_f = model.encode_image(img_t)
                 text_f = model.encode_text(tok)
-                img_f  = img_f / img_f.norm(dim=-1, keepdim=True)
+                img_f = img_f / img_f.norm(dim=-1, keepdim=True)
                 text_f = text_f / text_f.norm(dim=-1, keepdim=True)
                 scores.append((img_f * text_f).sum().item())
         return float(np.mean(scores))
@@ -65,16 +66,19 @@ def run_benchmark(label: str, pipe, device: str = "cuda") -> dict:
             num_inference_steps=STEPS,
             guidance_scale=GUIDANCE,
             generator=torch.Generator(device=device).manual_seed(SEED),
-            height=IMG_SIZE, width=IMG_SIZE,
+            height=IMG_SIZE,
+            width=IMG_SIZE,
         ).images[0]
         latencies.append(time.monotonic() - t0)
         images.append(img)
 
-    avg_lat   = sum(latencies) / len(latencies)
+    avg_lat = sum(latencies) / len(latencies)
     peak_vram = torch.cuda.max_memory_allocated() / 1024**2
     clip_score = measure_clip_score(images, PROMPTS)
 
-    print(f"  {label}: {avg_lat:.1f}s/img  |  {peak_vram:.0f} MB peak VRAM  |  CLIP={clip_score:.3f}")
+    print(
+        f"  {label}: {avg_lat:.1f}s/img  |  {peak_vram:.0f} MB peak VRAM  |  CLIP={clip_score:.3f}"
+    )
     return {"label": label, "avg_lat": avg_lat, "peak_vram": peak_vram, "clip": clip_score}
 
 
@@ -86,6 +90,7 @@ def load_fp16() -> "StableDiffusionPipeline":
 
 def load_quantized(bits: int) -> "StableDiffusionPipeline":
     from aetherart.quantization import load_sd21_quantized
+
     pipe = load_sd21_quantized(bits=bits)
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     return pipe
@@ -106,7 +111,7 @@ def write_report(results: list[dict]) -> None:
     ]
     for r in results:
         vram_delta = f"{r['peak_vram'] - fp16['peak_vram']:+.0f} MB"
-        clip_str   = f"{r['clip']:.3f}" if r["clip"] == r["clip"] else "n/a"
+        clip_str = f"{r['clip']:.3f}" if r["clip"] == r["clip"] else "n/a"
         lines.append(
             f"| {r['label']} | {r['avg_lat']:.1f} | {r['peak_vram']:.0f} | {clip_str} | {vram_delta} |"
         )
@@ -132,17 +137,21 @@ def main() -> None:
     print("[quant] fp16 baseline")
     pipe = load_fp16()
     results.append(run_benchmark("fp16", pipe))
-    pipe.to("cpu"); del pipe; torch.cuda.empty_cache()
+    pipe.to("cpu")
+    del pipe
+    torch.cuda.empty_cache()
 
     print("[quant] 8-bit INT8")
     pipe = load_quantized(8)
     results.append(run_benchmark("8-bit INT8", pipe, device="cpu"))
-    del pipe; torch.cuda.empty_cache()
+    del pipe
+    torch.cuda.empty_cache()
 
     print("[quant] 4-bit NF4")
     pipe = load_quantized(4)
     results.append(run_benchmark("4-bit NF4", pipe, device="cpu"))
-    del pipe; torch.cuda.empty_cache()
+    del pipe
+    torch.cuda.empty_cache()
 
     write_report(results)
 

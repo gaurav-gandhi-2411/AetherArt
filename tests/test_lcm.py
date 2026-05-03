@@ -1,6 +1,7 @@
 """Tests for LCM mode scheduler switching.
 No GPU or model downloads required — only diffusers.
 """
+
 from unittest.mock import MagicMock, patch
 
 import pytest

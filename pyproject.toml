@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 100
+# Gradio UI-builder blocks and diffusers pipeline call chains are verbose.
+# Default 88 forces awkward mid-argument wraps; 100 keeps them readable.
+
+[tool.isort]
+profile = "black"
+line_length = 100
+# profile = "black" sets: multi_line_output=3, include_trailing_comma=True,
+# force_grid_wrap=0, use_parentheses=True, ensure_newline_before_comments=True.
+# Must match black's line_length to avoid reformat loops.

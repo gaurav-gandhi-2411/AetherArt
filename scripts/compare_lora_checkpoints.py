@@ -119,7 +119,10 @@ def build_grid(rows: list[tuple[str, list[Image.Image]]]) -> Image.Image:
         y = label_h + i * (THUMB_SIZE + pad)
         draw.text(
             (label_w // 2, y + THUMB_SIZE // 2),
-            row_label, fill=(40, 40, 40), font=font_row, anchor="mm",
+            row_label,
+            fill=(40, 40, 40),
+            font=font_row,
+            anchor="mm",
         )
         for j, img in enumerate(images):
             thumb = img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)

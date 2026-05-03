@@ -5,6 +5,7 @@ Saves every candidate + picks nothing automatically (human reviews output).
 Usage:
     conda run -n aetherart python scripts/generate_gallery.py
 """
+
 from __future__ import annotations
 import json, time, shutil
 from pathlib import Path
@@ -17,19 +18,20 @@ from PIL import Image
 OUT = Path("docs/gallery_candidates")
 OUT.mkdir(exist_ok=True)
 
-SD21_MODEL  = "sd2-community/stable-diffusion-2-1"
-SDXL_MODEL  = "stabilityai/sdxl-turbo"
-LORA_PATH   = "data/lora/ukiyo-e/ukiyo-e-lora.safetensors"
+SD21_MODEL = "sd2-community/stable-diffusion-2-1"
+SDXL_MODEL = "stabilityai/sdxl-turbo"
+LORA_PATH = "data/lora/ukiyo-e/ukiyo-e-lora.safetensors"
 
 NEG = (
     "blurry, low quality, deformed, distorted, ugly, bad anatomy, "
     "watermark, signature, text, cropped, out of frame"
 )
 GUIDANCE = 7.5
-STEPS_SD  = 50
-SEEDS     = [42, 1337, 7777, 2024, 9999, 314, 888, 5050]
+STEPS_SD = 50
+SEEDS = [42, 1337, 7777, 2024, 9999, 314, 888, 5050]
 
 # ── helpers ─────────────────────────────────────────────────────────────────
+
 
 def _timer():
     t = time.time()
@@ -46,10 +48,13 @@ def _save(img: Image.Image, meta: dict, path: Path):
 
 def _load_sd21():
     from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
+
     print("Loading SD 2.1...")
     pipe = StableDiffusionPipeline.from_pretrained(
-        SD21_MODEL, torch_dtype=torch.float16,
-        safety_checker=None, requires_safety_checker=False,
+        SD21_MODEL,
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False,
     )
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     pipe = pipe.to("cuda")
@@ -57,13 +62,17 @@ def _load_sd21():
     return pipe
 
 
-def _gen_sd21(pipe, prompt: str, seed: int, width=768, height=768,
-              steps=STEPS_SD, guidance=GUIDANCE) -> tuple[Image.Image, float]:
+def _gen_sd21(
+    pipe, prompt: str, seed: int, width=768, height=768, steps=STEPS_SD, guidance=GUIDANCE
+) -> tuple[Image.Image, float]:
     elapsed = _timer()
     img = pipe(
-        prompt, negative_prompt=NEG,
-        num_inference_steps=steps, guidance_scale=guidance,
-        height=height, width=width,
+        prompt,
+        negative_prompt=NEG,
+        num_inference_steps=steps,
+        guidance_scale=guidance,
+        height=height,
+        width=width,
         generator=torch.Generator("cuda").manual_seed(seed),
     ).images[0]
     return img, elapsed()
@@ -76,12 +85,18 @@ def _batch(pipe, category: str, prompt: str, seeds: list[int], **kw) -> list[Pat
     for seed in seeds:
         img, t = _gen_sd21(pipe, prompt, seed, **kw)
         meta = dict(
-            prompt=prompt, negative_prompt=NEG, seed=seed,
-            steps=kw.get("steps", STEPS_SD), scheduler="DPM-Solver++",
+            prompt=prompt,
+            negative_prompt=NEG,
+            seed=seed,
+            steps=kw.get("steps", STEPS_SD),
+            scheduler="DPM-Solver++",
             guidance_scale=kw.get("guidance", GUIDANCE),
-            width=kw.get("width", 768), height=kw.get("height", 768),
-            model=SD21_MODEL, generation_time_seconds=t,
-            device="RTX 3070 8GB", dtype="fp16",
+            width=kw.get("width", 768),
+            height=kw.get("height", 768),
+            model=SD21_MODEL,
+            generation_time_seconds=t,
+            device="RTX 3070 8GB",
+            dtype="fp16",
         )
         p = cat_dir / f"seed{seed}.png"
         _save(img, meta, p)
@@ -90,6 +105,7 @@ def _batch(pipe, category: str, prompt: str, seeds: list[int], **kw) -> list[Pat
 
 
 # ── CATEGORY 1: Hero ────────────────────────────────────────────────────────
+
 
 def gen_hero(pipe):
     print("\n=== CATEGORY 1: Hero (multiple prompts) ===")
@@ -117,6 +133,7 @@ def gen_hero(pipe):
 
 # ── CATEGORY 2: Standard fp16 ───────────────────────────────────────────────
 
+
 def gen_standard(pipe):
     print("\n=== CATEGORY 2: Standard fp16 ===")
     prompts = {
@@ -136,6 +153,7 @@ def gen_standard(pipe):
 
 
 # ── CATEGORY 3: Ukiyo-e LoRA ────────────────────────────────────────────────
+
 
 def gen_lora(pipe):
     print("\n=== CATEGORY 3: Ukiyo-e LoRA ===")
@@ -172,11 +190,19 @@ def gen_lora(pipe):
         for seed in SEEDS:
             img, t = _gen_sd21(pipe, prompt, seed)
             meta = dict(
-                prompt=prompt, negative_prompt=NEG, seed=seed,
-                steps=STEPS_SD, scheduler="DPM-Solver++",
-                guidance_scale=GUIDANCE, width=768, height=768,
-                model=SD21_MODEL, lora=LORA_PATH if lora_loaded else None,
-                generation_time_seconds=t, device="RTX 3070 8GB", dtype="fp16",
+                prompt=prompt,
+                negative_prompt=NEG,
+                seed=seed,
+                steps=STEPS_SD,
+                scheduler="DPM-Solver++",
+                guidance_scale=GUIDANCE,
+                width=768,
+                height=768,
+                model=SD21_MODEL,
+                lora=LORA_PATH if lora_loaded else None,
+                generation_time_seconds=t,
+                device="RTX 3070 8GB",
+                dtype="fp16",
             )
             p = cat_dir / f"{slug}_seed{seed}.png"
             _save(img, meta, p)
@@ -186,6 +212,7 @@ def gen_lora(pipe):
 
 
 # ── CATEGORY 4: ControlNet Canny ────────────────────────────────────────────
+
 
 def gen_canny(pipe):
     print("\n=== CATEGORY 4: ControlNet Canny ===")
@@ -197,8 +224,11 @@ def gen_canny(pipe):
     print(f"  Loading ControlNet ({cn_id})...")
     controlnet = ControlNetModel.from_pretrained(cn_id, torch_dtype=torch.float16)
     cn_pipe = StableDiffusionControlNetPipeline.from_pretrained(
-        SD21_MODEL, controlnet=controlnet, torch_dtype=torch.float16,
-        safety_checker=None, requires_safety_checker=False,
+        SD21_MODEL,
+        controlnet=controlnet,
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False,
     )
     cn_pipe.scheduler = DPMSolverMultistepScheduler.from_config(cn_pipe.scheduler.config)
     cn_pipe = cn_pipe.to("cuda")
@@ -218,7 +248,7 @@ def gen_canny(pipe):
 
     arr = np.array(src_img)
     edges = cv2.Canny(arr, 100, 200)
-    canny_map = Image.fromarray(np.stack([edges]*3, axis=-1))
+    canny_map = Image.fromarray(np.stack([edges] * 3, axis=-1))
     canny_map.save(cat_dir / "canny_map.png")
 
     prompt = (
@@ -229,21 +259,32 @@ def gen_canny(pipe):
     for seed in SEEDS:
         elapsed = _timer()
         img = cn_pipe(
-            prompt, negative_prompt=NEG,
+            prompt,
+            negative_prompt=NEG,
             image=canny_map,
-            num_inference_steps=STEPS_SD, guidance_scale=GUIDANCE,
-            height=768, width=768,
+            num_inference_steps=STEPS_SD,
+            guidance_scale=GUIDANCE,
+            height=768,
+            width=768,
             generator=torch.Generator("cuda").manual_seed(seed),
             controlnet_conditioning_scale=1.0,
         ).images[0]
         t = elapsed()
         meta = dict(
-            prompt=prompt, negative_prompt=NEG, seed=seed,
-            steps=STEPS_SD, scheduler="DPM-Solver++",
-            guidance_scale=GUIDANCE, width=768, height=768,
-            model=SD21_MODEL, controlnet="canny",
+            prompt=prompt,
+            negative_prompt=NEG,
+            seed=seed,
+            steps=STEPS_SD,
+            scheduler="DPM-Solver++",
+            guidance_scale=GUIDANCE,
+            width=768,
+            height=768,
+            model=SD21_MODEL,
+            controlnet="canny",
             controlnet_source=str(src_path),
-            generation_time_seconds=t, device="RTX 3070 8GB", dtype="fp16",
+            generation_time_seconds=t,
+            device="RTX 3070 8GB",
+            dtype="fp16",
         )
         p = cat_dir / f"seed{seed}.png"
         _save(img, meta, p)
@@ -255,6 +296,7 @@ def gen_canny(pipe):
 
 # ── CATEGORY 5: ControlNet Depth ────────────────────────────────────────────
 
+
 def gen_depth(pipe):
     print("\n=== CATEGORY 5: ControlNet Depth ===")
     from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
@@ -264,8 +306,11 @@ def gen_depth(pipe):
     print(f"  Loading ControlNet ({cn_id})...")
     controlnet = ControlNetModel.from_pretrained(cn_id, torch_dtype=torch.float16)
     cn_pipe = StableDiffusionControlNetPipeline.from_pretrained(
-        SD21_MODEL, controlnet=controlnet, torch_dtype=torch.float16,
-        safety_checker=None, requires_safety_checker=False,
+        SD21_MODEL,
+        controlnet=controlnet,
+        torch_dtype=torch.float16,
+        safety_checker=None,
+        requires_safety_checker=False,
     )
     cn_pipe.scheduler = DPMSolverMultistepScheduler.from_config(cn_pipe.scheduler.config)
     cn_pipe = cn_pipe.to("cuda")
@@ -281,7 +326,11 @@ def gen_depth(pipe):
 
     src_img = Image.open(src_path).convert("RGB").resize((768, 768))
     src_img.save(cat_dir / "source.png")
-    depth_map = Image.open("docs/samples/controlnet_depth/00_depth_map.png").convert("RGB").resize((768, 768))
+    depth_map = (
+        Image.open("docs/samples/controlnet_depth/00_depth_map.png")
+        .convert("RGB")
+        .resize((768, 768))
+    )
     depth_map.save(cat_dir / "depth_map.png")
 
     prompt = (
@@ -292,21 +341,32 @@ def gen_depth(pipe):
     for seed in SEEDS:
         elapsed = _timer()
         img = cn_pipe(
-            prompt, negative_prompt=NEG,
+            prompt,
+            negative_prompt=NEG,
             image=depth_map,
-            num_inference_steps=STEPS_SD, guidance_scale=GUIDANCE,
-            height=768, width=768,
+            num_inference_steps=STEPS_SD,
+            guidance_scale=GUIDANCE,
+            height=768,
+            width=768,
             generator=torch.Generator("cuda").manual_seed(seed),
             controlnet_conditioning_scale=1.0,
         ).images[0]
         t = elapsed()
         meta = dict(
-            prompt=prompt, negative_prompt=NEG, seed=seed,
-            steps=STEPS_SD, scheduler="DPM-Solver++",
-            guidance_scale=GUIDANCE, width=768, height=768,
-            model=SD21_MODEL, controlnet="depth",
+            prompt=prompt,
+            negative_prompt=NEG,
+            seed=seed,
+            steps=STEPS_SD,
+            scheduler="DPM-Solver++",
+            guidance_scale=GUIDANCE,
+            width=768,
+            height=768,
+            model=SD21_MODEL,
+            controlnet="depth",
             controlnet_source=str(src_path),
-            generation_time_seconds=t, device="RTX 3070 8GB", dtype="fp16",
+            generation_time_seconds=t,
+            device="RTX 3070 8GB",
+            dtype="fp16",
         )
         p = cat_dir / f"seed{seed}.png"
         _save(img, meta, p)
@@ -318,15 +378,22 @@ def gen_depth(pipe):
 
 # ── CATEGORY 6: SDXL Turbo ──────────────────────────────────────────────────
 
+
 def gen_turbo():
     print("\n=== CATEGORY 6: SDXL Turbo ===")
     from diffusers import AutoPipelineForText2Image
 
     local_dir = Path("models/sdxl-turbo")
-    src = str(local_dir) if (local_dir / "unet" / "diffusion_pytorch_model.fp16.safetensors").exists() else SDXL_MODEL
+    src = (
+        str(local_dir)
+        if (local_dir / "unet" / "diffusion_pytorch_model.fp16.safetensors").exists()
+        else SDXL_MODEL
+    )
     print(f"  Loading SDXL Turbo from {src}...")
 
-    turbo = AutoPipelineForText2Image.from_pretrained(src, torch_dtype=torch.float16, variant="fp16")
+    turbo = AutoPipelineForText2Image.from_pretrained(
+        src, torch_dtype=torch.float16, variant="fp16"
+    )
     turbo.enable_model_cpu_offload()
 
     cat_dir = OUT / "06_turbo"
@@ -351,16 +418,24 @@ def gen_turbo():
                 prompt=prompt,
                 num_inference_steps=1,
                 guidance_scale=0.0,
-                height=512, width=512,
+                height=512,
+                width=512,
                 generator=torch.Generator("cuda").manual_seed(seed),
             ).images[0]
             t = elapsed()
             meta = dict(
-                prompt=prompt, negative_prompt="", seed=seed,
-                steps=1, scheduler="ADD-1step (Turbo)",
-                guidance_scale=0.0, width=512, height=512,
+                prompt=prompt,
+                negative_prompt="",
+                seed=seed,
+                steps=1,
+                scheduler="ADD-1step (Turbo)",
+                guidance_scale=0.0,
+                width=512,
+                height=512,
                 model="stabilityai/sdxl-turbo",
-                generation_time_seconds=t, device="RTX 3070 8GB", dtype="fp16",
+                generation_time_seconds=t,
+                device="RTX 3070 8GB",
+                dtype="fp16",
             )
             p = cat_dir / f"{slug}_seed{seed}.png"
             _save(img, meta, p)

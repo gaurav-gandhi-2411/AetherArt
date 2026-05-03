@@ -16,18 +16,18 @@ from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from PIL import Image, ImageDraw, ImageFont
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR   = REPO_ROOT / "reports" / "lora_comparison_gallery"
+OUT_DIR = REPO_ROOT / "reports" / "lora_comparison_gallery"
 GRID_PATH = REPO_ROOT / "reports" / "lora_comparison_gallery.png"
 LORA_PATH = REPO_ROOT / "data" / "lora" / "ukiyo-e" / "ukiyo-e-lora.safetensors"
 
-MODEL_ID   = "sd2-community/stable-diffusion-2-1"
-SEED       = 42
-STEPS      = 30
-GUIDANCE   = 7.5
-IMG_SIZE   = 512
+MODEL_ID = "sd2-community/stable-diffusion-2-1"
+SEED = 42
+STEPS = 30
+GUIDANCE = 7.5
+IMG_SIZE = 512
 THUMB_SIZE = 400
-TRIGGER    = "ukyowood"
-LORA_NEG   = "text, watermark, calligraphy, signature, words, letters"
+TRIGGER = "ukyowood"
+LORA_NEG = "text, watermark, calligraphy, signature, words, letters"
 
 # 4 prompts — without trigger (added for LoRA row automatically)
 PROMPTS = [
@@ -46,9 +46,7 @@ ROW_LABELS = ["base SD 2.1", "Ukiyo-e LoRA"]
 
 
 def load_pipeline() -> StableDiffusionPipeline:
-    pipe = StableDiffusionPipeline.from_pretrained(
-        MODEL_ID, torch_dtype=torch.float16
-    ).to("cuda")
+    pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16).to("cuda")
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     pipe.set_progress_bar_config(disable=True)
     return pipe
@@ -94,8 +92,13 @@ def build_grid(rows: list[tuple[str, list[Image.Image]]]) -> Image.Image:
 
     for i, (row_label, images) in enumerate(rows):
         y = label_h + i * (THUMB_SIZE + pad)
-        draw.text((label_w // 2, y + THUMB_SIZE // 2), row_label,
-                  fill=(40, 40, 40), font=font, anchor="mm")
+        draw.text(
+            (label_w // 2, y + THUMB_SIZE // 2),
+            row_label,
+            fill=(40, 40, 40),
+            font=font,
+            anchor="mm",
+        )
         for j, img in enumerate(images):
             thumb = img.resize((THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
             grid.paste(thumb, (label_w + j * (THUMB_SIZE + pad), y))

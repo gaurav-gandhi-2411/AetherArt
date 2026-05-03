@@ -27,8 +27,8 @@ from aetherart.quantization import load_sd21_quantized
 from aetherart.sdxl_turbo import TURBO_MODEL_ID, generate_turbo
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OUT_PATH  = REPO_ROOT / "docs" / "four_tier_showcase.png"
-SD21_ID   = "sd2-community/stable-diffusion-2-1"
+OUT_PATH = REPO_ROOT / "docs" / "four_tier_showcase.png"
+SD21_ID = "sd2-community/stable-diffusion-2-1"
 
 PROMPTS = [
     "a samurai warrior on horseback, dramatic lighting, cinematic",
@@ -36,8 +36,8 @@ PROMPTS = [
     "a tiger prowling through a bamboo forest, painterly",
     "a tea house at the base of Mount Fuji at dusk, ukiyo-e style",
 ]
-SEED      = 42
-IMG_SIZE  = 512
+SEED = 42
+IMG_SIZE = 512
 THUMB_W, THUMB_H = 340, 340
 LABEL_COL_W = 240
 PAD = 4
@@ -62,11 +62,17 @@ def build_grid(rows: list[tuple]) -> Image.Image:
         y = i * (THUMB_H + LABEL_H + PAD)
         draw.text(
             (LABEL_COL_W // 2, y + THUMB_H // 2 - 12),
-            row_label, fill=(220, 220, 220), font=font, anchor="mm",
+            row_label,
+            fill=(220, 220, 220),
+            font=font,
+            anchor="mm",
         )
         draw.text(
             (LABEL_COL_W // 2, y + THUMB_H // 2 + 8),
-            sub_label, fill=(160, 200, 160), font=font_sm, anchor="mm",
+            sub_label,
+            fill=(160, 200, 160),
+            font=font_sm,
+            anchor="mm",
         )
         for j, img in enumerate(images):
             x = LABEL_COL_W + j * (THUMB_W + PAD)
@@ -82,7 +88,8 @@ def gen_batch(pipe, prompts, n_steps, guidance, device="cuda"):
             num_inference_steps=n_steps,
             guidance_scale=guidance,
             generator=torch.Generator(device=device).manual_seed(SEED),
-            height=IMG_SIZE, width=IMG_SIZE,
+            height=IMG_SIZE,
+            width=IMG_SIZE,
         ).images[0]
         images.append(img)
     return images
@@ -111,7 +118,9 @@ def main() -> None:
     print(f"  {per:.1f}s/img")
     rows.append(("LCM fast", f"4-step LCMScheduler  {per:.1f}s/img", imgs))
 
-    pipe.to("cpu"); del pipe; torch.cuda.empty_cache()
+    pipe.to("cpu")
+    del pipe
+    torch.cuda.empty_cache()
 
     # ── Tier 3: 8-bit INT8 ────────────────────────────────────────────────
     print("[4tier] Tier 3: 8-bit INT8 quantized")
@@ -124,7 +133,8 @@ def main() -> None:
     peak_vram = torch.cuda.max_memory_allocated() / 1024**2
     print(f"  {per:.1f}s/img  |  {peak_vram:.0f} MB peak VRAM")
     rows.append(("8-bit INT8", f"30-step  {per:.1f}s/img  {peak_vram:.0f} MB VRAM", imgs))
-    del pipe_q; torch.cuda.empty_cache()
+    del pipe_q
+    torch.cuda.empty_cache()
 
     # ── Tier 4: SDXL Turbo ────────────────────────────────────────────────
     print(f"[4tier] Tier 4: SDXL Turbo  (downloads ~6.7 GB on first run)")
@@ -140,7 +150,9 @@ def main() -> None:
     per = (time.monotonic() - t0) / len(PROMPTS)
     print(f"  {per:.1f}s/img")
     rows.append(("SDXL Turbo", f"1-step ADD  {per:.1f}s/img", imgs))
-    pipe_t.to("cpu"); del pipe_t; torch.cuda.empty_cache()
+    pipe_t.to("cpu")
+    del pipe_t
+    torch.cuda.empty_cache()
 
     # ── assemble + save ───────────────────────────────────────────────────
     grid = build_grid(rows)

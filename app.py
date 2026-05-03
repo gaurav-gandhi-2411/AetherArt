@@ -32,13 +32,13 @@ _active_lora_name: str = "none"
 # ── Sample gallery data ─────────────────────────────────────────────────────
 
 _TIER_LABELS = {
-    "standard_fp16":    "Standard fp16 — 30-step DPM-Solver++",
-    "turbo":            "SDXL Turbo — 1-step adversarial diffusion",
-    "lora_ukiyo_e":     "Ukiyo-e LoRA — rank-8, checkpoint-1000",
+    "standard_fp16": "Standard fp16 — 30-step DPM-Solver++",
+    "turbo": "SDXL Turbo — 1-step adversarial diffusion",
+    "lora_ukiyo_e": "Ukiyo-e LoRA — rank-8, checkpoint-1000",
     "controlnet_canny": "ControlNet Canny — edge conditioning",
     "controlnet_depth": "ControlNet Depth — depth conditioning",
-    "quantized_8bit":   "8-bit INT8 — bitsandbytes quantized U-Net",
-    "quantized_4bit":   "4-bit NF4 — bitsandbytes quantized U-Net",
+    "quantized_8bit": "8-bit INT8 — bitsandbytes quantized U-Net",
+    "quantized_4bit": "4-bit NF4 — bitsandbytes quantized U-Net",
 }
 _TIER_ORDER = list(_TIER_LABELS.keys())
 
@@ -79,6 +79,7 @@ _SAMPLES = _load_samples()
 
 # ── GPU generation functions ────────────────────────────────────────────────
 
+
 def _run_sd21(
     prompt: str,
     negative_prompt: str,
@@ -113,6 +114,7 @@ def _run_sd21(
         if memory_mode not in _quant_pipes:
             _quant_pipes[memory_mode] = quant_mod.load_sd21_quantized(bits=bits)
             from diffusers import DPMSolverMultistepScheduler
+
             _quant_pipes[memory_mode].scheduler = DPMSolverMultistepScheduler.from_config(
                 _quant_pipes[memory_mode].scheduler.config
             )
@@ -125,7 +127,7 @@ def _run_sd21(
             except Exception as e:
                 logger.warning("Model init warning: %s", e)
         active_pipe = MODEL.pipe if MODEL.backend == "local" else None
-        use_lora = (MODEL.backend == "local")
+        use_lora = MODEL.backend == "local"
 
     # Apply / restore LCM scheduler on active_pipe (not MODEL.pipe)
     # Note: no LCM-LoRA for SD 2.1 (only SD 1.5/SDXL); scheduler-only is correct here.
@@ -262,6 +264,7 @@ def _run_turbo(
 
 # ── Gradio event handlers ───────────────────────────────────────────────────
 
+
 def estimate_cpu_time(width: int, height: int, num_steps: int) -> int:
     """Rough CPU generation time estimate in minutes (calibrated at 512×512×20 ≈ 12 min)."""
     pixel_factor = (width * height) / (512 * 512)
@@ -380,7 +383,11 @@ def generate_stream(
 
     # Save image with sidecar metadata
     scheduler_name = "ADD-1step" if speed_mode == "turbo" else "unknown"
-    if speed_mode != "turbo" and MODEL.backend == "local" and getattr(MODEL, "pipe", None) is not None:
+    if (
+        speed_mode != "turbo"
+        and MODEL.backend == "local"
+        and getattr(MODEL, "pipe", None) is not None
+    ):
         try:
             scheduler_name = MODEL.pipe.scheduler.__class__.__name__
         except Exception:
@@ -427,7 +434,15 @@ def reload_model(choice: str) -> str:
 
 
 def load_from_png(file_path: str | None) -> tuple:
-    empty = ("", "", None, cfg.default_steps, cfg.default_guidance, cfg.default_width, cfg.default_height)
+    empty = (
+        "",
+        "",
+        None,
+        cfg.default_steps,
+        cfg.default_guidance,
+        cfg.default_width,
+        cfg.default_height,
+    )
     if file_path is None:
         return empty
     try:
@@ -511,8 +526,8 @@ _PLACEHOLDER = make_placeholder_image(512, 512, "Your generated image will appea
 
 # Adjust defaults for CPU so first-time visitors don't wait 15 minutes
 _default_steps = cfg.default_steps if _HAS_GPU else 20
-_default_w     = cfg.default_width  if _HAS_GPU else 512
-_default_h     = cfg.default_height if _HAS_GPU else 512
+_default_w = cfg.default_width if _HAS_GPU else 512
+_default_h = cfg.default_height if _HAS_GPU else 512
 
 # Feature availability based on hardware — LCM on CPU produces blurry output
 # (no SD 2.1 LCM-LoRA exists; scheduler-only at 4 steps + float32 fallback degrades quality)
@@ -552,7 +567,8 @@ with gr.Blocks() as demo:
                     )
                     prompt = gr.Textbox(
                         placeholder="A modern studio portrait of an astronaut",
-                        label="Prompt", lines=2
+                        label="Prompt",
+                        lines=2,
                     )
                     negative_prompt = gr.Textbox(
                         placeholder="blurry, low quality", label="Negative Prompt", lines=1
@@ -562,11 +578,19 @@ with gr.Blocks() as demo:
                         1.0, 15.0, value=cfg.default_guidance, step=0.5, label="Guidance"
                     )
                     if not _HAS_GPU:
-                        width  = gr.Slider(minimum=512, maximum=768, value=_default_w, step=64, label="Width")
-                        height = gr.Slider(minimum=512, maximum=768, value=_default_h, step=64, label="Height")
+                        width = gr.Slider(
+                            minimum=512, maximum=768, value=_default_w, step=64, label="Width"
+                        )
+                        height = gr.Slider(
+                            minimum=512, maximum=768, value=_default_h, step=64, label="Height"
+                        )
                     else:
-                        width  = gr.Slider(minimum=512, maximum=1024, value=_default_w, step=64, label="Width")
-                        height = gr.Slider(minimum=512, maximum=1024, value=_default_h, step=64, label="Height")
+                        width = gr.Slider(
+                            minimum=512, maximum=1024, value=_default_w, step=64, label="Width"
+                        )
+                        height = gr.Slider(
+                            minimum=512, maximum=1024, value=_default_h, step=64, label="Height"
+                        )
                     seed = gr.Number(value=None, label="Seed (blank = random)", precision=0)
                     gen_btn = gr.Button("Generate", variant="primary")
                     reload_btn = gr.Button("Reload Model")
@@ -581,9 +605,7 @@ with gr.Blocks() as demo:
                 gr.Markdown(
                     "Upload a previously generated PNG to restore its prompt, seed, and settings."
                 )
-                png_upload = gr.File(
-                    label="Upload PNG", file_types=[".png"], type="filepath"
-                )
+                png_upload = gr.File(label="Upload PNG", file_types=[".png"], type="filepath")
                 load_btn = gr.Button("Load Settings from PNG")
 
             with gr.Accordion("ControlNet Conditioning", open=False):
@@ -598,8 +620,7 @@ with gr.Blocks() as demo:
                             label="Conditioning Image", type="pil", sources=["upload"]
                         )
                         control_type = gr.Radio(
-                            ["none", "canny", "depth"], value="none",
-                            label="Conditioning Type"
+                            ["none", "canny", "depth"], value="none", label="Conditioning Type"
                         )
                         control_scale = gr.Slider(
                             0.1, 2.0, value=1.0, step=0.05, label="Conditioning Scale"
@@ -611,9 +632,7 @@ with gr.Blocks() as demo:
                         canny_high = gr.Slider(
                             100, 300, value=200, step=10, label="Canny: High Threshold"
                         )
-                        control_preview = gr.Image(
-                            label="Control Map Preview", interactive=False
-                        )
+                        control_preview = gr.Image(label="Control Map Preview", interactive=False)
                         preview_btn = gr.Button("Preview Control Map")
 
             with gr.Accordion("LoRA Style", open=False):
@@ -629,7 +648,10 @@ with gr.Blocks() as demo:
                     info="ukiyo-e: Japanese woodblock print style (rank-8, SD 2.1, 80 images)",
                 )
                 lora_alpha = gr.Slider(
-                    0.1, 1.5, value=1.0, step=0.1,
+                    0.1,
+                    1.5,
+                    value=1.0,
+                    step=0.1,
                     label="LoRA strength (alpha)",
                     info="1.0 = full strength · >1 = exaggerated style · <1 = subtle blend",
                 )
@@ -657,15 +679,21 @@ with gr.Blocks() as demo:
                     value="fp16",
                     label="U-Net precision",
                     info="fp16: default quality"
-                    + (" · 8bit: balanced memory · 4bit: minimum VRAM" if _HAS_GPU else
-                       " (8bit/4bit require GPU)"),
+                    + (
+                        " · 8bit: balanced memory · 4bit: minimum VRAM"
+                        if _HAS_GPU
+                        else " (8bit/4bit require GPU)"
+                    ),
                 )
 
             with gr.Accordion("Generation Speed Mode", open=True):
                 _speed_desc = (
                     "**Standard** — 30-step DPM-Solver++, best quality"
-                    + (" (~3 s on A10G / ~12 s on RTX 3070)." if _HAS_GPU
-                       else " (~12–15 min at 512×512 on CPU).")
+                    + (
+                        " (~3 s on A10G / ~12 s on RTX 3070)."
+                        if _HAS_GPU
+                        else " (~12–15 min at 512×512 on CPU)."
+                    )
                     + "  \n"
                 )
                 if _HAS_GPU:
@@ -694,9 +722,24 @@ with gr.Blocks() as demo:
             gen_btn.click(
                 fn=generate_stream,
                 inputs=[
-                    prompt, negative_prompt, model_choice, steps, guidance, width, height, seed,
-                    control_image, control_type, control_scale, canny_low, canny_high,
-                    lora_name, lora_alpha, auto_trigger, speed_mode, memory_mode,
+                    prompt,
+                    negative_prompt,
+                    model_choice,
+                    steps,
+                    guidance,
+                    width,
+                    height,
+                    seed,
+                    control_image,
+                    control_type,
+                    control_scale,
+                    canny_low,
+                    canny_high,
+                    lora_name,
+                    lora_alpha,
+                    auto_trigger,
+                    speed_mode,
+                    memory_mode,
                 ],
                 outputs=[out_img, status_md],
                 concurrency_limit=1,

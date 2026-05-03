@@ -8,6 +8,7 @@ Order of operations:
 Run:
     python scripts/deploy_to_hf.py
 """
+
 from pathlib import Path
 from huggingface_hub import HfApi, upload_file
 
@@ -63,5 +64,7 @@ api.upload_folder(
 
 print(f"\nDone. Space: https://huggingface.co/spaces/{REPO_ID}")
 print("Wait ~60 s for Space rebuild, then check status:")
-print(f"  python -c \"from huggingface_hub import HfApi; "
-      f"print(HfApi().space_info('{REPO_ID}').runtime.stage)\"")
+print(
+    f'  python -c "from huggingface_hub import HfApi; '
+    f"print(HfApi().space_info('{REPO_ID}').runtime.stage)\""
+)

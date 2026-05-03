@@ -24,8 +24,8 @@ from aetherart.lcm import LCM_GUIDANCE, LCM_STEPS, apply_lcm_mode, restore_stand
 from aetherart.sdxl_turbo import TURBO_GUIDANCE, TURBO_MODEL_ID, TURBO_STEPS, generate_turbo
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OUT_PATH  = REPO_ROOT / "docs" / "three_tier_comparison.png"
-SD21_ID   = "sd2-community/stable-diffusion-2-1"
+OUT_PATH = REPO_ROOT / "docs" / "three_tier_comparison.png"
+SD21_ID = "sd2-community/stable-diffusion-2-1"
 
 PROMPTS = [
     "a samurai warrior on horseback, dramatic lighting, cinematic",
@@ -60,11 +60,17 @@ def build_grid(rows: list[tuple[str, list, float]]) -> Image.Image:
         y = i * (THUMB_H + LABEL_H + PAD)
         draw.text(
             (LABEL_COL_W // 2, y + THUMB_H // 2 - 10),
-            row_label, fill=(220, 220, 220), font=font, anchor="mm",
+            row_label,
+            fill=(220, 220, 220),
+            font=font,
+            anchor="mm",
         )
         draw.text(
             (LABEL_COL_W // 2, y + THUMB_H // 2 + 10),
-            f"{per_img_s:.1f}s/img", fill=(160, 200, 160), font=font_sm, anchor="mm",
+            f"{per_img_s:.1f}s/img",
+            fill=(160, 200, 160),
+            font=font_sm,
+            anchor="mm",
         )
         for j, img in enumerate(images):
             x = LABEL_COL_W + j * (THUMB_W + PAD)
@@ -77,9 +83,9 @@ def main() -> None:
 
     # ── SD 2.1 standard + LCM ──────────────────────────────────────────────
     print(f"[tier] Loading {SD21_ID}")
-    pipe_sd21 = StableDiffusionPipeline.from_pretrained(
-        SD21_ID, torch_dtype=torch.float16
-    ).to("cuda")
+    pipe_sd21 = StableDiffusionPipeline.from_pretrained(SD21_ID, torch_dtype=torch.float16).to(
+        "cuda"
+    )
     pipe_sd21.scheduler = DPMSolverMultistepScheduler.from_config(pipe_sd21.scheduler.config)
     pipe_sd21.set_progress_bar_config(disable=True)
 
@@ -99,7 +105,8 @@ def main() -> None:
                 num_inference_steps=n_steps,
                 guidance_scale=guidance,
                 generator=torch.Generator(device="cuda").manual_seed(SEED),
-                height=IMG_SIZE, width=IMG_SIZE,
+                height=IMG_SIZE,
+                width=IMG_SIZE,
             ).images[0]
             images.append(img)
         per_img = (time.monotonic() - t0) / len(PROMPTS)
@@ -138,8 +145,8 @@ def main() -> None:
     mb = OUT_PATH.stat().st_size / 1e6
     print(f"\n[tier] Saved: {OUT_PATH}  ({grid.size[0]}×{grid.size[1]} px, {mb:.1f} MB)")
 
-    std_per  = rows[0][2]
-    lcm_per  = rows[1][2]
+    std_per = rows[0][2]
+    lcm_per = rows[1][2]
     turb_per = rows[2][2]
     print(f"[tier] LCM speedup:   {std_per/lcm_per:.1f}×  ({std_per:.1f}s → {lcm_per:.1f}s)")
     print(f"[tier] Turbo speedup: {std_per/turb_per:.1f}×  ({std_per:.1f}s → {turb_per:.1f}s)")

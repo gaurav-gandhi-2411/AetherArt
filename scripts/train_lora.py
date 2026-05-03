@@ -41,7 +41,9 @@ def parse_args():
     )
     p.add_argument("--num-validation-images", type=int, default=4)
     p.add_argument("--validation-epochs", type=int, default=1)
-    p.add_argument("--no-xformers", action="store_true", help="Disable xformers (fallback if not installed)")
+    p.add_argument(
+        "--no-xformers", action="store_true", help="Disable xformers (fallback if not installed)"
+    )
     p.add_argument("--no-gradient-checkpointing", action="store_true")
     return p.parse_args()
 
@@ -59,25 +61,43 @@ def build_command(args, python_exe: str) -> list[str]:
         accelerate_exe += ".exe"
 
     cmd = [
-        accelerate_exe, "launch",
-        "--mixed_precision", args.mixed_precision,
+        accelerate_exe,
+        "launch",
+        "--mixed_precision",
+        args.mixed_precision,
         str(DIFFUSERS_SCRIPT),
-        "--pretrained_model_name_or_path", args.model,
-        "--train_data_dir", str(DATA_DIR),
-        "--caption_column", "text",
-        "--resolution", str(args.resolution),
-        "--train_batch_size", str(args.train_batch_size),
-        "--gradient_accumulation_steps", str(args.grad_accum),
-        "--learning_rate", str(args.lr),
-        "--max_train_steps", str(args.max_train_steps),
-        "--rank", str(args.rank),
-        "--mixed_precision", args.mixed_precision,
-        "--checkpointing_steps", str(args.checkpointing_steps),
-        "--output_dir", str(OUTPUT_DIR),
-        "--validation_prompt", args.validation_prompt,
-        "--num_validation_images", str(args.num_validation_images),
-        "--validation_epochs", str(args.validation_epochs),
-        "--seed", str(args.seed),
+        "--pretrained_model_name_or_path",
+        args.model,
+        "--train_data_dir",
+        str(DATA_DIR),
+        "--caption_column",
+        "text",
+        "--resolution",
+        str(args.resolution),
+        "--train_batch_size",
+        str(args.train_batch_size),
+        "--gradient_accumulation_steps",
+        str(args.grad_accum),
+        "--learning_rate",
+        str(args.lr),
+        "--max_train_steps",
+        str(args.max_train_steps),
+        "--rank",
+        str(args.rank),
+        "--mixed_precision",
+        args.mixed_precision,
+        "--checkpointing_steps",
+        str(args.checkpointing_steps),
+        "--output_dir",
+        str(OUTPUT_DIR),
+        "--validation_prompt",
+        args.validation_prompt,
+        "--num_validation_images",
+        str(args.num_validation_images),
+        "--validation_epochs",
+        str(args.validation_epochs),
+        "--seed",
+        str(args.seed),
     ]
 
     if not args.no_gradient_checkpointing:

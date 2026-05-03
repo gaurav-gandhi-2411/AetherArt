@@ -15,6 +15,7 @@ peak allocation during inference is not.
 8-bit INT8 is the best choice for VRAM-constrained setups where latency is acceptable.
 4-bit NF4 is useful when stored model size matters more than inference peak VRAM.
 """
+
 from __future__ import annotations
 
 from typing import Literal

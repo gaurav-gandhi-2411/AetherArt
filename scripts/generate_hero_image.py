@@ -17,18 +17,18 @@ from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
 from PIL import Image, ImageDraw, ImageFont
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR   = REPO_ROOT / "docs" / "hero_tiles"
+OUT_DIR = REPO_ROOT / "docs" / "hero_tiles"
 HERO_PATH = REPO_ROOT / "docs" / "hero.png"
 LORA_PATH = REPO_ROOT / "data" / "lora" / "ukiyo-e" / "ukiyo-e-lora.safetensors"
 
-MODEL_ID  = "sd2-community/stable-diffusion-2-1"
-SEED      = 42
-GUIDANCE  = 7.5
-IMG_SIZE  = 512
-THUMB_W   = 640
-THUMB_H   = 640
-TRIGGER   = "ukyowood"
-NEGATIVE  = "text, watermark, calligraphy, signature, words, letters, low quality, blurry"
+MODEL_ID = "sd2-community/stable-diffusion-2-1"
+SEED = 42
+GUIDANCE = 7.5
+IMG_SIZE = 512
+THUMB_W = 640
+THUMB_H = 640
+TRIGGER = "ukyowood"
+NEGATIVE = "text, watermark, calligraphy, signature, words, letters, low quality, blurry"
 
 PROMPTS = [
     "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset with reflections in calm water, cherry blossoms",
@@ -45,9 +45,7 @@ LABELS = [
 
 
 def load_pipeline(steps: int) -> StableDiffusionPipeline:
-    pipe = StableDiffusionPipeline.from_pretrained(
-        MODEL_ID, torch_dtype=torch.float16
-    ).to("cuda")
+    pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16).to("cuda")
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     pipe.set_progress_bar_config(disable=False)
     return pipe
@@ -86,7 +84,10 @@ def build_grid(images: list[Image.Image]) -> Image.Image:
         grid.paste(thumb, (x, y))
         draw.text(
             (x + THUMB_W // 2, y + THUMB_H + label_h // 2),
-            label, fill=(200, 200, 200), font=font, anchor="mm",
+            label,
+            fill=(200, 200, 200),
+            font=font,
+            anchor="mm",
         )
     return grid
 
