@@ -1,6 +1,7 @@
 import json
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -75,3 +76,17 @@ def test_get_git_commit_returns_string():
     commit = get_git_commit()
     assert isinstance(commit, str)
     assert len(commit) > 0
+
+
+def test_get_git_commit_returns_unknown_on_exception():
+    with patch("aetherart.metadata.subprocess.run", side_effect=FileNotFoundError("git not found")):
+        result = get_git_commit()
+    assert result == "unknown"
+
+
+def test_get_git_commit_returns_unknown_on_nonzero_returncode():
+    with patch("aetherart.metadata.subprocess.run") as mock_run:
+        mock_run.return_value.returncode = 128
+        mock_run.return_value.stdout = ""
+        result = get_git_commit()
+    assert result == "unknown"
