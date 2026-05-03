@@ -8,12 +8,17 @@ Usage:
 
 from __future__ import annotations
 
+import atexit
 import json
 import time
 from pathlib import Path
 
 import torch
 from PIL import Image
+
+from aetherart.gpu_hygiene import cleanup_gpu
+
+atexit.register(cleanup_gpu)
 
 # ── constants ───────────────────────────────────────────────────────────────
 
@@ -457,26 +462,32 @@ def gen_turbo():
 # ── main ────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    t_total = _timer()
-
-    # SD 2.1 pipe shared across cats 1-3; ControlNet loads its own
-    pipe = _load_sd21()
-
-    gen_hero(pipe)
-    gen_standard(pipe)
-    gen_lora(pipe)
-
-    # Unload SD 2.1 to free VRAM for ControlNet pipelines
-    del pipe
-    torch.cuda.empty_cache()
     pipe = None
+    try:
+        t_total = _timer()
 
-    gen_canny(pipe)
-    gen_depth(pipe)
+        # SD 2.1 pipe shared across cats 1-3; ControlNet loads its own
+        pipe = _load_sd21()
 
-    # SDXL Turbo last (separate pipeline)
-    gen_turbo()
+        gen_hero(pipe)
+        gen_standard(pipe)
+        gen_lora(pipe)
 
-    print(f"\n=== DONE — total GPU time: {t_total()}s ===")
-    print(f"Candidates in: {OUT}/")
-    print("Review each category subfolder and pick your favourite.")
+        # Unload SD 2.1 to free VRAM for ControlNet pipelines
+        del pipe
+        pipe = None
+        cleanup_gpu(verbose=True)
+
+        gen_canny(None)
+        gen_depth(None)
+
+        # SDXL Turbo last (separate pipeline)
+        gen_turbo()
+
+        print(f"\n=== DONE — total GPU time: {t_total()}s ===")
+        print(f"Candidates in: {OUT}/")
+        print("Review each category subfolder and pick your favourite.")
+    finally:
+        if pipe is not None:
+            del pipe
+        cleanup_gpu(verbose=True)
