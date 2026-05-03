@@ -4,6 +4,17 @@
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<table>
+  <tr>
+    <td><img src="docs/gallery/01_hero_fuji_blossom.png" width="384" alt="Fuji Blossom"></td>
+    <td><img src="docs/gallery/03_lora_samurai.png" width="384" alt="Samurai LoRA"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/gallery/05_depth_cyberpunk.png" width="384" alt="Cyberpunk Depth"></td>
+    <td><img src="docs/gallery/02_standard_wizard.png" width="384" alt="Wizard"></td>
+  </tr>
+</table>
+
 > I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
 
 <!-- Demo GIF — add after recording: ![AetherArt demo](docs/aetherart_demo.gif) -->
@@ -50,29 +61,17 @@ This README documents the engineering decisions I made, including the ones that 
 
 ## Architecture
 
-```
-User Prompt
-    │
-    ▼
-[Prompt Builder] ─── LoRA active? ──→ prepend trigger token + inject negative
-    │
-    ▼
-[SD 2.1 U-Net]
-    │                     │
-    │  ControlNet active?  │
-    └────────────────────→ [ControlNet Preprocessor]
-                                    │
-                              Canny / Depth map
-                                    │
-                            [ControlNet Pipeline]
-    │                               │
-    └───────────── merge ───────────┘
-                       │
-                       ▼
-               Generated Image
-                       │
-                       ▼
-          PNG + sidecar JSON (metadata)
+```mermaid
+flowchart TD
+    A[User Prompt] --> B[Prompt Builder]
+    B -- LoRA active --> B1[Prepend trigger + negative]
+    B --> C[SD 2.1 UNet]
+    C -- ControlNet? --> D[ControlNet Preprocessor]
+    D --> E[Canny or Depth Map]
+    E --> F[ControlNet Pipeline]
+    C --> G[Generated Image]
+    F --> G
+    G --> H[PNG + sidecar JSON]
 ```
 
 | Component | Model | Role |
@@ -176,21 +175,21 @@ A small selection of outputs across AetherArt's four major capabilities. All gen
 
 ### Hero — Photorealistic SD 2.1
 
-![Hero — Mount Fuji at golden hour with cherry blossoms](docs/gallery/01_hero_fuji_blossom.png)
+<img src="docs/gallery/01_hero_fuji_blossom.png" width="768" alt="Hero — Mount Fuji at golden hour with cherry blossoms">
 
 > *"Mount Fuji at golden hour, reflections in a perfectly still lake, foreground cherry blossom branches, traditional Japanese woodblock print fused with photorealism, ultra detailed, cinematic, masterpiece"*  
 > Seed 1337 · 50 steps · DPM-Solver++ · 768×768 · fp16 · 23.7s · [metadata](docs/gallery/01_hero_fuji_blossom.json)
 
 ### Standard SD 2.1 — Fantasy Composition
 
-![Standard — wizard reading by candlelight](docs/gallery/02_standard_wizard.png)
+<img src="docs/gallery/02_standard_wizard.png" width="768" alt="Standard — wizard reading by candlelight">
 
 > *"a wise old wizard reading an ancient leather-bound book by candlelight, intricate magical symbols floating around him, warm golden light, photorealistic fantasy, ultra detailed, dramatic shadows"*  
 > Seed 888 · 50 steps · DPM-Solver++ · 768×768 · fp16 · 24.0s · [metadata](docs/gallery/02_standard_wizard.json)
 
 ### Custom Ukiyo-e LoRA — Fine-Tuned on RTX 3070
 
-![LoRA — samurai warrior in ukiyo-e style](docs/gallery/03_lora_samurai.png)
+<img src="docs/gallery/03_lora_samurai.png" width="768" alt="LoRA — samurai warrior in ukiyo-e style">
 
 > *"a samurai warrior in flowing silk robes against a blazing sunset, traditional ukiyo-e woodblock style, bold graphic lines, rich colors, atmospheric"*  
 > Seed 1337 · 50 steps · DPM-Solver++ · 768×768 · fp16 · LoRA: `ukiyo-e-lora.safetensors` (weight 1.0) · [metadata](docs/gallery/03_lora_samurai.json)
@@ -199,21 +198,21 @@ A small selection of outputs across AetherArt's four major capabilities. All gen
 
 ### ControlNet — Canny Edge Conditioning
 
-![Canny — ornate temple gates in mountain mist](docs/gallery/04_canny_temple.png)
+<img src="docs/gallery/04_canny_temple.png" width="768" alt="Canny — ornate temple gates in mountain mist">
 
 > *"an ornate ancient temple in mystical mountain mist, fantasy art, ultra detailed, atmospheric, dramatic lighting, cinematic"*  
 > ControlNet: Canny · Source: [edge image](docs/gallery/04_canny_source.png) · Seed 1337 · 50 steps · 768×768 · [metadata](docs/gallery/04_canny_temple.json)
 
 ### ControlNet — Depth Conditioning
 
-![Depth — cyberpunk neon street with rain reflections](docs/gallery/05_depth_cyberpunk.png)
+<img src="docs/gallery/05_depth_cyberpunk.png" width="768" alt="Depth — cyberpunk neon street with rain reflections">
 
 > *"a futuristic neon-lit Asian metropolis at night, cyberpunk aesthetic, rain-slicked streets reflecting holographic advertisements, ultra detailed, cinematic"*  
 > ControlNet: Depth · Source: [depth image](docs/gallery/05_depth_source.png) · Seed 1337 · 50 steps · 768×768 · [metadata](docs/gallery/05_depth_cyberpunk.json)
 
 ### SDXL Turbo — 1-Step Adversarial Generation
 
-![Turbo — bioluminescent underwater palace](docs/gallery/06_turbo_bioluminescent.png)
+<img src="docs/gallery/06_turbo_bioluminescent.png" width="768" alt="Turbo — bioluminescent underwater palace">
 
 > *"an underwater city of bioluminescent coral and ancient ruins, mystical sea creatures, divine light rays, ultra detailed fantasy, epic"*  
 > Model: SDXL Turbo · Steps: 1 · Seed 1337 · 512×512 · 4.0s · [metadata](docs/gallery/06_turbo_bioluminescent.json)
@@ -227,7 +226,6 @@ Pre-generated on RTX 3070 8 GB, seed 42, 512×512. Visible in the **Sample Outpu
 | Tier | RTX 3070 | VRAM |
 |---|---|---|
 | Standard fp16 | 3.2–3.7 s/img | ~3.1 GB |
-| LCM 4-step | 0.6–0.8 s/img | ~3.1 GB |
 | SDXL Turbo | 3.3 s/img | ~6.0 GB |
 | Ukiyo-e LoRA | 3.5–4.0 s/img | ~3.5 GB |
 | ControlNet Canny | 4–5 s/img | ~5.8 GB |

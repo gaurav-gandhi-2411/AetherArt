@@ -33,7 +33,6 @@ _active_lora_name: str = "none"
 
 _TIER_LABELS = {
     "standard_fp16":    "Standard fp16 — 30-step DPM-Solver++",
-    "lcm":              "LCM 4-step — LCMScheduler",
     "turbo":            "SDXL Turbo — 1-step adversarial diffusion",
     "lora_ukiyo_e":     "Ukiyo-e LoRA — rank-8, checkpoint-1000",
     "controlnet_canny": "ControlNet Canny — edge conditioning",
@@ -99,6 +98,7 @@ def _run_sd21(
     control_scale: float,
     canny_low: int,
     canny_high: int,
+    step_callback: Optional[callable] = None,
 ) -> tuple:
     """SD 2.1 generation (standard / LCM / quantized). Returns (PIL.Image, gen_time_s, vram_mb)."""
     global _quant_pipes, _active_lora_name
@@ -139,6 +139,11 @@ def _run_sd21(
         run_guidance = guidance
         if active_pipe is not None and lcm_mod.is_lcm_scheduler(active_pipe):
             lcm_mod.restore_standard_mode(active_pipe)
+
+    def _on_step_end(pipe, step_i, t, callback_kwargs):
+        if step_callback is not None:
+            step_callback(step_i + 1, run_steps)
+        return callback_kwargs
 
     # LoRA trigger-token injection
     effective_prompt = prompt
@@ -183,6 +188,8 @@ def _run_sd21(
                 height=height,
                 generator=generator,
                 controlnet_conditioning_scale=float(control_scale),
+                callback_on_step_end=_on_step_end,
+                callback_on_step_end_tensor_inputs=[],
             )
         else:
             out = active_pipe(
@@ -193,6 +200,8 @@ def _run_sd21(
                 width=width,
                 height=height,
                 generator=generator,
+                callback_on_step_end=_on_step_end,
+                callback_on_step_end_tensor_inputs=[],
             )
 
         images = getattr(out, "images", None)
@@ -279,6 +288,7 @@ def generate_stream(
     auto_trigger: bool = True,
     speed_mode: str = "standard",
     memory_mode: str = "fp16",
+    progress: gr.Progress = gr.Progress(),
 ) -> Generator[tuple[Optional[Image.Image], str], None, None]:
     """Stream a status message, run generation, yield the final image."""
     try:
@@ -326,7 +336,11 @@ def generate_stream(
         else:
             yield None, f"**Generating ({mode_label}, seed {actual_seed})...**"
 
+        def _step_cb(done: int, total: int) -> None:
+            progress(done / total, desc=f"Step {done}/{total}")
+
         if speed_mode == "turbo":
+            progress(0, desc="Running SDXL Turbo (1 step)…")
             img, gen_time, vram_mb = _run_turbo(
                 prompt=prompt,
                 negative_prompt=negative_prompt or "",
@@ -336,6 +350,7 @@ def generate_stream(
             )
         else:
             effective_steps = lcm_mod.LCM_STEPS if speed_mode == "fast_lcm" else int(steps)
+            progress(0, desc=f"Generating ({mode_label}, seed {actual_seed})…")
             img, gen_time, vram_mb = _run_sd21(
                 prompt=prompt,
                 negative_prompt=negative_prompt or "",
@@ -355,6 +370,7 @@ def generate_stream(
                 control_scale=float(control_scale),
                 canny_low=int(canny_low),
                 canny_high=int(canny_high),
+                step_callback=_step_cb,
             )
 
     except Exception as e:
@@ -397,6 +413,7 @@ def generate_stream(
 
     latency_str = f"{gen_time:.1f}s"
     vram_str = f" — VRAM: {vram_mb:.0f} MB" if vram_mb > 0 else ""
+    progress(1.0, desc="Done!")
     yield img, f"**Done — {mode_label} — {latency_str}{vram_str}** — Saved: `{out_path}`"
 
 
@@ -514,7 +531,7 @@ with gr.Blocks() as demo:
             "(minimum for coherent output). Higher resolution = better quality but "
             "proportionally longer wait.  \n"
             ">  \n"
-            "> See the **Sample Outputs** tab for instant viewing of 24 results from a local "
+            "> See the **Sample Outputs** tab for instant viewing of 20 results from a local "
             "RTX 3070, or clone the "
             "[repo](https://github.com/gaurav-gandhi-2411/AetherArt) "
             "for full GPU acceleration."
