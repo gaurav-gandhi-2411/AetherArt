@@ -25,9 +25,17 @@ jobs:
           pip install -e .
           pip install -r requirements-dev.txt
 
-      - name: Lint
+      - name: Lint (flake8)
         run: |
-          flake8 aetherart || true
+          flake8 aetherart/ app.py scripts/ tests/
+
+      - name: Format check (black)
+        run: |
+          black --check aetherart/ app.py scripts/ tests/
+
+      - name: Import order check (isort)
+        run: |
+          isort --check-only aetherart/ app.py scripts/ tests/
 
       - name: Run tests
         run: |
