@@ -9,7 +9,7 @@ from PIL import Image
 
 pytest.importorskip("cv2", reason="opencv-python not installed")
 
-from aetherart.controlnet import preprocess_canny, preprocess
+from aetherart.controlnet import preprocess_canny, preprocess  # noqa: E402
 
 
 def _solid(w=64, h=64, color=(128, 128, 128)) -> Image.Image:

@@ -137,7 +137,7 @@ def main() -> None:
     torch.cuda.empty_cache()
 
     # ── Tier 4: SDXL Turbo ────────────────────────────────────────────────
-    print(f"[4tier] Tier 4: SDXL Turbo  (downloads ~6.7 GB on first run)")
+    print("[4tier] Tier 4: SDXL Turbo  (downloads ~6.7 GB on first run)")
     pipe_t = AutoPipelineForText2Image.from_pretrained(
         TURBO_MODEL_ID, torch_dtype=torch.float16, variant="fp16"
     ).to("cuda")

@@ -1,7 +1,8 @@
 """Resume gallery generation — categories 4, 5, 6 only (1-3 already complete)."""
 
 from __future__ import annotations
-import sys, os
+import sys
+import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

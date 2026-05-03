@@ -1,0 +1,14 @@
+{
+  "prompt": "a cosmic library with infinite shelves of glowing ancient books, ethereal light beams, mystical atmosphere, ultra detailed, dreamlike",
+  "negative_prompt": "",
+  "seed": 314,
+  "steps": 1,
+  "scheduler": "ADD-1step (Turbo)",
+  "guidance_scale": 0.0,
+  "width": 512,
+  "height": 512,
+  "model": "stabilityai/sdxl-turbo",
+  "generation_time_seconds": 3.9,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}

@@ -21,7 +21,7 @@ from diffusers import (
 from PIL import Image, ImageDraw, ImageFont
 
 from aetherart.lcm import LCM_GUIDANCE, LCM_STEPS, apply_lcm_mode, restore_standard_mode
-from aetherart.sdxl_turbo import TURBO_GUIDANCE, TURBO_MODEL_ID, TURBO_STEPS, generate_turbo
+from aetherart.sdxl_turbo import TURBO_MODEL_ID, TURBO_STEPS, generate_turbo
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_PATH = REPO_ROOT / "docs" / "three_tier_comparison.png"

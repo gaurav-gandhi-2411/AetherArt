@@ -13,7 +13,6 @@ from pathlib import Path
 
 import torch
 from diffusers import DPMSolverMultistepScheduler, StableDiffusionPipeline
-from PIL import Image
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 OUT_PATH = REPO_ROOT / "reports" / "quantization_benchmark.md"
@@ -113,7 +112,7 @@ def write_report(results: list[dict]) -> None:
         vram_delta = f"{r['peak_vram'] - fp16['peak_vram']:+.0f} MB"
         clip_str = f"{r['clip']:.3f}" if r["clip"] == r["clip"] else "n/a"
         lines.append(
-            f"| {r['label']} | {r['avg_lat']:.1f} | {r['peak_vram']:.0f} | {clip_str} | {vram_delta} |"
+            f"| {r['label']} | {r['avg_lat']:.1f} | {r['peak_vram']:.0f} | {clip_str} | {vram_delta} |"  # noqa: E501
         )
 
     lines += [

@@ -1,7 +1,6 @@
 """Tests for the docs/samples/ pre-generated sample directory."""
 
 import json
-import os
 from pathlib import Path
 
 import pytest

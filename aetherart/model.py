@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from typing import Optional, Dict, Any
 import inspect
 import torch
@@ -21,8 +22,6 @@ try:
     from huggingface_hub import InferenceClient
 except Exception:
     InferenceClient = None
-
-from contextlib import nullcontext
 
 
 def _preferred_dtype_kwarg(fn) -> Optional[str]:

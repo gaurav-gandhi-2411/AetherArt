@@ -171,7 +171,7 @@ def main() -> None:
     size_mb = GRID_PATH.stat().st_size / 1e6
     print(f"[compare] Grid saved: {GRID_PATH}")
     print(f"          {grid.size[0]} x {grid.size[1]} px, {size_mb:.1f} MB")
-    print(f"\n[compare] Individual images: reports/lora_validation/")
+    print("\n[compare] Individual images: reports/lora_validation/")
     for row_label, _ in rows:
         print(f"          {row_label.splitlines()[0]}/")
 

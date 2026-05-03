@@ -1,0 +1,14 @@
+{
+  "prompt": "an ancient samurai meditating on a cliff at dawn, swirling cherry blossom petals, atmospheric mist, traditional ink painting style merged with cinematic photography, ultra detailed, dramatic golden light, masterpiece",
+  "negative_prompt": "blurry, low quality, deformed, distorted, ugly, bad anatomy, watermark, signature, text, cropped, out of frame",
+  "seed": 314,
+  "steps": 50,
+  "scheduler": "DPM-Solver++",
+  "guidance_scale": 7.5,
+  "width": 768,
+  "height": 768,
+  "model": "sd2-community/stable-diffusion-2-1",
+  "generation_time_seconds": 24.0,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}

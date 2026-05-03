@@ -1,0 +1,14 @@
+{
+  "prompt": "an underwater city of bioluminescent coral and ancient ruins, mystical sea creatures, divine light rays, ultra detailed fantasy, epic",
+  "negative_prompt": "",
+  "seed": 9999,
+  "steps": 1,
+  "scheduler": "ADD-1step (Turbo)",
+  "guidance_scale": 0.0,
+  "width": 512,
+  "height": 512,
+  "model": "stabilityai/sdxl-turbo",
+  "generation_time_seconds": 4.1,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}

@@ -97,7 +97,7 @@ def caption_blip(img: Image.Image) -> str:
 def caption_template(artist_int: int) -> str:
     if ARTIST_NAMES and 0 <= artist_int < len(ARTIST_NAMES):
         artist = ARTIST_NAMES[artist_int].replace("_", " ")
-        return f"{TRIGGER_TOKEN}, ukiyo-e woodblock print by {artist}, traditional Japanese woodblock art"
+        return f"{TRIGGER_TOKEN}, ukiyo-e woodblock print by {artist}, traditional Japanese woodblock art"  # noqa: E501
     return f"{TRIGGER_TOKEN}, ukiyo-e woodblock print, traditional Japanese woodblock art"
 
 

@@ -18,9 +18,12 @@ peak allocation during inference is not.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import torch
+
+if TYPE_CHECKING:
+    from diffusers import StableDiffusionPipeline
 
 MODEL_ID = "sd2-community/stable-diffusion-2-1"
 

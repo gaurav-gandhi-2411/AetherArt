@@ -21,7 +21,6 @@ import argparse
 import json
 import sys
 import time
-from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -518,7 +517,8 @@ def main() -> None:
 
     if model.backend != "local" or model.pipe is None:
         sys.exit(
-            "Eval requires a local pipeline — set USE_HF_INFERENCE=0 and ensure diffusers is installed."
+            "Eval requires a local pipeline — set USE_HF_INFERENCE=0 "
+            "and ensure diffusers is installed."
         )
 
     # Prime CLIP scorer (downloads weights once)
@@ -547,7 +547,7 @@ def main() -> None:
         status = (
             "ERROR"
             if result.get("error")
-            else f"clip={result['clip_score']:.4f} lat={result['latency_s']:.1f}s vram={result['vram_peak_gb']:.2f}GB"
+            else f"clip={result['clip_score']:.4f} lat={result['latency_s']:.1f}s vram={result['vram_peak_gb']:.2f}GB"  # noqa: E501
         )
         logger.info(
             "[%d/%d] %s / %s / %dsteps — %s",

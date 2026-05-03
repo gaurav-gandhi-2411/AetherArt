@@ -102,7 +102,7 @@ def _run_sd21(
     step_callback: Optional[callable] = None,
 ) -> tuple:
     """SD 2.1 generation (standard / LCM / quantized). Returns (PIL.Image, gen_time_s, vram_mb)."""
-    global _quant_pipes, _active_lora_name
+    global _active_lora_name
 
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
@@ -666,7 +666,8 @@ with gr.Blocks() as demo:
                     "**fp16** (default) — full precision U-Net, ~4.5 GB VRAM peak.  \n"
                     "**8-bit INT8** — bitsandbytes quantized U-Net, ~2.5 GB VRAM. *GPU only.*  \n"
                     "**4-bit NF4** — aggressively quantized, ~1.5 GB VRAM. *GPU only.*  \n"
-                    "Quantized pipelines are cached after first load. LoRA is disabled in quantized mode."
+                    "Quantized pipelines are cached after first load. "
+                    "LoRA is disabled in quantized mode."
                 )
                 if not _HAS_GPU:
                     _mem_desc += (
@@ -698,7 +699,8 @@ with gr.Blocks() as demo:
                 )
                 if _HAS_GPU:
                     _speed_desc += (
-                        "**Fast (LCM)** — 4-step LCMScheduler, ~5.8× faster, moderate quality reduction. "
+                        "**Fast (LCM)** — 4-step LCMScheduler, ~5.8× faster, "
+                        "moderate quality reduction. "
                         "Uses scheduler-only LCM (no LCM-LoRA exists for SD 2.1).  \n"
                         "**Turbo (SDXL)** — 1-step adversarial diffusion. "
                         "Requires first-use download (~6.7 GB). LoRA/ControlNet not supported."

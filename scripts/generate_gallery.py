@@ -7,7 +7,8 @@ Usage:
 """
 
 from __future__ import annotations
-import json, time, shutil
+import json
+import time
 from pathlib import Path
 
 import torch
@@ -173,7 +174,7 @@ def gen_lora(pipe):
 
     prompts = {
         "fuji_waves": (
-            f"{trigger} Mount Fuji with crashing waves and cherry blossoms in the style of Hokusai, "
+            f"{trigger} Mount Fuji with crashing waves and cherry blossoms in the style of Hokusai, "  # noqa: E501
             "traditional Japanese woodblock print, vibrant colors, bold outlines, masterpiece"
         ),
         "samurai_sunset": (
@@ -218,7 +219,8 @@ def gen_canny(pipe):
     print("\n=== CATEGORY 4: ControlNet Canny ===")
     from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
     from diffusers import DPMSolverMultistepScheduler
-    import cv2, numpy as np
+    import cv2
+    import numpy as np
 
     cn_id = "thibaud/controlnet-sd21-canny-diffusers"
     print(f"  Loading ControlNet ({cn_id})...")

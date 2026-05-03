@@ -1,0 +1,16 @@
+{
+  "prompt": "a futuristic neon-lit Asian metropolis at night, cyberpunk aesthetic, rain-slicked streets reflecting holographic advertisements, ultra detailed, cinematic",
+  "negative_prompt": "blurry, low quality, deformed, distorted, ugly, bad anatomy, watermark, signature, text, cropped, out of frame",
+  "seed": 2024,
+  "steps": 50,
+  "scheduler": "DPM-Solver++",
+  "guidance_scale": 7.5,
+  "width": 768,
+  "height": 768,
+  "model": "sd2-community/stable-diffusion-2-1",
+  "controlnet": "depth",
+  "controlnet_source": "docs\\samples\\controlnet_depth\\00_source.png",
+  "generation_time_seconds": 33.2,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}

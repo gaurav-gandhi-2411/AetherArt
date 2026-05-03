@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 100
+extend-ignore = E203, W503
+per-file-ignores =
+    # Vendored HuggingFace training script — not our code to reformat
+    scripts/_diffusers_train_text_to_image_lora.py: E501
+    # sys.path.insert before imports is intentional for standalone script execution
+    scripts/eval.py: E402
+    scripts/_resume_samples.py: E402
+    scripts/resume_gallery_cats456.py: E402

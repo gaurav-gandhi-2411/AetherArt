@@ -31,8 +31,8 @@ TRIGGER = "ukyowood"
 NEGATIVE = "text, watermark, calligraphy, signature, words, letters, low quality, blurry"
 
 PROMPTS = [
-    "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset with reflections in calm water, cherry blossoms",
-    "ukyowood ukiyo-e woodblock print of two samurai warriors duelling under cherry blossoms, dramatic pose",
+    "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset with reflections in calm water, cherry blossoms",  # noqa: E501
+    "ukyowood ukiyo-e woodblock print of two samurai warriors duelling under cherry blossoms, dramatic pose",  # noqa: E501
     "ukyowood ukiyo-e woodblock print of a tiger leaping through a bamboo forest, bold colours",
     "ukyowood ukiyo-e woodblock print of a tea ceremony in a moonlit pavilion overlooking a garden",
 ]

@@ -1,0 +1,17 @@
+{
+  "prompt": "ukyowood Mount Fuji with crashing waves and cherry blossoms in the style of Hokusai, traditional Japanese woodblock print, vibrant colors, bold outlines, masterpiece",
+  "negative_prompt": "blurry, low quality, deformed, distorted, ugly, bad anatomy, watermark, signature, text, cropped, out of frame",
+  "seed": 2024,
+  "steps": 50,
+  "scheduler": "DPM-Solver++",
+  "guidance_scale": 7.5,
+  "width": 768,
+  "height": 768,
+  "model": "sd2-community/stable-diffusion-2-1",
+  "lora": "data/lora/ukiyo-e/ukiyo-e-lora.safetensors",
+  "adapter_name": "ukiyo_e",
+  "lora_weight": 1.0,
+  "generation_time_seconds": 24.7,
+  "device": "RTX 3070 8GB",
+  "dtype": "fp16"
+}
