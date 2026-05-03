@@ -1,15 +1,21 @@
 """Tests for LCM mode scheduler switching.
 No GPU or model downloads required — only diffusers.
 """
-import pytest
 from unittest.mock import MagicMock, patch
 
-from aetherart.lcm import (
-    LCM_STEPS,
+import pytest
+
+# Entire module requires diffusers — skip cleanly when not installed.
+diffusers = pytest.importorskip("diffusers", reason="diffusers required for scheduler tests")
+LCMScheduler = diffusers.LCMScheduler
+DPMSolverMultistepScheduler = diffusers.DPMSolverMultistepScheduler
+
+from aetherart.lcm import (  # noqa: E402
     LCM_GUIDANCE,
+    LCM_STEPS,
     apply_lcm_mode,
-    restore_standard_mode,
     is_lcm_scheduler,
+    restore_standard_mode,
 )
 
 
@@ -32,29 +38,31 @@ class TestSchedulerSwitch:
         return pipe
 
     def test_apply_lcm_mode_sets_lcm_scheduler(self):
-        from diffusers import LCMScheduler
         pipe = self._make_mock_pipe("DPMSolverMultistepScheduler")
-
-        with patch.object(LCMScheduler, "from_config", return_value=MagicMock(__class__=LCMScheduler)) as mock_fc:
+        with patch.object(
+            LCMScheduler,
+            "from_config",
+            return_value=MagicMock(__class__=LCMScheduler),
+        ) as mock_fc:
             apply_lcm_mode(pipe)
-            mock_fc.assert_called_once_with({})  # scheduler.config was set to {} in _make_mock_pipe
+            mock_fc.assert_called_once_with({})
 
     def test_restore_standard_mode_sets_dpm_scheduler(self):
-        from diffusers import DPMSolverMultistepScheduler
         pipe = self._make_mock_pipe("LCMScheduler")
-
-        with patch.object(DPMSolverMultistepScheduler, "from_config", return_value=MagicMock(__class__=DPMSolverMultistepScheduler)) as mock_fc:
+        with patch.object(
+            DPMSolverMultistepScheduler,
+            "from_config",
+            return_value=MagicMock(__class__=DPMSolverMultistepScheduler),
+        ) as mock_fc:
             restore_standard_mode(pipe)
-            mock_fc.assert_called_once_with({})  # scheduler.config was set to {} in _make_mock_pipe
+            mock_fc.assert_called_once_with({})
 
     def test_is_lcm_scheduler_true_for_lcm(self):
-        from diffusers import LCMScheduler
         pipe = MagicMock()
         pipe.scheduler = MagicMock(spec=LCMScheduler)
         assert is_lcm_scheduler(pipe) is True
 
     def test_is_lcm_scheduler_false_for_dpm(self):
-        from diffusers import DPMSolverMultistepScheduler
         pipe = MagicMock()
         pipe.scheduler = MagicMock(spec=DPMSolverMultistepScheduler)
         assert is_lcm_scheduler(pipe) is False

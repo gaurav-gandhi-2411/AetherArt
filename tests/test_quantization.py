@@ -28,8 +28,8 @@ class TestQuantizationImports:
         pytest.importorskip("bitsandbytes", reason="bitsandbytes not installed")
 
     def test_diffusers_bnb_config_available(self):
-        from diffusers import BitsAndBytesConfig
-        assert BitsAndBytesConfig is not None
+        diffusers = pytest.importorskip("diffusers")
+        assert diffusers.BitsAndBytesConfig is not None
 
     def test_quantization_module_imports(self):
         from aetherart.quantization import load_sd21_quantized, vram_allocated_mb, vram_peak_mb
