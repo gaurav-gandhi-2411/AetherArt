@@ -11,7 +11,7 @@
 
 **Practical takeaway:** DPM-Solver++ at 20 steps matches DDIM at 50 steps within noise (Δ = 0.0015, ~4% of σ). Use DPM@20 for ~2× the throughput with no measurable quality cost.
 
-**Sweet spot:** 30 steps is the practical choice over 20 — essentially free quality gain (+0.0030 CLIP, within SE), and 40% faster than 50. The data does not support using 50 steps on an 8 GB laptop GPU.
+**Sweet spot:** 30 steps is the practical choice over 20 — essentially free quality gain for DPM-Solver++ (+0.0030 CLIP, within 1 SE; pooled across schedulers: +0.0004), and 40% faster than 50. The data does not support using 50 steps on an 8 GB laptop GPU.
 
 ---
 

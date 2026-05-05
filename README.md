@@ -15,7 +15,7 @@
   </tr>
 </table>
 
-> I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.8×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
+> I built this to see what it takes to run modern diffusion models on a laptop GPU. The RTX 3070 has 8 GB of VRAM, which forced every architectural choice. Here's what I wired together: **LCM 4-step (5.3×)**, **SDXL Turbo (1-step)**, **4-bit/8-bit quantization**, **Ukiyo-e LoRA**, and **ControlNet** — all benchmarked on that same RTX 3070.
 
 **What this demonstrates:**
 
@@ -96,7 +96,7 @@ flowchart TD
 | ControlNet (Depth) | `thibaud/controlnet-sd21-depth-diffusers` | Depth-conditioned generation |
 | LoRA adapter | `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` | Ukiyo-e style transfer (rank-8) |
 | Scheduler | DPMSolverMultistepScheduler | Best CLIP/latency trade-off in benchmark |
-| LCM mode | `LCMScheduler` (diffusers) | 4-step fast generation (~5× speedup) |
+| LCM mode | `LCMScheduler` (diffusers) | 4-step fast generation (5.3× speedup) |
 | SDXL Turbo | `stabilityai/sdxl-turbo` | 1-step adversarial diffusion (~30× speedup) |
 | Quantization | bitsandbytes (4-bit NF4 / 8-bit INT8) | Memory-efficient U-Net for ≥ 4 GB GPUs |
 | Evaluator | `openai/clip-vit-base-patch32` | Prompt-image similarity scoring |
@@ -123,7 +123,7 @@ Rank-8 LoRA = 6.4 MB on disk. Rank-16 = 12.8 MB, with marginal quality gain on s
 
 ### Why these four schedulers?
 
-DDIM is the canonical baseline. DPM-Solver++ is the current Pareto-optimal choice in the diffusers literature. Euler-Ancestral and LMS fill out the comparison set. The benchmark section below has the numbers; DPM-Solver++ wins by a small but consistent margin across all 30 prompts.
+DDIM is the canonical baseline. DPM-Solver++ is the current Pareto-optimal choice in the diffusers literature. Euler-Ancestral and LMS fill out the comparison set. The benchmark section below has the numbers; DPM-Solver++ and DDIM are statistically indistinguishable at the same step count (Δ = 0.0007, smaller than 1 SE) — the real win is reaching the same CLIP score in fewer steps.
 
 ---
 
@@ -147,19 +147,19 @@ The 10–15 s local generation time reflects hardware constraints, not bad code.
 
 ### Generation speed tiers
 
-I added three speed modes to actually feel the trade-offs rather than just read about them. Swapping to the LCM scheduler dropped inference from 3.2 s to 0.6 s — about 5.8×. The catch is that LCM-LoRA doesn't exist for SD 2.1, so I'm using scheduler-only LCM, which trades some quality for speed. All tiers are selectable in the UI without restarting the server.
+I added three speed modes to actually feel the trade-offs rather than just read about them. Swapping to the LCM scheduler dropped inference from 3.2 s to 0.6 s — about 5.3×. The catch is that LCM-LoRA doesn't exist for SD 2.1, so I'm using scheduler-only LCM, which trades some quality for speed. All tiers are selectable in the UI without restarting the server.
 
 | Mode | Steps | RTX 3070 (local) | HF CPU Space (est.) | Quality |
 |------|------:|------------------|---------------------|---------|
 | Standard fp16 | 30 | **3.2 s/img** | ~5–8 min | Full baseline |
-| LCM fast (4-step) | 4 | **0.6 s/img — 5.8× faster** | GPU only | Moderate reduction |
+| LCM fast (4-step) | 4 | **0.6 s/img — 5.3× faster** | GPU only | Moderate reduction |
 | SDXL Turbo (1-step) | 1 | **3.3 s/img** — same as standard | GPU only | Lower; SDXL model (~2.6B vs 865M params) |
 
 > **SDXL Turbo note**: On RTX 3070 (8 GB), one pass through SDXL's 2.6B-parameter U-Net takes the same wall time as 30 passes through SD 2.1's 865M-parameter U-Net. Real Turbo speedup (10–30×) shows on A100/H100 with ~6.7 GB VRAM for the SDXL model.
 
 ### Memory / VRAM trade-offs (quantization)
 
-I added three memory modes because I wanted to feel the actual trade-offs, not just read about them. What surprised me: 4-bit quantization saves about 36% VRAM compared to fp16 but slows generation by 50%. The compute cost of dequantization at inference time exceeds the bandwidth savings on a laptop GPU — that kind of detail isn't in any blog post I read. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
+I added three memory modes because I wanted to feel the actual trade-offs, not just read about them. What surprised me: 4-bit NF4 uses 2761 MB — only 336 MB less than fp16's 3097 MB — but slows generation from 2.7 s to 4.7 s. The 8-bit INT8 mode saves 887 MB of VRAM but at 9.6 s it is 3.6× slower than fp16. The compute cost of dequantization at inference time exceeds the bandwidth savings on a laptop GPU — that kind of detail isn't in any blog post I read. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
 
 | Precision | Peak VRAM (measured) | vs fp16 | Avg latency | When to use |
 |-----------|---------------------:|---------|-------------|-------------|
