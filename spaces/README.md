@@ -23,28 +23,28 @@ description: |
   Stable Diffusion 2.1 with Ukiyo-e LoRA, ControlNet, LCM fast-generation, SDXL Turbo,
   and 4-bit/8-bit quantization. Three speed tiers, three memory modes, all in one UI.
 ---
+
 # AetherArt
 
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 
-> Stable Diffusion 2.1 + Ukiyo-e LoRA + ControlNet + three speed tiers (Standard / LCM / Turbo) + three memory modes (fp16 / 8-bit / 4-bit). Benchmarked across 360 generations.
+> **This Space runs on CPU** (~8–15 min per image). It is an architecture demo — use it to explore the UI and inspect the generated samples. For real-time generation, clone the repo and run locally with a CUDA GPU.
 
-**[Full documentation and benchmark results on GitHub →](https://github.com/gaurav-gandhi-2411/AetherArt)**  
-**[→ 360-run scheduler benchmark findings](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/findings.md)**
+AetherArt is a personal research project exploring diffusion model inference on consumer hardware. It wires together SD 2.1, a custom Ukiyo-e LoRA trained on an RTX 3070, ControlNet (Canny + Depth), and three speed tiers (Standard / LCM 4-step / SDXL Turbo 1-step). Every output embeds its full generation parameters as PNG metadata — drag any prior output back into the UI to reproduce it exactly.
 
-> **This Space runs on CPU** (~8–15 min per image). It demonstrates the architecture and lets you inspect the UI. For real-time generation, clone the repo and run locally with a CUDA GPU.
+**[Full documentation, benchmark results, and source code →](https://github.com/gaurav-gandhi-2411/AetherArt)**  
+**[360-run scheduler benchmark findings →](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/findings.md)**
 
 ## Features
 
-- **3 speed tiers**: Standard 30-step (best quality) · LCM 4-step (5.3× faster) · SDXL Turbo 1-step (~6× faster)
-- **3 memory modes**: fp16 (3.1 GB) · 8-bit INT8 (2.2 GB) · 4-bit NF4 (2.8 GB peak, smallest weights)
+- **3 speed tiers**: Standard 30-step · LCM 4-step (5.3× faster) · SDXL Turbo 1-step
+- **3 memory modes**: fp16 (3.1 GB) · 8-bit INT8 (2.2 GB) · 4-bit NF4 (2.8 GB peak)
 - Ukiyo-e LoRA style adapter (rank-8, 80 WikiArt images, checkpoint-1000)
 - ControlNet conditioning: Canny edge + Depth map (combinable with LoRA)
 - DPM-Solver++ scheduler (best CLIP/latency in 360-run PartiPrompts benchmark)
-- PNG + sidecar JSON metadata on every generation
-- **Recreate from PNG** — every output embeds full generation parameters as PNG tEXt chunks; drag any prior output into the UI to restore exact settings
+- **Recreate from PNG** — every output embeds full generation parameters; drag any prior output into the UI to restore exact settings
 
-## Speed tiers (RTX 3070 measured)
+## Speed tiers (RTX 3070, measured locally)
 
 | Mode | Steps | Local GPU | Quality |
 |------|------:|-----------|---------|
@@ -60,3 +60,5 @@ cd AetherArt
 pip install -r requirements.txt
 python app.py
 ```
+
+See [CONTRIBUTING.md](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/CONTRIBUTING.md) for full setup including CUDA torch installation.
