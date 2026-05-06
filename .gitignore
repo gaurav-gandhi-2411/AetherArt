@@ -25,3 +25,6 @@ models/
 
 # Hero image generation candidates (scratch outputs, not for tracking)
 docs/hero_candidates/
+
+# Experiment raw images (120+ PNGs per experiment — too large for git; results.csv has paths)
+reports/experiments/*/images/

@@ -11,3 +11,5 @@ per-file-ignores =
     # matplotlib.use("Agg") must precede pyplot import — inherent to the library
     scripts/_gen_findings_charts.py: E402
     scripts/generate_benchmark_charts.py: E402
+    # sys.path + matplotlib.use("Agg") before imports; markdown table rows in f-string can't wrap
+    scripts/experiments/exp1_quantization_quality.py: E402, E501
