@@ -51,6 +51,10 @@ seen here, and may show better latency. On this hardware path — CPU offload on
 uses more VRAM than fp16 and runs 2.8× slower, leaving no compelling reason to prefer it.
 NF4 saves 23% VRAM and runs 1.5× slower, but the pixel-fidelity loss is substantial.
 
+**Cross-experiment note:** Experiment 2 (negative prompt ablation) finds the same pattern:
+LPIPS = 0.46 between conditions while CLIP delta is within 1 SE. CLIP-blindness to pixel-level
+change appears to be a consistent property of the metric, not an artifact of this experiment.
+
 ## Charts
 
 - `charts/clip_by_condition.png` — mean CLIP score per condition

@@ -59,7 +59,9 @@ has negligible effect on wall-clock time.
 **Bottom line:** The standard negative prompt substantially reshapes pixel content (LPIPS = 0.46)
 without reliably improving the CLIP-measured text alignment (delta < 1 SE). Its value is
 qualitative — fewer artifacts, better composition at the tails — and this experiment confirms
-that CLIP alone cannot detect it.
+that CLIP alone cannot detect it. This mirrors Experiment 1, where NF4 quantization produced
+LPIPS = 0.40 vs fp16 with an equally invisible CLIP delta — the same metric failure, a different
+intervention.
 
 ## Charts
 
