@@ -4,6 +4,18 @@ Follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions, gr
 
 ---
 
+## Phase 6a — README rewrite and chart polish (May 2026)
+
+- **README structural rewrite** — new section order: hero → What this is → Gallery → Findings → Architecture → Models & Techniques → Performance → Reproducibility → Planned Experiments; cut "Sample Outputs", "Why CPU", "Free-Tier Limitations", old "What's Next" table
+- **Single hero image** — Tokyo neon rain (768×768) replaces 2×2 thumbnail grid; gallery section shows 6 unique capability images with no duplicates
+- **Reproducibility section** — exact commands for all key artifacts (benchmark, LoRA training, quantization benchmark, charts) with hardware and time estimates
+- **Planned Experiments section** — 7 Phase 6b experiments framed as specific questions
+- **ChartCanvas chart regeneration** — `scripts/generate_benchmark_charts.py` rewrites both benchmark charts using the collision-aware ChartCanvas from aetherart/visualization; same-scale variance decomposition makes the 18× finding immediately visible
+- **aetherart/visualization package** — ChartCanvas + palette constants; copied from shelfsense-m5, adapted (removed matplotlib.use("Agg"), updated docstring)
+- **CHANGELOG fix** — LCM speedup corrected to 5.3× (was 5.8×) in historical entry
+
+---
+
 ## Phase 4 — Story and portfolio polish (May 2026)
 
 - **Benchmark findings writeup** — `reports/findings.md`: full narrative with TL;DR, methodology, per-cell standard errors, Pareto scatter chart, and prompt-vs-scheduler variance decomposition
@@ -43,7 +55,7 @@ Follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions, gr
 
 ## Speed tiers and quantization (late April 2026)
 
-- **LCM fast mode** — 4-step generation via `LCMScheduler` (scheduler-only, no LCM-LoRA for SD 2.1); 5.8× speedup on RTX 3070 (0.6 s vs 3.2 s)
+- **LCM fast mode** — 4-step generation via `LCMScheduler` (scheduler-only, no LCM-LoRA for SD 2.1); 5.3× speedup on RTX 3070 (0.6 s vs 3.2 s)
 - **SDXL Turbo** — 1-step adversarial diffusion; separate 2.6B-param SDXL model; 3.3 s on RTX 3070 (real speedup only visible on A100/H100)
 - **INT8 quantization** — bitsandbytes 8-bit U-Net; 2.2 GB peak VRAM (vs 3.1 GB fp16); 9.6 s/img due to dequantization overhead
 - **NF4 quantization** — bitsandbytes 4-bit U-Net; 2.8 GB peak (compute buffer inflates vs stored weights); enables SD 2.1 on ≥4 GB GPUs
