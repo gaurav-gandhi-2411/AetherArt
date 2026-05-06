@@ -1,0 +1,832 @@
+{
+  "experiment": "exp2_negative_prompt",
+  "date": "2026-05-07",
+  "model": "sd2-community/stable-diffusion-2-1",
+  "steps": 30,
+  "guidance": 7.5,
+  "size": 512,
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1337
+  ],
+  "prompts": {
+    "p01_portrait": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+    "p02_landscape": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+    "p03_abstract": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+    "p04_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+    "p05_texture": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+    "p06_arch": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+    "p07_hands": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+    "p08_crowd": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene"
+  },
+  "conditions": {
+    "no_neg": "",
+    "with_neg": "low quality, blurry, deformed, ugly, bad anatomy, watermark"
+  },
+  "total_images": 80,
+  "results": [
+    {
+      "condition": "no_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 42,
+      "latency_s": 10.561,
+      "clip_score": 0.348926,
+      "lpips": 0.566974,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p01_portrait_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 123,
+      "latency_s": 8.012,
+      "clip_score": 0.341058,
+      "lpips": 0.310258,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p01_portrait_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 456,
+      "latency_s": 7.193,
+      "clip_score": 0.314015,
+      "lpips": 0.500099,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p01_portrait_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 789,
+      "latency_s": 7.313,
+      "clip_score": 0.353016,
+      "lpips": 0.684121,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p01_portrait_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 1337,
+      "latency_s": 7.164,
+      "clip_score": 0.36515,
+      "lpips": 0.552039,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p01_portrait_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 42,
+      "latency_s": 7.552,
+      "clip_score": 0.32664,
+      "lpips": 0.491115,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p02_landscape_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 123,
+      "latency_s": 6.812,
+      "clip_score": 0.316421,
+      "lpips": 0.554658,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p02_landscape_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 456,
+      "latency_s": 6.035,
+      "clip_score": 0.325759,
+      "lpips": 0.393563,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p02_landscape_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 789,
+      "latency_s": 5.573,
+      "clip_score": 0.311558,
+      "lpips": 0.373331,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p02_landscape_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 1337,
+      "latency_s": 5.752,
+      "clip_score": 0.324925,
+      "lpips": 0.362502,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p02_landscape_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 42,
+      "latency_s": 5.663,
+      "clip_score": 0.30527,
+      "lpips": 0.317651,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p03_abstract_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 123,
+      "latency_s": 7.79,
+      "clip_score": 0.310747,
+      "lpips": 0.279145,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p03_abstract_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 456,
+      "latency_s": 7.135,
+      "clip_score": 0.328863,
+      "lpips": 0.372387,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p03_abstract_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 789,
+      "latency_s": 7.37,
+      "clip_score": 0.314966,
+      "lpips": 0.421364,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p03_abstract_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 1337,
+      "latency_s": 7.185,
+      "clip_score": 0.298997,
+      "lpips": 0.36664,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p03_abstract_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 7.357,
+      "clip_score": 0.250834,
+      "lpips": 0.427061,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p04_text_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 123,
+      "latency_s": 5.344,
+      "clip_score": 0.255281,
+      "lpips": 0.451758,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p04_text_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 456,
+      "latency_s": 5.334,
+      "clip_score": 0.306861,
+      "lpips": 0.520922,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p04_text_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 789,
+      "latency_s": 5.591,
+      "clip_score": 0.259341,
+      "lpips": 0.330838,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p04_text_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 1337,
+      "latency_s": 5.293,
+      "clip_score": 0.315138,
+      "lpips": 0.616573,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p04_text_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 42,
+      "latency_s": 5.393,
+      "clip_score": 0.304877,
+      "lpips": 0.452322,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p05_texture_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 123,
+      "latency_s": 5.591,
+      "clip_score": 0.332437,
+      "lpips": 0.5844,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p05_texture_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 456,
+      "latency_s": 5.335,
+      "clip_score": 0.289291,
+      "lpips": 0.332841,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p05_texture_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 789,
+      "latency_s": 5.549,
+      "clip_score": 0.302724,
+      "lpips": 0.642189,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p05_texture_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 1337,
+      "latency_s": 5.423,
+      "clip_score": 0.333267,
+      "lpips": 0.551723,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p05_texture_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 42,
+      "latency_s": 6.807,
+      "clip_score": 0.307343,
+      "lpips": 0.546199,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p06_arch_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 123,
+      "latency_s": 7.938,
+      "clip_score": 0.313356,
+      "lpips": 0.290604,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p06_arch_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 456,
+      "latency_s": 6.027,
+      "clip_score": 0.316826,
+      "lpips": 0.434699,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p06_arch_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 789,
+      "latency_s": 5.328,
+      "clip_score": 0.336968,
+      "lpips": 0.469467,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p06_arch_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 1337,
+      "latency_s": 6.771,
+      "clip_score": 0.32253,
+      "lpips": 0.496224,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p06_arch_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 42,
+      "latency_s": 5.24,
+      "clip_score": 0.292536,
+      "lpips": 0.432655,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p07_hands_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 123,
+      "latency_s": 5.266,
+      "clip_score": 0.311718,
+      "lpips": 0.697794,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p07_hands_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 456,
+      "latency_s": 4.898,
+      "clip_score": 0.289612,
+      "lpips": 0.373351,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p07_hands_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 789,
+      "latency_s": 7.044,
+      "clip_score": 0.349741,
+      "lpips": 0.419018,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p07_hands_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 1337,
+      "latency_s": 6.874,
+      "clip_score": 0.277339,
+      "lpips": 0.578906,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p07_hands_seed1337.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 42,
+      "latency_s": 6.646,
+      "clip_score": 0.332677,
+      "lpips": 0.430904,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p08_crowd_seed42.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 123,
+      "latency_s": 6.981,
+      "clip_score": 0.32936,
+      "lpips": 0.365605,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p08_crowd_seed123.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 456,
+      "latency_s": 6.724,
+      "clip_score": 0.334518,
+      "lpips": 0.511582,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p08_crowd_seed456.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 789,
+      "latency_s": 6.841,
+      "clip_score": 0.339431,
+      "lpips": 0.43465,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p08_crowd_seed789.png"
+    },
+    {
+      "condition": "no_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 1337,
+      "latency_s": 7.273,
+      "clip_score": 0.340353,
+      "lpips": 0.502444,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/no_neg/p08_crowd_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 42,
+      "latency_s": 7.446,
+      "clip_score": 0.338809,
+      "lpips": 0.566974,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p01_portrait_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 123,
+      "latency_s": 7.057,
+      "clip_score": 0.315678,
+      "lpips": 0.310258,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p01_portrait_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 456,
+      "latency_s": 7.376,
+      "clip_score": 0.299856,
+      "lpips": 0.500099,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p01_portrait_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 789,
+      "latency_s": 6.821,
+      "clip_score": 0.318635,
+      "lpips": 0.684121,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p01_portrait_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "a portrait of an elderly woman with weathered skin, dramatic studio lighting, photorealistic",
+      "seed": 1337,
+      "latency_s": 5.492,
+      "clip_score": 0.341146,
+      "lpips": 0.552039,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p01_portrait_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 42,
+      "latency_s": 5.142,
+      "clip_score": 0.324788,
+      "lpips": 0.491115,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p02_landscape_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 123,
+      "latency_s": 4.927,
+      "clip_score": 0.303472,
+      "lpips": 0.554658,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p02_landscape_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 456,
+      "latency_s": 5.116,
+      "clip_score": 0.321038,
+      "lpips": 0.393563,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p02_landscape_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 789,
+      "latency_s": 4.76,
+      "clip_score": 0.310605,
+      "lpips": 0.373331,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p02_landscape_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography",
+      "seed": 1337,
+      "latency_s": 4.924,
+      "clip_score": 0.327202,
+      "lpips": 0.362502,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p02_landscape_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 42,
+      "latency_s": 5.334,
+      "clip_score": 0.306955,
+      "lpips": 0.317651,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p03_abstract_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 123,
+      "latency_s": 5.069,
+      "clip_score": 0.306416,
+      "lpips": 0.279145,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p03_abstract_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 456,
+      "latency_s": 6.56,
+      "clip_score": 0.317099,
+      "lpips": 0.372387,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p03_abstract_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 789,
+      "latency_s": 6.86,
+      "clip_score": 0.339504,
+      "lpips": 0.421364,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p03_abstract_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "geometric abstract composition with intersecting circles and triangles, vibrant color blocks",
+      "seed": 1337,
+      "latency_s": 6.533,
+      "clip_score": 0.321098,
+      "lpips": 0.36664,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p03_abstract_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 6.903,
+      "clip_score": 0.314498,
+      "lpips": 0.427061,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p04_text_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 123,
+      "latency_s": 6.817,
+      "clip_score": 0.27346,
+      "lpips": 0.451758,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p04_text_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 456,
+      "latency_s": 6.586,
+      "clip_score": 0.284091,
+      "lpips": 0.520922,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p04_text_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 789,
+      "latency_s": 6.696,
+      "clip_score": 0.26017,
+      "lpips": 0.330838,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p04_text_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p04_text",
+      "prompt_text": "a vintage poster with large bold letters reading OPEN, retro typography, worn paper texture",
+      "seed": 1337,
+      "latency_s": 6.609,
+      "clip_score": 0.32503,
+      "lpips": 0.616573,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p04_text_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 42,
+      "latency_s": 6.954,
+      "clip_score": 0.334815,
+      "lpips": 0.452322,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p05_texture_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 123,
+      "latency_s": 6.943,
+      "clip_score": 0.329882,
+      "lpips": 0.5844,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p05_texture_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 456,
+      "latency_s": 4.989,
+      "clip_score": 0.281335,
+      "lpips": 0.332841,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p05_texture_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 789,
+      "latency_s": 6.801,
+      "clip_score": 0.300384,
+      "lpips": 0.642189,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p05_texture_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p05_texture",
+      "prompt_text": "extreme close-up of rough concrete wall, water drops, micro detail, macro photography",
+      "seed": 1337,
+      "latency_s": 5.958,
+      "clip_score": 0.34199,
+      "lpips": 0.551723,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p05_texture_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 42,
+      "latency_s": 6.584,
+      "clip_score": 0.282387,
+      "lpips": 0.546199,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p06_arch_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 123,
+      "latency_s": 4.978,
+      "clip_score": 0.306847,
+      "lpips": 0.290604,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p06_arch_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 456,
+      "latency_s": 4.878,
+      "clip_score": 0.306006,
+      "lpips": 0.434699,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p06_arch_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 789,
+      "latency_s": 5.404,
+      "clip_score": 0.33161,
+      "lpips": 0.469467,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p06_arch_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p06_arch",
+      "prompt_text": "interior of a Gothic cathedral with stone arches, stained glass windows, soft diffused light",
+      "seed": 1337,
+      "latency_s": 7.188,
+      "clip_score": 0.306477,
+      "lpips": 0.496224,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p06_arch_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 42,
+      "latency_s": 7.168,
+      "clip_score": 0.278335,
+      "lpips": 0.432655,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p07_hands_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 123,
+      "latency_s": 7.009,
+      "clip_score": 0.265632,
+      "lpips": 0.697794,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p07_hands_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 456,
+      "latency_s": 7.253,
+      "clip_score": 0.29368,
+      "lpips": 0.373351,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p07_hands_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 789,
+      "latency_s": 5.63,
+      "clip_score": 0.317236,
+      "lpips": 0.419018,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p07_hands_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p07_hands",
+      "prompt_text": "two hands clasped together, wrinkled skin, natural light, photorealistic close-up",
+      "seed": 1337,
+      "latency_s": 5.219,
+      "clip_score": 0.277363,
+      "lpips": 0.578906,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p07_hands_seed1337.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 42,
+      "latency_s": 4.929,
+      "clip_score": 0.330529,
+      "lpips": 0.430904,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p08_crowd_seed42.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 123,
+      "latency_s": 5.248,
+      "clip_score": 0.33716,
+      "lpips": 0.365605,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p08_crowd_seed123.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 456,
+      "latency_s": 5.988,
+      "clip_score": 0.347168,
+      "lpips": 0.511582,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p08_crowd_seed456.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 789,
+      "latency_s": 7.651,
+      "clip_score": 0.323124,
+      "lpips": 0.43465,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p08_crowd_seed789.png"
+    },
+    {
+      "condition": "with_neg",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "a busy street market in Tokyo, dozens of people, neon signs, rain-wet pavement, night scene",
+      "seed": 1337,
+      "latency_s": 6.948,
+      "clip_score": 0.353425,
+      "lpips": 0.502444,
+      "image_path": "reports/experiments/exp2_negative_prompt/images/with_neg/p08_crowd_seed1337.png"
+    }
+  ]
+}

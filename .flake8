@@ -13,3 +13,4 @@ per-file-ignores =
     scripts/generate_benchmark_charts.py: E402
     # sys.path + matplotlib.use("Agg") before imports; markdown table rows in f-string can't wrap
     scripts/experiments/exp1_quantization_quality.py: E402, E501
+    scripts/experiments/exp2_negative_prompt.py: E402, E501
