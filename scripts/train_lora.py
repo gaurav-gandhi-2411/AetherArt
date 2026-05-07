@@ -51,6 +51,12 @@ def parse_args():
         default=None,
         help="Override output directory (default: data/lora/ukiyo-e/training_output)",
     )
+    p.add_argument(
+        "--data-dir",
+        type=Path,
+        default=None,
+        help="Override training data directory (default: data/lora/ukiyo-e)",
+    )
     return p.parse_args()
 
 
@@ -126,12 +132,17 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     log_path = output_dir / "training.log"
 
+    data_dir = Path(args.data_dir) if args.data_dir else DATA_DIR
+
     cmd = build_command(args, python_exe)
-    # patch --output_dir into the command (build_command uses OUTPUT_DIR directly)
+    # patch --output_dir and --train_data_dir overrides
     out_idx = cmd.index("--output_dir") + 1
     cmd[out_idx] = str(output_dir)
+    data_idx = cmd.index("--train_data_dir") + 1
+    cmd[data_idx] = str(data_dir)
 
     print(f"[train_lora] Output dir : {output_dir}")
+    print(f"[train_lora] Data dir   : {data_dir}")
     print(f"[train_lora] Log file   : {log_path}")
     print(f"[train_lora] Steps      : {args.max_train_steps}")
     print(f"[train_lora] Rank       : {args.rank}")
