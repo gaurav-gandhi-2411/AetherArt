@@ -15,3 +15,4 @@ per-file-ignores =
     scripts/experiments/exp1_quantization_quality.py: E402, E501
     scripts/experiments/exp2_negative_prompt.py: E402, E501
     scripts/experiments/exp3_cfg_sweep.py: E402, E501
+    scripts/experiments/exp4_scheduler_visual.py: E402, E501

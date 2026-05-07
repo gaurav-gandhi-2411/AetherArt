@@ -1,0 +1,181 @@
+scheduler_a,scheduler_b,pair,prompt_id,prompt,clip_a,clip_b,clip_delta,lpips
+DDIM,DPM,DDIM-DPM,pp_001,artificial intelligence,0.2291,0.2502,0.0211,0.326232
+DDIM,DPM,DDIM-DPM,pp_002,a shiba inu,0.3178,0.333,0.0152,0.58326
+DDIM,DPM,DDIM-DPM,pp_003,a dragon,0.2752,0.2871,0.0119,0.394867
+DDIM,DPM,DDIM-DPM,pp_004,a shiba inu wearing a beret and black turtleneck,0.4008,0.3922,-0.0086,0.26366
+DDIM,DPM,DDIM-DPM,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3554,0.3468,-0.0086,0.49875
+DDIM,DPM,DDIM-DPM,pp_006,an eagle swooping down to catch a mouse,0.3007,0.3067,0.006,0.502491
+DDIM,DPM,DDIM-DPM,pp_007,an elephant using its trunk to blow into a tuba,0.2972,0.3019,0.0047,0.33478
+DDIM,DPM,DDIM-DPM,pp_008,a dolphin in an astronaut suit on saturn,0.2926,0.322,0.0294,0.483117
+DDIM,DPM,DDIM-DPM,pp_009,an oil painting of a sailboat at sunset,0.3512,0.3421,-0.0091,0.098876
+DDIM,DPM,DDIM-DPM,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.3265,0.2921,-0.0344,0.533732
+DDIM,DPM,DDIM-DPM,pp_011,a coffee mug,0.2741,0.2736,-0.0005,0.257371
+DDIM,DPM,DDIM-DPM,pp_012,a red lego block,0.3016,0.2951,-0.0065,0.534323
+DDIM,DPM,DDIM-DPM,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.3689,0.336,-0.0329,0.534707
+DDIM,DPM,DDIM-DPM,pp_014,A bowl of Pho served with bean sprouts on top,0.286,0.3013,0.0153,0.622451
+DDIM,DPM,DDIM-DPM,pp_015,a bloody mary cocktail next to a napkin,0.2775,0.296,0.0185,0.717764
+DDIM,DPM,DDIM-DPM,pp_016,A bare kitchen has wood cabinets and white appliances,0.3046,0.304,-0.0006,0.27667
+DDIM,DPM,DDIM-DPM,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.3096,0.352,0.0424,0.391828
+DDIM,DPM,DDIM-DPM,pp_018,waterfall,0.2848,0.3228,0.038,0.433286
+DDIM,DPM,DDIM-DPM,pp_019,a fall landscape with a small cottage next to a lake,0.3451,0.3465,0.0014,0.201086
+DDIM,DPM,DDIM-DPM,pp_020,a professional photo of a sunset behind the grand canyon,0.3116,0.312,0.0004,0.338688
+DDIM,DPM,DDIM-DPM,pp_021,a cityscape at night with a full moon,0.2943,0.2804,-0.0139,0.535442
+DDIM,DPM,DDIM-DPM,pp_022,a young girl playing piano,0.3311,0.3533,0.0222,0.500925
+DDIM,DPM,DDIM-DPM,pp_023,a ballet dancer next to a waterfall,0.3468,0.3526,0.0058,0.268228
+DDIM,DPM,DDIM-DPM,pp_024,the Beatles crossing Abbey road,0.3223,0.3117,-0.0106,0.357915
+DDIM,DPM,DDIM-DPM,pp_025,a bundle of blue and yellow flowers in a vase,0.3675,0.36,-0.0075,0.313423
+DDIM,DPM,DDIM-DPM,pp_026,a steam locomotive speeding through a desert,0.3874,0.3862,-0.0012,0.422073
+DDIM,DPM,DDIM-DPM,pp_027,a large white yacht tossed about in a stormy sea,0.3096,0.3076,-0.002,0.218337
+DDIM,DPM,DDIM-DPM,pp_028,the Eiffel Tower,0.2999,0.2971,-0.0028,0.573282
+DDIM,DPM,DDIM-DPM,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.3023,0.3091,0.0068,0.190605
+DDIM,DPM,DDIM-DPM,pp_030,Golden Gate bridge on the surface of Mars,0.3058,0.3257,0.0199,0.398587
+DDIM,EulerA,DDIM-EulerA,pp_001,artificial intelligence,0.2291,0.2909,0.0618,0.736389
+DDIM,EulerA,DDIM-EulerA,pp_002,a shiba inu,0.3178,0.3196,0.0018,0.781209
+DDIM,EulerA,DDIM-EulerA,pp_003,a dragon,0.2752,0.2658,-0.0094,0.80867
+DDIM,EulerA,DDIM-EulerA,pp_004,a shiba inu wearing a beret and black turtleneck,0.4008,0.3862,-0.0146,0.78805
+DDIM,EulerA,DDIM-EulerA,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3554,0.3789,0.0235,0.81663
+DDIM,EulerA,DDIM-EulerA,pp_006,an eagle swooping down to catch a mouse,0.3007,0.3028,0.0021,0.654804
+DDIM,EulerA,DDIM-EulerA,pp_007,an elephant using its trunk to blow into a tuba,0.2972,0.287,-0.0102,0.750582
+DDIM,EulerA,DDIM-EulerA,pp_008,a dolphin in an astronaut suit on saturn,0.2926,0.3085,0.0159,0.847185
+DDIM,EulerA,DDIM-EulerA,pp_009,an oil painting of a sailboat at sunset,0.3512,0.3321,-0.0191,0.713076
+DDIM,EulerA,DDIM-EulerA,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.3265,0.2805,-0.046,0.768513
+DDIM,EulerA,DDIM-EulerA,pp_011,a coffee mug,0.2741,0.2829,0.0088,0.788132
+DDIM,EulerA,DDIM-EulerA,pp_012,a red lego block,0.3016,0.3028,0.0012,0.567124
+DDIM,EulerA,DDIM-EulerA,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.3689,0.3158,-0.0531,0.769691
+DDIM,EulerA,DDIM-EulerA,pp_014,A bowl of Pho served with bean sprouts on top,0.286,0.3126,0.0266,0.698419
+DDIM,EulerA,DDIM-EulerA,pp_015,a bloody mary cocktail next to a napkin,0.2775,0.3038,0.0263,0.80535
+DDIM,EulerA,DDIM-EulerA,pp_016,A bare kitchen has wood cabinets and white appliances,0.3046,0.3087,0.0041,0.637868
+DDIM,EulerA,DDIM-EulerA,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.3096,0.3206,0.011,0.764267
+DDIM,EulerA,DDIM-EulerA,pp_018,waterfall,0.2848,0.2888,0.004,0.723246
+DDIM,EulerA,DDIM-EulerA,pp_019,a fall landscape with a small cottage next to a lake,0.3451,0.3018,-0.0433,0.630586
+DDIM,EulerA,DDIM-EulerA,pp_020,a professional photo of a sunset behind the grand canyon,0.3116,0.3218,0.0102,0.68706
+DDIM,EulerA,DDIM-EulerA,pp_021,a cityscape at night with a full moon,0.2943,0.3076,0.0133,0.764636
+DDIM,EulerA,DDIM-EulerA,pp_022,a young girl playing piano,0.3311,0.3278,-0.0033,0.861889
+DDIM,EulerA,DDIM-EulerA,pp_023,a ballet dancer next to a waterfall,0.3468,0.3323,-0.0145,0.692127
+DDIM,EulerA,DDIM-EulerA,pp_024,the Beatles crossing Abbey road,0.3223,0.3002,-0.0221,0.634328
+DDIM,EulerA,DDIM-EulerA,pp_025,a bundle of blue and yellow flowers in a vase,0.3675,0.3515,-0.016,0.781238
+DDIM,EulerA,DDIM-EulerA,pp_026,a steam locomotive speeding through a desert,0.3874,0.3498,-0.0376,0.778595
+DDIM,EulerA,DDIM-EulerA,pp_027,a large white yacht tossed about in a stormy sea,0.3096,0.2679,-0.0417,0.665836
+DDIM,EulerA,DDIM-EulerA,pp_028,the Eiffel Tower,0.2999,0.2967,-0.0032,0.602617
+DDIM,EulerA,DDIM-EulerA,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.3023,0.2892,-0.0131,0.625322
+DDIM,EulerA,DDIM-EulerA,pp_030,Golden Gate bridge on the surface of Mars,0.3058,0.3273,0.0215,0.697736
+DDIM,LMS,DDIM-LMS,pp_001,artificial intelligence,0.2291,0.247,0.0179,0.361007
+DDIM,LMS,DDIM-LMS,pp_002,a shiba inu,0.3178,0.3359,0.0181,0.579028
+DDIM,LMS,DDIM-LMS,pp_003,a dragon,0.2752,0.2568,-0.0184,0.518786
+DDIM,LMS,DDIM-LMS,pp_004,a shiba inu wearing a beret and black turtleneck,0.4008,0.3668,-0.034,0.366448
+DDIM,LMS,DDIM-LMS,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3554,0.3592,0.0038,0.520665
+DDIM,LMS,DDIM-LMS,pp_006,an eagle swooping down to catch a mouse,0.3007,0.3056,0.0049,0.52272
+DDIM,LMS,DDIM-LMS,pp_007,an elephant using its trunk to blow into a tuba,0.2972,0.2368,-0.0604,0.636964
+DDIM,LMS,DDIM-LMS,pp_008,a dolphin in an astronaut suit on saturn,0.2926,0.3012,0.0086,0.664054
+DDIM,LMS,DDIM-LMS,pp_009,an oil painting of a sailboat at sunset,0.3512,0.3523,0.0011,0.140872
+DDIM,LMS,DDIM-LMS,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.3265,0.2974,-0.0291,0.476419
+DDIM,LMS,DDIM-LMS,pp_011,a coffee mug,0.2741,0.2689,-0.0052,0.249404
+DDIM,LMS,DDIM-LMS,pp_012,a red lego block,0.3016,0.2865,-0.0151,0.519888
+DDIM,LMS,DDIM-LMS,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.3689,0.3414,-0.0275,0.539374
+DDIM,LMS,DDIM-LMS,pp_014,A bowl of Pho served with bean sprouts on top,0.286,0.3137,0.0277,0.596154
+DDIM,LMS,DDIM-LMS,pp_015,a bloody mary cocktail next to a napkin,0.2775,0.291,0.0135,0.736804
+DDIM,LMS,DDIM-LMS,pp_016,A bare kitchen has wood cabinets and white appliances,0.3046,0.2992,-0.0054,0.275677
+DDIM,LMS,DDIM-LMS,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.3096,0.3147,0.0051,0.415351
+DDIM,LMS,DDIM-LMS,pp_018,waterfall,0.2848,0.2747,-0.0101,0.565467
+DDIM,LMS,DDIM-LMS,pp_019,a fall landscape with a small cottage next to a lake,0.3451,0.349,0.0039,0.292772
+DDIM,LMS,DDIM-LMS,pp_020,a professional photo of a sunset behind the grand canyon,0.3116,0.2048,-0.1068,0.769062
+DDIM,LMS,DDIM-LMS,pp_021,a cityscape at night with a full moon,0.2943,0.2824,-0.0119,0.533927
+DDIM,LMS,DDIM-LMS,pp_022,a young girl playing piano,0.3311,0.3529,0.0218,0.513989
+DDIM,LMS,DDIM-LMS,pp_023,a ballet dancer next to a waterfall,0.3468,0.3509,0.0041,0.436235
+DDIM,LMS,DDIM-LMS,pp_024,the Beatles crossing Abbey road,0.3223,0.3159,-0.0064,0.424845
+DDIM,LMS,DDIM-LMS,pp_025,a bundle of blue and yellow flowers in a vase,0.3675,0.363,-0.0045,0.417791
+DDIM,LMS,DDIM-LMS,pp_026,a steam locomotive speeding through a desert,0.3874,0.3797,-0.0077,0.397104
+DDIM,LMS,DDIM-LMS,pp_027,a large white yacht tossed about in a stormy sea,0.3096,0.3185,0.0089,0.254553
+DDIM,LMS,DDIM-LMS,pp_028,the Eiffel Tower,0.2999,0.3024,0.0025,0.578825
+DDIM,LMS,DDIM-LMS,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.3023,0.2987,-0.0036,0.36388
+DDIM,LMS,DDIM-LMS,pp_030,Golden Gate bridge on the surface of Mars,0.3058,0.2921,-0.0137,0.635229
+DPM,EulerA,DPM-EulerA,pp_001,artificial intelligence,0.2502,0.2909,0.0407,0.707731
+DPM,EulerA,DPM-EulerA,pp_002,a shiba inu,0.333,0.3196,-0.0134,0.756922
+DPM,EulerA,DPM-EulerA,pp_003,a dragon,0.2871,0.2658,-0.0213,0.851444
+DPM,EulerA,DPM-EulerA,pp_004,a shiba inu wearing a beret and black turtleneck,0.3922,0.3862,-0.006,0.759192
+DPM,EulerA,DPM-EulerA,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3468,0.3789,0.0321,0.787864
+DPM,EulerA,DPM-EulerA,pp_006,an eagle swooping down to catch a mouse,0.3067,0.3028,-0.0039,0.76865
+DPM,EulerA,DPM-EulerA,pp_007,an elephant using its trunk to blow into a tuba,0.3019,0.287,-0.0149,0.745472
+DPM,EulerA,DPM-EulerA,pp_008,a dolphin in an astronaut suit on saturn,0.322,0.3085,-0.0135,0.830225
+DPM,EulerA,DPM-EulerA,pp_009,an oil painting of a sailboat at sunset,0.3421,0.3321,-0.01,0.722207
+DPM,EulerA,DPM-EulerA,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.2921,0.2805,-0.0116,0.793673
+DPM,EulerA,DPM-EulerA,pp_011,a coffee mug,0.2736,0.2829,0.0093,0.769269
+DPM,EulerA,DPM-EulerA,pp_012,a red lego block,0.2951,0.3028,0.0077,0.598105
+DPM,EulerA,DPM-EulerA,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.336,0.3158,-0.0202,0.745185
+DPM,EulerA,DPM-EulerA,pp_014,A bowl of Pho served with bean sprouts on top,0.3013,0.3126,0.0113,0.698547
+DPM,EulerA,DPM-EulerA,pp_015,a bloody mary cocktail next to a napkin,0.296,0.3038,0.0078,0.780061
+DPM,EulerA,DPM-EulerA,pp_016,A bare kitchen has wood cabinets and white appliances,0.304,0.3087,0.0047,0.641299
+DPM,EulerA,DPM-EulerA,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.352,0.3206,-0.0314,0.747186
+DPM,EulerA,DPM-EulerA,pp_018,waterfall,0.3228,0.2888,-0.034,0.712042
+DPM,EulerA,DPM-EulerA,pp_019,a fall landscape with a small cottage next to a lake,0.3465,0.3018,-0.0447,0.629704
+DPM,EulerA,DPM-EulerA,pp_020,a professional photo of a sunset behind the grand canyon,0.312,0.3218,0.0098,0.680426
+DPM,EulerA,DPM-EulerA,pp_021,a cityscape at night with a full moon,0.2804,0.3076,0.0272,0.653554
+DPM,EulerA,DPM-EulerA,pp_022,a young girl playing piano,0.3533,0.3278,-0.0255,0.822958
+DPM,EulerA,DPM-EulerA,pp_023,a ballet dancer next to a waterfall,0.3526,0.3323,-0.0203,0.696364
+DPM,EulerA,DPM-EulerA,pp_024,the Beatles crossing Abbey road,0.3117,0.3002,-0.0115,0.627971
+DPM,EulerA,DPM-EulerA,pp_025,a bundle of blue and yellow flowers in a vase,0.36,0.3515,-0.0085,0.776479
+DPM,EulerA,DPM-EulerA,pp_026,a steam locomotive speeding through a desert,0.3862,0.3498,-0.0364,0.687314
+DPM,EulerA,DPM-EulerA,pp_027,a large white yacht tossed about in a stormy sea,0.3076,0.2679,-0.0397,0.66208
+DPM,EulerA,DPM-EulerA,pp_028,the Eiffel Tower,0.2971,0.2967,-0.0004,0.529284
+DPM,EulerA,DPM-EulerA,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.3091,0.2892,-0.0199,0.608397
+DPM,EulerA,DPM-EulerA,pp_030,Golden Gate bridge on the surface of Mars,0.3257,0.3273,0.0016,0.692201
+DPM,LMS,DPM-LMS,pp_001,artificial intelligence,0.2502,0.247,-0.0032,0.228039
+DPM,LMS,DPM-LMS,pp_002,a shiba inu,0.333,0.3359,0.0029,0.200038
+DPM,LMS,DPM-LMS,pp_003,a dragon,0.2871,0.2568,-0.0303,0.454591
+DPM,LMS,DPM-LMS,pp_004,a shiba inu wearing a beret and black turtleneck,0.3922,0.3668,-0.0254,0.422427
+DPM,LMS,DPM-LMS,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3468,0.3592,0.0124,0.348108
+DPM,LMS,DPM-LMS,pp_006,an eagle swooping down to catch a mouse,0.3067,0.3056,-0.0011,0.209259
+DPM,LMS,DPM-LMS,pp_007,an elephant using its trunk to blow into a tuba,0.3019,0.2368,-0.0651,0.617114
+DPM,LMS,DPM-LMS,pp_008,a dolphin in an astronaut suit on saturn,0.322,0.3012,-0.0208,0.592089
+DPM,LMS,DPM-LMS,pp_009,an oil painting of a sailboat at sunset,0.3421,0.3523,0.0102,0.098007
+DPM,LMS,DPM-LMS,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.2921,0.2974,0.0053,0.458903
+DPM,LMS,DPM-LMS,pp_011,a coffee mug,0.2736,0.2689,-0.0047,0.219618
+DPM,LMS,DPM-LMS,pp_012,a red lego block,0.2951,0.2865,-0.0086,0.227716
+DPM,LMS,DPM-LMS,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.336,0.3414,0.0054,0.400826
+DPM,LMS,DPM-LMS,pp_014,A bowl of Pho served with bean sprouts on top,0.3013,0.3137,0.0124,0.309084
+DPM,LMS,DPM-LMS,pp_015,a bloody mary cocktail next to a napkin,0.296,0.291,-0.005,0.193777
+DPM,LMS,DPM-LMS,pp_016,A bare kitchen has wood cabinets and white appliances,0.304,0.2992,-0.0048,0.098623
+DPM,LMS,DPM-LMS,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.352,0.3147,-0.0373,0.354907
+DPM,LMS,DPM-LMS,pp_018,waterfall,0.3228,0.2747,-0.0481,0.465653
+DPM,LMS,DPM-LMS,pp_019,a fall landscape with a small cottage next to a lake,0.3465,0.349,0.0025,0.276405
+DPM,LMS,DPM-LMS,pp_020,a professional photo of a sunset behind the grand canyon,0.312,0.2048,-0.1072,0.758925
+DPM,LMS,DPM-LMS,pp_021,a cityscape at night with a full moon,0.2804,0.2824,0.002,0.029917
+DPM,LMS,DPM-LMS,pp_022,a young girl playing piano,0.3533,0.3529,-0.0004,0.15759
+DPM,LMS,DPM-LMS,pp_023,a ballet dancer next to a waterfall,0.3526,0.3509,-0.0017,0.422901
+DPM,LMS,DPM-LMS,pp_024,the Beatles crossing Abbey road,0.3117,0.3159,0.0042,0.37581
+DPM,LMS,DPM-LMS,pp_025,a bundle of blue and yellow flowers in a vase,0.36,0.363,0.003,0.287633
+DPM,LMS,DPM-LMS,pp_026,a steam locomotive speeding through a desert,0.3862,0.3797,-0.0065,0.13284
+DPM,LMS,DPM-LMS,pp_027,a large white yacht tossed about in a stormy sea,0.3076,0.3185,0.0109,0.158541
+DPM,LMS,DPM-LMS,pp_028,the Eiffel Tower,0.2971,0.3024,0.0053,0.139367
+DPM,LMS,DPM-LMS,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.3091,0.2987,-0.0104,0.307669
+DPM,LMS,DPM-LMS,pp_030,Golden Gate bridge on the surface of Mars,0.3257,0.2921,-0.0336,0.458816
+EulerA,LMS,EulerA-LMS,pp_001,artificial intelligence,0.2909,0.247,-0.0439,0.709446
+EulerA,LMS,EulerA-LMS,pp_002,a shiba inu,0.3196,0.3359,0.0163,0.758344
+EulerA,LMS,EulerA-LMS,pp_003,a dragon,0.2658,0.2568,-0.009,0.877074
+EulerA,LMS,EulerA-LMS,pp_004,a shiba inu wearing a beret and black turtleneck,0.3862,0.3668,-0.0194,0.814496
+EulerA,LMS,EulerA-LMS,pp_005,a corgi wearing a red bowtie and a purple party hat,0.3789,0.3592,-0.0197,0.783035
+EulerA,LMS,EulerA-LMS,pp_006,an eagle swooping down to catch a mouse,0.3028,0.3056,0.0028,0.757246
+EulerA,LMS,EulerA-LMS,pp_007,an elephant using its trunk to blow into a tuba,0.287,0.2368,-0.0502,0.819645
+EulerA,LMS,EulerA-LMS,pp_008,a dolphin in an astronaut suit on saturn,0.3085,0.3012,-0.0073,0.836736
+EulerA,LMS,EulerA-LMS,pp_009,an oil painting of a sailboat at sunset,0.3321,0.3523,0.0202,0.718561
+EulerA,LMS,EulerA-LMS,pp_010,A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.,0.2805,0.2974,0.0169,0.797389
+EulerA,LMS,EulerA-LMS,pp_011,a coffee mug,0.2829,0.2689,-0.014,0.803511
+EulerA,LMS,EulerA-LMS,pp_012,a red lego block,0.3028,0.2865,-0.0163,0.596924
+EulerA,LMS,EulerA-LMS,pp_013,"an ornate, high-backed mahogany chair with a red cushion",0.3158,0.3414,0.0256,0.743226
+EulerA,LMS,EulerA-LMS,pp_014,A bowl of Pho served with bean sprouts on top,0.3126,0.3137,0.0011,0.682131
+EulerA,LMS,EulerA-LMS,pp_015,a bloody mary cocktail next to a napkin,0.3038,0.291,-0.0128,0.78034
+EulerA,LMS,EulerA-LMS,pp_016,A bare kitchen has wood cabinets and white appliances,0.3087,0.2992,-0.0095,0.650311
+EulerA,LMS,EulerA-LMS,pp_017,a room with two chairs and a painting of the Statue of Liberty,0.3206,0.3147,-0.0059,0.764371
+EulerA,LMS,EulerA-LMS,pp_018,waterfall,0.2888,0.2747,-0.0141,0.681758
+EulerA,LMS,EulerA-LMS,pp_019,a fall landscape with a small cottage next to a lake,0.3018,0.349,0.0472,0.665182
+EulerA,LMS,EulerA-LMS,pp_020,a professional photo of a sunset behind the grand canyon,0.3218,0.2048,-0.117,0.873807
+EulerA,LMS,EulerA-LMS,pp_021,a cityscape at night with a full moon,0.3076,0.2824,-0.0252,0.650373
+EulerA,LMS,EulerA-LMS,pp_022,a young girl playing piano,0.3278,0.3529,0.0251,0.819602
+EulerA,LMS,EulerA-LMS,pp_023,a ballet dancer next to a waterfall,0.3323,0.3509,0.0186,0.740497
+EulerA,LMS,EulerA-LMS,pp_024,the Beatles crossing Abbey road,0.3002,0.3159,0.0157,0.635519
+EulerA,LMS,EulerA-LMS,pp_025,a bundle of blue and yellow flowers in a vase,0.3515,0.363,0.0115,0.758827
+EulerA,LMS,EulerA-LMS,pp_026,a steam locomotive speeding through a desert,0.3498,0.3797,0.0299,0.698643
+EulerA,LMS,EulerA-LMS,pp_027,a large white yacht tossed about in a stormy sea,0.2679,0.3185,0.0506,0.639257
+EulerA,LMS,EulerA-LMS,pp_028,the Eiffel Tower,0.2967,0.3024,0.0057,0.532318
+EulerA,LMS,EulerA-LMS,pp_029,The Statue of Liberty with the Manhattan skyline in the background.,0.2892,0.2987,0.0095,0.606659
+EulerA,LMS,EulerA-LMS,pp_030,Golden Gate bridge on the surface of Mars,0.3273,0.2921,-0.0352,0.813272
