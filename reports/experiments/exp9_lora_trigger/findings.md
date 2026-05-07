@@ -1,4 +1,4 @@
-# Experiment 7: LoRA Trigger Token Sensitivity
+# Experiment 9: LoRA Trigger Token Sensitivity
 
 **Date:** 2026-05-07
 **Hardware:** RTX 3070 Laptop 8 GB (enable_model_cpu_offload)
@@ -49,13 +49,13 @@ is not redundant with the style-description words ("ukiyo-e", "woodblock print s
 in the prompt. The LoRA fires in a qualitatively different mode without the trigger —
 LPIPS confirms the pixel-level divergence is real; CLIP cannot see it at all.
 
-**Cross-experiment note:** Seventh and final confirmation of CLIP-blindness across this
+**Cross-experiment note:** Ninth confirmation of CLIP-blindness across this
 experimental series: quantization (Exp 1), negative prompt (Exp 2), CFG plateau (Exp 3),
-scheduler stochasticity (Exp 4), ControlNet strength (Exp 5), LoRA style scale (Exp 6,
+scheduler stochasticity (Exp 4), ControlNet strength (Exp 5), LoRA style scale (Exp 8,
 with the nuance that CLIP has partial sensitivity when style is explicitly named in the
-prompt), LoRA trigger token (Exp 7). The consistent theme: CLIP measures semantic
+prompt), LoRA trigger token (Exp 9). The consistent theme: CLIP measures semantic
 alignment reliably, but is structurally blind to parameters that reshape visual character
-without eliminating prompt-relevant content — and Exp 7 is the clearest case, because
+without eliminating prompt-relevant content — and Exp 9 is the clearest case, because
 the trigger token has zero CLIP-vocabulary footprint by construction.
 
 ## Charts
@@ -70,5 +70,5 @@ the trigger token has zero CLIP-vocabulary footprint by construction.
 Reproduce:
 
 ```bash
-python scripts/experiments/exp7_lora_trigger.py
+python scripts/experiments/exp9_lora_trigger.py
 ```

@@ -322,7 +322,7 @@ AetherArt/
 
 ## Experiments (Phase 6b)
 
-Seven controlled experiments examining generation parameters. The cross-cutting finding: **CLIP measures semantic alignment reliably but is structurally blind to parameters that reshape visual character without eliminating prompt-relevant content.** LPIPS was added as a complementary perceptual metric across all experiments.
+Nine controlled experiments examining generation parameters (Exp 6 and 7 pending). The cross-cutting finding: **CLIP measures semantic alignment reliably but is structurally blind to parameters that reshape visual character without eliminating prompt-relevant content.** LPIPS was added as a complementary perceptual metric across all experiments.
 
 | Experiment | Headline result |
 |---|---|
@@ -331,8 +331,10 @@ Seven controlled experiments examining generation parameters. The cross-cutting 
 | [CFG scale sweep](reports/experiments/exp3_cfg_sweep/findings.md) (CFG 1–15) | CLIP plateaus at CFG=5, flat to CFG=15. LPIPS vs CFG=7 reaches 0.47 at CFG=15 — comparable to NF4 damage. |
 | [Scheduler visual comparison](reports/experiments/exp4_scheduler_visual/findings.md) | Two LPIPS clusters: EulerA (stochastic) 0.72–0.73 vs deterministic (DDIM/DPM/LMS) 0.31–0.48. CLIP range borderline. |
 | [ControlNet strength sweep](reports/experiments/exp5_controlnet_strength/findings.md) (0.0–1.5) | CLIP flat 0.0–1.0. LPIPS V-shape: no conditioning = 0.72 (same as EulerA cluster); over-conditioning = 0.32. |
-| [LoRA style scale sweep](reports/experiments/exp6_lora_alpha/findings.md) (alpha 0.0–1.5) | CLIP rises +4 SE from no-LoRA to active-LoRA, then flat. LPIPS separates alpha=0.5 from alpha=1.5 (CLIP cannot). |
-| [LoRA trigger token sensitivity](reports/experiments/exp7_lora_trigger/findings.md) | CLIP delta −0.0008 (pure noise). LPIPS = 0.41 — trigger meaningfully redirects LoRA; CLIP is blind to it. |
+| LoRA rank ablation (rank 4 / 8 / 16) | *pending* |
+| LoRA data size ablation (20 / 40 / 80 images) | *pending* |
+| [LoRA style scale sweep](reports/experiments/exp8_lora_alpha/findings.md) (alpha 0.0–1.5, Exp 8) | CLIP rises +4 SE from no-LoRA to active-LoRA, then flat. LPIPS separates alpha=0.5 from alpha=1.5 (CLIP cannot). |
+| [LoRA trigger token sensitivity](reports/experiments/exp9_lora_trigger/findings.md) (Exp 9) | CLIP delta −0.0008 (pure noise). LPIPS = 0.41 — trigger meaningfully redirects LoRA; CLIP is blind to it. |
 
 Full analysis: [`reports/findings.md`](reports/findings.md)
 

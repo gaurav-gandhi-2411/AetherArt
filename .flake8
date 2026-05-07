@@ -17,5 +17,7 @@ per-file-ignores =
     scripts/experiments/exp3_cfg_sweep.py: E402, E501
     scripts/experiments/exp4_scheduler_visual.py: E402, E501
     scripts/experiments/exp5_controlnet_strength.py: E402, E501
-    scripts/experiments/exp6_lora_alpha.py: E402, E501
-    scripts/experiments/exp7_lora_trigger.py: E402, E501
+    scripts/experiments/exp6_lora_rank.py: E402, E501
+    scripts/experiments/exp7_lora_data_size.py: E402, E501
+    scripts/experiments/exp8_lora_alpha.py: E402, E501
+    scripts/experiments/exp9_lora_trigger.py: E402, E501

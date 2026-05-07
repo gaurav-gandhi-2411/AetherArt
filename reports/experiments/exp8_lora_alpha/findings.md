@@ -1,4 +1,4 @@
-# Experiment 6: LoRA Style Scale (Alpha) Sweep
+# Experiment 8: LoRA Style Scale (Alpha) Sweep
 
 **Date:** 2026-05-07
 **Hardware:** RTX 3070 Laptop 8 GB (enable_model_cpu_offload)
@@ -68,7 +68,7 @@ LPIPS units of perceptual distance. Choosing a working alpha requires visual ins
 
 **Cross-experiment note:** Sixth confirmation of CLIP-blindness (refined): quantization
 (Exp 1), negative prompt (Exp 2), CFG plateau (Exp 3), scheduler stochasticity (Exp 4),
-ControlNet strength (Exp 5), LoRA style scale (Exp 6). This experiment clarifies the
+ControlNet strength (Exp 5), LoRA style scale (Exp 8). This experiment clarifies the
 boundary: CLIP can partially detect style when explicitly named in the prompt, but
 cannot distinguish within the active-adapter range where LPIPS shows large differences.
 
@@ -85,5 +85,5 @@ cannot distinguish within the active-adapter range where LPIPS shows large diffe
 Reproduce:
 
 ```bash
-python scripts/experiments/exp6_lora_alpha.py
+python scripts/experiments/exp8_lora_alpha.py
 ```
