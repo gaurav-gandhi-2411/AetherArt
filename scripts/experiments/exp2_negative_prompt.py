@@ -72,16 +72,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, "
-        "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, "
-        "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -111,6 +109,7 @@ COND_LABELS = {"no_neg": "No negative prompt", "with_neg": "Standard negative pr
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
 
+
 def load_pipeline() -> StableDiffusionPipeline:
     pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16)
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
@@ -124,9 +123,8 @@ def load_pipeline() -> StableDiffusionPipeline:
 
 # ── Generation loop ───────────────────────────────────────────────────────────
 
-def run_condition(
-    label: str, neg_prompt: str, pipe: StableDiffusionPipeline
-) -> list[dict]:
+
+def run_condition(label: str, neg_prompt: str, pipe: StableDiffusionPipeline) -> list[dict]:
     rows: list[dict] = []
     img_dir = IMG_DIR / label
     for prompt_id, prompt_text in PROMPTS.items():
@@ -199,9 +197,7 @@ _lpips_fn = lpips_lib.LPIPS(net="alex")
 _lpips_fn.eval()
 
 no_neg_by_key: dict[tuple, str] = {
-    (r["prompt_id"], r["seed"]): r["image_path"]
-    for r in all_rows
-    if r["condition"] == "no_neg"
+    (r["prompt_id"], r["seed"]): r["image_path"] for r in all_rows if r["condition"] == "no_neg"
 }
 
 
@@ -237,9 +233,7 @@ print("LPIPS done.")
 CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
-csv_fields = [
-    "condition", "prompt_id", "seed", "latency_s", "clip_score", "lpips", "image_path"
-]
+csv_fields = ["condition", "prompt_id", "seed", "latency_s", "clip_score", "lpips", "image_path"]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
     writer.writeheader()
@@ -284,9 +278,7 @@ for cond, rows in by_cond.items():
         "mean_lat": statistics.mean(lats),
         "mean_lpips": statistics.mean(lpips_vals) if lpips_vals else 0.0,
         "se_lpips": (
-            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5
-            if len(lpips_vals) > 1
-            else 0.0
+            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5 if len(lpips_vals) > 1 else 0.0
         ),
     }
 

@@ -69,16 +69,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, "
-        "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, "
-        "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -104,6 +102,7 @@ COND_LABELS = {"fp16": "fp16 (baseline)", "int8": "INT8 (8-bit)", "nf4": "NF4 (4
 
 # ── Pipeline loading ──────────────────────────────────────────────────────────
 
+
 def _apply_dpm(pipe: StableDiffusionPipeline) -> StableDiffusionPipeline:
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     return pipe
@@ -127,6 +126,7 @@ def load_quantized(bits: int) -> StableDiffusionPipeline:
 
 
 # ── Generation loop ───────────────────────────────────────────────────────────
+
 
 def run_condition(label: str, pipe: StableDiffusionPipeline) -> list[dict]:
     rows: list[dict] = []
@@ -213,9 +213,7 @@ _lpips_fn = lpips_lib.LPIPS(net="alex")
 _lpips_fn.eval()
 
 fp16_img_path: dict[tuple, str] = {
-    (r["prompt_id"], r["seed"]): r["image_path"]
-    for r in all_rows
-    if r["condition"] == "fp16"
+    (r["prompt_id"], r["seed"]): r["image_path"] for r in all_rows if r["condition"] == "fp16"
 }
 
 
@@ -297,9 +295,7 @@ for cond, rows in by_cond.items():
         "mean_vram": statistics.mean(vrams),
         "mean_lpips": statistics.mean(lpips_vals) if lpips_vals else 0.0,
         "se_lpips": (
-            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5
-            if len(lpips_vals) > 1
-            else 0.0
+            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5 if len(lpips_vals) > 1 else 0.0
         ),
     }
 

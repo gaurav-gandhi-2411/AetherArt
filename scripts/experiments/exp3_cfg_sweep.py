@@ -87,16 +87,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, "
-        "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, "
-        "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -118,7 +116,7 @@ CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 # Colour palette: map CFG values to a gradient from grey → blue → red
 _CFG_PALETTE = {
     1: GREY,
-    3: "#5AADA8",   # teal-light
+    3: "#5AADA8",  # teal-light
     5: GREEN,
     7: BLUE,
     9: ORANGE,
@@ -128,6 +126,7 @@ _CFG_PALETTE = {
 
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
+
 
 def load_pipeline() -> StableDiffusionPipeline:
     pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16)
@@ -141,6 +140,7 @@ def load_pipeline() -> StableDiffusionPipeline:
 
 
 # ── Generation loop ───────────────────────────────────────────────────────────
+
 
 def run_cfg(cfg: float, pipe: StableDiffusionPipeline) -> list[dict]:
     rows: list[dict] = []
@@ -175,8 +175,8 @@ def run_cfg(cfg: float, pipe: StableDiffusionPipeline) -> list[dict]:
                     "seed": seed,
                     "latency_s": round(latency, 3),
                     "clip_score": None,
-                    "lpips_vs_ref": None,    # vs cfg=CFG_REF
-                    "lpips_vs_prev": None,   # vs previous CFG value
+                    "lpips_vs_ref": None,  # vs cfg=CFG_REF
+                    "lpips_vs_prev": None,  # vs previous CFG value
                     "image_path": (img_dir / fname).relative_to(ROOT).as_posix(),
                 }
             )
@@ -267,8 +267,14 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "cfg", "prompt_id", "seed", "latency_s",
-    "clip_score", "lpips_vs_ref", "lpips_vs_prev", "image_path",
+    "cfg",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "lpips_vs_ref",
+    "lpips_vs_prev",
+    "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
@@ -333,8 +339,10 @@ cfg_arr = np.array(CFG_VALUES, dtype=float)
 clip_arr = np.array([agg[c]["mean_clip"] for c in CFG_VALUES])
 lpips_ref_arr = np.array([agg[c]["mean_lpips_ref"] for c in CFG_VALUES])
 lpips_prev_arr = np.array(
-    [agg[c]["mean_lpips_prev"] if agg[c]["mean_lpips_prev"] is not None else 0.0
-     for c in CFG_VALUES]
+    [
+        agg[c]["mean_lpips_prev"] if agg[c]["mean_lpips_prev"] is not None else 0.0
+        for c in CFG_VALUES
+    ]
 )
 colors = [_CFG_PALETTE[c] for c in CFG_VALUES]
 x = np.arange(len(CFG_VALUES), dtype=float)
@@ -350,8 +358,13 @@ canvas = ChartCanvas(
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
 canvas.add_bars(
-    x, clip_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=8,
+    x,
+    clip_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=8,
 )
 canvas.set_xticks(x, xlabels, fontsize=9)
 canvas.save(str(CHARTS_DIR / "clip_by_cfg.png"))
@@ -366,8 +379,13 @@ canvas2 = ChartCanvas(
 )
 canvas2.set_ylim(0.0, max(lpips_ref_max * 1.5, 0.05))
 canvas2.add_bars(
-    x, lpips_ref_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=max(lpips_ref_max * 0.05, 0.002), value_size=8,
+    x,
+    lpips_ref_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=max(lpips_ref_max * 0.05, 0.002),
+    value_size=8,
 )
 canvas2.set_xticks(x, xlabels, fontsize=9)
 canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
@@ -389,8 +407,13 @@ canvas3 = ChartCanvas(
 )
 canvas3.set_ylim(0.0, adj_max * 1.5)
 canvas3.add_bars(
-    x3, adj_lpips, colors=adj_colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=adj_max * 0.05, value_size=8,
+    x3,
+    adj_lpips,
+    colors=adj_colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=adj_max * 0.05,
+    value_size=8,
 )
 canvas3.set_xticks(x3, adj_labels, fontsize=9)
 canvas3.save(str(CHARTS_DIR / "lpips_adjacent.png"))
@@ -409,9 +432,7 @@ for cfg in CFG_VALUES:
         break
 
 # Find the largest adjacent LPIPS step (visual regime change)
-regime_change_step = max(
-    adj_cfgs, key=lambda c: agg[c]["mean_lpips_prev"] or 0.0
-)
+regime_change_step = max(adj_cfgs, key=lambda c: agg[c]["mean_lpips_prev"] or 0.0)
 regime_change_val = agg[regime_change_step]["mean_lpips_prev"]
 regime_change_from = CFG_VALUES[CFG_VALUES.index(regime_change_step) - 1]
 
@@ -419,9 +440,7 @@ regime_change_from = CFG_VALUES[CFG_VALUES.index(regime_change_step) - 1]
 table_rows = []
 for cfg in CFG_VALUES:
     a = agg[cfg]
-    prev_str = (
-        f"{a['mean_lpips_prev']:.4f}" if a["mean_lpips_prev"] is not None else "—"
-    )
+    prev_str = f"{a['mean_lpips_prev']:.4f}" if a["mean_lpips_prev"] is not None else "—"
     table_rows.append(
         f"| {cfg:2d}    | {a['mean_clip']:.4f}    | ±{a['se_clip']:.4f}"
         f"  | {a['mean_lpips_ref']:.4f}               | {prev_str}            |"

@@ -99,8 +99,7 @@ PROMPTS = {
 
 # Source images for canny conditioning: DDIM 30-step benchmark outputs
 BENCHMARK_IMGS = {
-    pid: ROOT / "outputs" / "eval" / pid / "DDIM" / "30steps.png"
-    for pid in PROMPT_IDS
+    pid: ROOT / "outputs" / "eval" / pid / "DDIM" / "30steps.png" for pid in PROMPT_IDS
 }
 
 NEG_PROMPT = "low quality, blurry, deformed, ugly, bad anatomy, watermark"
@@ -116,13 +115,13 @@ CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Colour palette per strength level
 _STR_PALETTE = {
-    0.0:  GREY,
+    0.0: GREY,
     0.25: "#5AADA8",
-    0.5:  GREEN,
+    0.5: GREEN,
     0.75: TEAL,
-    1.0:  BLUE,
+    1.0: BLUE,
     1.25: ORANGE,
-    1.5:  RED,
+    1.5: RED,
 }
 
 
@@ -149,6 +148,7 @@ print(f"Canny conditioning images ready ({len(canny_images)} prompts)")
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
 
+
 def load_pipeline() -> StableDiffusionControlNetPipeline:
     dtype = torch.float16 if torch.cuda.is_available() else torch.float32
     print(f"Loading ControlNet weights: {CANNY_MODEL_ID}")
@@ -168,6 +168,7 @@ def load_pipeline() -> StableDiffusionControlNetPipeline:
 
 
 # ── Generation loop ───────────────────────────────────────────────────────────
+
 
 def run_strength(
     strength: float,
@@ -214,9 +215,7 @@ def run_strength(
                     "image_path": (img_dir / fname).relative_to(ROOT).as_posix(),
                 }
             )
-            print(
-                f"  [strength={strength:.2f}] {pid} seed={seed:5d} | {latency:.1f}s"
-            )
+            print(f"  [strength={strength:.2f}] {pid} seed={seed:5d} | {latency:.1f}s")
     return rows
 
 
@@ -304,8 +303,14 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "strength", "prompt_id", "seed", "latency_s",
-    "clip_score", "lpips_vs_ref", "lpips_vs_prev", "image_path",
+    "strength",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "lpips_vs_ref",
+    "lpips_vs_prev",
+    "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
@@ -373,8 +378,10 @@ str_arr = np.array(STRENGTH_VALUES)
 clip_arr = np.array([agg[s]["mean_clip"] for s in STRENGTH_VALUES])
 lpips_ref_arr = np.array([agg[s]["mean_lpips_ref"] for s in STRENGTH_VALUES])
 lpips_prev_arr = np.array(
-    [agg[s]["mean_lpips_prev"] if agg[s]["mean_lpips_prev"] is not None else 0.0
-     for s in STRENGTH_VALUES]
+    [
+        agg[s]["mean_lpips_prev"] if agg[s]["mean_lpips_prev"] is not None else 0.0
+        for s in STRENGTH_VALUES
+    ]
 )
 colors = [_STR_PALETTE[s] for s in STRENGTH_VALUES]
 x = np.arange(len(STRENGTH_VALUES), dtype=float)
@@ -390,8 +397,13 @@ canvas = ChartCanvas(
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
 canvas.add_bars(
-    x, clip_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=8,
+    x,
+    clip_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=8,
 )
 canvas.set_xticks(x, xlabels, fontsize=9)
 canvas.save(str(CHARTS_DIR / "clip_by_strength.png"))
@@ -406,8 +418,13 @@ canvas2 = ChartCanvas(
 )
 canvas2.set_ylim(0.0, max(lpips_ref_max * 1.5, 0.05))
 canvas2.add_bars(
-    x, lpips_ref_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=max(lpips_ref_max * 0.05, 0.002), value_size=8,
+    x,
+    lpips_ref_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=max(lpips_ref_max * 0.05, 0.002),
+    value_size=8,
 )
 canvas2.set_xticks(x, xlabels, fontsize=9)
 canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
@@ -415,8 +432,7 @@ canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
 # Chart 3: LPIPS between adjacent strength values
 adj_strs = STRENGTH_VALUES[1:]
 adj_labels = [
-    f"{STRENGTH_VALUES[i-1]}→{STRENGTH_VALUES[i]}"
-    for i in range(1, len(STRENGTH_VALUES))
+    f"{STRENGTH_VALUES[i-1]}→{STRENGTH_VALUES[i]}" for i in range(1, len(STRENGTH_VALUES))
 ]
 adj_lpips = np.array([agg[s]["mean_lpips_prev"] for s in adj_strs])
 adj_colors = [_STR_PALETTE[s] for s in adj_strs]
@@ -431,8 +447,13 @@ canvas3 = ChartCanvas(
 )
 canvas3.set_ylim(0.0, adj_max * 1.5)
 canvas3.add_bars(
-    x3, adj_lpips, colors=adj_colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=adj_max * 0.05, value_size=8,
+    x3,
+    adj_lpips,
+    colors=adj_colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=adj_max * 0.05,
+    value_size=8,
 )
 canvas3.set_xticks(x3, adj_labels, fontsize=9)
 canvas3.save(str(CHARTS_DIR / "lpips_adjacent.png"))

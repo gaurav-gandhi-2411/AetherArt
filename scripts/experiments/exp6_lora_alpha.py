@@ -80,8 +80,7 @@ SIZE = 512
 # Prompts with "ukyowood" trigger token (LoRA was trained with this caption prefix)
 PROMPTS = {
     "p01_portrait": (
-        "ukyowood ukiyo-e portrait of an elderly woman, "
-        "dramatic light, woodblock print style"
+        "ukyowood ukiyo-e portrait of an elderly woman, " "dramatic light, woodblock print style"
     ),
     "p02_landscape": (
         "ukyowood ukiyo-e misty mountain valley at sunrise, "
@@ -96,16 +95,13 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "ukyowood ukiyo-e extreme close-up of rough stone wall, "
-        "water drops, micro detail"
+        "ukyowood ukiyo-e extreme close-up of rough stone wall, " "water drops, micro detail"
     ),
     "p06_arch": (
-        "ukyowood ukiyo-e interior of a Japanese temple, "
-        "wooden pillars, soft lantern light"
+        "ukyowood ukiyo-e interior of a Japanese temple, " "wooden pillars, soft lantern light"
     ),
     "p07_hands": (
-        "ukyowood ukiyo-e two hands clasped together, "
-        "natural light, woodblock print style"
+        "ukyowood ukiyo-e two hands clasped together, " "natural light, woodblock print style"
     ),
     "p08_crowd": (
         "ukyowood ukiyo-e busy street market in Edo, "
@@ -123,17 +119,18 @@ for a in ALPHA_VALUES:
 CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 
 _ALPHA_PALETTE = {
-    0.0:  GREY,
+    0.0: GREY,
     0.25: "#5AADA8",
-    0.5:  GREEN,
+    0.5: GREEN,
     0.75: TEAL,
-    1.0:  BLUE,
+    1.0: BLUE,
     1.25: ORANGE,
-    1.5:  RED,
+    1.5: RED,
 }
 
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
+
 
 def load_pipeline() -> StableDiffusionPipeline:
     pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16)
@@ -164,6 +161,7 @@ def set_alpha(pipe: StableDiffusionPipeline, alpha: float) -> None:
 
 
 # ── Generation loop ───────────────────────────────────────────────────────────
+
 
 def run_alpha(alpha: float, pipe: StableDiffusionPipeline) -> list[dict]:
     set_alpha(pipe, alpha)
@@ -294,8 +292,14 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "alpha", "prompt_id", "seed", "latency_s",
-    "clip_score", "lpips_vs_ref", "lpips_vs_prev", "image_path",
+    "alpha",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "lpips_vs_ref",
+    "lpips_vs_prev",
+    "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
@@ -364,8 +368,10 @@ for a in ALPHA_VALUES:
 clip_arr = np.array([agg[a]["mean_clip"] for a in ALPHA_VALUES])
 lpips_ref_arr = np.array([agg[a]["mean_lpips_ref"] for a in ALPHA_VALUES])
 lpips_prev_arr = np.array(
-    [agg[a]["mean_lpips_prev"] if agg[a]["mean_lpips_prev"] is not None else 0.0
-     for a in ALPHA_VALUES]
+    [
+        agg[a]["mean_lpips_prev"] if agg[a]["mean_lpips_prev"] is not None else 0.0
+        for a in ALPHA_VALUES
+    ]
 )
 colors = [_ALPHA_PALETTE[a] for a in ALPHA_VALUES]
 x = np.arange(len(ALPHA_VALUES), dtype=float)
@@ -381,8 +387,13 @@ canvas = ChartCanvas(
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
 canvas.add_bars(
-    x, clip_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=8,
+    x,
+    clip_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=8,
 )
 canvas.set_xticks(x, xlabels, fontsize=9)
 canvas.save(str(CHARTS_DIR / "clip_by_alpha.png"))
@@ -397,18 +408,20 @@ canvas2 = ChartCanvas(
 )
 canvas2.set_ylim(0.0, max(lpips_ref_max * 1.5, 0.05))
 canvas2.add_bars(
-    x, lpips_ref_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=max(lpips_ref_max * 0.05, 0.002), value_size=8,
+    x,
+    lpips_ref_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=max(lpips_ref_max * 0.05, 0.002),
+    value_size=8,
 )
 canvas2.set_xticks(x, xlabels, fontsize=9)
 canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
 
 # Chart 3: LPIPS adjacent steps
 adj_alphas = ALPHA_VALUES[1:]
-adj_labels = [
-    f"{ALPHA_VALUES[i-1]}→{ALPHA_VALUES[i]}"
-    for i in range(1, len(ALPHA_VALUES))
-]
+adj_labels = [f"{ALPHA_VALUES[i-1]}→{ALPHA_VALUES[i]}" for i in range(1, len(ALPHA_VALUES))]
 adj_lpips = np.array([agg[a]["mean_lpips_prev"] for a in adj_alphas])
 adj_colors = [_ALPHA_PALETTE[a] for a in adj_alphas]
 x3 = np.arange(len(adj_alphas), dtype=float)
@@ -422,8 +435,13 @@ canvas3 = ChartCanvas(
 )
 canvas3.set_ylim(0.0, adj_max * 1.5)
 canvas3.add_bars(
-    x3, adj_lpips, colors=adj_colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=adj_max * 0.05, value_size=8,
+    x3,
+    adj_lpips,
+    colors=adj_colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=adj_max * 0.05,
+    value_size=8,
 )
 canvas3.set_xticks(x3, adj_labels, fontsize=9)
 canvas3.save(str(CHARTS_DIR / "lpips_adjacent.png"))

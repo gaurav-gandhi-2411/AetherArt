@@ -97,9 +97,7 @@ for r in eval_data["results"]:
     eval_index[(r["prompt_id"], r["scheduler"], r["steps"])] = r
 
 # Collect all prompt IDs at 30 steps for our schedulers
-prompt_ids = sorted(
-    {r["prompt_id"] for r in eval_data["results"] if r["steps"] == STEPS}
-)
+prompt_ids = sorted({r["prompt_id"] for r in eval_data["results"] if r["steps"] == STEPS})
 print(f"  {len(prompt_ids)} prompts × {STEPS} steps × {len(SCHEDULERS)} schedulers")
 print(f"  All images expected at outputs/eval/{{prompt_id}}/{{scheduler}}/{STEPS}steps.png")
 
@@ -240,8 +238,15 @@ with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer.writerows(sched_rows)
 
 pair_fields = [
-    "scheduler_a", "scheduler_b", "pair", "prompt_id",
-    "prompt", "clip_a", "clip_b", "clip_delta", "lpips",
+    "scheduler_a",
+    "scheduler_b",
+    "pair",
+    "prompt_id",
+    "prompt",
+    "clip_a",
+    "clip_b",
+    "clip_delta",
+    "lpips",
 ]
 with open(PAIRS_CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=pair_fields)
@@ -284,10 +289,13 @@ canvas = ChartCanvas(
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
 canvas.add_bars(
-    x1, clip_arr,
+    x1,
+    clip_arr,
     colors=[SCHED_COLOR[s] for s in SCHEDULERS],
     width=0.55,
-    value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=9,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=9,
 )
 canvas.set_xticks(x1, SCHEDULERS, fontsize=10)
 canvas.save(str(CHARTS_DIR / "clip_by_scheduler.png"))
@@ -306,10 +314,13 @@ canvas2 = ChartCanvas(
 )
 canvas2.set_ylim(0.0, lpips_max * 1.5)
 canvas2.add_bars(
-    x2, lpips_arr,
+    x2,
+    lpips_arr,
     colors=[PAIR_COLORS[p] for p in PAIRS],
     width=0.55,
-    value_fmt="{:.4f}", value_pad=lpips_max * 0.04, value_size=8,
+    value_fmt="{:.4f}",
+    value_pad=lpips_max * 0.04,
+    value_size=8,
 )
 canvas2.set_xticks(x2, pair_labels, fontsize=9)
 canvas2.save(str(CHARTS_DIR / "lpips_by_pair.png"))
@@ -331,10 +342,13 @@ canvas3 = ChartCanvas(
 )
 canvas3.set_ylim(0.0, max(fig_vals) * 1.6)
 canvas3.add_bars(
-    x3, fig_vals,
+    x3,
+    fig_vals,
     colors=[BLUE, GREEN],
     width=0.45,
-    value_fmt="{:.4f}", value_pad=max(fig_vals) * 0.04, value_size=9,
+    value_fmt="{:.4f}",
+    value_pad=max(fig_vals) * 0.04,
+    value_size=9,
 )
 canvas3.set_xticks(x3, fig_labels, fontsize=8)
 canvas3.save(str(CHARTS_DIR / "clip_vs_lpips_range.png"))

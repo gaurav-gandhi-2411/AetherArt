@@ -136,6 +136,7 @@ CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
 
+
 def load_pipeline() -> StableDiffusionPipeline:
     pipe = StableDiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16)
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
@@ -158,6 +159,7 @@ def load_lora(pipe: StableDiffusionPipeline) -> None:
 
 
 # ── Generation ────────────────────────────────────────────────────────────────
+
 
 def generate_condition(
     condition: str,
@@ -286,8 +288,14 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "condition", "prompt_id", "seed", "latency_s",
-    "clip_score", "lpips_between", "gen_prompt", "image_path",
+    "condition",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "lpips_between",
+    "gen_prompt",
+    "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
@@ -337,9 +345,7 @@ for cond, rows in by_cond.items():
         "mean_lat": statistics.mean(lats),
         "mean_lpips": statistics.mean(lpips_vals) if lpips_vals else None,
         "se_lpips": (
-            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5
-            if len(lpips_vals) > 1
-            else None
+            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5 if len(lpips_vals) > 1 else None
         ),
     }
 
@@ -350,10 +356,7 @@ mean_lpips = agg["no_trigger"]["mean_lpips"]
 print("\n── Condition summary ──")
 for cond in CONDITIONS:
     a = agg[cond]
-    print(
-        f"  {cond}: CLIP={a['mean_clip']:.4f} ±{a['se_clip']:.4f} | "
-        f"lat={a['mean_lat']:.1f}s"
-    )
+    print(f"  {cond}: CLIP={a['mean_clip']:.4f} ±{a['se_clip']:.4f} | " f"lat={a['mean_lat']:.1f}s")
 print(f"  CLIP delta (with_trigger - no_trigger): {clip_delta:+.4f}  (pooled SE={pooled_se:.4f})")
 print(f"  Mean LPIPS between conditions: {mean_lpips:.4f} ±{agg['no_trigger']['se_lpips']:.4f}")
 
@@ -391,7 +394,8 @@ for pid in prompt_ids:
     vals = [
         r["lpips_between"]
         for r in all_rows
-        if r["condition"] == "no_trigger" and r["prompt_id"] == pid
+        if r["condition"] == "no_trigger"
+        and r["prompt_id"] == pid
         and r["lpips_between"] is not None
     ]
     per_prompt_lpips.append(statistics.mean(vals) if vals else 0.0)
