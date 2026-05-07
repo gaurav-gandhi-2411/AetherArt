@@ -4,6 +4,21 @@ Follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) conventions, gr
 
 ---
 
+## Phase 6b — Controlled experiments: CLIP-blindness series (May 2026)
+
+Seven experiments examining how generation parameters affect CLIP score vs perceptual image quality (LPIPS). Cross-cutting finding: CLIP reliably measures semantic alignment but is structurally blind to parameters that reshape visual character without eliminating prompt-relevant content.
+
+- **Exp 1 — Quantization quality** (`exp1_quantization_quality.py`): fp16 / INT8 / NF4 all within 1 SE on CLIP. NF4 vs fp16 LPIPS = 0.40 — perceptually large difference, invisible to CLIP. INT8 uses *more* VRAM than fp16 under model CPU offload (bitsandbytes dequantization buffer).
+- **Exp 2 — Negative prompt impact** (`exp2_negative_prompt.py`): CLIP delta +0.003 (within noise). LPIPS = 0.46 between conditions. Second confirmation of CLIP-blindness.
+- **Exp 3 — CFG scale sweep** (`exp3_cfg_sweep.py`): CLIP plateaus at CFG=5, flat through CFG=15. LPIPS vs CFG=7 reaches 0.47 at CFG=15 — comparable to NF4 quantization damage. "Maximize CFG until CLIP peaks" gives no useful signal past the plateau.
+- **Exp 4 — Scheduler visual comparison** (`exp4_scheduler_visual.py`): Zero GPU time — reused 360-run benchmark images. Two LPIPS clusters: EulerA (stochastic sampler) 0.72–0.73 vs deterministic cluster (DDIM/DPM/LMS) 0.31–0.48. Mechanistic explanation: EulerA adds fresh Gaussian noise at each step.
+- **Exp 5 — ControlNet strength sweep** (`exp5_controlnet_strength.py`): CLIP flat 0.0–1.0 (V-shape in LPIPS). No-conditioning LPIPS = 0.72 (matches EulerA tier). Largest adjacent step at 0.25→0.50.
+- **Exp 6 — LoRA style scale sweep** (`exp6_lora_alpha.py`): CLIP rises +4 SE from no-LoRA to active-LoRA (prompts name the style explicitly), then plateaus. LPIPS separates within the active range; adjacent steps uniform (~0.41).
+- **Exp 7 — LoRA trigger token sensitivity** (`exp7_lora_trigger.py`): CLIP delta −0.0008 (0.12 SE, pure noise). LPIPS = 0.41 — trigger "ukyowood" meaningfully redirects LoRA firing; CLIP cannot detect it. Clearest CLIP-blindness case: trigger token has zero CLIP-vocabulary footprint by construction.
+- **Infrastructure**: LPIPS added as post-hoc metric (lpips 0.1.4, AlexNet backbone); `_to_lpips_tensor` helper normalises PIL→[-1,1] without torchvision; all experiment scripts exempted from E402/E501 in `.flake8`; all 7 scripts black-formatted.
+
+---
+
 ## Phase 6a — README rewrite and chart polish (May 2026)
 
 - **README structural rewrite** — new section order: hero → What this is → Gallery → Findings → Architecture → Models & Techniques → Performance → Reproducibility → Planned Experiments; cut "Sample Outputs", "Why CPU", "Free-Tier Limitations", old "What's Next" table

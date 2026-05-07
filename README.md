@@ -38,7 +38,7 @@ The Space runs on HF's free CPU tier — generation takes ~8–15 min. It demons
 - [Recreate from PNG](#recreate-from-png)
 - [Reproducibility](#reproducibility)
 - [Project Structure](#project-structure)
-- [Planned Experiments](#planned-experiments-phase-6b)
+- [Experiments](#experiments-phase-6b)
 - [What's Next](#whats-next)
 - [References & Acknowledgments](#references--acknowledgments)
 
@@ -320,19 +320,21 @@ AetherArt/
 
 ---
 
-## Planned Experiments (Phase 6b)
+## Experiments (Phase 6b)
 
-Queued experiments with specific questions:
+Seven controlled experiments examining generation parameters. The cross-cutting finding: **CLIP measures semantic alignment reliably but is structurally blind to parameters that reshape visual character without eliminating prompt-relevant content.** LPIPS was added as a complementary perceptual metric across all experiments.
 
-| Experiment | Question |
+| Experiment | Headline result |
 |---|---|
-| LoRA rank ablation (4 / 8 / 16) | Does rank 8 prevent overfitting, or is rank 4 sufficient at 80 images? |
-| LoRA training data size (20 / 80 / 200 images) | How much data does a rank-8 LoRA actually need? |
-| Negative prompt impact | How much CLIP score does the calligraphy negative prompt recover on LoRA outputs? |
-| CFG scale sweep (3 / 5 / 7 / 9 / 12) | Is guidance_scale=7.5 the right default, or does the optimal shift with scheduler? |
-| ControlNet conditioning strength sweep | At what conditioning strength does the depth/edge constraint become over-constraining? |
-| Quantization quality comparison | Are fp16, INT8, and NF4 visually distinguishable at fixed seed and prompt? |
-| Scheduler visual comparison | Side-by-side renders at fixed seed — do schedulers differ in texture or just CLIP score? |
+| [Quantization quality](reports/experiments/exp1_quantization_quality/findings.md) (fp16 / INT8 / NF4) | All three within 1 SE on CLIP. NF4 vs fp16 LPIPS = 0.40 — perceptually large, CLIP-invisible. |
+| [Negative prompt impact](reports/experiments/exp2_negative_prompt/findings.md) | CLIP delta +0.003 (within noise). LPIPS = 0.46 between conditions. |
+| [CFG scale sweep](reports/experiments/exp3_cfg_sweep/findings.md) (CFG 1–15) | CLIP plateaus at CFG=5, flat to CFG=15. LPIPS vs CFG=7 reaches 0.47 at CFG=15 — comparable to NF4 damage. |
+| [Scheduler visual comparison](reports/experiments/exp4_scheduler_visual/findings.md) | Two LPIPS clusters: EulerA (stochastic) 0.72–0.73 vs deterministic (DDIM/DPM/LMS) 0.31–0.48. CLIP range borderline. |
+| [ControlNet strength sweep](reports/experiments/exp5_controlnet_strength/findings.md) (0.0–1.5) | CLIP flat 0.0–1.0. LPIPS V-shape: no conditioning = 0.72 (same as EulerA cluster); over-conditioning = 0.32. |
+| [LoRA style scale sweep](reports/experiments/exp6_lora_alpha/findings.md) (alpha 0.0–1.5) | CLIP rises +4 SE from no-LoRA to active-LoRA, then flat. LPIPS separates alpha=0.5 from alpha=1.5 (CLIP cannot). |
+| [LoRA trigger token sensitivity](reports/experiments/exp7_lora_trigger/findings.md) | CLIP delta −0.0008 (pure noise). LPIPS = 0.41 — trigger meaningfully redirects LoRA; CLIP is blind to it. |
+
+Full analysis: [`reports/findings.md`](reports/findings.md)
 
 ---
 

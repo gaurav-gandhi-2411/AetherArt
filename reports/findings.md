@@ -134,3 +134,23 @@ The prompt-to-prompt range (0.130) is **18× larger** than the scheduler-to-sche
 | Low VRAM (4–6 GB GPU) | Any scheduler + 8-bit INT8 quant | 2.2 GB peak, 9.6 s — independent of scheduler choice |
 | Scheduler for batch eval | DPM or DDIM | Lower variance per prompt; more predictable outputs |
 | Avoid | LMS · 50 steps | Highest latency, lowest CLIP, highest variance — dominated on all axes |
+
+---
+
+## Phase 6b: Controlled Experiments — The CLIP-Blindness Series
+
+Seven targeted experiments run after the benchmark, each asking a specific question about a generation parameter. The cross-cutting finding: **CLIP score reliably measures prompt–semantic alignment but is structurally blind to any parameter that reshapes pixel-level visual character without eliminating the dominant semantic content.** LPIPS (Learned Perceptual Image Patch Similarity) was added as a complementary metric in all experiments to detect what CLIP misses.
+
+| Exp | Parameter | CLIP signal | LPIPS finding | Detail |
+|-----|-----------|-------------|---------------|--------|
+| 1 | Quantization (fp16 / INT8 / NF4) | All three within 1 SE — indistinguishable | NF4 vs fp16: LPIPS = 0.40 (large) | [findings](experiments/exp1_quantization_quality/findings.md) |
+| 2 | Negative prompt (off vs on) | Delta = −0.003 (within 1 SE, no reliable effect) | LPIPS = 0.46 between conditions | [findings](experiments/exp2_negative_prompt/findings.md) |
+| 3 | CFG scale (1–15) | Plateaus at CFG=5; flat from 5→15 | LPIPS vs CFG=7 reaches 0.47 at CFG=15 — comparable to NF4 damage | [findings](experiments/exp3_cfg_sweep/findings.md) |
+| 4 | Scheduler (DDIM / DPM / EulerA / LMS) | Range 0.011, borderline 1.8× SE | Two clusters: EulerA (stochastic) LPIPS 0.72–0.73; deterministic cluster 0.31–0.48 | [findings](experiments/exp4_scheduler_visual/findings.md) |
+| 5 | ControlNet strength (0.0–1.5) | Flat 0.0–1.0; mild dip at 1.5 (−2.2 SE) | V-shape: no conditioning LPIPS = 0.72 (same as EulerA cluster); strength=1.5 LPIPS = 0.32 | [findings](experiments/exp5_controlnet_strength/findings.md) |
+| 6 | LoRA alpha / style scale (0.0–1.5) | Rises +4 SE from no-LoRA to active-LoRA; flat within 0.5–1.25 | No-LoRA LPIPS = 0.67 vs reference; adjacent steps uniform 0.38–0.45 across sweep | [findings](experiments/exp6_lora_alpha/findings.md) |
+| 7 | LoRA trigger token (with / without "ukyowood") | Delta = −0.0008 (0.12 SE, pure noise) | LPIPS = 0.41 — trigger redirects LoRA firing in ways CLIP cannot see | [findings](experiments/exp7_lora_trigger/findings.md) |
+
+**The refined picture:** CLIP is not fully blind to style — when the prompt explicitly names a style (Exp 6: "ukiyo-e woodblock print"), CLIP partially registers whether the image matches that description. But CLIP cannot resolve within the active-style range (alpha 0.5–1.25 all within noise while spanning 0.41 LPIPS units), and it is entirely blind to stylistic choices that have no prompt-side vocabulary (Exp 7: trigger token, Exp 4: stochastic vs deterministic sampler paths).
+
+**Practical implication for this project:** DPM-Solver++ at 30 steps, CFG=7, fp16, ControlNet strength=1.0, LoRA alpha=1.0 with trigger token are validated as the working defaults. CLIP can confirm semantic alignment at those defaults but cannot guide fine-tuning of any of the parameters that shape visual character.
