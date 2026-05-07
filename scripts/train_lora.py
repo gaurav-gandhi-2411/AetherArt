@@ -20,7 +20,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DIFFUSERS_SCRIPT = REPO_ROOT / "scripts" / "_diffusers_train_text_to_image_lora.py"
 DATA_DIR = REPO_ROOT / "data" / "lora" / "ukiyo-e"
-OUTPUT_DIR = DATA_DIR / "training_output"
+DEFAULT_OUTPUT_DIR = DATA_DIR / "training_output"
 
 
 def parse_args():
@@ -45,6 +45,12 @@ def parse_args():
         "--no-xformers", action="store_true", help="Disable xformers (fallback if not installed)"
     )
     p.add_argument("--no-gradient-checkpointing", action="store_true")
+    p.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Override output directory (default: data/lora/ukiyo-e/training_output)",
+    )
     return p.parse_args()
 
 
@@ -89,7 +95,7 @@ def build_command(args, python_exe: str) -> list[str]:
         "--checkpointing_steps",
         str(args.checkpointing_steps),
         "--output_dir",
-        str(OUTPUT_DIR),
+        str(DEFAULT_OUTPUT_DIR),
         "--validation_prompt",
         args.validation_prompt,
         "--num_validation_images",
@@ -116,14 +122,19 @@ def main():
     args = parse_args()
     python_exe = sys.executable
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    log_path = OUTPUT_DIR / "training.log"
+    output_dir = Path(args.output_dir) if args.output_dir else DEFAULT_OUTPUT_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    log_path = output_dir / "training.log"
 
     cmd = build_command(args, python_exe)
+    # patch --output_dir into the command (build_command uses OUTPUT_DIR directly)
+    out_idx = cmd.index("--output_dir") + 1
+    cmd[out_idx] = str(output_dir)
 
-    print(f"[train_lora] Output dir : {OUTPUT_DIR}")
+    print(f"[train_lora] Output dir : {output_dir}")
     print(f"[train_lora] Log file   : {log_path}")
     print(f"[train_lora] Steps      : {args.max_train_steps}")
+    print(f"[train_lora] Rank       : {args.rank}")
     print(f"[train_lora] Command    : {' '.join(cmd)}\n")
 
     t0 = time.monotonic()
@@ -151,7 +162,7 @@ def main():
     print(f"\n[train_lora] Finished in {elapsed_str} — exit code {rc}")
 
     with open(log_path, "a", encoding="utf-8") as log_fh:
-        log_fh.write(f"\n--- elapsed {elapsed_str} | exit {rc} ---\n")
+        log_fh.write(f"\n--- elapsed {elapsed_str} | exit {rc} | rank {args.rank} ---\n")
 
     sys.exit(rc)
 
