@@ -461,7 +461,15 @@ canvas = ChartCanvas(
     top_margin_pct=0.22,
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
-canvas.add_bars(x, clip_arr, colors=colors, width=0.5, value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=9)
+canvas.add_bars(
+    x,
+    clip_arr,
+    colors=colors,
+    width=0.5,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=9,
+)
 canvas.set_xticks(x, xlabels, fontsize=10)
 canvas.save(str(CHARTS_DIR / "clip_by_data_size.png"))
 
@@ -473,7 +481,15 @@ canvas2 = ChartCanvas(
     top_margin_pct=0.22,
 )
 canvas2.set_ylim(0.0, max(lpips_max * 1.5, 0.05))
-canvas2.add_bars(x, lpips_arr, colors=colors, width=0.5, value_fmt="{:.4f}", value_pad=max(lpips_max * 0.05, 0.002), value_size=9)
+canvas2.add_bars(
+    x,
+    lpips_arr,
+    colors=colors,
+    width=0.5,
+    value_fmt="{:.4f}",
+    value_pad=max(lpips_max * 0.05, 0.002),
+    value_size=9,
+)
 canvas2.set_xticks(x, xlabels, fontsize=10)
 canvas2.save(str(CHARTS_DIR / "lpips_vs_data80.png"))
 
