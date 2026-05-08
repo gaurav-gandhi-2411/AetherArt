@@ -92,3 +92,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp5_controlnet_strength.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — the V-shape LPIPS pattern (strength=0 reaches 0.72, matching EulerA's stochastic tier) is the sharpest illustration of CLIP missing a structural conditioning signal.

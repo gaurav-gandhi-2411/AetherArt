@@ -75,3 +75,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp7_lora_data_size.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — see "The Underfitting Paradox" subsection; data-20 > data-80 on CLIP (LPIPS 0.66) is the second confirmation that CLIP rewards keyword literalness over style quality.

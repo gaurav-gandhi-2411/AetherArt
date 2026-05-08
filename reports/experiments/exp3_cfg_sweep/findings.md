@@ -88,3 +88,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp3_cfg_sweep.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — third confirmation; demonstrates CLIP's plateau problem (adequate for finding the guidance threshold, useless above it).

@@ -70,3 +70,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp1_quantization_quality.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — first confirmation of the pattern; see the full 9-experiment evidence table and the "Why CLIP fails" explanation.

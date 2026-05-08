@@ -99,3 +99,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp4_scheduler_visual.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — the EulerA stochastic-vs-deterministic cluster split (LPIPS 0.73 vs 0.40) provides a mechanistic explanation for why sampling regime is invisible to embedding-based metrics.

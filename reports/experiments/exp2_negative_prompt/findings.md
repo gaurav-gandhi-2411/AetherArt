@@ -78,3 +78,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp2_negative_prompt.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — second confirmation of the pattern; LPIPS = 0.46 from a parameter that changes only pixel rendering, not semantic content.

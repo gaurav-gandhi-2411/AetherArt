@@ -75,3 +75,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp6_lora_rank.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — see "The Underfitting Paradox" subsection; this experiment is one of two that confirm CLIP actively rewards underfitting (rank-4 > rank-8 on CLIP).

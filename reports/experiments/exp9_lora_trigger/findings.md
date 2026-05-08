@@ -72,3 +72,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp9_lora_trigger.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — the cleanest CLIP-blindness case: trigger token has zero CLIP-vocabulary footprint by construction; CLIP delta = 0.12 SE; LPIPS = 0.41.

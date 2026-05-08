@@ -32,6 +32,7 @@ The Space runs on HF's free CPU tier — generation takes ~8–15 min. It demons
 
 - [Gallery](#gallery)
 - [Findings](#findings)
+- [Central finding: CLIP blindness](#central-finding-clip-blindness)
 - [Architecture](#architecture)
 - [Models & Techniques](#models--techniques)
 - [Performance](#performance)
@@ -103,6 +104,24 @@ Prompt choice matters 18× more than scheduler choice. Across 30 prompts the CLI
 | Chart | |
 |---|---|
 | ![Speed–quality Pareto](reports/eval_charts/pareto_scatter.png) | ![Prompt vs scheduler variance](reports/eval_charts/variance_decomposition.png) |
+
+---
+
+## Central finding: CLIP blindness
+
+Nine Phase 6b experiments varied one generation parameter at a time and measured CLIP score and LPIPS (Learned Perceptual Image Patch Similarity). The result was consistent: **CLIP stayed flat while the images changed substantially.** CLIP delta was mostly below 1 standard error across all nine experiments; LPIPS ranged 0.40–0.73.
+
+| Panel | What it shows |
+|---|---|
+| ![CLIP-blindness chart](reports/clip_blindness_chart.png) | Left: CLIP sensitivity (SE units). Right: max LPIPS. The contrast is the finding — tall orange LPIPS bars against mostly-nub blue CLIP bars. |
+
+The one partial exception is Experiment 8 (LoRA alpha): CLIP rises +4 SE when the LoRA switches on, because the prompts explicitly name the style. But CLIP stays blind within the active range (alpha 0.5–1.25) despite LPIPS showing 0.40+ unit differences there.
+
+**The underfitting paradox:** The clearest illustration of what CLIP actually measures. Rank-4 LoRA scored *higher* on CLIP than rank-8 (0.3384 vs 0.3337); data-20 scored higher than data-80. Underfit models produce more literal keyword matches; CLIP rewards literalness, not visual quality.
+
+**Implication:** CLIP is valid for confirming semantic presence — whether the image contains what the prompt describes. It cannot guide parameter choices that reshape visual character: CFG above the plateau, ControlNet strength, LoRA rank, training data quality, adapter alpha. Use LPIPS or human evaluation for those.
+
+**[Full writeup with evidence table, mechanistic explanation, and caveats → reports/clip_blindness.md](reports/clip_blindness.md)**
 
 ---
 
@@ -347,6 +366,16 @@ Full analysis: [`reports/findings.md`](reports/findings.md)
 - **DreamBooth for subject personalisation** — full fine-tuning needs ~16 GB VRAM and 30–60 min per subject. Out of reach on the RTX 3070.
 - **TensorRT compilation** — 3–5× additional speedup. Only worth pursuing with consistent production traffic to amortise the build time.
 - **Distillation** — whether a distilled SD 2.1 can run on 4 GB GPU is an interesting question. Needs a teacher inference budget not available on free GPU tiers.
+
+---
+
+## Project documentation
+
+- **[reports/clip_blindness.md](reports/clip_blindness.md)** — Cross-experiment CLIP-blindness writeup: evidence table, mechanistic explanation, the underfitting paradox, practical implications, caveats.
+- **[reports/what_didnt_work.md](reports/what_didnt_work.md)** — Honest account of bugs, abandoned approaches, and surprises, including the Phase 6b experiment substitution incident.
+- **[docs/lab_notebook.md](docs/lab_notebook.md)** — Dated research log: decisions, surprises, and what the data showed vs what was expected.
+- **[reports/findings.md](reports/findings.md)** — Main benchmark narrative (360-run CLIP benchmark + Phase 6b overview).
+- **[CHANGELOG.md](CHANGELOG.md)** — Phased project history.
 
 ---
 

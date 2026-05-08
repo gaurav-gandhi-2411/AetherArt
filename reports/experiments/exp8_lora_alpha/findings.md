@@ -87,3 +87,7 @@ Reproduce:
 ```bash
 python scripts/experiments/exp8_lora_alpha.py
 ```
+
+---
+
+**Cross-experiment context:** [`reports/clip_blindness.md`](../../clip_blindness.md) — the partial exception: CLIP rises +4 SE from no-LoRA to active-LoRA (prompts name the style) but is blind within the active range (alpha 0.5–1.25, LPIPS spread 0.40+).
