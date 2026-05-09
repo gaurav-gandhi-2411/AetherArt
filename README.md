@@ -109,6 +109,8 @@ Prompt choice matters 18× more than scheduler choice. Across 30 prompts the CLI
 
 ## Central finding: CLIP blindness
 
+The 360-run benchmark above tested one parameter (scheduler choice) on one metric (CLIP). The finding below comes from a separate, larger experiment series — nine controlled experiments across quantization, negative prompts, CFG scale, ControlNet strength, LoRA rank, LoRA data size, LoRA alpha, and LoRA trigger words — and tests CLIP itself as a measurement tool.
+
 Nine Phase 6b experiments varied one generation parameter at a time and measured CLIP score and LPIPS (Learned Perceptual Image Patch Similarity). The result was consistent: **CLIP stayed flat while the images changed substantially.** CLIP delta was mostly below 1 standard error across all nine experiments; LPIPS ranged 0.40–0.73.
 
 | Panel | What it shows |
