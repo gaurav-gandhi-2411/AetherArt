@@ -228,28 +228,28 @@ Commercial services run on H100/A100 GPUs (80 GB VRAM) with TensorRT-compiled mo
 
 ### VRAM and quantization
 
-4-bit NF4 uses 2761 MB — only 336 MB less than fp16's 3097 MB — but slows generation from 2.7 s to 4.7 s. The 8-bit INT8 mode saves 887 MB but at 9.6 s is 3.6× slower than fp16. The compute cost of dequantization exceeds the bandwidth savings on a laptop GPU. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
+4-bit NF4 uses 1382 MB — 421 MB less than fp16's 1803 MB — at 1.5× the latency. The 8-bit INT8 mode costs 407 MB more than fp16 under CPU offload: bitsandbytes allocates a full fp16 compute buffer for dequantization, and on 8 GB with `enable_model_cpu_offload()` that buffer costs more than the stored-weight savings recover. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
 
-| Precision | Peak VRAM (measured) | vs fp16 | Avg latency | When to use |
-|-----------|---------------------:|---------|-------------|-------------|
-| fp16 (default) | 3097 MB | — | 2.7 s/img | 8 GB GPU — best quality |
-| 8-bit INT8 | **2210 MB** | −887 MB | 9.6 s/img | 4–6 GB GPU — best VRAM savings |
-| 4-bit NF4 | 2761 MB | −336 MB | 4.7 s/img | Smallest stored weights; inference peak inflated by compute buffer |
+| Precision | Peak VRAM (Exp 1) | vs fp16 | Avg latency | When to use |
+|-----------|------------------:|---------|-------------|-------------|
+| fp16 (default) | 1803 MB | — | 2.7 s/img | 8 GB GPU — best quality |
+| 8-bit INT8 | **2210 MB** | **+407 MB** | 9.6 s/img | Costs VRAM under CPU offload; gains savings only when loaded fully on-device (≥12 GB) |
+| 4-bit NF4 | 1382 MB | −421 MB | 4.7 s/img | Best VRAM savings under CPU offload; pixel fidelity loss is substantial (LPIPS = 0.40 vs fp16) |
 
-> Latency above is from the quantization benchmark (warm model, isolated pipeline call). The speed tiers table shows 3.2 s/img for standard fp16 — that includes model CPU offload switching overhead across the full generation stack.
+> VRAM numbers are from [Experiment 1](reports/experiments/exp1_quantization_quality/findings.md) (40 images, RTX 3070, model CPU offload). Latency is from an earlier standalone benchmark (warm model, isolated pipeline call) — the speed tiers table's 3.2 s/img for fp16 includes CPU offload switching overhead across the full generation stack.
 
 > LCM and quantization are independent axes — combine them for speed *and* VRAM savings.
 
 ### VRAM breakdown
 
 ```
-SD 2.1 U-Net (fp16):        3097 MB peak  (measured, RTX 3070, 30 steps, model CPU offload)
-SD 2.1 U-Net (8-bit INT8):  2210 MB peak  (best VRAM savings; 3.5× slower due to dequant)
-SD 2.1 U-Net (4-bit NF4):   2761 MB peak  (bitsandbytes compute buffer inflates inference peak)
+SD 2.1 U-Net (fp16):        1803 MB peak  (Exp 1, RTX 3070, model CPU offload)
+SD 2.1 U-Net (8-bit INT8):  2210 MB peak  (+407 MB vs fp16 under CPU offload; compute buffer cost)
+SD 2.1 U-Net (4-bit NF4):   1382 MB peak  (−421 MB vs fp16; 4-bit compression survives compute buffer)
 ControlNet pipeline:         ~3000 MB additional (separate pipeline object)
 LoRA adapter:                   6.4 MB (negligible)
 SDXL Turbo:                  ~6000 MB peak (separate SDXL-architecture model)
-Total worst case (SD+CN fp16): ~6100 MB — fits in 8 GB with margin
+Total worst case (SD+CN fp16): ~4800 MB — fits in 8 GB with margin
 ```
 
 ---
