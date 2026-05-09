@@ -69,8 +69,8 @@
 
 | File | Size | Notes |
 |---|---|---|
-| `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` | **6.4 MB** | **Selected adapter (checkpoint-1000)** |
-| `training_output/pytorch_lora_weights.safetensors` | 6.4 MB | Final weights (step 1500, gitignored) |
+| `data/lora/ukiyo-e/ukiyo-e-lora.safetensors` | **6.4 MB** (6.7 MB decimal) | **Selected adapter (checkpoint-1000)** |
+| `training_output/pytorch_lora_weights.safetensors` | 6.4 MB (6.7 MB decimal) | Final weights (step 1500, gitignored) |
 | `training_output/training.log` | 822 KB | Full training log (gitignored) |
 
 All 6 checkpoint subdirectories were deleted after selection (freed ~10 GB).
