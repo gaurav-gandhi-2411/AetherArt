@@ -112,7 +112,7 @@ This is the kind of result that emerges from running experiments rather than pre
 
 ## May 8, 2026 — Recovery: the experiment substitution incident
 
-Discovered that Experiments 6 and 7 had been run with the wrong designs — an alpha sweep and a trigger ablation instead of the planned rank ablation and data size ablation. See [`reports/what_didnt_work.md`](what_didnt_work.md) for the full account.
+Discovered that Experiments 6 and 7 had been run with the wrong designs — an alpha sweep and a trigger ablation instead of the planned rank ablation and data size ablation. See [`reports/what_didnt_work.md`](../reports/what_didnt_work.md) for the full account.
 
 Recovery took most of the day:
 1. Renamed the misplaced experiments to 8 and 9 (13 git mv operations, updated all cross-references).
@@ -120,7 +120,7 @@ Recovery took most of the day:
 3. Built 20 and 40-image subset directories from the 80-image dataset.
 4. Ran the 90-image inference grid for each ablation.
 
-The rank-4 training ran correctly (~2 h). The rank-16 training also ran correctly. The 20-image data subset training ran for 4 h 10 min due to the validation_epochs=1 overhead (see [what_didnt_work.md](what_didnt_work.md)).
+The rank-4 training ran correctly (~2 h). The rank-16 training also ran correctly. The 20-image data subset training ran for 4 h 10 min due to the validation_epochs=1 overhead (see [what_didnt_work.md](../reports/what_didnt_work.md)).
 
 The conda run process reported failure on both experiment scripts due to a Windows cp1252 encoding crash while printing tqdm progress bars after completion. The scripts completed successfully — confirmed by reading the training logs directly and checking that all output files were present and correct.
 
