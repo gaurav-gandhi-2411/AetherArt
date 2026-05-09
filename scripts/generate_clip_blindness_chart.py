@@ -126,4 +126,3 @@ fig.suptitle(
 
 OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 ChartCanvas.save_fig(fig, str(OUT_PATH), dpi=130, bottom_adjust=0.20)
-print(f"Saved: {OUT_PATH}")
