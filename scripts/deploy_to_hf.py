@@ -47,17 +47,49 @@ api.upload_folder(
         ".gitattributes",
         # --- Space-specific subfolder (already uploaded above) ---
         "spaces/**",
-        # --- large local-only files ---
-        "models/**",
-        "outputs/**",
-        "data/lora/ukiyo-e/dataset/**",
-        "reports/lora_comparison_gallery/**",
-        # --- Python bytecode ---
+        # --- Python bytecode / caches ---
         "**/__pycache__/**",
         "**/*.pyc",
-        # --- temp/dev scripts ---
-        "scripts/_*.py",
-        # --- misc ---
+        ".mypy_cache/**",
+        ".pytest_cache/**",
+        ".coverage",
+        # --- research narrative docs (GitHub-only) ---
+        "reports/**",
+        "CHANGELOG.md",
+        "CONTRIBUTING.md",
+        "CITATIONS.bib",
+        "PLAN.md",
+        "docs/lab_notebook.md",
+        "docs/gallery_candidates/**",
+        "docs/hero_candidates/**",
+        "docs/hero_tiles/**",
+        "images/**",
+        # --- dev/CI tooling (no runtime use on Space) ---
+        "tests/**",
+        ".github/**",
+        "scripts/**",
+        ".pre-commit-config.yaml",
+        ".flake8",
+        "pyproject.toml",
+        "setup.py",
+        "environment.yml",
+        "requirements-dev.txt",
+        "requirements-lock.txt",
+        # --- large local-only model/data files ---
+        "models/**",
+        "outputs/**",
+        # LoRA training artifacts — Space only needs the adapter safetensors,
+        # which is already present from prior deploys; exclude to avoid LFS
+        # batch upload against the 1 GB Space LFS cap.
+        "data/lora/ukiyo-e/*.safetensors",
+        "data/lora/ukiyo-e/images/**",
+        "data/lora/ukiyo-e/dataset/**",
+        "data/lora/ukiyo-e/training_output/**",
+        "data/lora/ukiyo-e-data20/**",
+        "data/lora/ukiyo-e-data40/**",
+        "data/lora/ukiyo-e-rank16/**",
+        "data/lora/ukiyo-e-rank4/**",
+        # --- misc transient files ---
         "*.log",
         "_probe_out.txt",
     ],
