@@ -230,7 +230,7 @@ Commercial services run on H100/A100 GPUs (80 GB VRAM) with TensorRT-compiled mo
 
 ### VRAM and quantization
 
-4-bit NF4 uses 1382 MB — 421 MB less than fp16's 1803 MB — at 1.5× the latency. The 8-bit INT8 mode costs 407 MB more than fp16 under CPU offload: bitsandbytes allocates a full fp16 compute buffer for dequantization, and on 8 GB with `enable_model_cpu_offload()` that buffer costs more than the stored-weight savings recover. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
+4-bit NF4 uses 1382 MB — 421 MB less than fp16's 1803 MB — but slows generation from 2.7 s to 4.7 s. The 8-bit INT8 mode costs 407 MB more than fp16 under CPU offload: bitsandbytes allocates a full fp16 compute buffer for dequantization, and on 8 GB with `enable_model_cpu_offload()` that buffer costs more than the stored-weight savings recover. Quantization applies to the U-Net only; text encoder and VAE stay at fp16.
 
 | Precision | Peak VRAM (Exp 1) | vs fp16 | Avg latency | When to use |
 |-----------|------------------:|---------|-------------|-------------|
