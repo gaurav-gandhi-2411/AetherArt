@@ -317,6 +317,7 @@ AetherArt/
 │   ├── eval.py                             # 360-run CLIP benchmark harness
 │   ├── train_lora.py                       # LoRA training wrapper (accelerate launch)
 │   ├── generate_benchmark_charts.py        # ChartCanvas-based chart generation
+│   ├── generate_clip_blindness_chart.py    # CLIP-blindness two-panel summary chart
 │   ├── benchmark_quantization.py           # fp16 vs 8-bit vs 4-bit VRAM + CLIP + latency
 │   └── prepare_lora_dataset.py             # WikiArt dataset prep + caption generation
 ├── docs/
@@ -331,7 +332,7 @@ AetherArt/
 │   └── quantization_benchmark.md
 ├── spaces/
 │   └── README.md                           # HF Space version (with YAML frontmatter)
-├── tests/                                  # pytest suite — 76 tests, 59% coverage
+├── tests/                                  # pytest suite — 76 tests, 41% coverage (visualization package at 0%; ~56% excluding it)
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
 └── requirements.txt
