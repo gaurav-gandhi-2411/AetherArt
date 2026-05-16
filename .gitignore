@@ -28,3 +28,9 @@ docs/hero_candidates/
 
 # Experiment raw images (120+ PNGs per experiment — too large for git; results.csv has paths)
 reports/experiments/*/images/
+
+# Python coverage artifacts
+.coverage
+
+# LoRA training data (too large for git, regenerated locally)
+data/lora/
