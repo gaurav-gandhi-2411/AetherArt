@@ -1,4 +1,4 @@
-# AetherArt — Diffusion Inference on a Laptop GPU
+# AetherArt — Diffusion Inference on a Laptop GPu
 
 [![Hugging Face Spaces](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
