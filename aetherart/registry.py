@@ -22,6 +22,11 @@ from .gpu_hygiene import cleanup_gpu
 from .logger import get_logger
 from .model import AetherModel
 
+try:
+    from diffusers import StableDiffusionXLPipeline
+except Exception:
+    StableDiffusionXLPipeline = None  # type: ignore[assignment, misc]
+
 logger = get_logger(__name__)
 
 
@@ -33,6 +38,8 @@ class ModelRegistry:
         self._quant_mode: Optional[str] = None  # "8bit" or "4bit"
         self._active_lora: str = "none"
         self._base_init_error: Optional[str] = None
+        self._sdxl_base: Optional[Any] = None
+        self._sdxl_base_init_error: Optional[str] = None
 
     # ── Base SD 2.1 / SDXL ──────────────────────────────────────────────────
 
@@ -69,6 +76,47 @@ class ModelRegistry:
     @active_lora.setter
     def active_lora(self, name: str) -> None:
         self._active_lora = name
+
+    # ── SDXL Base ───────────────────────────────────────────────────────────
+
+    def get_sdxl_base(self) -> Any:
+        """Lazy-load the SDXL base pipeline and return it.
+
+        Caches the init failure so repeated calls raise immediately instead of
+        re-attempting a download that already failed.  Call retry_sdxl_base_init()
+        to clear the cached error and try again.
+        """
+        if self._sdxl_base is not None:
+            return self._sdxl_base
+        if self._sdxl_base_init_error is not None:
+            raise RuntimeError(
+                f"SDXL base init previously failed: {self._sdxl_base_init_error}. "
+                "Call registry.retry_sdxl_base_init() to retry."
+            )
+        try:
+            from .sdxl_pipeline import load_sdxl_base
+
+            logger.info("Loading SDXL base pipeline…")
+            self._sdxl_base = load_sdxl_base()
+            self._sdxl_base_init_error = None
+            logger.info("SDXL base pipeline ready")
+        except Exception as exc:
+            self._sdxl_base_init_error = str(exc)
+            raise RuntimeError(f"SDXL base init failed: {exc}") from exc
+        return self._sdxl_base
+
+    def retry_sdxl_base_init(self) -> None:
+        """Clear the cached SDXL init failure and try again."""
+        self._sdxl_base_init_error = None
+        self._sdxl_base = None
+        self.get_sdxl_base()
+
+    def release_sdxl_base(self) -> None:
+        if self._sdxl_base is not None:
+            from .sdxl_pipeline import release_sdxl_pipeline
+
+            release_sdxl_pipeline(self._sdxl_base)
+            self._sdxl_base = None
 
     # ── SDXL Turbo ──────────────────────────────────────────────────────────
 
@@ -142,6 +190,12 @@ class ModelRegistry:
             result["base"] = "not_loaded"
         else:
             result["base"] = f"ok ({self._base.backend})"
+        if self._sdxl_base_init_error:
+            result["sdxl_base"] = f"error: {self._sdxl_base_init_error}"
+        elif self._sdxl_base is not None:
+            result["sdxl_base"] = "loaded"
+        else:
+            result["sdxl_base"] = "not_loaded"
         result["turbo"] = "ok" if self._turbo is not None else "not_loaded"
         if self._quant is not None:
             result["quantized"] = f"ok ({self._quant_mode})"
@@ -158,6 +212,7 @@ class ModelRegistry:
 
     def release_all(self) -> None:
         """Release all loaded pipelines and free GPU memory. Safe to call multiple times."""
+        self.release_sdxl_base()
         self.release_turbo()
         if self._quant is not None:
             del self._quant
