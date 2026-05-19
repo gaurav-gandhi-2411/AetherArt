@@ -34,6 +34,37 @@ _MODEL_CARD_PATH = _REPO_ROOT / "docs" / "model_cards" / "sd21_ukiyo_e.md"
 _SAMPLE_IMAGES_DIR = _REPO_ROOT / "docs" / "model_cards" / "sd21_ukiyo_e_samples"
 
 
+def _resolve_token() -> str | None:
+    """Return a working HF token.
+
+    Tries HUGGINGFACEHUB_API_TOKEN from env first; falls back to the
+    credential cached by `huggingface-cli login` if the env token is
+    absent or fails authentication.
+    """
+    from huggingface_hub import HfApi
+
+    env_token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+    if env_token:
+        try:
+            HfApi().whoami(token=env_token)
+            return env_token
+        except Exception:
+            logger.debug("Env token invalid; falling back to cached credential")
+
+    # Try cached token (stored by huggingface-cli login)
+    try:
+        from huggingface_hub.utils import HfFolder
+
+        cached = HfFolder.get_token()
+        if cached:
+            HfApi().whoami(token=cached)
+            return cached
+    except Exception:
+        pass
+
+    return None
+
+
 def _validate(adapter_path: Path) -> str | None:
     """Return an error message if validation fails, else None."""
     if not adapter_path.exists():
@@ -42,9 +73,11 @@ def _validate(adapter_path: Path) -> str | None:
         return f"Adapter file is empty: {adapter_path}"
     if not _MODEL_CARD_PATH.exists():
         return f"Model card not found: {_MODEL_CARD_PATH}"
-    token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-    if not token:
-        return "HUGGINGFACEHUB_API_TOKEN not set — cannot authenticate with Hub"
+    if _resolve_token() is None:
+        return (
+            "No valid HF token found. Set HUGGINGFACEHUB_API_TOKEN or run "
+            "`huggingface-cli login` to cache credentials."
+        )
     return None
 
 
@@ -52,7 +85,7 @@ def _publish(adapter_path: Path, repo_id: str) -> None:
     from huggingface_hub import HfApi
 
     api = HfApi()
-    token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+    token = _resolve_token()
 
     logger.info("Creating or verifying repo '%s'…", repo_id)
     api.create_repo(repo_id, repo_type="model", exist_ok=True, private=False, token=token)
