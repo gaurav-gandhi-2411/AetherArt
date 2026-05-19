@@ -32,7 +32,7 @@ try:
     from diffusers.models import ControlNetUnionModel
 except Exception:
     AutoencoderKL = None  # type: ignore[assignment, misc]
-    ControlNetUnionModel = None  # type: ignore[assignment, misc]
+    ControlNetUnionModel = None  # type: ignore[misc]
     StableDiffusionXLControlNetUnionPipeline = None  # type: ignore[assignment, misc]
 
 # Shared singleton — one model object, referenced by every pipeline in the LRU cache.
