@@ -135,3 +135,41 @@ The mechanistic explanation: an underfit LoRA learns a simple, literal represent
 CLIP rewards literalness. Style quality is not literal. The metric is optimizing in the wrong direction for style transfer evaluation.
 
 This was the sharpest illustration in the series of why CLIP cannot guide LoRA training decisions. The finding belongs in the project's main conclusions, not just in the experiment reports.
+
+---
+
+## Phase 7 carry-over — deferred ruff violations
+
+<!-- TODO(PR-14): ruff cleanup deferred — fold ruff --fix --unsafe-fixes into PR 14 (coverage threshold enforcement). These are stylistic, not bugs. -->
+
+PR 02 enabled `E, F, I, W` rules only. `UP`, `B`, and `SIM` rules found 20 pre-existing violations that must be fixed before those rule sets can be activated. Consultant decision (2026-05-19): defer to PR 14, which already touches the package broadly for coverage gap-filling.
+
+**`aetherart/model.py` — UP rules (8 hits)**
+- `UP035` line 5: `from typing import … Dict` — deprecated, use `dict`
+- `UP006` line 51: `-> Dict[str, Any]` → `-> dict[str, Any]`
+- `UP006` line 57: `kwargs: Dict[str, Any]` → `kwargs: dict[str, Any]`
+- `UP006` line 83: `self.optimizations: Dict[str, str]` → `dict[str, str]`
+- `UP045` line 34: `-> Optional[str]` → `-> str | None`
+- `UP045` line 51: `hf_token: Optional[str]` → `str | None`
+- `UP045` line 76: `model_id: Optional[str]` → `str | None`
+- `UP045` line 78: `self.hf_token: Optional[str]` → `str | None`
+- `UP045` line 81: `self.backend: Optional[str]` → `str | None`
+- `UP045` line 232: `seed: Optional[int]` → `int | None`
+- `UP037` line 233: `-> "Image.Image"` — remove quotes from annotation
+
+**`aetherart/controlnet.py` — SIM rules (1 hit)**
+- `SIM105` line 162: `try/except Exception: pass` → `with contextlib.suppress(Exception):`
+
+**`aetherart/lora.py` — SIM rules (1 hit)**
+- `SIM105` line 41: `try/except Exception: pass` → `with contextlib.suppress(Exception):`
+
+**`scripts/` — B and SIM rules (8 hits, lower priority)**
+- `B905` `scripts/benchmark_quantization.py:42`: `zip()` missing `strict=`
+- `B905` `scripts/eval.py:330`: `zip()` missing `strict=`
+- `B905` `scripts/generate_hero_image.py:79`: `zip()` missing `strict=`
+- `B904` `scripts/_diffusers_train_text_to_image_lora.py:637`: raise without `from`
+- `B007` `scripts/_diffusers_train_text_to_image_lora.py:889`: unused loop var `step`
+- `SIM910` `scripts/_diffusers_train_text_to_image_lora.py:683`: `.get(x, None)` → `.get(x)`
+- `SIM102` `scripts/_diffusers_train_text_to_image_lora.py:977`: nested `if` → single `if … and …`
+- `SIM102` `scripts/_diffusers_train_text_to_image_lora.py:1025`: same
+- `SIM114` `scripts/_gen_findings_charts.py:77,81`: combinable `elif` branches
