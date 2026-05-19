@@ -4,8 +4,9 @@ ControlNetUnionModel is loaded once and shared across all pipeline instances in 
 LRU-2 registry cache.  The 2.5 GB checkpoint does not reload between LRU evictions —
 only the pipeline wrapper objects cycle in/out.
 
-control_type (canny, depth, …) is passed at inference time, not construction.
-One ControlNetUnionModel checkpoint serves all control types.
+control_mode (diffusers 0.35 param name; formerly control_type in older releases) is
+passed at inference time, not construction.  One ControlNetUnionModel checkpoint
+serves all control types.
 
 G1: VAE is always madebyollin/sdxl-vae-fp16-fix at fp16.
 enable_model_cpu_offload() only — sequential offload breaks bitsandbytes (#10800).
@@ -177,7 +178,7 @@ def preprocess_depth(image: Any) -> Any:
 # Valid control-type literals understood by StableDiffusionXLControlNetUnionPipeline.
 CONTROL_TYPES = Literal["canny", "depth", "hed", "pidi", "scribble", "ted", "lineart", "normal"]
 
-# Integer IDs used by ControlNetUnionModel at inference time.
+# Integer IDs passed as control_mode at inference time (diffusers 0.35 API).
 # Multiple string aliases share an int where the model treats them identically.
 _CTYPE_TO_INT: dict[str, int] = {
     "openpose": 0,
@@ -210,8 +211,10 @@ def generate_sdxl_controlnet(
 ) -> Any:
     """Run SDXL ControlNet Union inference.
 
-    control_type is resolved from the ctype string at call time per the Union
-    pipeline contract — it is not baked into the pipeline at construction.
+    control_mode (diffusers 0.35 API name) is resolved from the ctype string at call
+    time per the Union pipeline contract — it is not baked into the pipeline at
+    construction.  Verified parameter names: control_image, control_mode (not image /
+    control_type — those were the pre-0.35 names and cause TypeError at runtime).
 
     Args:
         pipe: Pipeline returned by load_sdxl_controlnet_pipeline().
@@ -238,8 +241,8 @@ def generate_sdxl_controlnet(
 
     result = pipe(
         prompt=prompt,
-        image=image,
-        control_type=[_CTYPE_TO_INT[ctype]],
+        control_image=image,
+        control_mode=[_CTYPE_TO_INT[ctype]],
         negative_prompt=negative_prompt,
         num_inference_steps=num_inference_steps,
         guidance_scale=guidance_scale,

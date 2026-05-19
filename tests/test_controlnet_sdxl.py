@@ -170,19 +170,19 @@ class TestGenerateSdxlControlnet:
 
         return Image.fromarray(np.zeros((8, 8, 3), dtype=np.uint8))
 
-    def test_canny_passes_control_type_3(self):
+    def test_canny_passes_control_mode_3(self):
         from aetherart.controlnet_sdxl import generate_sdxl_controlnet
 
         pipe = self._mock_pipe()
         generate_sdxl_controlnet(pipe, "test", self._blank_image(), ctype="canny")
-        assert pipe.call_args.kwargs["control_type"] == [3]
+        assert pipe.call_args.kwargs["control_mode"] == [3]
 
-    def test_depth_passes_control_type_1(self):
+    def test_depth_passes_control_mode_1(self):
         from aetherart.controlnet_sdxl import generate_sdxl_controlnet
 
         pipe = self._mock_pipe()
         generate_sdxl_controlnet(pipe, "test", self._blank_image(), ctype="depth")
-        assert pipe.call_args.kwargs["control_type"] == [1]
+        assert pipe.call_args.kwargs["control_mode"] == [1]
 
     def test_unknown_ctype_raises_value_error(self):
         from aetherart.controlnet_sdxl import generate_sdxl_controlnet
@@ -225,6 +225,14 @@ class TestGenerateSdxlControlnet:
         pipe = self._mock_pipe()
         generate_sdxl_controlnet(pipe, "test", self._blank_image(), conditioning_scale=0.65)
         assert pipe.call_args.kwargs["controlnet_conditioning_scale"] == 0.65
+
+    def test_passes_control_image_kwarg(self):
+        from aetherart.controlnet_sdxl import generate_sdxl_controlnet
+
+        pipe = self._mock_pipe()
+        ctrl = self._blank_image()
+        generate_sdxl_controlnet(pipe, "test", ctrl)
+        assert pipe.call_args.kwargs["control_image"] is ctrl
 
     def test_passes_negative_prompt(self):
         from aetherart.controlnet_sdxl import generate_sdxl_controlnet
