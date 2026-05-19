@@ -123,7 +123,7 @@ class ModelRegistry:
 
     # ── SDXL Quantized ──────────────────────────────────────────────────────
 
-    def get_sdxl_quantized(self, bits: int = 4) -> Any:
+    def get_sdxl_quantized(self, bits: Literal[4, 8] = 4) -> Any:
         """Return the NF4/INT8-quantized SDXL pipeline, loading if needed.
 
         Evicts the current quantized pipeline if a different bit width is requested.
@@ -160,7 +160,7 @@ class ModelRegistry:
             raise RuntimeError(f"SDXL quantized init failed: {exc}") from exc
         return self._sdxl_quantized
 
-    def retry_sdxl_quantized_init(self, bits: int = 4) -> None:
+    def retry_sdxl_quantized_init(self, bits: Literal[4, 8] = 4) -> None:
         """Clear the cached SDXL quantized init failure and try again."""
         self._sdxl_quantized_init_error = None
         self.get_sdxl_quantized(bits=bits)
