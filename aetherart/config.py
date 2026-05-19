@@ -35,6 +35,7 @@ def _env_float(key: str, default: float) -> float:
 class Config:
     default_model: str = os.environ.get("HF_MODEL_ID", "sd2-community/stable-diffusion-2-1")
     sdxl_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
+    sdxl_vae_fix: str = "madebyollin/sdxl-vae-fp16-fix"
     hf_token: str | None = os.environ.get("HUGGINGFACEHUB_API_TOKEN") or os.environ.get(
         "HF_API_TOKEN"
     )

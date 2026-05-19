@@ -192,3 +192,64 @@ class TestReleaseAll:
         r._base.backend = "local"
         r.release_all()
         assert r._base.pipe is None
+
+    def test_release_all_drains_sdxl(self):
+        r = _make_registry()
+        mock_pipe = MagicMock()
+        r._sdxl_base = mock_pipe
+        with patch("aetherart.sdxl_pipeline.release_sdxl_pipeline") as mock_release:
+            r.release_all()
+        mock_release.assert_called_once_with(mock_pipe)
+        assert r._sdxl_base is None
+
+
+class TestSdxlBase:
+    def test_registry_get_sdxl_base_lazy_loads(self):
+        r = _make_registry()
+        mock_pipe = MagicMock()
+        with patch("aetherart.registry.ModelRegistry.get_sdxl_base", return_value=mock_pipe):
+            result = r.get_sdxl_base()
+        assert result is mock_pipe
+
+    def test_registry_release_sdxl_base(self):
+        r = _make_registry()
+        mock_pipe = MagicMock()
+        r._sdxl_base = mock_pipe
+        with patch("aetherart.sdxl_pipeline.release_sdxl_pipeline") as mock_release:
+            r.release_sdxl_base()
+        mock_release.assert_called_once_with(mock_pipe)
+        assert r._sdxl_base is None
+
+    def test_registry_release_sdxl_base_idempotent(self):
+        r = _make_registry()
+        r.release_sdxl_base()  # should not raise when _sdxl_base is None
+
+    def test_registry_health_reports_sdxl_slot_not_loaded(self):
+        r = _make_registry()
+        h = r.health()
+        assert h["sdxl_base"] == "not_loaded"
+
+    def test_registry_health_reports_sdxl_slot_loaded(self):
+        r = _make_registry()
+        r._sdxl_base = MagicMock()
+        h = r.health()
+        assert h["sdxl_base"] == "loaded"
+
+    def test_registry_health_reports_sdxl_slot_error(self):
+        r = _make_registry()
+        r._sdxl_base_init_error = "OOM"
+        h = r.health()
+        assert "error" in h["sdxl_base"]
+
+    def test_registry_get_sdxl_base_caches_failure(self):
+        r = _make_registry()
+        with patch("aetherart.sdxl_pipeline.load_sdxl_base", side_effect=RuntimeError("no GPU")):
+            with pytest.raises(RuntimeError, match="SDXL base init failed"):
+                r.get_sdxl_base()
+        assert r._sdxl_base_init_error is not None
+
+    def test_registry_get_sdxl_base_raises_on_cached_failure(self):
+        r = _make_registry()
+        r._sdxl_base_init_error = "previous failure"
+        with pytest.raises(RuntimeError, match="previously failed"):
+            r.get_sdxl_base()
