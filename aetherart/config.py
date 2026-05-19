@@ -2,6 +2,10 @@ import logging
 import os
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 _log = logging.getLogger(__name__)
 
 
