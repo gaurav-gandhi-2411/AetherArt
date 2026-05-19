@@ -255,6 +255,52 @@ class TestSdxlBase:
             r.get_sdxl_base()
 
 
+class TestSdxlControlnetRegistry:
+    def test_registry_get_sdxl_controlnet_pipeline_caches_result(self):
+        r = _make_registry()
+        mock_pipe = MagicMock()
+        target = "aetherart.controlnet_sdxl.load_sdxl_controlnet_pipeline"
+        with patch(target, return_value=mock_pipe):
+            result1 = r.get_sdxl_controlnet_pipeline("canny", "none", 1.0)
+            result2 = r.get_sdxl_controlnet_pipeline("canny", "none", 1.0)
+        assert result1 is result2
+
+    def test_registry_sdxl_cn_cache_evicts_lru(self):
+        r = _make_registry()
+        pipes = [MagicMock(), MagicMock(), MagicMock()]
+        with (
+            patch(
+                "aetherart.controlnet_sdxl.load_sdxl_controlnet_pipeline", side_effect=pipes
+            ),
+            patch("aetherart.controlnet_sdxl.release_sdxl_controlnet_pipeline"),
+        ):
+            r.get_sdxl_controlnet_pipeline("canny", "none", 1.0)
+            r.get_sdxl_controlnet_pipeline("depth", "none", 1.0)
+            r.get_sdxl_controlnet_pipeline("canny", "ukiyo-e", 1.0)
+
+        assert len(r._sdxl_cn_cache) == 2
+        assert ("canny", "none", 1.0) not in r._sdxl_cn_cache
+
+    def test_registry_release_all_sdxl_cn_drains_cache(self):
+        r = _make_registry()
+        r._sdxl_cn_cache[("canny", "none", 1.0)] = MagicMock()
+        with (
+            patch("aetherart.controlnet_sdxl.release_sdxl_controlnet_pipeline"),
+            patch("aetherart.controlnet_sdxl.release_controlnet_union_model"),
+        ):
+            r.release_all_sdxl_cn()
+        assert len(r._sdxl_cn_cache) == 0
+
+    def test_registry_health_reports_sdxl_cn_cache(self):
+        r = _make_registry()
+        h = r.health()
+        assert "sdxl_cn_cache" in h
+        assert "0 / 2" in h["sdxl_cn_cache"]
+        r._sdxl_cn_cache[("canny", "none", 1.0)] = MagicMock()
+        h2 = r.health()
+        assert "1 / 2" in h2["sdxl_cn_cache"]
+
+
 class TestSdxlQuantizedRegistry:
     def test_registry_get_sdxl_quantized_lazy_loads(self):
         r = _make_registry()
