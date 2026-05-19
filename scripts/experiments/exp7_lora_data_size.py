@@ -557,7 +557,7 @@ this — if it doesn't, this is another CLIP-blindness case.
 **LPIPS (adjacent sizes):** 20- vs 40-image: {lpips_20_40:.4f}; 40- vs 80-image: {lpips_40_80:.4f}.
 {"Small LPIPS: data size differences are perceptually minor." if max(lpips_20_40, lpips_40_80) < 0.3 else "Moderate-to-large LPIPS: data size produces visually distinct outputs despite similar CLIP."}
 
-**Checkpoint sizes:** all three are identical ({agg[20]['ckpt_mb']:.1f} MB) — file size
+**Checkpoint sizes:** all three are identical ({agg[20]["ckpt_mb"]:.1f} MB) — file size
 is determined by rank, not training data size. This is expected: the checkpoint stores
 trained weight deltas whose dimensionality is rank × hidden_dim, independent of data.
 

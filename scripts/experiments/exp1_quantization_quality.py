@@ -57,8 +57,7 @@ PROMPTS = {
         "dramatic studio lighting, photorealistic"
     ),
     "p02_landscape": (
-        "a misty mountain valley at sunrise, pine forest, "
-        "golden hour light, landscape photography"
+        "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography"
     ),
     "p03_abstract": (
         "geometric abstract composition with intersecting circles and triangles, "
@@ -69,14 +68,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -168,10 +167,7 @@ def run_condition(label: str, pipe: StableDiffusionPipeline) -> list[dict]:
                     "image_path": (img_dir / fname).relative_to(ROOT).as_posix(),
                 }
             )
-            print(
-                f"  [{label}] {prompt_id} seed={seed:5d} | "
-                f"{latency:.1f}s | VRAM={peak_mb:.0f}MB"
-            )
+            print(f"  [{label}] {prompt_id} seed={seed:5d} | {latency:.1f}s | VRAM={peak_mb:.0f}MB")
     return rows
 
 
@@ -441,23 +437,23 @@ differences rise above statistical noise.
 
 | Condition | Mean CLIP | CLIP delta vs fp16 | Mean LPIPS | Latency (s) | Peak VRAM (MB) |
 |-----------|----------:|-------------------:|-----------:|------------:|---------------:|
-| fp16      | {fp16_a['mean_clip']:.4f}    | —                  | 0.0000     | {fp16_a['mean_lat']:.1f}s       | {fp16_a['mean_vram']:.0f}            |
-| INT8      | {int8_a['mean_clip']:.4f}    | {int8_delta:+.4f}             | {int8_a['mean_lpips']:.4f}     | {int8_a['mean_lat']:.1f}s       | {int8_a['mean_vram']:.0f}            |
-| NF4       | {nf4_a['mean_clip']:.4f}    | {nf4_delta:+.4f}             | {nf4_a['mean_lpips']:.4f}     | {nf4_a['mean_lat']:.1f}s       | {nf4_a['mean_vram']:.0f}            |
+| fp16      | {fp16_a["mean_clip"]:.4f}    | —                  | 0.0000     | {fp16_a["mean_lat"]:.1f}s       | {fp16_a["mean_vram"]:.0f}            |
+| INT8      | {int8_a["mean_clip"]:.4f}    | {int8_delta:+.4f}             | {int8_a["mean_lpips"]:.4f}     | {int8_a["mean_lat"]:.1f}s       | {int8_a["mean_vram"]:.0f}            |
+| NF4       | {nf4_a["mean_clip"]:.4f}    | {nf4_delta:+.4f}             | {nf4_a["mean_lpips"]:.4f}     | {nf4_a["mean_lat"]:.1f}s       | {nf4_a["mean_vram"]:.0f}            |
 
-SE on CLIP: fp16 ±{fp16_a['se_clip']:.4f} · INT8 ±{int8_a['se_clip']:.4f} · \\
-NF4 ±{nf4_a['se_clip']:.4f}
+SE on CLIP: fp16 ±{fp16_a["se_clip"]:.4f} · INT8 ±{int8_a["se_clip"]:.4f} · \\
+NF4 ±{nf4_a["se_clip"]:.4f}
 
 ## Interpretation
 
 **INT8 quality:** CLIP score is {_clip_verdict(int8_delta, pooled_se)}.
-Perceptual fidelity to fp16: {_lpips_verdict(int8_a['mean_lpips'])}.
-Latency cost: {int8_a['mean_lat']:.1f}s vs {fp16_a['mean_lat']:.1f}s fp16 ({int8_lat_ratio:.1f}x slower).
+Perceptual fidelity to fp16: {_lpips_verdict(int8_a["mean_lpips"])}.
+Latency cost: {int8_a["mean_lat"]:.1f}s vs {fp16_a["mean_lat"]:.1f}s fp16 ({int8_lat_ratio:.1f}x slower).
 VRAM saved: {int8_vram_saving_mb:.0f} MB ({int8_vram_saving_pct:.0f}% reduction vs fp16).
 
 **NF4 quality:** CLIP score is {_clip_verdict(nf4_delta, pooled_se)}.
-Perceptual fidelity to fp16: {_lpips_verdict(nf4_a['mean_lpips'])}.
-Latency cost: {nf4_a['mean_lat']:.1f}s vs {fp16_a['mean_lat']:.1f}s fp16 ({nf4_lat_ratio:.1f}x slower).
+Perceptual fidelity to fp16: {_lpips_verdict(nf4_a["mean_lpips"])}.
+Latency cost: {nf4_a["mean_lat"]:.1f}s vs {fp16_a["mean_lat"]:.1f}s fp16 ({nf4_lat_ratio:.1f}x slower).
 VRAM saved: {nf4_vram_saving_mb:.0f} MB ({nf4_vram_saving_pct:.0f}% reduction vs fp16).
 
 **Bottom line:** Both quantization modes preserve CLIP-measured alignment but carry a latency

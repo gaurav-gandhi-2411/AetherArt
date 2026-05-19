@@ -80,7 +80,7 @@ SIZE = 512
 # Prompts with "ukyowood" trigger token (LoRA was trained with this caption prefix)
 PROMPTS = {
     "p01_portrait": (
-        "ukyowood ukiyo-e portrait of an elderly woman, " "dramatic light, woodblock print style"
+        "ukyowood ukiyo-e portrait of an elderly woman, dramatic light, woodblock print style"
     ),
     "p02_landscape": (
         "ukyowood ukiyo-e misty mountain valley at sunrise, "
@@ -91,21 +91,19 @@ PROMPTS = {
         "intersecting circles and triangles, vibrant color blocks"
     ),
     "p04_text": (
-        "ukyowood ukiyo-e vintage print with bold lettering, "
-        "retro typography, worn paper texture"
+        "ukyowood ukiyo-e vintage print with bold lettering, retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "ukyowood ukiyo-e extreme close-up of rough stone wall, " "water drops, micro detail"
+        "ukyowood ukiyo-e extreme close-up of rough stone wall, water drops, micro detail"
     ),
     "p06_arch": (
-        "ukyowood ukiyo-e interior of a Japanese temple, " "wooden pillars, soft lantern light"
+        "ukyowood ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light"
     ),
     "p07_hands": (
-        "ukyowood ukiyo-e two hands clasped together, " "natural light, woodblock print style"
+        "ukyowood ukiyo-e two hands clasped together, natural light, woodblock print style"
     ),
     "p08_crowd": (
-        "ukyowood ukiyo-e busy street market in Edo, "
-        "dozens of people, lantern light, night scene"
+        "ukyowood ukiyo-e busy street market in Edo, dozens of people, lantern light, night scene"
     ),
 }
 NEG_PROMPT = "low quality, blurry, deformed, ugly, bad anatomy, watermark, text, calligraphy"
@@ -421,7 +419,7 @@ canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
 
 # Chart 3: LPIPS adjacent steps
 adj_alphas = ALPHA_VALUES[1:]
-adj_labels = [f"{ALPHA_VALUES[i-1]}→{ALPHA_VALUES[i]}" for i in range(1, len(ALPHA_VALUES))]
+adj_labels = [f"{ALPHA_VALUES[i - 1]}→{ALPHA_VALUES[i]}" for i in range(1, len(ALPHA_VALUES))]
 adj_lpips = np.array([agg[a]["mean_lpips_prev"] for a in adj_alphas])
 adj_colors = [_ALPHA_PALETTE[a] for a in adj_alphas]
 x3 = np.arange(len(adj_alphas), dtype=float)
@@ -489,8 +487,8 @@ FINDINGS = f"""\
 **Date:** 2026-05-07
 **Hardware:** RTX 3070 Laptop 8 GB (enable_model_cpu_offload)
 **Model:** {MODEL_ID}
-**LoRA:** {LORA_NAME} — {lora_cfg['description']}
-**Trigger token:** {lora_cfg['trigger_token']} (used in all prompts)
+**LoRA:** {LORA_NAME} — {lora_cfg["description"]}
+**Trigger token:** {lora_cfg["trigger_token"]} (used in all prompts)
 **Alpha values:** {ALPHA_VALUES}
   (0.0 = LoRA loaded but suppressed / base model; 1.0 = standard weight; 1.5 = over-styled)
 **Reference alpha for LPIPS:** {ALPHA_REF}

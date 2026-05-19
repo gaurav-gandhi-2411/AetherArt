@@ -75,7 +75,7 @@ def preprocess_canny(
     """Produce a 3-channel Canny edge map from a PIL image."""
     if not _CV2_AVAILABLE:
         raise RuntimeError(
-            "opencv-python is required for Canny preprocessing. " "Run: pip install opencv-python"
+            "opencv-python is required for Canny preprocessing. Run: pip install opencv-python"
         )
     img_rgb = np.array(image.convert("RGB"))
     gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)

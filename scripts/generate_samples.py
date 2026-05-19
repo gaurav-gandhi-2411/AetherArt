@@ -8,6 +8,7 @@ Usage (from repo root, aetherart conda env, requires CUDA GPU):
 
 Estimated time on RTX 3070 8 GB: ~15 minutes (all tiers).
 """
+
 import json
 import time
 from pathlib import Path

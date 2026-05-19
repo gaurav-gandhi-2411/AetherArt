@@ -9,6 +9,7 @@ Usage:
 
 NOTE: First run downloads SDXL Turbo (~6.7 GB).
 """
+
 import time
 from pathlib import Path
 
@@ -148,8 +149,8 @@ def main() -> None:
     std_per = rows[0][2]
     lcm_per = rows[1][2]
     turb_per = rows[2][2]
-    print(f"[tier] LCM speedup:   {std_per/lcm_per:.1f}×  ({std_per:.1f}s → {lcm_per:.1f}s)")
-    print(f"[tier] Turbo speedup: {std_per/turb_per:.1f}×  ({std_per:.1f}s → {turb_per:.1f}s)")
+    print(f"[tier] LCM speedup:   {std_per / lcm_per:.1f}×  ({std_per:.1f}s → {lcm_per:.1f}s)")
+    print(f"[tier] Turbo speedup: {std_per / turb_per:.1f}×  ({std_per:.1f}s → {turb_per:.1f}s)")
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ Cols:  6 test prompts (same seed across all rows for direct comparison)
 Usage:
     python scripts/compare_lora_checkpoints.py
 """
+
 import time
 from pathlib import Path
 
@@ -144,7 +145,7 @@ def main() -> None:
     t0 = time.monotonic()
     imgs = generate_row(pipe, lora_path=None)
     elapsed = time.monotonic() - t0
-    print(f"          done in {elapsed:.0f}s ({elapsed/len(PROMPTS):.1f}s/img)")
+    print(f"          done in {elapsed:.0f}s ({elapsed / len(PROMPTS):.1f}s/img)")
     save_row(imgs, "baseline")
     rows.append(("baseline\n(no LoRA)", imgs))
 
@@ -159,7 +160,7 @@ def main() -> None:
         t0 = time.monotonic()
         imgs = generate_row(pipe, lora_path=lora_path)
         elapsed = time.monotonic() - t0
-        print(f"          done in {elapsed:.0f}s ({elapsed/len(PROMPTS):.1f}s/img)")
+        print(f"          done in {elapsed:.0f}s ({elapsed / len(PROMPTS):.1f}s/img)")
         save_row(imgs, f"checkpoint-{step}")
         rows.append((f"ckpt-{step}", imgs))
 

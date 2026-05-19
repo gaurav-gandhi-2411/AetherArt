@@ -406,8 +406,8 @@ CLIP range across schedulers: {clip_range:.4f} ({clip_range_in_se:.1f}× the poo
 |----------------|----------:|--------:|
 {pair_table_rows}
 
-Most different pair: {max_lpips_pair} (LPIPS = {pair_agg[max_lpips_pair]['mean_lpips']:.4f})
-Most similar pair:   {min_lpips_pair} (LPIPS = {pair_agg[min_lpips_pair]['mean_lpips']:.4f})
+Most different pair: {max_lpips_pair} (LPIPS = {pair_agg[max_lpips_pair]["mean_lpips"]:.4f})
+Most similar pair:   {min_lpips_pair} (LPIPS = {pair_agg[min_lpips_pair]["mean_lpips"]:.4f})
 Mean LPIPS across all pairs: {mean_lpips_all:.4f}
 
 ## Interpretation
@@ -418,9 +418,9 @@ benchmark's 18× finding at the 30-step operating point.
 
 **LPIPS:** Despite identical CLIP scores, schedulers produce perceptually distinct images.
 The mean LPIPS across all pairs is {mean_lpips_all:.4f}, with the most different pair
-({max_lpips_pair}) reaching {pair_agg[max_lpips_pair]['mean_lpips']:.4f} — substantial
+({max_lpips_pair}) reaching {pair_agg[max_lpips_pair]["mean_lpips"]:.4f} — substantial
 perceptual divergence. Even the most similar pair ({min_lpips_pair},
-LPIPS = {pair_agg[min_lpips_pair]['mean_lpips']:.4f}) shows non-trivial differences.
+LPIPS = {pair_agg[min_lpips_pair]["mean_lpips"]:.4f}) shows non-trivial differences.
 
 **The finding:** Schedulers that are interchangeable by CLIP are not interchangeable
 perceptually. Choosing DPM-Solver++ over DDIM (or any other swap) produces images with

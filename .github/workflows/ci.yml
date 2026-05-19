@@ -29,17 +29,13 @@ jobs:
           pip install -e .
           pip install -r requirements-dev.txt
 
-      - name: Lint (flake8)
+      - name: Lint (ruff check)
         run: |
-          flake8 aetherart/ app.py scripts/ tests/
+          ruff check .
 
-      - name: Format check (black)
+      - name: Format check (ruff format)
         run: |
-          black --check aetherart/ app.py scripts/ tests/
-
-      - name: Import order check (isort)
-        run: |
-          isort --check-only aetherart/ app.py scripts/ tests/
+          ruff format --check .
 
       - name: Type check (mypy)
         run: |
@@ -47,4 +43,13 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov=aetherart --cov-report=term-missing --cov-report=xml -q
+          pytest --cov=aetherart --cov-report=term-missing --cov-report=html --cov-report=xml -q
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: |
+            htmlcov/
+            coverage.xml

@@ -133,8 +133,7 @@ for pid in PROMPT_IDS:
     src_path = BENCHMARK_IMGS[pid]
     if not src_path.exists():
         raise FileNotFoundError(
-            f"Benchmark image missing: {src_path}\n"
-            "Run the benchmark eval first (scripts/eval.py)."
+            f"Benchmark image missing: {src_path}\nRun the benchmark eval first (scripts/eval.py)."
         )
     src = Image.open(src_path).convert("RGB")
     canny_img = preprocess_canny(src, low_threshold=100, high_threshold=200)
@@ -432,7 +431,7 @@ canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
 # Chart 3: LPIPS between adjacent strength values
 adj_strs = STRENGTH_VALUES[1:]
 adj_labels = [
-    f"{STRENGTH_VALUES[i-1]}→{STRENGTH_VALUES[i]}" for i in range(1, len(STRENGTH_VALUES))
+    f"{STRENGTH_VALUES[i - 1]}→{STRENGTH_VALUES[i]}" for i in range(1, len(STRENGTH_VALUES))
 ]
 adj_lpips = np.array([agg[s]["mean_lpips_prev"] for s in adj_strs])
 adj_colors = [_STR_PALETTE[s] for s in adj_strs]

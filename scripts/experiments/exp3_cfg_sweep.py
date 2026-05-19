@@ -75,8 +75,7 @@ PROMPTS = {
         "dramatic studio lighting, photorealistic"
     ),
     "p02_landscape": (
-        "a misty mountain valley at sunrise, pine forest, "
-        "golden hour light, landscape photography"
+        "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography"
     ),
     "p03_abstract": (
         "geometric abstract composition with intersecting circles and triangles, "
@@ -87,14 +86,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -192,7 +191,7 @@ print("\nLoading fp16 pipeline...")
 pipe = load_pipeline()
 
 for cfg in CFG_VALUES:
-    print(f"\n=== CFG = {cfg} ({CFG_VALUES.index(cfg)+1}/{len(CFG_VALUES)}) ===")
+    print(f"\n=== CFG = {cfg} ({CFG_VALUES.index(cfg) + 1}/{len(CFG_VALUES)}) ===")
     all_rows.extend(run_cfg(cfg, pipe))
 
 del pipe
@@ -393,7 +392,7 @@ canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
 # Chart 3: LPIPS between adjacent CFG values (step change)
 # First value has no previous, so skip index 0
 adj_cfgs = CFG_VALUES[1:]
-adj_labels = [f"{CFG_VALUES[i-1]}→{CFG_VALUES[i]}" for i in range(1, len(CFG_VALUES))]
+adj_labels = [f"{CFG_VALUES[i - 1]}→{CFG_VALUES[i]}" for i in range(1, len(CFG_VALUES))]
 adj_lpips = np.array([agg[c]["mean_lpips_prev"] for c in adj_cfgs])
 adj_colors = [_CFG_PALETTE[c] for c in adj_cfgs]
 x3 = np.arange(len(adj_cfgs), dtype=float)

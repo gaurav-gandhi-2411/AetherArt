@@ -15,6 +15,7 @@ Usage:
     # Resume after crash
     python scripts/eval.py --resume
 """
+
 from __future__ import annotations
 
 import argparse

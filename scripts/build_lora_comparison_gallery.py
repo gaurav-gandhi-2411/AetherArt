@@ -8,6 +8,7 @@ Output: reports/lora_comparison_gallery.png
 Usage:
     python scripts/build_lora_comparison_gallery.py
 """
+
 import time
 from pathlib import Path
 
@@ -111,7 +112,7 @@ def main() -> None:
 
     print(f"[gallery] Loading pipeline: {MODEL_ID}")
     pipe = load_pipeline()
-    print(f"[gallery] VRAM: {torch.cuda.memory_allocated()/1e9:.1f} GB\n")
+    print(f"[gallery] VRAM: {torch.cuda.memory_allocated() / 1e9:.1f} GB\n")
 
     rows: list[tuple[str, list[Image.Image]]] = []
 
@@ -119,10 +120,10 @@ def main() -> None:
     print("[gallery] Row 1/2: base SD 2.1 (no LoRA)")
     t0 = time.monotonic()
     base_imgs = generate_row(pipe, PROMPTS, negative=None)
-    print(f"          done in {time.monotonic()-t0:.0f}s")
+    print(f"          done in {time.monotonic() - t0:.0f}s")
     (OUT_DIR / "base").mkdir(parents=True, exist_ok=True)
     for i, img in enumerate(base_imgs):
-        img.save(OUT_DIR / "base" / f"prompt_{i+1:02d}.png")
+        img.save(OUT_DIR / "base" / f"prompt_{i + 1:02d}.png")
     rows.append((ROW_LABELS[0], base_imgs))
 
     # LoRA row
@@ -131,11 +132,11 @@ def main() -> None:
     lora_prompts = [f"{TRIGGER} {p}" for p in PROMPTS]
     t0 = time.monotonic()
     lora_imgs = generate_row(pipe, lora_prompts, negative=LORA_NEG)
-    print(f"          done in {time.monotonic()-t0:.0f}s")
+    print(f"          done in {time.monotonic() - t0:.0f}s")
     pipe.unload_lora_weights()
     (OUT_DIR / "lora").mkdir(parents=True, exist_ok=True)
     for i, img in enumerate(lora_imgs):
-        img.save(OUT_DIR / "lora" / f"prompt_{i+1:02d}.png")
+        img.save(OUT_DIR / "lora" / f"prompt_{i + 1:02d}.png")
     rows.append((ROW_LABELS[1], lora_imgs))
 
     # Grid

@@ -301,12 +301,15 @@ def generate_stream(
 
         _MIN_SIZE_CPU = 512
         if not _HAS_GPU and (int(width) < _MIN_SIZE_CPU or int(height) < _MIN_SIZE_CPU):
-            yield gr.update(value=None), (
-                f"⚠️ Resolution too low for SD 2.1 on CPU. "
-                f"Minimum: {_MIN_SIZE_CPU}×{_MIN_SIZE_CPU}. "
-                f"SD 2.1 was trained at 768×768; outputs below 512 produce incoherent results "
-                f"due to cross-attention mismatch. Please raise resolution or use the "
-                f"**Sample Outputs** tab for examples."
+            yield (
+                gr.update(value=None),
+                (
+                    f"⚠️ Resolution too low for SD 2.1 on CPU. "
+                    f"Minimum: {_MIN_SIZE_CPU}×{_MIN_SIZE_CPU}. "
+                    f"SD 2.1 was trained at 768×768; outputs below 512 produce incoherent results "
+                    f"due to cross-attention mismatch. Please raise resolution or use the "
+                    f"**Sample Outputs** tab for examples."
+                ),
             )
             return
 
@@ -317,9 +320,12 @@ def generate_stream(
 
         if not _HAS_GPU:
             est_min = estimate_cpu_time(int(width), int(height), int(steps))
-            yield gr.update(value=None), (
-                f"⏳ Estimated wait: ~{est_min} minutes on CPU. "
-                f"Generation in progress… please don't refresh."
+            yield (
+                gr.update(value=None),
+                (
+                    f"⏳ Estimated wait: ~{est_min} minutes on CPU. "
+                    f"Generation in progress… please don't refresh."
+                ),
             )
         elif speed_mode == "turbo" and REGISTRY._turbo is None:
             yield None, "**Downloading SDXL Turbo (~6.7 GB on first use) — please wait...**"

@@ -486,7 +486,7 @@ if it doesn't, this is another CLIP-blindness case.
 **LPIPS (adjacent ranks):** rank-4 vs rank-8: {lpips_4_8:.4f}; rank-8 vs rank-16: {lpips_8_16:.4f}.
 {"Small LPIPS values: rank differences are perceptually minor at the pixel level." if max(lpips_4_8, lpips_8_16) < 0.3 else "Moderate-to-large LPIPS: ranks produce visually distinct outputs despite similar CLIP."}
 
-**File size:** rank-4 = {agg[4]['ckpt_mb']:.1f} MB, rank-8 = {agg[8]['ckpt_mb']:.1f} MB, rank-16 = {agg[16]['ckpt_mb']:.1f} MB.
+**File size:** rank-4 = {agg[4]["ckpt_mb"]:.1f} MB, rank-8 = {agg[8]["ckpt_mb"]:.1f} MB, rank-16 = {agg[16]["ckpt_mb"]:.1f} MB.
 Scales approximately linearly with rank (attention layer matrices scale as rank × hidden_dim).
 
 **Cross-experiment note:** Sixth training-parameter experiment across the CLIP-blindness
