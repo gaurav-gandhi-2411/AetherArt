@@ -129,16 +129,16 @@ def main() -> int:
         samples_status = (
             "found — " + str(_SAMPLE_IMAGES_DIR)
             if _SAMPLE_IMAGES_DIR.exists()
-            else "not found — will skip"
+            else "not found - will skip"
         )
         print(f"[DRY RUN] Samples:    {samples_status}")
         print(f"[DRY RUN] Target:     https://huggingface.co/{args.repo_id}")
         print("[DRY RUN] Actions that would run:")
         print(f"[DRY RUN]   1. HfApi().create_repo('{args.repo_id}', exist_ok=True, private=False)")
-        print(f"[DRY RUN]   2. upload_file '{adapter_path.name}' → {args.repo_id}")
-        print(f"[DRY RUN]   3. upload_file 'README.md' (model card) → {args.repo_id}")
+        print(f"[DRY RUN]   2. upload_file '{adapter_path.name}' -> {args.repo_id}")
+        print(f"[DRY RUN]   3. upload_file 'README.md' (model card) -> {args.repo_id}")
         if _SAMPLE_IMAGES_DIR.exists():
-            print(f"[DRY RUN]   4. upload_folder samples/ → {args.repo_id}/samples")
+            print(f"[DRY RUN]   4. upload_folder samples/ -> {args.repo_id}/samples")
         print("[DRY RUN] No Hub API calls made.")
         return 0
 
