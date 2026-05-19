@@ -173,3 +173,6 @@ PR 02 enabled `E, F, I, W` rules only. `UP`, `B`, and `SIM` rules found 20 pre-e
 - `SIM102` `scripts/_diffusers_train_text_to_image_lora.py:977`: nested `if` → single `if … and …`
 - `SIM102` `scripts/_diffusers_train_text_to_image_lora.py:1025`: same
 - `SIM114` `scripts/_gen_findings_charts.py:77,81`: combinable `elif` branches
+
+**`aetherart/sdxl_pipeline.py` + all callers — diffusers deprecation warning (PR 03)**
+- diffusers 0.35.1 emits `` `torch_dtype` is deprecated! Use `dtype` instead! `` from `StableDiffusionXLPipeline.from_pretrained` (and likely SDXL Turbo, Flux). Surfaced during PR 03 smoke test. Not actionable until we upgrade to a diffusers version that accepts `dtype=`. When upgrading diffusers in PR 14 or a dedicated dep-bump PR, swap all `torch_dtype=torch.float16` kwargs to `dtype=torch.float16` in `sdxl_pipeline.py`, `sdxl_turbo.py`, and any future Flux loader. Same fix applies to `model.py` line 122 (SDXL path in `AetherModel.init`).
