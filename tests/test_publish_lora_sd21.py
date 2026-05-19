@@ -35,7 +35,7 @@ class TestDryRun:
 
         with (
             patch.object(_mod, "_MODEL_CARD_PATH", model_card),
-            patch.dict(os.environ, {"HUGGINGFACEHUB_API_TOKEN": "hf_fake"}),
+            patch.object(_mod, "_resolve_token", return_value="hf_fake"),
         ):
             err = _mod._validate(adapter)
         assert err is None
@@ -63,7 +63,7 @@ class TestDryRun:
         with (
             patch.object(_mod, "_MODEL_CARD_PATH", model_card),
             patch.object(_mod, "_SAMPLE_IMAGES_DIR", tmp_path / "nonexistent_samples"),
-            patch.dict(os.environ, {"HUGGINGFACEHUB_API_TOKEN": "hf_fake"}),
+            patch.object(_mod, "_resolve_token", return_value="hf_fake"),
         ):
             import sys
 
