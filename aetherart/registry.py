@@ -40,6 +40,9 @@ class ModelRegistry:
         self._base_init_error: Optional[str] = None
         self._sdxl_base: Optional[Any] = None
         self._sdxl_base_init_error: Optional[str] = None
+        self._sdxl_quantized: Optional[Any] = None
+        self._sdxl_quantized_bits: Optional[int] = None
+        self._sdxl_quantized_init_error: Optional[str] = None
 
     # ── Base SD 2.1 / SDXL ──────────────────────────────────────────────────
 
@@ -117,6 +120,58 @@ class ModelRegistry:
 
             release_sdxl_pipeline(self._sdxl_base)
             self._sdxl_base = None
+
+    # ── SDXL Quantized ──────────────────────────────────────────────────────
+
+    def get_sdxl_quantized(self, bits: Literal[4, 8] = 4) -> Any:
+        """Return the NF4/INT8-quantized SDXL pipeline, loading if needed.
+
+        Evicts the current quantized pipeline if a different bit width is requested.
+        Caches init failures; call retry_sdxl_quantized_init() to retry.
+
+        Note: SDXL base + SDXL NF4 + Flux are mutually exclusive on 8 GB VRAM.
+        This slot can coexist with other slots for now; mutual-exclusion logic
+        lands with demo wiring in a later PR.
+        """
+        if self._sdxl_quantized_bits == bits and self._sdxl_quantized is not None:
+            return self._sdxl_quantized
+        if self._sdxl_quantized_init_error is not None:
+            raise RuntimeError(
+                f"SDXL quantized init previously failed: {self._sdxl_quantized_init_error}. "
+                "Call registry.retry_sdxl_quantized_init() to retry."
+            )
+        if self._sdxl_quantized is not None:
+            logger.info(
+                "Evicting SDXL quantized pipeline (%sbit) for new request (%sbit)",
+                self._sdxl_quantized_bits,
+                bits,
+            )
+            self.release_sdxl_quantized()
+        try:
+            from .quantization import load_sdxl_quantized
+
+            logger.info("Loading %sbit-quantized SDXL pipeline...", bits)
+            self._sdxl_quantized = load_sdxl_quantized(bits=bits)
+            self._sdxl_quantized_bits = bits
+            self._sdxl_quantized_init_error = None
+            logger.info("%sbit-quantized SDXL pipeline ready", bits)
+        except Exception as exc:
+            self._sdxl_quantized_init_error = str(exc)
+            raise RuntimeError(f"SDXL quantized init failed: {exc}") from exc
+        return self._sdxl_quantized
+
+    def retry_sdxl_quantized_init(self, bits: Literal[4, 8] = 4) -> None:
+        """Clear the cached SDXL quantized init failure and try again."""
+        self._sdxl_quantized_init_error = None
+        self.get_sdxl_quantized(bits=bits)
+
+    def release_sdxl_quantized(self) -> None:
+        if self._sdxl_quantized is not None:
+            from .quantization import release_quantized_pipeline
+
+            release_quantized_pipeline(self._sdxl_quantized)
+            self._sdxl_quantized = None
+            self._sdxl_quantized_bits = None
 
     # ── SDXL Turbo ──────────────────────────────────────────────────────────
 
@@ -201,6 +256,14 @@ class ModelRegistry:
             result["quantized"] = f"ok ({self._quant_mode})"
         else:
             result["quantized"] = "not_loaded"
+        if self._sdxl_quantized_init_error:
+            result["sdxl_quantized"] = f"error: {self._sdxl_quantized_init_error}"
+        elif self._sdxl_quantized is not None:
+            result["sdxl_quantized"] = (
+                "nf4_loaded" if self._sdxl_quantized_bits == 4 else "int8_loaded"
+            )
+        else:
+            result["sdxl_quantized"] = "not_loaded"
         # ControlNet cache lives in controlnet.py
         try:
             from . import controlnet as cn
@@ -213,6 +276,7 @@ class ModelRegistry:
     def release_all(self) -> None:
         """Release all loaded pipelines and free GPU memory. Safe to call multiple times."""
         self.release_sdxl_base()
+        self.release_sdxl_quantized()
         self.release_turbo()
         if self._quant is not None:
             del self._quant

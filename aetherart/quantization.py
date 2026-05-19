@@ -18,12 +18,33 @@ peak allocation during inference is not.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+import gc
+from typing import TYPE_CHECKING, Any, Literal
 
 import torch
 
 if TYPE_CHECKING:
     from diffusers import StableDiffusionPipeline
+
+from .config import cfg
+from .logger import get_logger
+
+logger = get_logger(__name__)
+
+try:
+    from diffusers import (
+        AutoencoderKL,
+        BitsAndBytesConfig,
+        DPMSolverMultistepScheduler,
+        StableDiffusionXLPipeline,
+        UNet2DConditionModel,
+    )
+except Exception:
+    AutoencoderKL = None  # type: ignore[assignment, misc]
+    BitsAndBytesConfig = None  # type: ignore[assignment, misc]
+    DPMSolverMultistepScheduler = None  # type: ignore[assignment, misc]
+    StableDiffusionXLPipeline = None  # type: ignore[assignment, misc]
+    UNet2DConditionModel = None  # type: ignore[assignment, misc]
 
 MODEL_ID = "sd2-community/stable-diffusion-2-1"
 
@@ -81,3 +102,72 @@ def vram_peak_mb() -> float:
     if torch.cuda.is_available():
         return torch.cuda.max_memory_allocated() / 1024**2
     return 0.0
+
+
+def load_sdxl_quantized(bits: Literal[4, 8] = 4) -> Any:
+    """Load SDXL with bitsandbytes quantization on the UNet (fp16-fix VAE, model CPU offload)."""
+    # enable_model_cpu_offload only — sequential offload breaks bitsandbytes (issue #10800)
+    if (
+        BitsAndBytesConfig is None
+        or UNet2DConditionModel is None
+        or StableDiffusionXLPipeline is None
+        or AutoencoderKL is None
+        or DPMSolverMultistepScheduler is None
+    ):
+        raise RuntimeError("diffusers is not installed; cannot load SDXL quantized pipeline")
+
+    quant_config = BitsAndBytesConfig(
+        load_in_4bit=(bits == 4),
+        load_in_8bit=(bits == 8),
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+    )
+
+    logger.info("Loading SDXL UNet (%sbit) from '%s'...", bits, cfg.sdxl_model)
+    unet = UNet2DConditionModel.from_pretrained(
+        cfg.sdxl_model,
+        subfolder="unet",
+        quantization_config=quant_config,
+        torch_dtype=torch.float16,
+    )
+
+    logger.info("Loading fp16-fix VAE from '%s'...", cfg.sdxl_vae_fix)
+    vae = AutoencoderKL.from_pretrained(
+        cfg.sdxl_vae_fix,
+        torch_dtype=torch.float16,
+    )
+
+    logger.info("Constructing SDXL pipeline...")
+    pipe = StableDiffusionXLPipeline.from_pretrained(
+        cfg.sdxl_model,
+        unet=unet,
+        vae=vae,
+        torch_dtype=torch.float16,
+        variant="fp16",
+        use_safetensors=True,
+    )
+
+    pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+    logger.info("Scheduler set to DPMSolverMultistep")
+
+    pipe.enable_model_cpu_offload()
+    logger.info("Enabled model CPU offload")
+
+    try:
+        import xformers  # noqa: F401
+
+        pipe.enable_xformers_memory_efficient_attention()
+        logger.info("Enabled xformers memory-efficient attention")
+    except ImportError:
+        pass
+
+    logger.info("SDXL %sbit-quantized pipeline ready", bits)
+    return pipe
+
+
+def release_quantized_pipeline(pipe: Any) -> None:
+    """Release a quantized pipeline and free GPU memory."""
+    del pipe
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()

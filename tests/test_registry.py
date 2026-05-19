@@ -253,3 +253,53 @@ class TestSdxlBase:
         r._sdxl_base_init_error = "previous failure"
         with pytest.raises(RuntimeError, match="previously failed"):
             r.get_sdxl_base()
+
+
+class TestSdxlQuantizedRegistry:
+    def test_registry_get_sdxl_quantized_lazy_loads(self):
+        r = _make_registry()
+        mock_pipe = MagicMock()
+        target = "aetherart.quantization.load_sdxl_quantized"
+        with patch(target, return_value=mock_pipe) as mock_load:
+            result = r.get_sdxl_quantized(bits=4)
+        mock_load.assert_called_once_with(bits=4)
+        assert result is mock_pipe
+
+    def test_registry_get_sdxl_quantized_evicts_on_bit_switch(self):
+        r = _make_registry()
+        mock_4bit = MagicMock()
+        r._sdxl_quantized = mock_4bit
+        r._sdxl_quantized_bits = 4
+
+        mock_8bit = MagicMock()
+        with patch("aetherart.quantization.load_sdxl_quantized", return_value=mock_8bit):
+            with patch("aetherart.quantization.release_quantized_pipeline"):
+                r.get_sdxl_quantized(bits=8)
+
+        assert r._sdxl_quantized is not mock_4bit
+        assert r._sdxl_quantized_bits == 8
+
+    def test_registry_release_sdxl_quantized(self):
+        r = _make_registry()
+        r._sdxl_quantized = MagicMock()
+        r._sdxl_quantized_bits = 4
+        with patch("aetherart.quantization.release_quantized_pipeline"):
+            r.release_sdxl_quantized()
+        assert r._sdxl_quantized is None
+        assert r._sdxl_quantized_bits is None
+
+    def test_registry_health_reports_sdxl_quantized_slot(self):
+        r = _make_registry()
+        assert r.health()["sdxl_quantized"] == "not_loaded"
+
+        r._sdxl_quantized = MagicMock()
+        r._sdxl_quantized_bits = 4
+        assert r.health()["sdxl_quantized"] == "nf4_loaded"
+
+        r._sdxl_quantized_bits = 8
+        assert r.health()["sdxl_quantized"] == "int8_loaded"
+
+        r._sdxl_quantized = None
+        r._sdxl_quantized_bits = None
+        r._sdxl_quantized_init_error = "OOM"
+        assert "error" in r.health()["sdxl_quantized"]
