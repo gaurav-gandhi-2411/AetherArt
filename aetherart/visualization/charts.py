@@ -405,7 +405,7 @@ class ChartCanvas:
 
         else:
             raise ValueError(
-                f"Unknown placement {placement!r}. " "Use 'top', 'right', 'left', or 'free'."
+                f"Unknown placement {placement!r}. Use 'top', 'right', 'left', or 'free'."
             )
 
         fc = facecolor or _fc(color)

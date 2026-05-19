@@ -1,14 +1,34 @@
-[tool.black]
+[tool.ruff]
 line-length = 100
-# Gradio UI-builder blocks and diffusers pipeline call chains are verbose.
-# Default 88 forces awkward mid-argument wraps; 100 keeps them readable.
 
-[tool.isort]
-profile = "black"
-line_length = 100
-# profile = "black" sets: multi_line_output=3, include_trailing_comma=True,
-# force_grid_wrap=0, use_parentheses=True, ensure_newline_before_comments=True.
-# Must match black's line_length to avoid reformat loops.
+[tool.ruff.lint]
+# E/F/W: pycodestyle errors+warnings and pyflakes (flake8 equivalents)
+# I: isort import ordering
+# UP/B/SIM deferred — pre-existing violations require a cleanup PR first
+select = ["E", "F", "I", "W"]
+extend-ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+# Vendored HuggingFace training script — not our code to reformat
+"scripts/_diffusers_train_text_to_image_lora.py" = ["E501"]
+# sys.path.insert before imports is intentional for standalone script execution
+"scripts/eval.py" = ["E402"]
+"scripts/_resume_samples.py" = ["E402"]
+"scripts/resume_gallery_cats456.py" = ["E402"]
+# matplotlib.use("Agg") must precede pyplot import — inherent to the library
+"scripts/_gen_findings_charts.py" = ["E402"]
+"scripts/generate_benchmark_charts.py" = ["E402"]
+"scripts/generate_clip_blindness_chart.py" = ["E402"]
+# sys.path + matplotlib.use("Agg") before imports; markdown table rows in f-string can't wrap
+"scripts/experiments/exp1_quantization_quality.py" = ["E402", "E501"]
+"scripts/experiments/exp2_negative_prompt.py" = ["E402", "E501"]
+"scripts/experiments/exp3_cfg_sweep.py" = ["E402", "E501"]
+"scripts/experiments/exp4_scheduler_visual.py" = ["E402", "E501"]
+"scripts/experiments/exp5_controlnet_strength.py" = ["E402", "E501"]
+"scripts/experiments/exp6_lora_rank.py" = ["E402", "E501"]
+"scripts/experiments/exp7_lora_data_size.py" = ["E402", "E501"]
+"scripts/experiments/exp8_lora_alpha.py" = ["E402", "E501"]
+"scripts/experiments/exp9_lora_trigger.py" = ["E402", "E501"]
 
 [tool.mypy]
 python_version = "3.10"

@@ -8,6 +8,7 @@ Output: reports/quantization_benchmark.md
 Usage:
     python scripts/benchmark_quantization.py
 """
+
 import time
 from pathlib import Path
 

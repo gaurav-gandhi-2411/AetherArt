@@ -7,6 +7,7 @@ Output: docs/lcm_comparison.png
 Usage:
     python scripts/generate_lcm_comparison.py
 """
+
 import time
 from pathlib import Path
 
@@ -105,7 +106,7 @@ def main() -> None:
 
     std_per = list(results.values())[0][2]
     lcm_per = list(results.values())[1][2]
-    print(f"[lcm] Speedup: {std_per/lcm_per:.1f}×  ({std_per:.1f}s → {lcm_per:.1f}s per image)")
+    print(f"[lcm] Speedup: {std_per / lcm_per:.1f}×  ({std_per:.1f}s → {lcm_per:.1f}s per image)")
 
 
 if __name__ == "__main__":

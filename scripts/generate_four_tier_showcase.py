@@ -11,6 +11,7 @@ Usage:
 NOTE: First run downloads SDXL Turbo (~6.7 GB) and loads all four pipelines sequentially.
       Expects ~20 min on RTX 3070 8 GB.
 """
+
 import time
 from pathlib import Path
 

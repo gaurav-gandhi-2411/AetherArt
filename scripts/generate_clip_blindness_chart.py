@@ -13,6 +13,7 @@ the style switch but still cannot resolve within the active range.
 Run from project root:
     python scripts/generate_clip_blindness_chart.py
 """
+
 import sys
 from pathlib import Path
 

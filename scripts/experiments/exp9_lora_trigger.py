@@ -356,7 +356,7 @@ mean_lpips = agg["no_trigger"]["mean_lpips"]
 print("\n── Condition summary ──")
 for cond in CONDITIONS:
     a = agg[cond]
-    print(f"  {cond}: CLIP={a['mean_clip']:.4f} ±{a['se_clip']:.4f} | " f"lat={a['mean_lat']:.1f}s")
+    print(f"  {cond}: CLIP={a['mean_clip']:.4f} ±{a['se_clip']:.4f} | lat={a['mean_lat']:.1f}s")
 print(f"  CLIP delta (with_trigger - no_trigger): {clip_delta:+.4f}  (pooled SE={pooled_se:.4f})")
 print(f"  Mean LPIPS between conditions: {mean_lpips:.4f} ±{agg['no_trigger']['se_lpips']:.4f}")
 
@@ -435,9 +435,9 @@ def _clip_verdict(delta, se):
     if abs(delta) < se:
         return "within noise (< 1 pooled SE) — CLIP cannot detect the trigger"
     elif abs(delta) < 2 * se:
-        return f"borderline ({abs(delta)/se:.1f}× pooled SE) — marginal CLIP signal"
+        return f"borderline ({abs(delta) / se:.1f}× pooled SE) — marginal CLIP signal"
     else:
-        return f"detectable ({abs(delta)/se:.1f}× pooled SE)"
+        return f"detectable ({abs(delta) / se:.1f}× pooled SE)"
 
 
 clip_verd = _clip_verdict(clip_delta, pooled_se)
@@ -448,9 +448,9 @@ FINDINGS = f"""\
 **Date:** 2026-05-07
 **Hardware:** RTX 3070 Laptop 8 GB (enable_model_cpu_offload)
 **Model:** {MODEL_ID}
-**LoRA:** {LORA_NAME} — {lora_config['description']}
+**LoRA:** {LORA_NAME} — {lora_config["description"]}
 **LoRA alpha:** {LORA_ALPHA} (fixed — trained default, loaded once for both conditions)
-**Trigger token:** "{lora_config['trigger_token']}"
+**Trigger token:** "{lora_config["trigger_token"]}"
 **Conditions:**
   - `no_trigger`: prompts use "ukiyo-e ..." style description, NO trigger token
   - `with_trigger`: identical prompts prepended with "ukyowood"
@@ -471,11 +471,11 @@ means the LoRA fires similarly regardless of the trigger.
 
 | Condition    | Mean CLIP | SE      | Mean LPIPS (between) |
 |--------------|----------:|--------:|---------------------:|
-| no_trigger   | {nt['mean_clip']:.4f}    | ±{nt['se_clip']:.4f}  | {nt['mean_lpips']:.4f} ±{nt['se_lpips']:.4f}  |
-| with_trigger | {wt['mean_clip']:.4f}    | ±{wt['se_clip']:.4f}  | (same pairs)         |
+| no_trigger   | {nt["mean_clip"]:.4f}    | ±{nt["se_clip"]:.4f}  | {nt["mean_lpips"]:.4f} ±{nt["se_lpips"]:.4f}  |
+| with_trigger | {wt["mean_clip"]:.4f}    | ±{wt["se_clip"]:.4f}  | (same pairs)         |
 
 CLIP delta (with_trigger − no_trigger): {clip_delta:+.4f}  (pooled SE = {pooled_se:.4f})
-LPIPS between conditions (mean ± SE): {mean_lpips:.4f} ±{nt['se_lpips']:.4f}
+LPIPS between conditions (mean ± SE): {mean_lpips:.4f} ±{nt["se_lpips"]:.4f}
 
 ## Interpretation
 

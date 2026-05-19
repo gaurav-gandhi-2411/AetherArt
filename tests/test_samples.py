@@ -88,9 +88,9 @@ class TestSampleMetadata:
                 continue
             data = json.loads(json_path.read_text(encoding="utf-8"))
             t = data.get("inference_time_rtx3070_s")
-            assert (
-                isinstance(t, (int, float)) and t > 0
-            ), f"{json_path.name}: inference_time_rtx3070_s={t!r} must be a positive number"
+            assert isinstance(t, (int, float)) and t > 0, (
+                f"{json_path.name}: inference_time_rtx3070_s={t!r} must be a positive number"
+            )
 
     def test_seed_matches_expected(self):
         """All samples use seed 42 by convention."""
@@ -99,6 +99,6 @@ class TestSampleMetadata:
             if not json_path.exists():
                 continue
             data = json.loads(json_path.read_text(encoding="utf-8"))
-            assert (
-                data.get("seed") == 42
-            ), f"{json_path.name}: expected seed=42, got {data.get('seed')!r}"
+            assert data.get("seed") == 42, (
+                f"{json_path.name}: expected seed=42, got {data.get('seed')!r}"
+            )

@@ -60,8 +60,7 @@ PROMPTS = {
         "dramatic studio lighting, photorealistic"
     ),
     "p02_landscape": (
-        "a misty mountain valley at sunrise, pine forest, "
-        "golden hour light, landscape photography"
+        "a misty mountain valley at sunrise, pine forest, golden hour light, landscape photography"
     ),
     "p03_abstract": (
         "geometric abstract composition with intersecting circles and triangles, "
@@ -72,14 +71,14 @@ PROMPTS = {
         "retro typography, worn paper texture"
     ),
     "p05_texture": (
-        "extreme close-up of rough concrete wall, water drops, " "micro detail, macro photography"
+        "extreme close-up of rough concrete wall, water drops, micro detail, macro photography"
     ),
     "p06_arch": (
         "interior of a Gothic cathedral with stone arches, "
         "stained glass windows, soft diffused light"
     ),
     "p07_hands": (
-        "two hands clasped together, wrinkled skin, " "natural light, photorealistic close-up"
+        "two hands clasped together, wrinkled skin, natural light, photorealistic close-up"
     ),
     "p08_crowd": (
         "a busy street market in Tokyo, dozens of people, "
@@ -436,10 +435,10 @@ negative prompts primarily reshape the output distribution at the tails.
 
 | Condition | Mean CLIP | Mean latency (s) | Mean LPIPS (vs other condition) |
 |-----------|----------:|-----------------:|--------------------------------:|
-| no_neg    | {no_a['mean_clip']:.4f}    | {no_a['mean_lat']:.1f}s             | {no_a['mean_lpips']:.4f}                         |
-| with_neg  | {wn_a['mean_clip']:.4f}    | {wn_a['mean_lat']:.1f}s             | {wn_a['mean_lpips']:.4f}                         |
+| no_neg    | {no_a["mean_clip"]:.4f}    | {no_a["mean_lat"]:.1f}s             | {no_a["mean_lpips"]:.4f}                         |
+| with_neg  | {wn_a["mean_clip"]:.4f}    | {wn_a["mean_lat"]:.1f}s             | {wn_a["mean_lpips"]:.4f}                         |
 
-SE on CLIP: no_neg ±{no_a['se_clip']:.4f} · with_neg ±{wn_a['se_clip']:.4f}
+SE on CLIP: no_neg ±{no_a["se_clip"]:.4f} · with_neg ±{wn_a["se_clip"]:.4f}
 CLIP delta (with_neg − no_neg): {clip_delta:+.4f} — {_clip_delta_verdict(clip_delta, pooled_se)}
 
 LPIPS between conditions (same seed/prompt pair): {lpips_mean:.4f} — {_lpips_context(lpips_mean)}
@@ -455,7 +454,7 @@ whether the effect is consistent or prompt-dependent.
 The CLIP delta is {_clip_delta_verdict(clip_delta, pooled_se)}.
 The LPIPS of {lpips_mean:.4f} between conditions tells us the negative prompt {_lpips_context(lpips_mean)}.
 
-Latency difference: {wn_a['mean_lat'] - no_a['mean_lat']:+.2f}s — negative prompt text adds
+Latency difference: {wn_a["mean_lat"] - no_a["mean_lat"]:+.2f}s — negative prompt text adds
 minimal compute overhead (classifier-free guidance already processes a null embedding; replacing
 it with a non-empty prompt does not change the number of forward passes).
 

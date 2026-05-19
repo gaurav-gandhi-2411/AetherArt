@@ -8,6 +8,7 @@ Usage:
     python scripts/generate_hero_image.py
     python scripts/generate_hero_image.py --steps 80   # higher quality
 """
+
 import argparse
 import time
 from pathlib import Path
@@ -104,18 +105,18 @@ def main() -> None:
     pipe = load_pipeline(args.steps)
     pipe.load_lora_weights(str(LORA_PATH.parent), weight_name=LORA_PATH.name)
     pipe.set_progress_bar_config(disable=True)
-    print(f"[hero] VRAM after load: {torch.cuda.memory_allocated()/1e9:.1f} GB")
+    print(f"[hero] VRAM after load: {torch.cuda.memory_allocated() / 1e9:.1f} GB")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     images: list[Image.Image] = []
 
     for i, prompt in enumerate(PROMPTS):
         label = LABELS[i]
-        print(f"[hero] {i+1}/4: {label}")
+        print(f"[hero] {i + 1}/4: {label}")
         t0 = time.monotonic()
         img = generate(pipe, prompt, args.steps)
         elapsed = time.monotonic() - t0
-        tile_path = OUT_DIR / f"tile_{i+1:02d}.png"
+        tile_path = OUT_DIR / f"tile_{i + 1:02d}.png"
         img.save(tile_path)
         print(f"          saved {tile_path.name}  ({elapsed:.0f}s)")
         images.append(img)
