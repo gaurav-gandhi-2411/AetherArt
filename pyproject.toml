@@ -1,3 +1,8 @@
+[tool.pytest.ini_options]
+markers = [
+    "gpu: requires CUDA GPU (auto-skipped when cuda is unavailable)",
+]
+
 [tool.ruff]
 line-length = 100
 
