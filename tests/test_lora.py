@@ -28,12 +28,13 @@ class TestLoraRegistry:
         assert "trigger_token" in cfg
         assert "default_negative" in cfg
 
-    def test_all_named_loras_have_path(self):
-        for name, cfg in LORA_REGISTRY.items():
+    def test_all_named_loras_have_path_or_repo(self):
+        for name, entry in LORA_REGISTRY.items():
             if name == "none":
-                assert cfg is None
+                assert entry is None
             else:
-                assert isinstance(cfg, dict) and "path" in cfg
+                assert isinstance(entry, dict)
+                assert "path" in entry or "repo" in entry
 
 
 class TestGetTriggerToken:
@@ -101,3 +102,23 @@ class TestLoadLora:
         load_lora(pipe, "ukiyo-e")
         _, kwargs = pipe.set_adapters.call_args
         assert kwargs.get("adapter_weights") == [1.0] or pipe.set_adapters.call_args[0][1] == [1.0]
+
+
+class TestLoraRegistryHyper:
+    def test_lora_registry_contains_hyper_4step(self):
+        assert "hyper_4step" in LORA_REGISTRY
+        assert LORA_REGISTRY["hyper_4step"] is not None
+
+    def test_lora_registry_contains_hyper_8step(self):
+        assert "hyper_8step" in LORA_REGISTRY
+        assert LORA_REGISTRY["hyper_8step"] is not None
+
+    def test_lora_registry_hyper_4step_does_not_support_negative_prompt(self):
+        entry = LORA_REGISTRY["hyper_4step"]
+        assert entry is not None
+        assert entry["supports_negative_prompt"] is False
+
+    def test_lora_registry_hyper_8step_supports_negative_prompt(self):
+        entry = LORA_REGISTRY["hyper_8step"]
+        assert entry is not None
+        assert entry["supports_negative_prompt"] is True
