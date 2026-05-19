@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
 
@@ -36,6 +38,13 @@ class Config:
     default_model: str = os.environ.get("HF_MODEL_ID", "sd2-community/stable-diffusion-2-1")
     sdxl_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
     sdxl_vae_fix: str = "madebyollin/sdxl-vae-fp16-fix"
+    hyper_sd_repo: str = "ByteDance/Hyper-SD"
+    hyper_sd_weights: dict[str, str] = field(
+        default_factory=lambda: {
+            "4step": "Hyper-SDXL-4steps-lora.safetensors",
+            "8step": "Hyper-SDXL-8steps-lora.safetensors",
+        }
+    )
     hf_token: str | None = os.environ.get("HUGGINGFACEHUB_API_TOKEN") or os.environ.get(
         "HF_API_TOKEN"
     )

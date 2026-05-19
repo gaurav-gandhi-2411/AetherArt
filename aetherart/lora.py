@@ -15,6 +15,30 @@ LORA_REGISTRY: dict[str, dict[str, Any] | None] = {
         "default_negative": "text, watermark, calligraphy, signature, words, letters",
         "description": "Japanese woodblock print style — 80 WikiArt images, SD 2.1, rank-8",
     },
+    "hyper_4step": {
+        "repo": "ByteDance/Hyper-SD",
+        "weight_name": "Hyper-SDXL-4steps-lora.safetensors",
+        "type": "few_step",
+        "step_count": 4,
+        "supports_negative_prompt": False,
+        "description": (
+            "Hyper-SDXL 4-step CFG-free LoRA. Use with guidance_scale=0. "
+            "Negative prompts are ignored. Calligraphy artifact will surface "
+            "when composed with Ukiyo-e LoRA."
+        ),
+    },
+    "hyper_8step": {
+        "repo": "ByteDance/Hyper-SD",
+        "weight_name": "Hyper-SDXL-8steps-lora.safetensors",
+        "type": "few_step",
+        "step_count": 8,
+        "supports_negative_prompt": True,
+        "description": (
+            "Hyper-SDXL 8-step CFG-preserved LoRA. Use with guidance_scale=5-8. "
+            "Compatible with negative prompts and Ukiyo-e LoRA composition "
+            "(default for the demo)."
+        ),
+    },
 }
 
 
