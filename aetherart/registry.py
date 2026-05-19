@@ -347,9 +347,7 @@ class ModelRegistry:
         except Exception:
             result["controlnet_cache"] = "unknown"
         # SDXL ControlNet Union LRU-2 cache
-        result["sdxl_cn_cache"] = (
-            f"{len(self._sdxl_cn_cache)} / {self._SDXL_CN_CACHE_MAX} entries"
-        )
+        result["sdxl_cn_cache"] = f"{len(self._sdxl_cn_cache)} / {self._SDXL_CN_CACHE_MAX} entries"
         return result
 
     def release_all(self) -> None:

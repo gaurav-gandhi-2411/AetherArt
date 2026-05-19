@@ -230,9 +230,7 @@ class TestGenerateSdxlControlnet:
         from aetherart.controlnet_sdxl import generate_sdxl_controlnet
 
         pipe = self._mock_pipe()
-        generate_sdxl_controlnet(
-            pipe, "test", self._blank_image(), negative_prompt="ugly, blurry"
-        )
+        generate_sdxl_controlnet(pipe, "test", self._blank_image(), negative_prompt="ugly, blurry")
         assert pipe.call_args.kwargs["negative_prompt"] == "ugly, blurry"
 
     def test_passes_dimensions(self):

@@ -269,9 +269,7 @@ class TestSdxlControlnetRegistry:
         r = _make_registry()
         pipes = [MagicMock(), MagicMock(), MagicMock()]
         with (
-            patch(
-                "aetherart.controlnet_sdxl.load_sdxl_controlnet_pipeline", side_effect=pipes
-            ),
+            patch("aetherart.controlnet_sdxl.load_sdxl_controlnet_pipeline", side_effect=pipes),
             patch("aetherart.controlnet_sdxl.release_sdxl_controlnet_pipeline"),
         ):
             r.get_sdxl_controlnet_pipeline("canny", "none", 1.0)

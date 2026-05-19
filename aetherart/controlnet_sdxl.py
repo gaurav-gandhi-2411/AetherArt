@@ -66,9 +66,7 @@ def load_sdxl_controlnet_pipeline(
         or ControlNetUnionModel is None
         or StableDiffusionXLControlNetUnionPipeline is None
     ):
-        raise RuntimeError(
-            "diffusers is not installed; cannot load SDXL ControlNet Union pipeline"
-        )
+        raise RuntimeError("diffusers is not installed; cannot load SDXL ControlNet Union pipeline")
 
     cn_model = _get_or_load_controlnet_union()
 
@@ -232,9 +230,7 @@ def generate_sdxl_controlnet(
         PIL Image.
     """
     if ctype not in _CTYPE_TO_INT:
-        raise ValueError(
-            f"Unknown ctype '{ctype}'. Valid options: {sorted(_CTYPE_TO_INT)}"
-        )
+        raise ValueError(f"Unknown ctype '{ctype}'. Valid options: {sorted(_CTYPE_TO_INT)}")
 
     generator = None
     if seed is not None:
