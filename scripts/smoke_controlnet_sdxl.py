@@ -99,7 +99,11 @@ def main() -> None:
     print(f"  depth image size: {depth_img.size}")
     depth_mean = float(np.array(depth_img).mean())
     canny_mean = float(np.array(canny_img).mean())
-    print(f"  depth map mean={depth_mean:.2f}  canny map mean={canny_mean:.2f}  distinct={abs(depth_mean - canny_mean) > 1.0}")
+    distinct = abs(depth_mean - canny_mean) > 1.0
+    print(
+        f"  depth map mean={depth_mean:.2f}  canny map mean={canny_mean:.2f}"
+        f"  distinct={distinct}"
+    )
 
     print("\nLoading SDXL ControlNet Union pipeline (singleton model)...")
     pipe = load_sdxl_controlnet_pipeline()
