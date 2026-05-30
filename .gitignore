@@ -32,5 +32,11 @@ reports/experiments/*/images/
 # Python coverage artifacts
 .coverage
 
+# Build / install artifacts
+aetherart.egg-info/
+
+# Session scratch files (not for tracking)
+cleanup-status.md
+
 # LoRA training data (too large for git, regenerated locally)
 data/lora/

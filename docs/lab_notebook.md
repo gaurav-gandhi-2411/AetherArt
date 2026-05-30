@@ -176,3 +176,17 @@ PR 02 enabled `E, F, I, W` rules only. `UP`, `B`, and `SIM` rules found 20 pre-e
 
 **`aetherart/sdxl_pipeline.py` + all callers — diffusers deprecation warning (PR 03)**
 - diffusers 0.35.1 emits `` `torch_dtype` is deprecated! Use `dtype` instead! `` from `StableDiffusionXLPipeline.from_pretrained` (and likely SDXL Turbo, Flux). Surfaced during PR 03 smoke test. Not actionable until we upgrade to a diffusers version that accepts `dtype=`. When upgrading diffusers in PR 14 or a dedicated dep-bump PR, swap all `torch_dtype=torch.float16` kwargs to `dtype=torch.float16` in `sdxl_pipeline.py`, `sdxl_turbo.py`, and any future Flux loader. Same fix applies to `model.py` line 122 (SDXL path in `AetherModel.init`).
+
+**Depth estimator split — doc/model-card pass (PR 08)**
+- The SDXL and legacy SD 2.1 depth ControlNet paths now use different estimator models. Any doc or model card that mentions the depth estimator must distinguish:
+  - Legacy SD 2.1 depth ControlNet (`aetherart/controlnet.py`): `Intel/dpt-hybrid-midas` (frozen, unchanged)
+  - SDXL depth ControlNet (`aetherart/controlnet_sdxl.py`): `LiheYoung/depth-anything-small-hf`
+- Reason for swap: `Intel/dpt-hybrid-midas` ships PyTorch `.bin` weights; transformers' CVE-2025-32434 patch blocks `torch.load` on torch < 2.6. `depth-anything-small-hf` uses safetensors and is a stronger estimator. Fix landed in PR 08 (`e3e4e6a`).
+- When writing the README depth section and HF model card in PR 14: name both models explicitly with their scope.
+
+**ControlNet local latency note (PR 08)**
+- Unquantized FP16 SDXL + ControlNet + `enable_model_cpu_offload` peaks at 7928 MB VRAM (right at the 8 GB ceiling) and runs ~275–292 s/image locally (offload-bound). This config is not suitable for timed local work.
+- PR 14: document that the local ControlNet path requires either the NF4 quantized variant (future) or a GPU with > 8 GB VRAM for usable latency. Modal A10G (24 GB) will be fine for PR 09.
+
+**numpy `__array__` copy-kwarg deprecation warning (PR 08)**
+- `diffusers/schedulers/scheduling_euler_discrete.py:405` emits `DeprecationWarning: __array__ implementation doesn't accept a copy keyword`. Upstream diffusers issue; not actionable locally. Add to dep-bump watchlist for PR 14: confirm fixed in diffusers ≥ 0.36.
