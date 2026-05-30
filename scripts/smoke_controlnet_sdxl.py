@@ -36,7 +36,7 @@ PROMPT = "a futuristic city skyline at sunset, cinematic, highly detailed"
 NEG_PROMPT = "blurry, low quality, cartoon"
 SEED = 42
 SIZE = 1024
-STEPS = 20
+STEPS = 15
 GUIDANCE = 7.5
 COND_SCALE = 0.7
 
@@ -92,8 +92,14 @@ def main() -> None:
     canny_img = preprocess_canny(source_img, low_threshold=100, high_threshold=200)
     print(f"  canny image size: {canny_img.size}")
 
-    print("[depth] preprocessing is skipped for smoke test — reusing canny map as control image")
-    depth_img = canny_img  # depth estimator download is optional for basic smoke
+    print("[depth] preprocessing with preprocess_depth (DPT-MiDaS)...")
+    from aetherart.controlnet_sdxl import preprocess_depth
+
+    depth_img = preprocess_depth(source_img)
+    print(f"  depth image size: {depth_img.size}")
+    depth_mean = float(np.array(depth_img).mean())
+    canny_mean = float(np.array(canny_img).mean())
+    print(f"  depth map mean={depth_mean:.2f}  canny map mean={canny_mean:.2f}  distinct={abs(depth_mean - canny_mean) > 1.0}")
 
     print("\nLoading SDXL ControlNet Union pipeline (singleton model)...")
     pipe = load_sdxl_controlnet_pipeline()
