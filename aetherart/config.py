@@ -45,6 +45,10 @@ class Config:
             "8step": "Hyper-SDXL-8steps-lora.safetensors",
         }
     )
+    sdxl_controlnet_union: str = "xinsir/controlnet-union-sdxl-1.0"
+    sdxl_controlnet_canny: str = "xinsir/controlnet-canny-sdxl-1.0"
+    sdxl_controlnet_depth: str = "xinsir/controlnet-depth-sdxl-1.0"
+    depth_estimator: str = "LiheYoung/depth-anything-small-hf"
     hf_token: str | None = os.environ.get("HUGGINGFACEHUB_API_TOKEN") or os.environ.get(
         "HF_API_TOKEN"
     )

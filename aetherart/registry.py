@@ -16,6 +16,7 @@ Design decisions:
 from __future__ import annotations
 
 import gc
+from collections import OrderedDict
 from typing import Any, Literal, Optional
 
 from .gpu_hygiene import cleanup_gpu
@@ -43,6 +44,10 @@ class ModelRegistry:
         self._sdxl_quantized: Optional[Any] = None
         self._sdxl_quantized_bits: Optional[int] = None
         self._sdxl_quantized_init_error: Optional[str] = None
+        # LRU-2 cache for SDXL ControlNet Union pipelines.
+        # Key: (ctype, lora_name, lora_alpha)  Value: pipeline object
+        self._sdxl_cn_cache: OrderedDict[tuple[str, str, float], Any] = OrderedDict()
+        self._sdxl_cn_init_error: Optional[str] = None
 
     # ── Base SD 2.1 / SDXL ──────────────────────────────────────────────────
 
@@ -234,6 +239,76 @@ class ModelRegistry:
         logger.info("%s-quantized pipeline ready", bits)
         return self._quant
 
+    # ── SDXL ControlNet Union (LRU-2) ───────────────────────────────────────
+
+    _SDXL_CN_CACHE_MAX: int = 2
+
+    def get_sdxl_controlnet_pipeline(
+        self,
+        ctype: str = "canny",
+        lora_name: str = "none",
+        lora_alpha: float = 1.0,
+    ) -> Any:
+        """Return a cached SDXL ControlNet Union pipeline, loading if needed.
+
+        LRU-2: at most 2 pipeline wrappers in memory at once. The underlying
+        ControlNetUnionModel singleton is NOT evicted on LRU overflow — only the
+        pipeline wrapper is released. Call release_all_sdxl_cn() to free the model.
+        """
+        key = (ctype, lora_name, lora_alpha)
+        if key in self._sdxl_cn_cache:
+            self._sdxl_cn_cache.move_to_end(key)
+            return self._sdxl_cn_cache[key]
+        if self._sdxl_cn_init_error is not None:
+            raise RuntimeError(
+                f"SDXL ControlNet init previously failed: {self._sdxl_cn_init_error}. "
+                "Call registry.retry_sdxl_cn_init() to retry."
+            )
+        if len(self._sdxl_cn_cache) >= self._SDXL_CN_CACHE_MAX:
+            evicted_key, evicted_pipe = self._sdxl_cn_cache.popitem(last=False)
+            logger.info("Evicting SDXL ControlNet pipeline for key %s", evicted_key)
+            from .controlnet_sdxl import release_sdxl_controlnet_pipeline
+
+            release_sdxl_controlnet_pipeline(evicted_pipe)
+        try:
+            from .controlnet_sdxl import load_sdxl_controlnet_pipeline
+
+            logger.info(
+                "Loading SDXL ControlNet Union pipeline (ctype=%s, lora=%s)...", ctype, lora_name
+            )
+            pipe = load_sdxl_controlnet_pipeline(lora_name=lora_name, lora_alpha=lora_alpha)
+            self._sdxl_cn_cache[key] = pipe
+            self._sdxl_cn_init_error = None
+        except Exception as exc:
+            self._sdxl_cn_init_error = str(exc)
+            raise RuntimeError(f"SDXL ControlNet init failed: {exc}") from exc
+        return pipe
+
+    def retry_sdxl_cn_init(
+        self,
+        ctype: str = "canny",
+        lora_name: str = "none",
+        lora_alpha: float = 1.0,
+    ) -> Any:
+        """Clear the cached ControlNet init failure and try again."""
+        self._sdxl_cn_init_error = None
+        return self.get_sdxl_controlnet_pipeline(ctype, lora_name, lora_alpha)
+
+    def release_all_sdxl_cn(self) -> None:
+        """Release all cached ControlNet pipelines and the shared ControlNetUnionModel."""
+        if self._sdxl_cn_cache:
+            from .controlnet_sdxl import release_sdxl_controlnet_pipeline
+
+            for pipe in list(self._sdxl_cn_cache.values()):
+                release_sdxl_controlnet_pipeline(pipe)
+            self._sdxl_cn_cache.clear()
+        try:
+            from .controlnet_sdxl import release_controlnet_union_model
+
+            release_controlnet_union_model()
+        except Exception:
+            pass
+
     # ── Health + lifecycle ───────────────────────────────────────────────────
 
     def health(self) -> dict[str, str]:
@@ -264,13 +339,15 @@ class ModelRegistry:
             )
         else:
             result["sdxl_quantized"] = "not_loaded"
-        # ControlNet cache lives in controlnet.py
+        # SD 2.1 ControlNet cache lives in controlnet.py
         try:
             from . import controlnet as cn
 
             result["controlnet_cache"] = f"{len(cn._cn_pipelines)} / {cn._MAX_CN_CACHE} entries"
         except Exception:
             result["controlnet_cache"] = "unknown"
+        # SDXL ControlNet Union LRU-2 cache
+        result["sdxl_cn_cache"] = f"{len(self._sdxl_cn_cache)} / {self._SDXL_CN_CACHE_MAX} entries"
         return result
 
     def release_all(self) -> None:
@@ -292,5 +369,6 @@ class ModelRegistry:
             cn.invalidate_cache()
         except Exception:
             pass
+        self.release_all_sdxl_cn()
         cleanup_gpu(verbose=True)
         logger.info("ModelRegistry: all pipelines released")
