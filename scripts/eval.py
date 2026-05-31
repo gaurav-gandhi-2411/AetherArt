@@ -826,9 +826,7 @@ def main() -> None:
                 avg_vram = np.mean([r["vram_peak_gb"] for r in sub])
                 hps_vals = [r["hps_score"] for r in sub if r.get("hps_score") is not None]
                 ir_vals = [
-                    r["image_reward_score"]
-                    for r in sub
-                    if r.get("image_reward_score") is not None
+                    r["image_reward_score"] for r in sub if r.get("image_reward_score") is not None
                 ]
                 lpips_vals = [r["lpips_score"] for r in sub if r.get("lpips_score") is not None]
                 score_str = f"CLIP(cmp-only)={avg_clip:.4f}"
