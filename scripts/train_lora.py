@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 """
-Wrapper around the diffusers train_text_to_image_lora.py script.
+Wrapper around the diffusers LoRA training scripts.
 
-Launches via accelerate with sane defaults for the RTX 3070 8GB Laptop GPU,
-logs output to training_output/training.log, and reports elapsed time.
+Launches via accelerate with sane defaults, logs output to training_output/training.log,
+and reports elapsed time.
 
 Usage:
-    python scripts/train_lora.py                     # full 1500-step run
-    python scripts/train_lora.py --max-train-steps 5 # pre-flight check
-    python scripts/train_lora.py --rank 4 --lr 5e-5  # custom hyperparams
+    python scripts/train_lora.py                          # SD 2.1, full 1500-step run
+    python scripts/train_lora.py --base sdxl              # SDXL at 1024x1024
+    python scripts/train_lora.py --max-train-steps 5      # pre-flight check
+    python scripts/train_lora.py --rank 4 --lr 5e-5       # custom hyperparams
 """
+
+from __future__ import annotations
 
 import argparse
 import importlib.util
@@ -19,15 +22,35 @@ import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DIFFUSERS_SCRIPT = REPO_ROOT / "scripts" / "_diffusers_train_text_to_image_lora.py"
 DATA_DIR = REPO_ROOT / "data" / "lora" / "ukiyo-e"
-DEFAULT_OUTPUT_DIR = DATA_DIR / "training_output"
+
+# Per-base config: (script filename, default model, default resolution, default output subdir)
+_BASE_CONFIG: dict[str, tuple[str, str, int, str]] = {
+    "sd21": (
+        "_diffusers_train_text_to_image_lora.py",
+        "sd2-community/stable-diffusion-2-1",
+        512,
+        "training_output",
+    ),
+    "sdxl": (
+        "_diffusers_train_text_to_image_lora_sdxl.py",
+        "stabilityai/stable-diffusion-xl-base-1.0",
+        1024,
+        "training_output_sdxl",
+    ),
+}
 
 
-def parse_args():
-    p = argparse.ArgumentParser(description="LoRA fine-tune wrapper for Ukiyo-e SD 2.1")
-    p.add_argument("--model", default="sd2-community/stable-diffusion-2-1")
-    p.add_argument("--resolution", type=int, default=512)
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="LoRA fine-tune wrapper for Ukiyo-e (SD 2.1 or SDXL)")
+    p.add_argument(
+        "--base",
+        choices=["sd21", "sdxl"],
+        default="sd21",
+        help="Base model family: 'sd21' (default, 512px) or 'sdxl' (1024px)",
+    )
+    p.add_argument("--model", default=None, help="Override default model ID for the chosen base")
+    p.add_argument("--resolution", type=int, default=None, help="Override default resolution")
     p.add_argument("--train-batch-size", type=int, default=1)
     p.add_argument("--grad-accum", type=int, default=4)
     p.add_argument("--lr", type=float, default=1e-4)
@@ -50,7 +73,7 @@ def parse_args():
         "--output-dir",
         type=Path,
         default=None,
-        help="Override output directory (default: data/lora/ukiyo-e/training_output)",
+        help="Override output directory",
     )
     p.add_argument(
         "--data-dir",
@@ -61,7 +84,14 @@ def parse_args():
     return p.parse_args()
 
 
-def build_command(args, python_exe: str) -> list[str]:
+def build_command(args: argparse.Namespace, python_exe: str) -> list[str]:
+    script_name, default_model, default_resolution, default_output_subdir = _BASE_CONFIG[args.base]
+    diffusers_script = REPO_ROOT / "scripts" / script_name
+    model = args.model or default_model
+    resolution = args.resolution or default_resolution
+    output_dir = Path(args.output_dir) if args.output_dir else DATA_DIR / default_output_subdir
+    data_dir = Path(args.data_dir) if args.data_dir else DATA_DIR
+
     # Locate accelerate in the same env as the current interpreter.
     # Windows: python.exe lives at env root, scripts at env/Scripts/
     # Unix: both live in env/bin/
@@ -78,15 +108,15 @@ def build_command(args, python_exe: str) -> list[str]:
         "launch",
         "--mixed_precision",
         args.mixed_precision,
-        str(DIFFUSERS_SCRIPT),
+        str(diffusers_script),
         "--pretrained_model_name_or_path",
-        args.model,
+        model,
         "--train_data_dir",
-        str(DATA_DIR),
+        str(data_dir),
         "--caption_column",
         "text",
         "--resolution",
-        str(args.resolution),
+        str(resolution),
         "--train_batch_size",
         str(args.train_batch_size),
         "--gradient_accumulation_steps",
@@ -102,7 +132,7 @@ def build_command(args, python_exe: str) -> list[str]:
         "--checkpointing_steps",
         str(args.checkpointing_steps),
         "--output_dir",
-        str(DEFAULT_OUTPUT_DIR),
+        str(output_dir),
         "--validation_prompt",
         args.validation_prompt,
         "--num_validation_images",
@@ -113,6 +143,10 @@ def build_command(args, python_exe: str) -> list[str]:
         str(args.seed),
     ]
 
+    # SDXL requires the fp16-fix VAE to avoid black validation images (G1 mandate)
+    if args.base == "sdxl":
+        cmd += ["--pretrained_vae_model_name_or_path", "madebyollin/sdxl-vae-fp16-fix"]
+
     if not args.no_gradient_checkpointing:
         cmd.append("--gradient_checkpointing")
 
@@ -122,28 +156,20 @@ def build_command(args, python_exe: str) -> list[str]:
     elif not args.no_xformers and not xformers_available:
         print("[train_lora] xformers not found — running without memory-efficient attention")
 
-    return cmd
+    return cmd, output_dir
 
 
-def main():
+def main() -> None:
     args = parse_args()
     python_exe = sys.executable
 
-    output_dir = Path(args.output_dir) if args.output_dir else DEFAULT_OUTPUT_DIR
+    cmd, output_dir = build_command(args, python_exe)
     output_dir.mkdir(parents=True, exist_ok=True)
     log_path = output_dir / "training.log"
 
-    data_dir = Path(args.data_dir) if args.data_dir else DATA_DIR
-
-    cmd = build_command(args, python_exe)
-    # patch --output_dir and --train_data_dir overrides
-    out_idx = cmd.index("--output_dir") + 1
-    cmd[out_idx] = str(output_dir)
-    data_idx = cmd.index("--train_data_dir") + 1
-    cmd[data_idx] = str(data_dir)
-
+    _, default_model, default_resolution, _ = _BASE_CONFIG[args.base]
+    print(f"[train_lora] Base       : {args.base}")
     print(f"[train_lora] Output dir : {output_dir}")
-    print(f"[train_lora] Data dir   : {data_dir}")
     print(f"[train_lora] Log file   : {log_path}")
     print(f"[train_lora] Steps      : {args.max_train_steps}")
     print(f"[train_lora] Rank       : {args.rank}")

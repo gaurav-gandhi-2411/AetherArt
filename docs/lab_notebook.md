@@ -190,3 +190,22 @@ PR 02 enabled `E, F, I, W` rules only. `UP`, `B`, and `SIM` rules found 20 pre-e
 
 **numpy `__array__` copy-kwarg deprecation warning (PR 08)**
 - `diffusers/schedulers/scheduling_euler_discrete.py:405` emits `DeprecationWarning: __array__ implementation doesn't accept a copy keyword`. Upstream diffusers issue; not actionable locally. Add to dep-bump watchlist for PR 14: confirm fixed in diffusers ≥ 0.36.
+
+---
+
+## 2026-05-31 — SDXL Ukiyo-e LoRA training on GCP L4 (PR 09)
+
+First GCP-compute PR. Ran a rank-8 SDXL LoRA at 1024×1024 on a g2-standard-4 (NVIDIA L4 24 GB) in `review-iq-prod/us-central1-a`. Training data: same 80 WikiArt ukiyo-e images used for the SD 2.1 LoRA in PR 04 — same rank, same steps, different resolution, for a controlled cross-resolution comparison.
+
+**Infrastructure note:** intended project is `aetherart-497918` (created for this work), but new GCP projects have a `GPUS_ALL_REGIONS=0` cold-start gate that requires 24–48h billing history before auto-approval. Hit the gate mid-run; pivoted to `review-iq-prod` (established, L4 quota already granted). `aetherart-497918` stays as the long-term home; future runs will use it once quota propagates. Full teardown and isolation rules applied: every resource prefixed `aetherart-`, labelled `project=aetherart,ephemeral=true`, zero non-aetherart resources touched.
+
+**Wall-clock reality vs estimate:**
+- Runbook estimate: 1.5h. Actual: 4h 26m. Reason: `--validation_epochs 1` triggered 75 SDXL inference passes (one per epoch, 4 images each). Not accounted for in the initial estimate. Future runs should pass `--validation_epochs 10` or higher to cap validation overhead at reasonable levels.
+
+**Cost:** ~$3.50 actual vs ~$1.50 estimated. Under the $5.00 authorized hard stop. Honest note for the training report (portfolio-positive transparency).
+
+**Dependency issue caught during training:** the GCP DLVM image (PyTorch 2.9, transformers 4.51+) removed `FLAX_WEIGHTS_NAME` from `transformers.utils`, breaking `diffusers==0.35.1`'s pipeline loading. Fixed by pinning `transformers>=4.41.2,<4.51` on the VM. Add to PR-14 carry-over: when upgrading diffusers, verify this compatibility constraint is resolved in the target version.
+
+**Checkpoint selection:** evaluated 500/1000/1500. Selected checkpoint-1000 by visual evaluation (same selection as the SD 2.1 run — useful consistency point). Key finding: at 1024×1024, the calligraphy artifact manifests as compositionally integrated cartouche banners and red seals rather than scattered characters, which is more anatomically faithful to real ukiyo-e woodblock prints. checkpoint-1500 showed mild mode-collapse (lost the samurai figure in prompt 3); checkpoint-500 underfitted on figure adherence. The 1000-step convergence point is consistent across both resolutions.
+
+**Adapter:** `data/lora/ukiyo-e/ukiyo-e-sdxl-lora.safetensors`, 45 MB, rank-8, UNet-only. Publication to HF Hub is PR 11.

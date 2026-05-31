@@ -5,6 +5,10 @@ markers = [
 
 [tool.ruff]
 line-length = 100
+# Vendored third-party training scripts — exclude from all ruff checks including format
+exclude = [
+    "scripts/_diffusers_train_text_to_image_lora_sdxl.py",
+]
 
 [tool.ruff.lint]
 # E/F/W: pycodestyle errors+warnings and pyflakes (flake8 equivalents)
@@ -14,8 +18,9 @@ select = ["E", "F", "I", "W"]
 extend-ignore = ["E203"]
 
 [tool.ruff.lint.per-file-ignores]
-# Vendored HuggingFace training script — not our code to reformat
+# Vendored HuggingFace training scripts — not our code to reformat
 "scripts/_diffusers_train_text_to_image_lora.py" = ["E501"]
+"scripts/_diffusers_train_text_to_image_lora_sdxl.py" = ["ALL"]
 # sys.path.insert before imports is intentional for standalone script execution
 "scripts/eval.py" = ["E402"]
 "scripts/_resume_samples.py" = ["E402"]
