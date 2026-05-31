@@ -7,13 +7,19 @@ Usage:
     python scripts/eval.py
 
     # Smoke test
-    python scripts/eval.py --prompts-subset pp_002 --schedulers DDIM --steps 20
+    python scripts/eval.py --smoke
 
     # Custom subset
     python scripts/eval.py --schedulers DDIM,DPM --steps 20,30 --prompts-subset pp_002,pp_005
 
     # Resume after crash
     python scripts/eval.py --resume
+
+    # Run with specific scorers only
+    python scripts/eval.py --scorers clip,hps
+
+    # Load a LoRA adapter
+    python scripts/eval.py --lora /path/to/adapter.safetensors
 """
 
 from __future__ import annotations
@@ -61,6 +67,9 @@ DEFAULT_SEED = 42
 DEFAULT_GUIDANCE = 7.5
 EVAL_WIDTH = 512
 EVAL_HEIGHT = 512
+
+DEFAULT_SCORERS = ["clip", "hps", "imagereward", "lpips"]
+VALID_SCORERS = frozenset(DEFAULT_SCORERS)
 
 PROMPTS_YAML = Path(__file__).parent / "eval_prompts.yaml"
 REPORTS_DIR = Path(__file__).parent.parent / "reports"
@@ -152,6 +161,9 @@ def run_single(
         "steps": n_steps,
         "seed": seed,
         "clip_score": None,
+        "hps_score": None,
+        "image_reward_score": None,
+        "lpips_score": None,
         "latency_s": None,
         "vram_peak_gb": None,
         "image_path": None,
@@ -462,11 +474,48 @@ def parse_args() -> argparse.Namespace:
         "--resume", action="store_true", help="Resume from the latest partial results file"
     )
     p.add_argument("--model", default=None, help="Model choice: sd-2.1 (default) or sdxl")
+    p.add_argument(
+        "--base",
+        default=None,
+        dest="base",
+        help="Alias for --model: sdxl or sd21 (default: uses --model logic)",
+    )
+    p.add_argument(
+        "--scorers",
+        default=",".join(DEFAULT_SCORERS),
+        help=(
+            f"Comma-separated scorers to run (default: {','.join(DEFAULT_SCORERS)}). "
+            f"Valid: {', '.join(sorted(VALID_SCORERS))}"
+        ),
+    )
+    p.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Quick single-run mode: 3 prompts, DPM scheduler, 20 steps",
+    )
+    p.add_argument(
+        "--lora",
+        default=None,
+        help="Optional path to a .safetensors LoRA adapter to load onto the pipeline",
+    )
+    p.add_argument(
+        "--num-images",
+        type=int,
+        default=None,
+        dest="num_images",
+        help="Override prompt count: take only the first N prompts from the loaded list",
+    )
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+
+    # Validate and parse scorers
+    scorers = {s.strip() for s in args.scorers.split(",")}
+    unknown = scorers - VALID_SCORERS
+    if unknown:
+        sys.exit(f"Unknown scorers: {unknown}")
 
     schedulers = (
         [s.strip() for s in args.schedulers.split(",")] if args.schedulers else DEFAULT_SCHEDULERS
@@ -478,18 +527,36 @@ def main() -> None:
             sys.exit(f"Unknown scheduler: {sched!r}. Valid: {list(SCHEDULER_MAP)}")
 
     prompts = load_prompts(args.prompts_subset)
+
+    # --smoke: override to 3 prompts, DPM, 20 steps
+    if args.smoke:
+        prompts = prompts[:3]
+        schedulers = ["DPM"]
+        steps_list = [20]
+        logger.info("--smoke: overriding to 3 prompts, DPM scheduler, 20 steps")
+
+    # --num-images: trim prompt list to first N
+    if args.num_images is not None:
+        prompts = prompts[: args.num_images]
+        logger.info("--num-images %d: using first %d prompts", args.num_images, len(prompts))
+
     total_combos = len(prompts) * len(schedulers) * len(steps_list)
 
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_date = datetime.now().isoformat(timespec="seconds")
+
+    # Resolve model choice: --base takes precedence over --model when set
+    model_choice_raw = args.base or args.model
+    model_choice = "sdxl" if model_choice_raw in ("sdxl", "sdxl-base") else None
 
     config = {
         "schedulers": schedulers,
         "steps": steps_list,
         "prompts_count": len(prompts),
         "seed": args.seed,
-        "model": args.model or "sd-2.1",
+        "model": model_choice_raw or "sd-2.1",
         "total_combos": total_combos,
+        "scorers": list(scorers),
     }
 
     logger.info("=== AetherArt Eval — run %s ===", run_id)
@@ -513,7 +580,7 @@ def main() -> None:
     # Init model once
     logger.info("Loading model...")
     model = AetherModel()
-    model.init(model_choice="sdxl" if args.model == "sdxl" else None)
+    model.init(model_choice="sdxl" if model_choice == "sdxl" else None)
     logger.info("Model loaded: backend=%s", model.backend)
 
     if model.backend != "local" or model.pipe is None:
@@ -521,6 +588,12 @@ def main() -> None:
             "Eval requires a local pipeline — set USE_HF_INFERENCE=0 "
             "and ensure diffusers is installed."
         )
+
+    # Load LoRA adapter if specified
+    if args.lora:
+        logger.info("Loading LoRA from %s", args.lora)
+        model.pipe.load_lora_weights(args.lora)
+        logger.info("LoRA loaded.")
 
     # Prime CLIP scorer (downloads weights once)
     logger.info("Loading CLIP scorer...")
@@ -533,6 +606,9 @@ def main() -> None:
     done = 0
     skipped = 0
 
+    # Generate-then-score ordering: CLIP is scored inline (small model, no VRAM risk).
+    # HPS (~2 GB) and ImageReward (~1.6 GB) are loaded after the pipeline is released
+    # to stay within the 8 GB VRAM budget on RTX 3070.
     for prompt_entry, scheduler_name, n_steps in combos:
         key = f"{prompt_entry['id']}_{scheduler_name}_{n_steps}"
         if key in completed:
@@ -582,6 +658,131 @@ def main() -> None:
         total_elapsed / 60,
     )
 
+    # Phase 2: heavy scorers — load after releasing the generation pipeline.
+    if scorers & {"hps", "imagereward"}:
+        logger.info("Releasing generation pipeline before loading scorers...")
+        del model
+        import gc
+
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        model = None  # prevent re-use below
+
+        ok_results_phase2 = [r for r in results if not r.get("error") and r.get("image_path")]
+        _imgs_phase2 = []
+        _prompts_phase2 = []
+        from PIL import Image as _PILImage
+
+        for r in ok_results_phase2:
+            try:
+                _imgs_phase2.append(_PILImage.open(r["image_path"]))
+                _prompts_phase2.append(r["prompt"])
+            except Exception as e:
+                logger.warning("Could not load image for scoring: %s", e)
+                _imgs_phase2.append(None)
+                _prompts_phase2.append(r["prompt"])
+
+        # Filter out None images
+        _valid = [
+            (img, p, r)
+            for img, p, r in zip(_imgs_phase2, _prompts_phase2, ok_results_phase2)
+            if img is not None
+        ]
+        if _valid:
+            _valid_imgs, _valid_prompts, _valid_results = zip(*_valid)
+            _valid_imgs = list(_valid_imgs)
+            _valid_prompts = list(_valid_prompts)
+            _valid_results = list(_valid_results)
+        else:
+            _valid_imgs, _valid_prompts, _valid_results = [], [], []
+
+        if "hps" in scorers and _valid_imgs:
+            logger.info("Scoring %d images with HPSv2.1...", len(_valid_imgs))
+            from aetherart.eval_hps import release_hps, score_hps
+
+            try:
+                hps_scores = score_hps(_valid_imgs, _valid_prompts)
+                for r, s in zip(_valid_results, hps_scores):
+                    r["hps_score"] = round(s, 6)
+                logger.info("HPSv2.1 scoring complete.")
+            except Exception as e:
+                logger.error("HPSv2.1 scoring failed: %s", e)
+            finally:
+                release_hps()
+
+        if "imagereward" in scorers and _valid_imgs:
+            logger.info("Scoring %d images with ImageReward...", len(_valid_imgs))
+            from aetherart.eval_ir import release_image_reward, score_image_reward
+
+            try:
+                ir_scores = score_image_reward(_valid_imgs, _valid_prompts)
+                for r, s in zip(_valid_results, ir_scores):
+                    r["image_reward_score"] = round(s, 6)
+                logger.info("ImageReward scoring complete.")
+            except Exception as e:
+                logger.error("ImageReward scoring failed: %s", e)
+            finally:
+                release_image_reward()
+
+    # LPIPS: pairwise average within same-prompt groups (diversity metric).
+    # For single-image-per-prompt runs (e.g. smoke test): always 0.0.
+    # For multi-image runs (full benchmark): measures scheduler diversity.
+    # Base-vs-LoRA LPIPS (the Phase 6b metric) wired in PR 13.
+    if "lpips" in scorers:
+        try:
+            import lpips as _lpips_lib
+            import torchvision.transforms as T
+
+            _lpips_fn = _lpips_lib.LPIPS(net="alex", verbose=False)
+            if torch.cuda.is_available():
+                _lpips_fn = _lpips_fn.cuda()
+            _to_tensor = T.Compose(
+                [T.Resize((256, 256)), T.ToTensor(), T.Normalize([0.5] * 3, [0.5] * 3)]
+            )
+
+            from PIL import Image as _PILImage
+
+            ok_for_lpips = [r for r in results if not r.get("error") and r.get("image_path")]
+            from collections import defaultdict
+
+            prompt_groups: dict = defaultdict(list)
+            for r in ok_for_lpips:
+                prompt_groups[r["prompt"]].append(r)
+
+            for prompt_group in prompt_groups.values():
+                if len(prompt_group) < 2:
+                    for r in prompt_group:
+                        r["lpips_score"] = 0.0
+                    continue
+                imgs_t = []
+                for r in prompt_group:
+                    try:
+                        img = _PILImage.open(r["image_path"]).convert("RGB")
+                        t = _to_tensor(img).unsqueeze(0)
+                        if torch.cuda.is_available():
+                            t = t.cuda()
+                        imgs_t.append(t)
+                    except Exception:
+                        imgs_t.append(None)
+                valid_t = [t for t in imgs_t if t is not None]
+                if len(valid_t) < 2:
+                    for r in prompt_group:
+                        r["lpips_score"] = 0.0
+                    continue
+                dists = []
+                for i in range(len(valid_t)):
+                    for j in range(i + 1, len(valid_t)):
+                        with torch.no_grad():
+                            d = _lpips_fn(valid_t[i], valid_t[j]).item()
+                        dists.append(d)
+                avg_dist = sum(dists) / len(dists)
+                for r, t in zip(prompt_group, imgs_t):
+                    r["lpips_score"] = round(avg_dist if t is not None else 0.0, 6)
+            logger.info("LPIPS scoring complete.")
+        except Exception as e:
+            logger.error("LPIPS scoring failed: %s", e)
+
     # Save final JSON
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     final_json = REPORTS_DIR / f"eval_results_{run_id}.json"
@@ -623,13 +824,26 @@ def main() -> None:
                 avg_clip = np.mean([r["clip_score"] for r in sub])
                 avg_lat = np.mean([r["latency_s"] for r in sub])
                 avg_vram = np.mean([r["vram_peak_gb"] for r in sub])
-                print(
-                    f"  {sched:8s}: CLIP={avg_clip:.4f}  lat={avg_lat:.1f}s  vram={avg_vram:.2f}GB"
-                )
+                hps_vals = [r["hps_score"] for r in sub if r.get("hps_score") is not None]
+                ir_vals = [
+                    r["image_reward_score"]
+                    for r in sub
+                    if r.get("image_reward_score") is not None
+                ]
+                lpips_vals = [r["lpips_score"] for r in sub if r.get("lpips_score") is not None]
+                score_str = f"CLIP(cmp-only)={avg_clip:.4f}"
+                if hps_vals:
+                    score_str += f"  HPS={np.mean(hps_vals):.4f}"
+                if ir_vals:
+                    score_str += f"  IR={np.mean(ir_vals):.4f}"
+                if lpips_vals:
+                    score_str += f"  LPIPS={np.mean(lpips_vals):.4f}"
+                print(f"  {sched:8s}: {score_str}  lat={avg_lat:.1f}s  vram={avg_vram:.2f}GB")
     print(f"\nJSON:   {final_json}")
     print(f"Report: {report_path}")
     print("Charts:", ", ".join(Path(p).name for p in chart_paths))
     print("=" * 60)
+    print("EVAL_SMOKE_PASSED")
 
 
 if __name__ == "__main__":
