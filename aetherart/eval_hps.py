@@ -51,12 +51,12 @@ def score_hps(
     Groups images by prompt so same-prompt batches share one score() call,
     reducing the number of checkpoint reloads from N to #unique_prompts.
     """
-    import hpsv2
-
     if len(images) != len(prompts):
         raise ValueError(
             f"images and prompts must have equal length ({len(images)} vs {len(prompts)})"
         )
+
+    import hpsv2
 
     _ensure_checkpoint(hps_version)
 
