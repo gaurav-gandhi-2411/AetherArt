@@ -84,3 +84,72 @@ class TestScoreImageReward:
 
         assert mod._model is None
         assert mod._device is None
+
+
+class TestDatasetsStubbedImport:
+    """Verify the scoped datasets stub that protects against the pyarrow 24.x crash.
+
+    ImageReward.__init__ → ReFL → datasets → pandas → pyarrow.dataset C extension
+    causes a Windows access violation. eval_ir._load() stubs 'datasets' in
+    sys.modules for the duration of `import ImageReward` only, then removes it.
+    """
+
+    def test_stub_removed_after_load(self):
+        """_load() must not leave a datasets stub in sys.modules after returning."""
+        import sys
+        import types
+
+        mod = _get_mod()
+
+        saved_datasets = sys.modules.pop("datasets", None)
+        saved_ir = sys.modules.pop("ImageReward", None)
+        try:
+            fake_ir = MagicMock()
+            fake_ir.load.return_value = MagicMock()
+
+            with patch.dict(sys.modules, {"ImageReward": fake_ir}):
+                with patch("torch.cuda.is_available", return_value=False):
+                    mod._model = None
+                    mod._load()
+
+            # Only a real datasets module (with __version__) is acceptable;
+            # a stub (ModuleType without __version__) means the cleanup was skipped.
+            if "datasets" in sys.modules:
+                assert hasattr(sys.modules["datasets"], "__version__"), (
+                    "datasets stub artifact leaked into sys.modules — cleanup missing"
+                )
+        finally:
+            if saved_datasets is not None:
+                sys.modules["datasets"] = saved_datasets
+            if saved_ir is not None:
+                sys.modules["ImageReward"] = saved_ir
+
+    def test_stub_not_inserted_when_datasets_already_present(self):
+        """If real datasets is already loaded, _load() must not overwrite or remove it."""
+        import sys
+        import types
+
+        mod = _get_mod()
+
+        sentinel = types.ModuleType("datasets")
+        sentinel.__version__ = "test-sentinel"  # type: ignore[attr-defined]
+
+        saved_ir = sys.modules.pop("ImageReward", None)
+        try:
+            fake_ir = MagicMock()
+            fake_ir.load.return_value = MagicMock()
+
+            with patch.dict(sys.modules, {"ImageReward": fake_ir, "datasets": sentinel}):
+                with patch("torch.cuda.is_available", return_value=False):
+                    mod._model = None
+                    mod._load()
+
+                # Check INSIDE the context while sentinel is still in sys.modules:
+                # _load() must not have removed or replaced it.
+                assert sys.modules.get("datasets") is sentinel, (
+                    "datasets was replaced or removed during _load() — "
+                    "stub was incorrectly inserted when real datasets was present"
+                )
+        finally:
+            if saved_ir is not None:
+                sys.modules["ImageReward"] = saved_ir

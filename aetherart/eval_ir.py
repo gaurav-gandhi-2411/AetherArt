@@ -45,7 +45,27 @@ _device: str | None = None
 def _load() -> tuple:
     global _model, _device
     if _model is None:
-        import ImageReward as ir
+        import sys
+        import types as _types
+
+        # ImageReward.__init__ eagerly imports ReFL (training infrastructure only) which
+        # chains to: datasets → pandas → pyarrow.dataset C extension → Windows access
+        # violation on pyarrow 24.x. Stub 'datasets' in sys.modules for the duration of
+        # `import ImageReward` only, then remove it so nothing else sees the stub.
+        # ReFL is never called on the inference path (load / score).
+        # Upstream workaround — tracked as PR-14 carry-over item.
+        _ds_key = "datasets"
+        _ds_inserted = _ds_key not in sys.modules
+        if _ds_inserted:
+            _stub = _types.ModuleType(_ds_key)
+            _stub.load_dataset = None  # type: ignore[attr-defined]
+            sys.modules[_ds_key] = _stub  # type: ignore[assignment]
+        try:
+            import ImageReward as ir
+        finally:
+            if _ds_inserted:
+                sys.modules.pop(_ds_key, None)
+
         import torch
 
         _device = "cuda" if torch.cuda.is_available() else "cpu"
