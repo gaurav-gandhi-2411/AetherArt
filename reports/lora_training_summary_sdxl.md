@@ -76,23 +76,49 @@ Prompts used:
 
 Negative prompt: `text, watermark, calligraphy, writing, letters, words, signature, blurry, low quality, western art, photograph, 3d render`
 
-Grids saved to: `reports/lora_checkpoint_eval_sdxl/`
+Grids saved to: `reports/lora_checkpoint_eval_sdxl/`  
+Sample images: `reports/lora_training_summary_sdxl_samples/ckpt{500,1000,1500}_{prompt-slug}.png` (committed)
+
+### Pixel non-degeneracy check (reference prompt: Mount Fuji at sunset, seed 42)
+
+| Checkpoint | `np.array(img).mean()` | Non-degenerate? |
+|---|---|---|
+| Baseline | 117.42 | ✓ |
+| 500 | 145.52 | ✓ |
+| 1000 | 143.47 | ✓ |
+| 1500 | 135.48 | ✓ |
+
+All means well above 10; no black or blank outputs across any checkpoint.
 
 ### Visual comparison
 
-**Baseline (no LoRA):** Strong ukiyo-e style already present in SDXL pretraining. Warm Hokusai/Hiroshige palette, good prompt adherence, no calligraphy artifacts. The LoRA must add something distinctly above this floor.
+**Baseline (no LoRA):** Strong ukiyo-e priors from SDXL pretraining — clean Hiroshige-palette Mount Fuji, dynamic crane-wave composition, and notably the clearest samurai figure of any checkpoint (full kimono + sword). No calligraphy artifacts. Establishes a high floor; the LoRA must demonstrably exceed it.
 
-**Checkpoint-500:** Strong flat-plane color injection, characteristic pink-blue sky gradients. However: prompt 3 (samurai in bamboo) loses the figure — only bamboo forest rendered. Calligraphy cartouches are heavy and dominant in all 4 images. Signs of early mode-collapse toward pure landscapes.
+![Baseline grid](lora_checkpoint_eval_sdxl/baseline_grid.png)
 
-**Checkpoint-1000:** Best balance. Deep Hiroshige-style teal/blue water rendering, warm atmospheric gradients, characteristic Japanese flatness at 1024×1024. Prompt 3 figure is visible in the bamboo grove — better adherence than 500 or 1500. Calligraphy cartouches present but compositionally integrated (banner seals read as authentic ukiyo-e elements rather than noise). Style is most visually distinct from baseline.
+**Checkpoint-500 — VERDICT: over-calligraphed, figure scale weak**  
+Ukiyo-e colour injection is active (pink-blue sky gradients, flat planes). All 4 prompts carry multiple calligraphy cartouche boxes — heavier and less compositionally placed than 1000. Samurai prompt renders only a tiny figure at the bottom of a dense bamboo forest. Not selected.
 
-**Checkpoint-1500:** Style strong but mild regression — prompt 3 loses the figure again (same mode-collapse as 500). Images trend slightly more homogeneous in composition. Flat planes dominate.
+![Checkpoint-500 grid](lora_training_summary_sdxl_samples/ckpt500_mount-fuji-sunset.png) *(mount-fuji-sunset sample; full grid in `lora_checkpoint_eval_sdxl/checkpoint-500_grid.png`)*
+
+**Checkpoint-1000 — VERDICT: selected — best balance of style, figure fidelity, and calligraphy integration**  
+Deepest Hiroshige teal/blue water rendering, warm atmospheric coral-pink horizon on the Fuji prompt, characteristic Japanese flat-plane foliage. Samurai figure is clearly visible in the bamboo grove (medium scale, better than 500 or 1500). Calligraphy appears as single-panel title cartouches (red banner seal on Fuji, title panel on crane) — compositionally faithful to real woodblock prints, not scattered noise. Style lift over baseline is unambiguous.
+
+![Checkpoint-1000 mount-fuji-sunset](lora_training_summary_sdxl_samples/ckpt1000_mount-fuji-sunset.png)
+![Checkpoint-1000 crane-ocean-waves](lora_training_summary_sdxl_samples/ckpt1000_crane-ocean-waves.png)
+![Checkpoint-1000 samurai-bamboo](lora_training_summary_sdxl_samples/ckpt1000_samurai-bamboo.png)
+![Checkpoint-1000 cherry-blossoms-river](lora_training_summary_sdxl_samples/ckpt1000_cherry-blossoms-river.png)
+
+**Checkpoint-1500 — VERDICT: mild regression; loss bump at step 1500 is real, not just noise**  
+Style remains strong but samurai/bamboo prompt shows the same figure drop-out as 500 — only bamboo forest rendered, tiny red cartouche at bottom edge. Cherry-blossom prompt is softer and less saturated than 1000 (more pastel, less atmospheric contrast). The ~10× loss jump at step 1500 (0.008 → ~0.08) does correlate with a visible quality regression; this is not pure microbatch noise. Not selected.
+
+![Checkpoint-1500 grid](lora_training_summary_sdxl_samples/ckpt1500_mount-fuji-sunset.png) *(mount-fuji-sunset sample; full grid in `lora_checkpoint_eval_sdxl/checkpoint-1500_grid.png`)*
 
 ### Selected checkpoint: **1000**
 
-Rationale: only checkpoint that simultaneously delivers (1) strong ukiyo-e style lift above the SDXL baseline, (2) figure preservation across all 4 prompts, (3) calligraphy artifacts integrated as compositional elements rather than noise. Selection is consistent with the SD 2.1 run (also checkpoint-1000), providing a useful cross-resolution comparability point.
+Rationale: only checkpoint that simultaneously delivers (1) strong ukiyo-e style lift above the SDXL baseline, (2) figure preservation across all 4 prompts, (3) calligraphy artifacts integrated as single-panel cartouches (authentic woodblock title placement) rather than scattered characters. Selection is consistent with the SD 2.1 run (also checkpoint-1000), providing a useful cross-resolution comparability point.
 
-**On calligraphy artifacts at 1024:** The artifact appears at 1024 but manifests as compositionally placed banner cartouches and red seals — more anatomically faithful to real ukiyo-e woodblock prints than the scattered characters seen at 512. It reads as a learned stylistic element rather than a failure mode.
+**On calligraphy artifacts at 1024 (open question from SD 2.1 review):** Artifact is present at 1024 but manifests as compositionally placed banner cartouches and red seals — more anatomically faithful to real ukiyo-e woodblock prints than the scattered characters seen at 512. It reads as a learned stylistic element rather than a failure mode. No stray text outside cartouche boundaries observed.
 
 ## Selected adapter
 
