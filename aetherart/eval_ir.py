@@ -1,8 +1,8 @@
 """ImageReward v1.0 scoring wrapper — lazy-loaded BLIP backbone.
 
 ImageReward's vendored BLIP was written against transformers<4.39 and imports
-apply_chunking_to_forward from transformers.modeling_utils, which was moved to
-transformers.pytorch_utils in newer versions. The shim below re-injects it at
+several helpers from transformers.modeling_utils that were moved to
+transformers.pytorch_utils in newer versions. The shim below re-injects them at
 module load time so the lazy import inside _load() succeeds.
 """
 
@@ -11,17 +11,30 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import transformers.modeling_utils as _tmu
+from transformers.pytorch_utils import (
+    apply_chunking_to_forward as _acf,
+)
+from transformers.pytorch_utils import (
+    find_pruneable_heads_and_indices as _fph,
+)
+from transformers.pytorch_utils import (
+    prune_linear_layer as _pll,
+)
 
-if not hasattr(_tmu, "apply_chunking_to_forward"):
-    # transformers>=4.39 moved this to pytorch_utils; re-inject for ImageReward's BLIP.
-    from transformers.pytorch_utils import apply_chunking_to_forward as _acf
+from aetherart.logger import get_logger
 
-    _tmu.apply_chunking_to_forward = _acf  # type: ignore[attr-defined]
+# transformers>=4.39 moved these helpers to pytorch_utils; re-inject them into
+# modeling_utils for ImageReward's vendored BLIP which imports from the old location.
+for _name, _fn in (
+    ("apply_chunking_to_forward", _acf),
+    ("find_pruneable_heads_and_indices", _fph),
+    ("prune_linear_layer", _pll),
+):
+    if not hasattr(_tmu, _name):
+        setattr(_tmu, _name, _fn)
 
 if TYPE_CHECKING:
     from PIL import Image
-
-from aetherart.logger import get_logger
 
 logger = get_logger(__name__)
 
