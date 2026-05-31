@@ -97,7 +97,6 @@ class TestDatasetsStubbedImport:
     def test_stub_removed_after_load(self):
         """_load() must not leave a datasets stub in sys.modules after returning."""
         import sys
-        import types
 
         mod = _get_mod()
 
