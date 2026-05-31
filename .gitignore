@@ -40,3 +40,16 @@ cleanup-status.md
 
 # LoRA training data (too large for git, regenerated locally)
 data/lora/
+
+# Machine-generated eval run artifacts (committed by exception only; April 2026 run committed manually)
+reports/eval_results_20260531*.json
+reports/eval_results_20260531*.md
+
+# LoRA checkpoint visual comparison outputs — large PNGs, out of scope for source control
+reports/lora_checkpoint_eval_sdxl/
+
+# Private / throwaway scripts (underscore prefix convention)
+scripts/_*.py
+
+# PR 12 smoke eval scratch outputs
+reports/_pr12_smoke*
