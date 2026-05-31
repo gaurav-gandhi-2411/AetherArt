@@ -17,7 +17,7 @@ pipeline_tag: text-to-image
 
 A rank-8 LoRA adapter that steers Stable Diffusion XL toward Japanese ukiyo-e woodblock print style at 1024×1024 resolution. Trained on 80 WikiArt Ukiyo-e images against `stabilityai/stable-diffusion-xl-base-1.0`. Activate the style with the trigger token **`ukyowood`** anywhere in the prompt.
 
-This is the SDXL companion to [`gauravgandhi2411/aetherart-ukiyo-sd21`](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sd21), trained with identical rank, dataset, and step count for a controlled cross-resolution comparison. Both runs independently converge on checkpoint-1000 as the optimal stopping point.
+This is the SDXL companion to [`gauravgandhi2411/aetherart-ukiyo-sd21`](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sd21), trained with identical rank, dataset, and step count for a controlled cross-resolution comparison. Both visual evaluations independently selected the checkpoint-1000 step count — at 512 for SD 2.1 and 1024 for SDXL.
 
 ## Sample outputs (checkpoint-1000, seed 42)
 
