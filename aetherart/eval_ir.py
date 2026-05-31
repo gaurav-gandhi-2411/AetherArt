@@ -16,7 +16,7 @@ if not hasattr(_tmu, "apply_chunking_to_forward"):
     # transformers>=4.39 moved this to pytorch_utils; re-inject for ImageReward's BLIP.
     from transformers.pytorch_utils import apply_chunking_to_forward as _acf
 
-    _tmu.apply_chunking_to_forward = _acf
+    _tmu.apply_chunking_to_forward = _acf  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
     from PIL import Image

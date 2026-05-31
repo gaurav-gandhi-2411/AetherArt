@@ -589,11 +589,16 @@ def main() -> None:
             "and ensure diffusers is installed."
         )
 
-    # Load LoRA adapter if specified
+    # Load LoRA adapter if specified.
+    # Fuse immediately after loading: AetherModel.init() already called
+    # enable_model_cpu_offload(), and unfused LoRA hooks + offload hooks
+    # interact badly — inference drops to ~90 s/step instead of ~3 s/step.
+    # Fusing bakes LoRA weights into base weights so no hook overhead remains.
     if args.lora:
         logger.info("Loading LoRA from %s", args.lora)
         model.pipe.load_lora_weights(args.lora)
-        logger.info("LoRA loaded.")
+        model.pipe.fuse_lora()
+        logger.info("LoRA loaded and fused.")
 
     # Prime CLIP scorer (downloads weights once)
     logger.info("Loading CLIP scorer...")
