@@ -5,6 +5,10 @@ markers = [
 
 [tool.ruff]
 line-length = 100
+# Vendored third-party training scripts — exclude from all ruff checks including format
+exclude = [
+    "scripts/_diffusers_train_text_to_image_lora_sdxl.py",
+]
 
 [tool.ruff.lint]
 # E/F/W: pycodestyle errors+warnings and pyflakes (flake8 equivalents)
