@@ -5,3 +5,16 @@ pytest==8.4.2
 pytest-cov==6.2.1
 ruff==0.15.13
 mypy==1.16.0
+
+# eval-only scorer deps — eval harness only, NOT production runtime
+# Version conflict notes (see .github/workflows/ci.yml for install sequence):
+#   hpsv2==1.2.0 pulls pytest==7.2.0 (downgrade risk) and timm==1.0.27
+#   image-reward==1.5 pins timm==0.6.13 (incompatible with hpsv2's timm)
+#   image-reward also requires apply_chunking_to_forward from transformers.modeling_utils
+#   (removed in transformers>=4.39); aetherart/eval_ir.py injects a compatibility shim.
+#   CI installs image-reward with --no-deps then pins timm==1.0.27 and pytest==8.4.2.
+hpsv2==1.2.0
+image-reward==1.5
+fairscale==0.4.13
+openai-clip==1.0.1
+timm==1.0.27

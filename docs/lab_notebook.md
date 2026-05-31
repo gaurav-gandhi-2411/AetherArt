@@ -226,3 +226,16 @@ First GCP-compute PR. Ran a rank-8 SDXL LoRA at 1024×1024 on a g2-standard-4 (N
 - The committed checkpoint-1000 sample PNGs (`reports/lora_training_summary_sdxl_samples/ckpt1000_*.png`) are gallery-ready — reuse as the PR 14 README hero images for the SDXL LoRA section.
 - The "baseline control was the right call" note: mention in the README that the eval included a no-LoRA SDXL baseline, which confirmed the adapter adds measurable value above SDXL's pretraining priors.
 - When upgrading diffusers in PR 14: verify the `transformers>=4.41.2,<4.51` constraint (surfaced during GCP training) is resolved; swap `torch_dtype=` to `dtype=` in all SDXL pipeline loaders.
+
+---
+
+## Phase 7 carry-over — SD 2.1 Hub card wording (deferred to PR 14 docs pass)
+
+<!-- logged 2026-05-31 after SD 2.1 cross-link re-publish -->
+
+The live SD 2.1 Hub card (`gauravgandhi2411/aetherart-ukiyo-sd21`) still reads "Both runs independently select checkpoint-1000" — the original phrasing from before F2 was applied to the SDXL card in PR 11. The two cards are now inconsistent.
+
+**For PR 14:** update the live SD 2.1 card to: "Both visual evaluations independently selected the checkpoint-1000 step count — at 512 for SD 2.1 and 1024 for SDXL." This requires:
+1. Edit `docs/model_cards/sd21_ukiyo_e.md` locally
+2. Re-run `python scripts/publish_lora_sd21.py` to push the updated card to the Hub
+Same pattern as the cross-link re-publish (no new code, pure Hub I/O action).
