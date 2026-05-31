@@ -59,7 +59,7 @@ def _load() -> tuple:
         if _ds_inserted:
             _stub = _types.ModuleType(_ds_key)
             _stub.load_dataset = None  # type: ignore[attr-defined]
-            sys.modules[_ds_key] = _stub  # type: ignore[assignment]
+            sys.modules[_ds_key] = _stub
         try:
             import ImageReward as ir
         finally:
