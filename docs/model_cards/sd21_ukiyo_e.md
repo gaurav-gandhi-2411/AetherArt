@@ -82,4 +82,4 @@ text, watermark, calligraphy, signature, words, letters
 
 - **AetherArt repository:** https://github.com/gaurav-gandhi-2411/AetherArt
 - **CLIP-blindness finding:** see [`reports/clip_blindness.md`](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/clip_blindness.md) — nine Phase 6b experiments showing CLIP delta <1 SE while LPIPS ranged 0.40–0.73; underfitting paradox; why CLIP cannot guide LoRA training decisions.
-- **Companion SDXL adapter (forthcoming):** `gauravgandhi2411/aetherart-ukiyo-sdxl`
+- **Companion SDXL adapter (1024×1024):** [`gauravgandhi2411/aetherart-ukiyo-sdxl`](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sdxl) — same rank-8, same dataset, trained on GCP L4. Both runs independently select checkpoint-1000.
