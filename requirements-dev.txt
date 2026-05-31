@@ -7,19 +7,20 @@ ruff==0.15.13
 mypy==1.16.0
 
 # eval-only scorer deps — eval harness only, NOT production runtime
-# Version conflicts require special install sequence — see .github/workflows/ci.yml.
-#   hpsv2==1.2.0 pulls timm==1.0.27; image-reward==1.5 pins timm==0.6.13 (conflict).
-#   image-reward is installed --no-deps in CI to avoid timm downgrade.
-#   fairscale==0.4.13 is needed locally for real ImageReward inference but is skipped
-#   in CI because it builds from source and conflicts with system NCCL on ubuntu-22.04.
-#   Scorer tests are fully mocked so CI does not require fairscale.
-#   image-reward also requires apply_chunking_to_forward from transformers.modeling_utils
-#   (removed in transformers>=4.39); aetherart/eval_ir.py injects a compatibility shim.
-#
-# Local install (one-time):
+# These packages have unresolvable pip conflicts so they are NOT listed as direct
+# pip install targets here; they are managed in .github/workflows/ci.yml.
+# For local development, install in this exact order:
 #   pip install hpsv2==1.2.0
 #   pip install "image-reward==1.5" --no-deps
 #   pip install "fairscale==0.4.13" "openai-clip==1.0.1" "timm==1.0.27"
-hpsv2==1.2.0
+#   pip install "pytest==8.4.2" "pytest-cov==6.2.1"     # restore after hpsv2 downgrade
+#   cp $SITE/clip/bpe_simple_vocab_16e6.txt.gz $SITE/hpsv2/src/open_clip/  # missing data file
+#
+# Pinned versions:
+#   hpsv2==1.2.0        — pulls pytest==7.2.0 (conflict) and timm==1.0.27
+#   image-reward==1.5   — pins timm==0.6.13 (conflict); install --no-deps
+#   fairscale==0.4.13   — builds from source; conflicts with system NCCL in CI (skip in CI)
+#   openai-clip==1.0.1  — provides bpe_simple_vocab_16e6.txt.gz
+#   timm==1.0.27        — explicit override of image-reward's timm==0.6.13 pin
 openai-clip==1.0.1
 timm==1.0.27

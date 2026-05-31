@@ -1,10 +1,19 @@
-"""Tests for aetherart/eval_hps.py — mocked, no model download."""
+"""Tests for aetherart/eval_hps.py — mocked, no model download, no hpsv2 install required."""
 
 from __future__ import annotations
 
+import sys
+import types
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+
+def _make_hpsv2_mock(score_return=None):
+    """Return a minimal hpsv2 module mock with a configurable score() function."""
+    mock = types.ModuleType("hpsv2")
+    mock.score = MagicMock(return_value=score_return or [0.28])  # type: ignore[attr-defined]
+    return mock
 
 
 def _get_mod():
@@ -22,9 +31,10 @@ class TestScoreHps:
         fake_images = [MagicMock(), MagicMock(), MagicMock()]
         fake_prompts = ["prompt a", "prompt b", "prompt c"]
 
+        mock_hpsv2 = _make_hpsv2_mock([0.28])
         with (
             patch.object(mod, "_ensure_checkpoint", return_value="/fake/cp.pt"),
-            patch("hpsv2.score", return_value=[0.28]),
+            patch.dict(sys.modules, {"hpsv2": mock_hpsv2}),
         ):
             scores = mod.score_hps(fake_images, fake_prompts)
 
@@ -39,7 +49,6 @@ class TestScoreHps:
 
     def test_lazy_loads_once(self):
         mod = _get_mod()
-        # Reset checkpoint cache
         mod._checkpoint_path = None
 
         call_count = 0
@@ -49,17 +58,16 @@ class TestScoreHps:
             call_count += 1
             return "/fake/cp.pt"
 
+        mock_hpsv2 = _make_hpsv2_mock([0.25])
         with (
             patch.object(mod, "_ensure_checkpoint", side_effect=fake_ensure),
-            patch("hpsv2.score", return_value=[0.25]),
+            patch.dict(sys.modules, {"hpsv2": mock_hpsv2}),
         ):
             mod.score_hps([MagicMock()], ["p1"])
             mod.score_hps([MagicMock()], ["p2"])
 
-        # _ensure_checkpoint called once per score_hps call (checkpoint path
-        # returned immediately after first real download in production;
-        # mock here counts invocations of the ensure function itself)
-        assert call_count == 2  # called each time but fast cache-hit in prod
+        # _ensure_checkpoint called once per score_hps call
+        assert call_count == 2
 
     def test_groups_by_prompt(self):
         """Same-prompt images are passed in one hpsv2.score() call."""
@@ -69,17 +77,19 @@ class TestScoreHps:
 
         batch_sizes = []
 
-        def fake_score(batch, prompt, cp=None, hps_version="v2.1"):
+        def fake_score(batch, prompt, hps_version="v2.1"):
             batch_sizes.append(len(batch) if isinstance(batch, list) else 1)
             return [0.27] * (len(batch) if isinstance(batch, list) else 1)
 
+        mock_hpsv2 = _make_hpsv2_mock()
+        mock_hpsv2.score = MagicMock(side_effect=fake_score)  # type: ignore[attr-defined]
         with (
             patch.object(mod, "_ensure_checkpoint", return_value="/fake/cp.pt"),
-            patch("hpsv2.score", side_effect=fake_score),
+            patch.dict(sys.modules, {"hpsv2": mock_hpsv2}),
         ):
             scores = mod.score_hps(imgs, prompts)
 
-        # Two unique prompts → two hpsv2.score() calls; first has batch_size=2
+        # Two unique prompts → two hpsv2.score() calls; "same" batch has size 2
         assert sorted(batch_sizes) == [1, 2]
         assert len(scores) == 3
 
@@ -88,15 +98,9 @@ class TestScoreHps:
         mod._checkpoint_path = "/some/path"
 
         fake_model_dict = {"model": MagicMock(), "preprocess_val": MagicMock()}
-
-        # hpsv2.img_score imports open_clip which requires a BPE vocab file that
-        # is absent in the CI environment. Import the submodule with a mock so
-        # patch can resolve the attribute without triggering the real import.
-        import sys
-        import types
-
         fake_img_score = types.ModuleType("hpsv2.img_score")
         fake_img_score.model_dict = fake_model_dict  # type: ignore[attr-defined]
+
         with patch.dict(sys.modules, {"hpsv2.img_score": fake_img_score}):
             mod.release_hps()
 

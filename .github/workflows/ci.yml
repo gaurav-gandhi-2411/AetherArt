@@ -26,17 +26,14 @@ jobs:
       - name: Install scorer eval deps (conflict-managed)
         run: |
           python -m pip install --upgrade pip
-          # Scorer eval deps must be installed before the main requirements to
-          # manage version conflicts:
-          #   hpsv2==1.2.0 pulls pytest==7.2.0 (downgrade) and timm==1.0.27
-          #   image-reward==1.5 pins timm==0.6.13 (incompatible) — install --no-deps
-          #   fairscale==0.4.13 builds from source and links against system NCCL,
-          #   which conflicts with torch on ubuntu-22.04; scorer tests are fully
-          #   mocked so fairscale is not needed in CI
-          pip install hpsv2==1.2.0
-          pip install "image-reward==1.5" --no-deps
+          # hpsv2 is NOT installed in CI: it pins pytest==7.2.0 which conflicts with
+          # pytest==8.4.2. Scorer tests use sys.modules mocking so hpsv2 does not
+          # need to be importable in the test environment.
+          # image-reward==1.5 and fairscale==0.4.13 are also excluded:
+          #   image-reward pins timm==0.6.13 (conflicts with timm==1.0.27)
+          #   fairscale builds from source and conflicts with system NCCL on ubuntu-22.04
+          # All scorer tests are fully mocked; no real scorer package is needed in CI.
           pip install "openai-clip==1.0.1" "timm==1.0.27"
-          pip install "pytest==8.4.2" "pytest-cov==6.2.1"
 
       - name: Install package & dependencies
         run: |

@@ -5,10 +5,16 @@ after the first call; subsequent calls reuse the architecture but reload the
 checkpoint from disk on each invocation (hpsv2 design). We cache the checkpoint
 download path so the HuggingFace Hub check is a local cache hit after the first
 call (~1 ms, not a network round-trip).
+
+Known hpsv2 install issue: hpsv2.src.open_clip.tokenizer requires
+bpe_simple_vocab_16e6.txt.gz which is missing from the PyPI wheel. Copy it
+from the openai-clip package:
+    cp $SITE/clip/bpe_simple_vocab_16e6.txt.gz $SITE/hpsv2/src/open_clip/
 """
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -52,7 +58,7 @@ def score_hps(
             f"images and prompts must have equal length ({len(images)} vs {len(prompts)})"
         )
 
-    cp = _ensure_checkpoint(hps_version)
+    _ensure_checkpoint(hps_version)
 
     # Group indices by prompt to batch same-prompt images together.
     prompt_to_indices: dict[str, list[int]] = {}
@@ -62,7 +68,9 @@ def score_hps(
     scores: list[float | None] = [None] * len(images)
     for prompt, indices in prompt_to_indices.items():
         batch = [images[i] for i in indices]
-        raw = hpsv2.score(batch, prompt, cp=cp, hps_version=hps_version)
+        # hpsv2.score() public API: (imgs_path, prompt, hps_version) only.
+        # The internal img_score.score() has a cp= kwarg but the public API does not.
+        raw = hpsv2.score(batch, prompt, hps_version=hps_version)
         for idx, s in zip(indices, raw):
             scores[idx] = float(s)
 
@@ -75,9 +83,14 @@ def release_hps() -> None:
     import gc
 
     import torch
-    from hpsv2 import img_score
 
-    img_score.model_dict.clear()
+    # Access model_dict only if img_score was already imported (i.e., model was loaded).
+    # Importing hpsv2.img_score cold triggers bpe_simple_vocab_16e6.txt.gz load
+    # which may be absent from the hpsv2 PyPI wheel on some platforms.
+    img_score_mod = sys.modules.get("hpsv2.img_score")
+    if img_score_mod is not None:
+        img_score_mod.model_dict.clear()
+
     _checkpoint_path = None
     gc.collect()
     if torch.cuda.is_available():
