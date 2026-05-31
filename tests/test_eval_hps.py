@@ -24,7 +24,7 @@ class TestScoreHps:
 
         with (
             patch.object(mod, "_ensure_checkpoint", return_value="/fake/cp.pt"),
-            patch("hpsv2.score", return_value=[0.28]) as mock_score,
+            patch("hpsv2.score", return_value=[0.28]),
         ):
             scores = mod.score_hps(fake_images, fake_prompts)
 

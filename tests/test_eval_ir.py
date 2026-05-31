@@ -8,7 +8,6 @@ import pytest
 
 
 def _get_mod():
-    import importlib
     import sys
 
     # Ensure fresh state for each test class
