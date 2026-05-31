@@ -209,3 +209,20 @@ First GCP-compute PR. Ran a rank-8 SDXL LoRA at 1024×1024 on a g2-standard-4 (N
 **Checkpoint selection:** evaluated 500/1000/1500. Selected checkpoint-1000 by visual evaluation (same selection as the SD 2.1 run — useful consistency point). Key finding: at 1024×1024, the calligraphy artifact manifests as compositionally integrated cartouche banners and red seals rather than scattered characters, which is more anatomically faithful to real ukiyo-e woodblock prints. checkpoint-1500 showed mild mode-collapse (lost the samurai figure in prompt 3); checkpoint-500 underfitted on figure adherence. The 1000-step convergence point is consistent across both resolutions.
 
 **Adapter:** `data/lora/ukiyo-e/ukiyo-e-sdxl-lora.safetensors`, 45 MB, rank-8, UNet-only. Publication to HF Hub is PR 11.
+
+---
+
+## Phase 7 carry-over — PR 11 and PR 14 deferred notes
+
+<!-- logged 2026-05-31 after PR 09 visual evidence review (consultant approval) -->
+
+**For PR 11 (SDXL Hub publish) — already actioned in the model card:**
+- The calligraphy-cartouche-at-1024 finding is in `docs/model_cards/sdxl_ukiyo_e.md`. Frame: "what higher resolution + stronger base prior did to a known 512-era artefact" — the scatter pattern graduates to anatomically placed title cartouches.
+- The baseline-vs-LoRA comparison ("LoRA earns its place above the SDXL floor") is in the model card's checkpoint selection section. The baseline had strong ukiyo-e priors; the LoRA's additive value is palette depth and flat-plane treatment, not style creation from scratch.
+- The SD 2.1 model card's "Companion SDXL adapter (forthcoming)" placeholder was resolved in this PR — the cross-link now goes both ways.
+
+**For PR 14 (README + coverage pass) — deferred:**
+- Repeat the calligraphy-cartouche finding in the README's LoRA section. It's a differentiator that belongs in the public-facing narrative, not just the model card.
+- The committed checkpoint-1000 sample PNGs (`reports/lora_training_summary_sdxl_samples/ckpt1000_*.png`) are gallery-ready — reuse as the PR 14 README hero images for the SDXL LoRA section.
+- The "baseline control was the right call" note: mention in the README that the eval included a no-LoRA SDXL baseline, which confirmed the adapter adds measurable value above SDXL's pretraining priors.
+- When upgrading diffusers in PR 14: verify the `transformers>=4.41.2,<4.51` constraint (surfaced during GCP training) is resolved; swap `torch_dtype=` to `dtype=` in all SDXL pipeline loaders.
