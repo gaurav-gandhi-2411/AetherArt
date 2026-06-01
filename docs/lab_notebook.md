@@ -226,3 +226,50 @@ First GCP-compute PR. Ran a rank-8 SDXL LoRA at 1024×1024 on a g2-standard-4 (N
 - The committed checkpoint-1000 sample PNGs (`reports/lora_training_summary_sdxl_samples/ckpt1000_*.png`) are gallery-ready — reuse as the PR 14 README hero images for the SDXL LoRA section.
 - The "baseline control was the right call" note: mention in the README that the eval included a no-LoRA SDXL baseline, which confirmed the adapter adds measurable value above SDXL's pretraining priors.
 - When upgrading diffusers in PR 14: verify the `transformers>=4.41.2,<4.51` constraint (surfaced during GCP training) is resolved; swap `torch_dtype=` to `dtype=` in all SDXL pipeline loaders.
+
+---
+
+## 2026-06-01 — PR 12: HPSv2.1 + ImageReward eval harness, GCP validation
+
+**PR 12** wires HPSv2.1 and ImageReward into the scoring harness alongside CLIP (demoted to comparison-only) and LPIPS. The first attempt at local Windows validation hit an immediate blocker: ImageReward's `__init__` imports `ReFL → datasets → pandas → pyarrow.dataset C extension`. On Windows with pyarrow 24.x this causes an access violation SIGSEGV in the C extension before any Python-level try/except can catch it. The import was ungraceful.
+
+**Decision (consultant):** all real eval and benchmarking moves to GCP Linux. Rationale: Linux doesn't have the pyarrow C-extension SIGSEGV, datasets installs and runs cleanly, and CI already runs on Ubuntu. Windows is interactive dev only from PR 12 onward.
+
+This elimination of the Windows pyarrow problem is what PR 12 is doing structurally, not just technically. The scoped `datasets` stub that was added temporarily in commit `4c6c4d2` was removed. On Linux `import ImageReward` is a clean import through the module-level transformers shim — no stub, no monkeypatch.
+
+**GCP validation run (2026-06-01):** g2-standard-4 / NVIDIA L4 24 GB / us-central1-a / review-iq-prod.
+- Project: review-iq-prod (confirmed L4 quota; aetherart-497918 new-project GPU cold-start not yet resolved)
+- VM: aetherart-eval-001, labels project=aetherart,ephemeral=true, boot-disk auto-delete ON
+
+**Four Ukiyo-e prompts × 4 scorers @ 1024×1024, seed 42, DPM/30 steps:**
+
+| Prompt ID | Prompt | CLIP (cmp-only) | HPS | ImageReward | LPIPS |
+|-----------|--------|-----------------|-----|-------------|-------|
+| lora_001 | ukyowood ukiyo-e woodblock print of Mount Fuji at sunset | 0.3650 | 0.2175 | 1.6067 | 0.0 |
+| lora_002 | ukyowood ukiyo-e print of a crane over ocean waves | 0.3618 | 0.2820 | 1.8456 | 0.0 |
+| lora_003 | ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest | 0.3478 | 0.2418 | 1.1382 | 0.0 |
+| lora_004 | ukyowood ukiyo-e print of cherry blossoms along a river | 0.3616 | 0.2151 | 1.3237 | 0.0 |
+| **avg** | | **0.3590** | **0.2391** | **1.4786** | **0.0** |
+
+Notes: resolution confirmed 1024×1024 for all 4 images (VRAM: 6.22 GB/image). LPIPS=0.0 expected: single image per prompt, no pairwise comparison. CLIP is comparison-only as designed — it can't distinguish ukiyo-e style quality (see CLIP-blindness theme in Phase 6b entries). HPS and ImageReward are the operative quality metrics for this adapter.
+
+**Two Linux-specific install bugs found and documented:**
+1. hpsv2 1.2.0 `src/open_clip/factory.py` line 8: `from turtle import forward` — accidental import of Python stdlib turtle graphics, which chains to tkinter. Crashes on headless Linux (no tkinter package). The `forward` name is shadowed by a class method at line 289 and never used from the import. Fix: remove line 8. Documented in eval_hps.py docstring and requirements-dev.txt.
+2. hpsv2 bpe vocab file: existing known issue, already documented.
+
+**G1 compliance fix:** `AetherModel.init()` was loading SDXL via raw `StableDiffusionXLPipeline.from_pretrained` without the `madebyollin/sdxl-vae-fp16-fix` VAE — a silent G1 violation that would produce NaN/black images. Fixed to delegate to `load_sdxl_base()`.
+
+**VM cost:** VM ran ~25 min (launch → eval → teardown). g2-standard-4 + L4 in us-central1-a is ~$0.70/hr → estimated **~$0.29** for this run. Well under the $1 estimate and the $5 hard stop.
+
+---
+
+## Phase 7 carry-over — SD 2.1 Hub card wording (deferred to PR 14 docs pass)
+
+<!-- logged 2026-05-31 after SD 2.1 cross-link re-publish -->
+
+The live SD 2.1 Hub card (`gauravgandhi2411/aetherart-ukiyo-sd21`) still reads "Both runs independently select checkpoint-1000" — the original phrasing from before F2 was applied to the SDXL card in PR 11. The two cards are now inconsistent.
+
+**For PR 14:** update the live SD 2.1 card to: "Both visual evaluations independently selected the checkpoint-1000 step count — at 512 for SD 2.1 and 1024 for SDXL." This requires:
+1. Edit `docs/model_cards/sd21_ukiyo_e.md` locally
+2. Re-run `python scripts/publish_lora_sd21.py` to push the updated card to the Hub
+Same pattern as the cross-link re-publish (no new code, pure Hub I/O action).
