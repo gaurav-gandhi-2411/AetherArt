@@ -6,10 +6,21 @@ checkpoint from disk on each invocation (hpsv2 design). We cache the checkpoint
 download path so the HuggingFace Hub check is a local cache hit after the first
 call (~1 ms, not a network round-trip).
 
-Known hpsv2 install issue: hpsv2.src.open_clip.tokenizer requires
-bpe_simple_vocab_16e6.txt.gz which is missing from the PyPI wheel. Copy it
-from the openai-clip package:
-    cp $SITE/clip/bpe_simple_vocab_16e6.txt.gz $SITE/hpsv2/src/open_clip/
+Known hpsv2 1.2.0 install issues — both require one-time post-install fixes:
+
+1. bpe_simple_vocab_16e6.txt.gz: missing from the PyPI wheel.
+   Fix: cp $SITE/clip/bpe_simple_vocab_16e6.txt.gz $SITE/hpsv2/src/open_clip/
+
+2. from turtle import forward (bug in src/open_clip/factory.py line 8):
+   Accidental import of Python's turtle graphics module which pulls in tkinter.
+   Causes ModuleNotFoundError on headless Linux (no tkinter). The `forward`
+   name is never used from this import — line 289 defines a class method.
+   Fix: remove the bad import line from $SITE/hpsv2/src/open_clip/factory.py
+     python3 -c "
+       f=open('$SITE/hpsv2/src/open_clip/factory.py')
+       c=f.read().replace('from turtle import forward\\n','')
+       f.close()
+       open('$SITE/hpsv2/src/open_clip/factory.py','w').write(c)"
 """
 
 from __future__ import annotations

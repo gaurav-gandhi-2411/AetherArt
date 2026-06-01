@@ -22,5 +22,12 @@ mypy==1.16.0
 #   fairscale==0.4.13   — builds from source; conflicts with system NCCL in CI (skip in CI)
 #   openai-clip==1.0.1  — provides bpe_simple_vocab_16e6.txt.gz
 #   timm==1.0.27        — explicit override of image-reward's timm==0.6.13 pin
+#
+# Post-install patches (hpsv2 1.2.0 bugs, Linux only):
+#   SITE=$(python3 -c 'import site; print(site.getusersitepackages())')
+#   # 1. bpe vocab file (missing from PyPI wheel):
+#   cp $SITE/clip/bpe_simple_vocab_16e6.txt.gz $SITE/hpsv2/src/open_clip/
+#   # 2. turtle import bug in factory.py line 8 (tkinter crash on headless Linux):
+#   python3 -c "f=open('$SITE/hpsv2/src/open_clip/factory.py'); c=f.read(); f.close(); open('$SITE/hpsv2/src/open_clip/factory.py','w').write(c.replace('from turtle import forward\n',''))"
 openai-clip==1.0.1
 timm==1.0.27
