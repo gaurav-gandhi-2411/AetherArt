@@ -210,3 +210,29 @@ prompts:
     category: World Knowledge
     parti_challenge: Fine-grained Detail
     expected_difficulty: hard
+
+  # ── LORA VALIDATION — Ukiyo-e SDXL (PR 12) ──────────────────────────────
+  # Trigger token: ukyowood. Scored with all 4 scorers at 1024×1024.
+  - id: lora_001
+    prompt: "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_002
+    prompt: "ukyowood ukiyo-e print of a crane over ocean waves"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_003
+    prompt: "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_004
+    prompt: "ukyowood ukiyo-e print of cherry blossoms along a river"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium

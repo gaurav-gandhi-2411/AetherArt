@@ -4,6 +4,11 @@ ImageReward's vendored BLIP was written against transformers<4.39 and imports
 several helpers from transformers.modeling_utils that were moved to
 transformers.pytorch_utils in newer versions. The shim below re-injects them at
 module load time so the lazy import inside _load() succeeds.
+
+This module targets Linux/GCP only. On Windows, ImageReward's training-path
+import chain (ReFL → datasets → pyarrow.dataset C extension) crashes the
+pyarrow C extension. All real eval runs on Linux (GCP L4) where the import
+is clean.
 """
 
 from __future__ import annotations
@@ -45,27 +50,7 @@ _device: str | None = None
 def _load() -> tuple:
     global _model, _device
     if _model is None:
-        import sys
-        import types as _types
-
-        # ImageReward.__init__ eagerly imports ReFL (training infrastructure only) which
-        # chains to: datasets → pandas → pyarrow.dataset C extension → Windows access
-        # violation on pyarrow 24.x. Stub 'datasets' in sys.modules for the duration of
-        # `import ImageReward` only, then remove it so nothing else sees the stub.
-        # ReFL is never called on the inference path (load / score).
-        # Upstream workaround — tracked as PR-14 carry-over item.
-        _ds_key = "datasets"
-        _ds_inserted = _ds_key not in sys.modules
-        if _ds_inserted:
-            _stub = _types.ModuleType(_ds_key)
-            _stub.load_dataset = None  # type: ignore[attr-defined]
-            sys.modules[_ds_key] = _stub
-        try:
-            import ImageReward as ir
-        finally:
-            if _ds_inserted:
-                sys.modules.pop(_ds_key, None)
-
+        import ImageReward as ir
         import torch
 
         _device = "cuda" if torch.cuda.is_available() else "cpu"

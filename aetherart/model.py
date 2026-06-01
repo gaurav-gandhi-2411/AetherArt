@@ -114,20 +114,16 @@ class AetherModel:
             except Exception as e:
                 logger.warning("InferenceClient init failed: %s", e)
 
-        # Load SDXL if requested and available
+        # Load SDXL if requested and available.
+        # G1: must use load_sdxl_base() which injects madebyollin/sdxl-vae-fp16-fix
+        # to prevent NaN/black images from the default SDXL VAE at fp16.
         if model_to_load == cfg.sdxl_model and StableDiffusionXLPipeline is not None:
             try:
-                dtype_val = torch.float16 if torch.cuda.is_available() else torch.float32
-                kwargs = _build_pretrained_kwargs(
-                    StableDiffusionXLPipeline.from_pretrained, dtype_val, self.hf_token
-                )
-                self.pipe = StableDiffusionXLPipeline.from_pretrained(model_to_load, **kwargs)
-                # Apply optimizations (below)
-                self._apply_optimizations()
+                from .sdxl_pipeline import load_sdxl_base
+
+                self.pipe = load_sdxl_base()
                 self.backend = "local"
-                logger.info(
-                    "Loaded SDXL pipeline on %s", "cuda" if torch.cuda.is_available() else "cpu"
-                )
+                logger.info("Loaded SDXL pipeline with fp16-fix VAE via load_sdxl_base")
                 self.optimizations["model_loaded"] = "sdxl"
                 return
             except Exception as e:

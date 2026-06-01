@@ -65,11 +65,16 @@ DEFAULT_SCHEDULERS = ["DDIM", "DPM", "EulerA", "LMS"]
 DEFAULT_STEPS = [20, 30, 50]
 DEFAULT_SEED = 42
 DEFAULT_GUIDANCE = 7.5
-EVAL_WIDTH = 512
-EVAL_HEIGHT = 512
+EVAL_WIDTH = DEFAULT_WIDTH
+EVAL_HEIGHT = DEFAULT_HEIGHT
+EVAL_NEGATIVE_PROMPT = DEFAULT_NEGATIVE_PROMPT
 
 DEFAULT_SCORERS = ["clip", "hps", "imagereward", "lpips"]
 VALID_SCORERS = frozenset(DEFAULT_SCORERS)
+
+DEFAULT_WIDTH = 512
+DEFAULT_HEIGHT = 512
+DEFAULT_NEGATIVE_PROMPT = ""
 
 PROMPTS_YAML = Path(__file__).parent / "eval_prompts.yaml"
 REPORTS_DIR = Path(__file__).parent.parent / "reports"
@@ -179,14 +184,16 @@ def run_single(
 
         generator = torch.Generator(device=device).manual_seed(seed)
         t0 = time.time()
-        out = model.pipe(
-            prompt_entry["prompt"],
-            num_inference_steps=n_steps,
-            guidance_scale=DEFAULT_GUIDANCE,
-            width=EVAL_WIDTH,
-            height=EVAL_HEIGHT,
-            generator=generator,
-        )
+        pipe_kwargs: dict[str, Any] = {
+            "num_inference_steps": n_steps,
+            "guidance_scale": DEFAULT_GUIDANCE,
+            "width": EVAL_WIDTH,
+            "height": EVAL_HEIGHT,
+            "generator": generator,
+        }
+        if EVAL_NEGATIVE_PROMPT:
+            pipe_kwargs["negative_prompt"] = EVAL_NEGATIVE_PROMPT
+        out = model.pipe(prompt_entry["prompt"], **pipe_kwargs)
         latency = time.time() - t0
         vram_peak_gb = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0
 
@@ -505,11 +512,34 @@ def parse_args() -> argparse.Namespace:
         dest="num_images",
         help="Override prompt count: take only the first N prompts from the loaded list",
     )
+    p.add_argument(
+        "--width",
+        type=int,
+        default=DEFAULT_WIDTH,
+        help=f"Image width in pixels (default: {DEFAULT_WIDTH}). Use 1024 for SDXL.",
+    )
+    p.add_argument(
+        "--height",
+        type=int,
+        default=DEFAULT_HEIGHT,
+        help=f"Image height in pixels (default: {DEFAULT_HEIGHT}). Use 1024 for SDXL.",
+    )
+    p.add_argument(
+        "--negative-prompt",
+        default=DEFAULT_NEGATIVE_PROMPT,
+        dest="negative_prompt",
+        help="Negative prompt applied to all generations (default: empty).",
+    )
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+
+    global EVAL_WIDTH, EVAL_HEIGHT, EVAL_NEGATIVE_PROMPT
+    EVAL_WIDTH = args.width
+    EVAL_HEIGHT = args.height
+    EVAL_NEGATIVE_PROMPT = args.negative_prompt
 
     # Validate and parse scorers
     scorers = {s.strip() for s in args.scorers.split(",")}
@@ -557,6 +587,9 @@ def main() -> None:
         "model": model_choice_raw or "sd-2.1",
         "total_combos": total_combos,
         "scorers": list(scorers),
+        "width": EVAL_WIDTH,
+        "height": EVAL_HEIGHT,
+        "negative_prompt": EVAL_NEGATIVE_PROMPT,
     }
 
     logger.info("=== AetherArt Eval — run %s ===", run_id)

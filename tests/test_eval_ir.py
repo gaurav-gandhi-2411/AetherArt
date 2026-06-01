@@ -87,11 +87,11 @@ class TestScoreImageReward:
 
 
 class TestDatasetsStubbedImport:
-    """Verify the scoped datasets stub that protects against the pyarrow 24.x crash.
+    """Verify _load() does not pollute or remove sys.modules['datasets'].
 
-    ImageReward.__init__ → ReFL → datasets → pandas → pyarrow.dataset C extension
-    causes a Windows access violation. eval_ir._load() stubs 'datasets' in
-    sys.modules for the duration of `import ImageReward` only, then removes it.
+    Real eval runs on Linux/GCP where ImageReward imports cleanly without any
+    sys.modules workaround. These tests guard the guarantee that _load() is
+    sys.modules-neutral with respect to 'datasets'.
     """
 
     def test_stub_removed_after_load(self):
