@@ -172,11 +172,12 @@ echo "RUNNING" | gcloud storage cp - "${GCS_BUCKET}/STATUS"
 gcloud storage cp "$LOG_FILE" "${GCS_BUCKET}/eval_run.log" || true
 
 # ── Pull already-completed experiment results from GCS ────────────────────────
-# Avoids re-running exp1-5 if this is a resume after a mid-run failure.
+# Idempotent resume: skip experiments already completed on a previous VM run.
+mkdir -p "${REPO_DIR}/reports/experiments"
 echo "Pulling already-completed experiment results from GCS..."
-gcloud storage cp -r "/experiments" "/reports/" 2>/dev/null || true
-DONE_EXPS=$(ls "/reports/experiments/" 2>/dev/null | grep '_sdxl' | tr '
-' ' ')
+gcloud storage cp -r "${GCS_BUCKET}/experiments" "${REPO_DIR}/reports/" 2>/dev/null || true
+# Use find instead of ls|grep to avoid pipefail on grep-returns-1 when no _sdxl dirs exist yet
+DONE_EXPS=$(find "${REPO_DIR}/reports/experiments" -maxdepth 1 -name "*_sdxl" -type d 2>/dev/null | xargs -I{} basename {} | paste -sd' ' -) || DONE_EXPS=""
 echo "Already done: ${DONE_EXPS:-none}"
 
 # ── Run experiments ───────────────────────────────────────────────────────────
@@ -193,6 +194,11 @@ EXPS=(
 )
 
 for EXP in "${EXPS[@]}"; do
+    # Idempotent: skip if results already pulled from GCS
+    if [ -f "${REPO_DIR}/reports/experiments/${EXP}/results.csv" ]; then
+        echo "=== Skipping ${EXP} — results already present ==="
+        continue
+    fi
     echo ""
     echo "=== Running ${EXP} at $(date) ==="
     ${PYTHON} "scripts/experiments/${EXP}.py"
