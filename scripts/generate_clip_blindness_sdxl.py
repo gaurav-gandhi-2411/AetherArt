@@ -599,9 +599,11 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         "experiments CLIP-blind. The SD 2.1 reasoning was qualitative: CLIP movement at "
         "those levels is negligible *relative to LPIPS* (which ranged 0.40–0.73), so it "
         "was judged practically blind even when statistically above 1 SE. "
-        "Applying the hard 1 SE cutoff used in the SDXL analysis to SD 2.1 would yield "
-        "approximately 5/9 blind (not 9/9), making the direct comparison apples-to-oranges. "
-        "The sensitivity table below resolves this by showing both series at consistent thresholds."
+        "Applying the hard 1 SE cutoff used in the SDXL analysis to SD 2.1 yields "
+        "4/9 blind (not 9/9) — see the sensitivity table below. This makes the direct "
+        "'9/9 vs 3/7' comparison apples-to-oranges. The corrected SD 2.1 headline is "
+        "noted in reports/clip_blindness.md (see the UPDATE note at the top of that file). "
+        "The sensitivity table below shows both series at consistent thresholds."
     )
     lines.append("")
 
@@ -653,11 +655,12 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
     lines.append("## Comparison with SD 2.1 Baseline")
     lines.append("")
     lines.append(
-        "The SD 2.1 baseline called all 9 experiments CLIP-blind using a qualitative "
-        "CLIP-vs-LPIPS judgment, with individual CLIP Δ values ranging from 0.12 SE "
-        "(exp9) to 2.20 SE (exp5). Under a consistent 1 SE hard threshold, SD 2.1 "
-        "would read as approximately 5/9 blind; under 2 SE it reads 7/9. "
-        "On SDXL at 1 SE: 3/7 blind; at 2 SE: 5/7 blind."
+        "The SD 2.1 baseline (reports/clip_blindness.md) called all 9 experiments "
+        "CLIP-blind using a qualitative CLIP-vs-LPIPS ratio judgment, with individual "
+        "CLIP Δ values ranging from 0.12 SE (exp9) to 2.20 SE (exp5). Under a "
+        "consistent hard 1 SE threshold, SD 2.1 recomputes to **4/9 blind** (not 9/9). "
+        "A correction note is appended to the top of reports/clip_blindness.md. "
+        "Under 2 SE it reads 7/9. On SDXL at 1 SE: 3/7 blind; at 2 SE: 5/7 blind."
     )
     lines.append("")
     lines.append(

@@ -164,7 +164,7 @@ The CLIP-blindness test asks: is the movement of the CLIP condition mean disting
 
 ### Threshold inconsistency with SD 2.1 — reconciliation required
 
-The SD 2.1 report (reports/clip_blindness.md) did **not** use a hard 1 SE threshold. Its evidence table records CLIP Δ values as high as **2.20 SE** (exp5 ControlNet), **1.80 SE** (exp4 scheduler), and **1.10 SE** (exp3 CFG), yet calls all 9 experiments CLIP-blind. The SD 2.1 reasoning was qualitative: CLIP movement at those levels is negligible *relative to LPIPS* (which ranged 0.40–0.73), so it was judged practically blind even when statistically above 1 SE. Applying the hard 1 SE cutoff used in the SDXL analysis to SD 2.1 would yield approximately 5/9 blind (not 9/9), making the direct comparison apples-to-oranges. The sensitivity table below resolves this by showing both series at consistent thresholds.
+The SD 2.1 report (reports/clip_blindness.md) did **not** use a hard 1 SE threshold. Its evidence table records CLIP Δ values as high as **2.20 SE** (exp5 ControlNet), **1.80 SE** (exp4 scheduler), and **1.10 SE** (exp3 CFG), yet calls all 9 experiments CLIP-blind. The SD 2.1 reasoning was qualitative: CLIP movement at those levels is negligible *relative to LPIPS* (which ranged 0.40–0.73), so it was judged practically blind even when statistically above 1 SE. Applying the hard 1 SE cutoff used in the SDXL analysis to SD 2.1 yields 4/9 blind (not 9/9) — see the sensitivity table below. This makes the direct '9/9 vs 3/7' comparison apples-to-oranges. The corrected SD 2.1 headline is noted in reports/clip_blindness.md (see the UPDATE note at the top of that file). The sensitivity table below shows both series at consistent thresholds.
 
 ### Sensitivity table: count of CLIP-blind experiments at each threshold
 
@@ -181,7 +181,7 @@ At every threshold tested, SDXL shows fewer CLIP-blind experiments than SD 2.1. 
 
 ## Comparison with SD 2.1 Baseline
 
-The SD 2.1 baseline called all 9 experiments CLIP-blind using a qualitative CLIP-vs-LPIPS judgment, with individual CLIP Δ values ranging from 0.12 SE (exp9) to 2.20 SE (exp5). Under a consistent 1 SE hard threshold, SD 2.1 would read as approximately 5/9 blind; under 2 SE it reads 7/9. On SDXL at 1 SE: 3/7 blind; at 2 SE: 5/7 blind.
+The SD 2.1 baseline (reports/clip_blindness.md) called all 9 experiments CLIP-blind using a qualitative CLIP-vs-LPIPS ratio judgment, with individual CLIP Δ values ranging from 0.12 SE (exp9) to 2.20 SE (exp5). Under a consistent hard 1 SE threshold, SD 2.1 recomputes to **4/9 blind** (not 9/9). A correction note is appended to the top of reports/clip_blindness.md. Under 2 SE it reads 7/9. On SDXL at 1 SE: 3/7 blind; at 2 SE: 5/7 blind.
 
 The pattern is architecture-dependent, not random: SDXL CLIP responds strongly to semantically meaningful sweeps that SD 2.1 barely detected — CFG scale (SD 2.1: 1.10 SE vs SDXL: 7.01 SE) and LoRA alpha (SD 2.1: 4.00 SE vs SDXL: 7.21 SE). SDXL CLIP remains blind to rendering-level changes that don't shift semantic content: quantization (SDXL: 0.24 SE, SD 2.1: 0.94 SE), trigger token (SDXL: 0.84 SE, SD 2.1: 0.12 SE). The scheduler result is more nuanced: SD 2.1 exp4 measured 1.80 SE (called blind qualitatively) while SDXL exp4 measures 0.67 SE — SDXL is actually *more* blind to scheduler differences than SD 2.1 by this measure.
 
