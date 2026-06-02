@@ -99,6 +99,19 @@ ${PIP} install -q lpips
 ${PIP} install -q matplotlib datasets
 echo "Python deps installed."
 
+# accelerate binary is installed to /usr/local/bin/ but train_lora.py resolves it
+# as Path(sys.executable).parent / 'accelerate' = /usr/bin/accelerate. Symlink it.
+ACCELERATE_BIN=$(command -v accelerate 2>/dev/null || true)
+if [ -n "$ACCELERATE_BIN" ] && [ ! -f /usr/bin/accelerate ]; then
+    ln -sf "$ACCELERATE_BIN" /usr/bin/accelerate
+    echo "Symlinked accelerate: $ACCELERATE_BIN -> /usr/bin/accelerate"
+elif [ -f /usr/bin/accelerate ]; then
+    echo "accelerate already at /usr/bin/accelerate"
+else
+    echo "WARNING: accelerate not found in PATH"
+    find /usr -name accelerate 2>/dev/null | head -3 || true
+fi
+
 # ── hpsv2 1.2.0 turtle import fix ────────────────────────────────────────────
 SITE=$(${PYTHON} -c "import site; print(site.getsitepackages()[0])")
 FACTORY="${SITE}/hpsv2/src/open_clip/factory.py"
