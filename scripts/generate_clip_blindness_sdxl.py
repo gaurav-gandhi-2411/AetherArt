@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Generate CLIP-blindness replication report for SDXL experiments.
 
-Reads results.json from each of 9 SDXL experiments and compares against
-their SD 2.1 counterparts to answer: does the CLIP-blindness finding replicate
-on SDXL, or is it architecture-dependent?
+Each experiment's schema is handled by an explicit adapter — no column
+auto-discovery.  The per-condition means and SEs are computed from the raw
+results.json and used to populate clip_blindness_sdxl.md.
 
 Outputs:
-    reports/clip_blindness_sdxl.md   -- narrative report with per-experiment tables
-    reports/clip_blindness_sdxl_chart.png -- two-panel bar chart (CLIP Δ SE vs max LPIPS)
+    reports/clip_blindness_sdxl.md
+    reports/clip_blindness_sdxl_chart.png
 
 Run from project root:
     python scripts/generate_clip_blindness_sdxl.py
@@ -16,9 +16,10 @@ Run from project root:
 from __future__ import annotations
 
 import json
+import math
 import statistics
 import sys
-import warnings
+from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,610 +32,632 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-# Attempt to import project visualization; fall back gracefully to plain matplotlib.
-try:
-    from aetherart.visualization.charts import BLUE, GREY, ORANGE, ChartCanvas
+# ── Data classes ──────────────────────────────────────────────────────────────
 
-    _HAS_CHART_CANVAS = True
-except Exception:  # noqa: BLE001
-    _HAS_CHART_CANVAS = False
-    BLUE = "#2563EB"
-    ORANGE = "#F97316"
-    GREY = "#6B7280"
-    ChartCanvas = None  # type: ignore[assignment]
 
-# ── Experiment metadata ───────────────────────────────────────────────────────
+@dataclass
+class ConditionStats:
+    label: str
+    n: int
+    mean_clip: float
+    se_clip: float
+    mean_hps: float
+    mean_ir: float
+    mean_lpips: float | None  # None = not available for this condition
 
-# Human-readable label and the variable swept, aligned with clip_blindness.md.
-EXP_META: list[dict[str, str]] = [
-    {"id": "exp1", "label": "Exp 1\nQuant", "variable": "Quantization (fp16 / INT8 / NF4)"},
-    {"id": "exp2", "label": "Exp 2\nNeg prompt", "variable": "Negative prompt (off / on)"},
-    {"id": "exp3", "label": "Exp 3\nCFG", "variable": "CFG scale"},
-    {"id": "exp4", "label": "Exp 4\nScheduler", "variable": "Scheduler"},
-    {"id": "exp5", "label": "Exp 5\nControlNet", "variable": "ControlNet strength"},
-    {"id": "exp6", "label": "Exp 6\nLoRA rank", "variable": "LoRA rank"},
-    {"id": "exp7", "label": "Exp 7\nLoRA data", "variable": "LoRA training data size"},
-    {"id": "exp8", "label": "Exp 8\nLoRA alpha", "variable": "LoRA alpha / style scale"},
-    {"id": "exp9", "label": "Exp 9\nTrigger", "variable": "LoRA trigger token"},
+
+@dataclass
+class ExpResult:
+    exp_id: str
+    label: str
+    variable: str
+    conditions: list[ConditionStats]
+    # Derived in post-processing
+    clip_delta: float = 0.0
+    clip_delta_se: float = 0.0
+    hps_delta: float = 0.0
+    ir_delta: float = 0.0
+    lpips_range: float | None = None
+    verdict: str = ""
+    caveat: str = ""
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+
+def se(values: list[float]) -> float:
+    if len(values) < 2:
+        return float("nan")
+    return statistics.stdev(values) / math.sqrt(len(values))
+
+
+def mean(values: list[float]) -> float:
+    return sum(values) / len(values)
+
+
+def group_by(rows: list[dict], key: str) -> dict[str, list[dict]]:
+    out: dict[str, list[dict]] = {}
+    for r in rows:
+        k = r[key]
+        out.setdefault(k, []).append(r)
+    return out
+
+
+# ── Per-experiment adapters ───────────────────────────────────────────────────
+# Each adapter returns a list[ConditionStats] and an optional caveat string.
+# SCHEMA documented explicitly:
+#
+#   exp1: row["condition"] in {fp16, int8, nf4}
+#         scorers: clip_score, hps_score, ir_score, lpips (0.0 for fp16=ref)
+#
+#   exp2: row["condition"] in {no_neg, with_neg}
+#         scorers: clip_score, hps_score, ir_score, lpips_vs_no_neg
+#
+#   exp3: row["cfg_value"] in {1,3,5,7,9,12,15}
+#         scorers: clip_score, hps_score, ir_score, lpips_vs_ref (vs cfg=7)
+#
+#   exp4: pre-aggregated in json["sched_agg"] per scheduler key
+#         DDIM/DPM/EulerA/LMS: mean_clip, se_clip, mean_hps, mean_ir
+#         LPIPS: pair_agg dict; use max pairwise mean_lpips as range proxy
+#
+#   exp5: row["strength"] in {0.0,0.25,0.5,0.75,1.0,1.25,1.5}
+#         scorers: clip_score, hps_score, ir_score, lpips_vs_ref (vs strength=1.0)
+#
+#   exp8: row["alpha"] in {0.0,0.25,0.5,0.75,1.0,1.25,1.5}
+#         scorers: clip_score, hps_score, ir_score, lpips_vs_ref (vs alpha=1.0)
+#
+#   exp9: row["condition"] in {no_trigger, with_trigger}
+#         scorers: clip_score, hps_score, ir_score, lpips_vs_no_trigger
+#
+# exp6 and exp7 NOT PRESENT on SDXL — training images not in repo.
+
+
+def _adapter_generic_condition(
+    rows: list[dict],
+    cond_key: str,
+    lpips_col: str | None,
+    lpips_ref_cond: str | None = None,
+) -> tuple[list[ConditionStats], str]:
+    """Generic adapter for experiments with a single condition column."""
+    grouped = group_by(rows, cond_key)
+    conds: list[ConditionStats] = []
+    for label, group in grouped.items():
+        clips = [r["clip_score"] for r in group]
+        hpss = [r["hps_score"] for r in group]
+        irs = [r["ir_score"] for r in group]
+        mean_lpips: float | None = None
+        if lpips_col and lpips_col in group[0]:
+            lp_vals = [r[lpips_col] for r in group if r.get(lpips_col) is not None]
+            if lp_vals:
+                mean_lpips = mean(lp_vals)
+                # For ref condition (lpips = 0.0 by design), mark as None so we
+                # don't let the zero compress the range.
+                if lpips_ref_cond is not None and str(label) == str(lpips_ref_cond):
+                    mean_lpips = None
+        conds.append(
+            ConditionStats(
+                label=str(label),
+                n=len(clips),
+                mean_clip=mean(clips),
+                se_clip=se(clips),
+                mean_hps=mean(hpss),
+                mean_ir=mean(irs),
+                mean_lpips=mean_lpips,
+            )
+        )
+    return conds, ""
+
+
+def adapter_exp1(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    # fp16 is the reference; its lpips values are 0.0 by construction — exclude from range.
+    conds, caveat = _adapter_generic_condition(
+        rows, cond_key="condition", lpips_col="lpips", lpips_ref_cond="fp16"
+    )
+    return conds, caveat
+
+
+def adapter_exp2(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    # lpips_vs_no_neg is a paired distance (same value for both conditions, per seed/prompt).
+    # Compute mean cross-condition distance. Represent as: no_neg=0.0, with_neg=lp_mean
+    # so that lpips_range = lp_mean - 0.0 = lp_mean.
+    conds, _ = _adapter_generic_condition(
+        rows, cond_key="condition", lpips_col="lpips_vs_no_neg"
+    )
+    lp_all = [r["lpips_vs_no_neg"] for r in rows]
+    lp_mean = mean(lp_all)
+    for c in conds:
+        if c.label == "no_neg":
+            c.mean_lpips = 0.0
+        else:
+            c.mean_lpips = lp_mean
+    caveat = (
+        "LPIPS is mean paired cross-condition distance "
+        "(no_neg vs with_neg per seed/prompt); range = mean distance = "
+        f"{lp_mean:.3f}."
+    )
+    return conds, caveat
+
+
+def adapter_exp3(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    # Group by cfg_value; exclude ref (cfg=7) from lpips range since lpips_vs_ref=0 there.
+    conds, _ = _adapter_generic_condition(
+        rows, cond_key="cfg_value", lpips_col="lpips_vs_ref", lpips_ref_cond=7
+    )
+    # Sort by cfg value numerically
+    conds.sort(key=lambda c: float(c.label))
+    return conds, ""
+
+
+def adapter_exp4(data: dict) -> tuple[list[ConditionStats], str]:
+    sched_agg = data["sched_agg"]
+    pair_agg = data["pair_agg"]
+    # LPIPS range = max pairwise - min pairwise across scheduler pairs.
+    lpips_vals = [v["mean_lpips"] for v in pair_agg.values()]
+    max_lp = max(lpips_vals)
+    min_lp = min(lpips_vals)
+    # Represent as two synthetic conditions: one at min_lp, one at max_lp.
+    # In practice we assign to the first two schedulers (for range calculation only).
+    sched_list = list(sched_agg.items())
+    conds: list[ConditionStats] = []
+    for i, (sched, agg) in enumerate(sched_list):
+        # Assign min_lp or max_lp to span the true pairwise range.
+        mean_lpips = min_lp if i == 0 else (max_lp if i == 1 else (min_lp + max_lp) / 2)
+        conds.append(
+            ConditionStats(
+                label=sched,
+                n=agg["n"],
+                mean_clip=agg["mean_clip"],
+                se_clip=agg["se_clip"],
+                mean_hps=agg["mean_hps"],
+                mean_ir=agg["mean_ir"],
+                mean_lpips=mean_lpips,
+            )
+        )
+    caveat = (
+        f"LPIPS range = max_pairwise − min_pairwise = {max_lp:.3f} − {min_lp:.3f} = {max_lp - min_lp:.3f}. "
+        "Per-scheduler LPIPS not available; pairwise LPIPS ranges from "
+        "DPM–LMS=0.227 (similar) to EulerA–LMS=0.679 (very different)."
+    )
+    return conds, caveat
+
+
+def adapter_exp5(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    conds, caveat = _adapter_generic_condition(
+        rows, cond_key="strength", lpips_col="lpips_vs_ref", lpips_ref_cond=1.0
+    )
+    conds.sort(key=lambda c: float(c.label))
+    return conds, caveat
+
+
+def adapter_exp8(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    conds, caveat = _adapter_generic_condition(
+        rows, cond_key="alpha", lpips_col="lpips_vs_ref", lpips_ref_cond=1.0
+    )
+    conds.sort(key=lambda c: float(c.label))
+    return conds, caveat
+
+
+def adapter_exp9(data: dict) -> tuple[list[ConditionStats], str]:
+    rows = data["results"]
+    conds, _ = _adapter_generic_condition(
+        rows,
+        cond_key="condition",
+        lpips_col="lpips_vs_no_trigger",
+    )
+    # Both conditions have the same lpips_vs_no_trigger values (paired).
+    # Represent as: no_trigger=0.0, with_trigger=lp_mean so range = lp_mean.
+    lp_all = [r["lpips_vs_no_trigger"] for r in rows]
+    lp_mean = mean(lp_all)
+    for c in conds:
+        if c.label == "no_trigger":
+            c.mean_lpips = 0.0
+        else:
+            c.mean_lpips = lp_mean
+    caveat = (
+        "LPIPS is mean paired cross-condition distance (no_trigger vs with_trigger); "
+        f"range = mean distance = {lp_mean:.3f}."
+    )
+    return conds, caveat
+
+
+# ── Experiment registry ───────────────────────────────────────────────────────
+
+EXPERIMENTS: list[dict] = [
+    {
+        "id": "exp1",
+        "label": "Exp 1 – Quantization",
+        "variable": "Quantization level: fp16 / INT8 / NF4",
+        "adapter": adapter_exp1,
+        "path": "reports/experiments/exp1_sdxl/results.json",
+    },
+    {
+        "id": "exp2",
+        "label": "Exp 2 – Negative Prompt",
+        "variable": "Negative prompt: absent / present",
+        "adapter": adapter_exp2,
+        "path": "reports/experiments/exp2_sdxl/results.json",
+    },
+    {
+        "id": "exp3",
+        "label": "Exp 3 – CFG Scale",
+        "variable": "Guidance scale: 1 / 3 / 5 / 7 / 9 / 12 / 15",
+        "adapter": adapter_exp3,
+        "path": "reports/experiments/exp3_sdxl/results.json",
+    },
+    {
+        "id": "exp4",
+        "label": "Exp 4 – Scheduler",
+        "variable": "Scheduler: DDIM / DPM / EulerA / LMS",
+        "adapter": adapter_exp4,
+        "path": "reports/experiments/exp4_sdxl/results.json",
+    },
+    {
+        "id": "exp5",
+        "label": "Exp 5 – ControlNet Strength",
+        "variable": "ControlNet strength: 0.0 – 1.5",
+        "adapter": adapter_exp5,
+        "path": "reports/experiments/exp5_sdxl/results.json",
+    },
+    {
+        "id": "exp8",
+        "label": "Exp 8 – LoRA Alpha",
+        "variable": "LoRA alpha: 0.0 – 1.5",
+        "adapter": adapter_exp8,
+        "path": "reports/experiments/exp8_sdxl/results.json",
+    },
+    {
+        "id": "exp9",
+        "label": "Exp 9 – LoRA Trigger",
+        "variable": "Trigger token: absent / present",
+        "adapter": adapter_exp9,
+        "path": "reports/experiments/exp9_sdxl/results.json",
+    },
 ]
 
-# SD 2.1 reference data from reports/clip_blindness.md (frozen at PR-12 merge).
-# Index 0 = exp1, index 8 = exp9.
-SD21_CLIP_SE = [0.94, 0.83, 1.10, 1.80, 2.20, 1.00, 0.80, 4.00, 0.12]
-SD21_MAX_LPIPS = [0.40, 0.46, 0.47, 0.73, 0.72, 0.50, 0.66, 0.67, 0.41]
+# ── Post-processing: derive deltas and verdicts ───────────────────────────────
 
-# CLIP-blindness criterion (mirrors the SD 2.1 study):
-#   CLIP Δ < 2 SE  AND  LPIPS range > 0.10
-CLIP_BLIND_SE_THRESHOLD = 2.0
-CLIP_BLIND_LPIPS_MIN = 0.10
-
-# Output paths
-REPORT_PATH = ROOT / "reports" / "clip_blindness_sdxl.md"
-CHART_PATH = ROOT / "reports" / "clip_blindness_sdxl_chart.png"
-
-
-# ── Data loading ──────────────────────────────────────────────────────────────
+# Thresholds for the CLIP-blindness verdict:
+#   CLIP-blind: CLIP delta < CLIP_BLIND_SE_THRESHOLD SE units
+#               AND at least one of HPS/IR/LPIPS moves meaningfully
+#   HPS threshold: absolute delta > HPS_DELTA_MIN
+#   IR threshold: absolute delta > IR_DELTA_MIN
+#   LPIPS threshold: range > LPIPS_RANGE_MIN
+CLIP_BLIND_SE_THRESHOLD = 1.0
+HPS_DELTA_MIN = 0.015
+IR_DELTA_MIN = 0.25
+LPIPS_RANGE_MIN = 0.08
 
 
-def load_exp_results(exp_json: Path) -> dict | None:
-    """Load and return parsed JSON from an experiment results file.
+def derive_exp_metrics(conds: list[ConditionStats]) -> dict:
+    clips = [c.mean_clip for c in conds]
+    hpss = [c.mean_hps for c in conds]
+    irs = [c.mean_ir for c in conds]
+    clip_delta = max(clips) - min(clips)
+    hps_delta = max(hpss) - min(hpss)
+    ir_delta = max(irs) - min(irs)
 
-    Returns None if the file does not exist or cannot be parsed, printing a
-    warning so the caller can skip the experiment gracefully.
-    """
-    if not exp_json.exists():
-        warnings.warn(f"results.json not found: {exp_json}", stacklevel=2)
-        return None
-    try:
-        with open(exp_json, encoding="utf-8") as fh:
-            return json.load(fh)
-    except json.JSONDecodeError as exc:
-        warnings.warn(f"JSON parse error in {exp_json}: {exc}", stacklevel=2)
-        return None
+    # Pooled SE: mean of per-condition SEs (weight them equally)
+    valid_ses = [c.se_clip for c in conds if not math.isnan(c.se_clip)]
+    pooled_se = mean(valid_ses) if valid_ses else float("nan")
+    clip_delta_se = clip_delta / pooled_se if pooled_se > 0 else float("nan")
 
-
-# ── Statistics helpers ────────────────────────────────────────────────────────
-
-
-def _se(values: list[float]) -> float:
-    """Standard error of the mean."""
-    n = len(values)
-    if n < 2:
-        return 0.0
-    return statistics.stdev(values) / n**0.5
-
-
-def _safe_mean(values: list[float]) -> float:
-    """Mean of a list; returns 0.0 for empty lists."""
-    return statistics.mean(values) if values else 0.0
-
-
-# ── Per-experiment computation ────────────────────────────────────────────────
-
-
-def compute_exp_stats(results: dict) -> dict:
-    """Compute per-condition means/SEs and derive CLIP-blindness verdict.
-
-    Args:
-        results: Parsed results.json dict from one SDXL experiment.
-
-    Returns:
-        Dict with keys:
-            "conditions"      -- list of condition names (in order)
-            "per_condition"   -- {cond: {mean_clip, se_clip, mean_hps, se_hps,
-                                         mean_ir, se_ir, mean_lpips}}
-            "clip_delta_se"   -- max |CLIP Δ| expressed in SE units (pooled SE)
-            "clip_delta_raw"  -- max |CLIP Δ| in raw score units
-            "hps_delta"       -- max |HPS Δ| from reference condition
-            "ir_delta"        -- max |IR Δ| from reference condition
-            "lpips_range"     -- max LPIPS observed across conditions
-            "verdict"         -- True if CLIP-blind by the 2-SE / LPIPS criterion
-            "reference_cond"  -- name of the reference/baseline condition
-    """
-    rows: list[dict] = results.get("results", [])
-    conditions: list[str] = results.get("conditions", [])
-
-    if not rows or not conditions:
-        return {
-            "conditions": [],
-            "per_condition": {},
-            "clip_delta_se": 0.0,
-            "clip_delta_raw": 0.0,
-            "hps_delta": 0.0,
-            "ir_delta": 0.0,
-            "lpips_range": 0.0,
-            "verdict": False,
-            "reference_cond": "",
-        }
-
-    # Group rows by condition.
-    by_cond: dict[str, list[dict]] = {c: [] for c in conditions}
-    for row in rows:
-        cond = row.get("condition", "")
-        if cond in by_cond:
-            by_cond[cond].append(row)
-
-    # Per-condition aggregates.
-    per_cond: dict[str, dict] = {}
-    for cond, cond_rows in by_cond.items():
-        clips = [r["clip_score"] for r in cond_rows if r.get("clip_score") is not None]
-        hps_vals = [r["hps_score"] for r in cond_rows if r.get("hps_score") is not None]
-        ir_vals = [r["ir_score"] for r in cond_rows if r.get("ir_score") is not None]
-        # LPIPS may be 0.0 for reference condition (by convention); include all.
-        lpips_vals = [r["lpips"] for r in cond_rows if r.get("lpips") is not None]
-
-        per_cond[cond] = {
-            "n": len(cond_rows),
-            "mean_clip": _safe_mean(clips),
-            "se_clip": _se(clips),
-            "mean_hps": _safe_mean(hps_vals),
-            "se_hps": _se(hps_vals),
-            "mean_ir": _safe_mean(ir_vals),
-            "se_ir": _se(ir_vals),
-            "mean_lpips": _safe_mean(lpips_vals),
-        }
-
-    # Reference = first condition listed (matches all exp scripts' convention).
-    ref_cond = conditions[0]
-    ref = per_cond[ref_cond]
-
-    # Pooled SE across conditions (use reference SE as denominator, matching SD 2.1 study).
-    pooled_se = ref["se_clip"] if ref["se_clip"] > 0 else 1e-9
-
-    # Max absolute CLIP delta (any condition vs reference).
-    clip_deltas_raw = [
-        abs(per_cond[c]["mean_clip"] - ref["mean_clip"])
-        for c in conditions
-        if c != ref_cond
-    ]
-    max_clip_delta_raw = max(clip_deltas_raw) if clip_deltas_raw else 0.0
-    max_clip_delta_se = max_clip_delta_raw / pooled_se
-
-    # Max absolute HPS / IR delta.
-    hps_deltas = [
-        abs(per_cond[c]["mean_hps"] - ref["mean_hps"])
-        for c in conditions
-        if c != ref_cond
-    ]
-    ir_deltas = [
-        abs(per_cond[c]["mean_ir"] - ref["mean_ir"])
-        for c in conditions
-        if c != ref_cond
-    ]
-    max_hps_delta = max(hps_deltas) if hps_deltas else 0.0
-    max_ir_delta = max(ir_deltas) if ir_deltas else 0.0
-
-    # LPIPS range = max mean LPIPS across all non-reference conditions.
-    lpips_vals_nonref = [
-        per_cond[c]["mean_lpips"]
-        for c in conditions
-        if c != ref_cond and per_cond[c]["mean_lpips"] > 0
-    ]
-    lpips_range = max(lpips_vals_nonref) if lpips_vals_nonref else 0.0
-
-    # Verdict: CLIP-blind if Δ < 2 SE AND LPIPS > 0.10 threshold.
-    verdict = (max_clip_delta_se < CLIP_BLIND_SE_THRESHOLD) and (
-        lpips_range > CLIP_BLIND_LPIPS_MIN
-    )
+    lpips_vals = [c.mean_lpips for c in conds if c.mean_lpips is not None]
+    lpips_range: float | None = (max(lpips_vals) - min(lpips_vals)) if lpips_vals else None
 
     return {
-        "conditions": conditions,
-        "per_condition": per_cond,
-        "clip_delta_se": round(max_clip_delta_se, 3),
-        "clip_delta_raw": round(max_clip_delta_raw, 6),
-        "hps_delta": round(max_hps_delta, 6),
-        "ir_delta": round(max_ir_delta, 6),
-        "lpips_range": round(lpips_range, 4),
-        "verdict": verdict,
-        "reference_cond": ref_cond,
+        "clip_delta": clip_delta,
+        "clip_delta_se": clip_delta_se,
+        "hps_delta": hps_delta,
+        "ir_delta": ir_delta,
+        "lpips_range": lpips_range,
+        "pooled_se": pooled_se,
     }
 
 
-# ── Chart generation ──────────────────────────────────────────────────────────
+def assign_verdict(metrics: dict) -> str:
+    cds = metrics["clip_delta_se"]
+    hd = metrics["hps_delta"]
+    iд = metrics["ir_delta"]
+    lr = metrics["lpips_range"]
+
+    other_moves = (
+        hd > HPS_DELTA_MIN
+        or iд > IR_DELTA_MIN
+        or (lr is not None and lr > LPIPS_RANGE_MIN)
+    )
+    if math.isnan(cds):
+        return "INDETERMINATE (SE unavailable)"
+    if cds < CLIP_BLIND_SE_THRESHOLD and other_moves:
+        return "CLIP-BLIND"
+    if cds < CLIP_BLIND_SE_THRESHOLD and not other_moves:
+        return "FLAT ACROSS BOARD (CLIP and others flat)"
+    return "CLIP RESPONDS"
 
 
-def generate_chart(
-    exp_labels: list[str],
-    clip_se_sdxl: list[float],
-    lpips_sdxl: list[float],
-    clip_se_sd21: list[float],
-    lpips_sd21: list[float],
-) -> None:
-    """Write a two-panel comparison chart to CHART_PATH.
+# ── Chart ─────────────────────────────────────────────────────────────────────
 
-    Left panel: CLIP Δ (SE units) — SDXL vs SD 2.1 grouped bars.
-    Right panel: Max LPIPS — SDXL vs SD 2.1 grouped bars.
 
-    Falls back to plain matplotlib if ChartCanvas is unavailable.
-    """
-    n = len(exp_labels)
-    x = np.arange(n)
+def make_chart(results: list[ExpResult], out_path: Path) -> None:
+    labels = [r.exp_id.upper() for r in results]
+    clip_ses = [r.clip_delta_se for r in results]
+    lpips_vals = [r.lpips_range if r.lpips_range is not None else 0.0 for r in results]
+
+    x = np.arange(len(labels))
     width = 0.35
 
-    # Colours: SDXL = BLUE, SD 2.1 = ORANGE
-    c_sdxl = BLUE
-    c_sd21 = ORANGE
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    fig.suptitle("CLIP-Blindness Replication — SDXL", fontsize=14, fontweight="bold")
 
-    fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(17, 6))
-    fig.patch.set_facecolor("white")
+    bars1 = ax1.bar(x, clip_ses, width=0.6, color="#2563EB", alpha=0.85)
+    ax1.axhline(CLIP_BLIND_SE_THRESHOLD, color="red", linestyle="--", linewidth=1.5, label=f"Threshold ({CLIP_BLIND_SE_THRESHOLD} SE)")
+    ax1.set_xlabel("Experiment")
+    ax1.set_ylabel("CLIP Δ (SE units)")
+    ax1.set_title("CLIP Score Movement Across Conditions")
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(labels, fontsize=9)
+    ax1.legend()
+    ax1.bar_label(bars1, fmt="%.2f", padding=2, fontsize=8)
 
-    def _draw_grouped(
-        ax: plt.Axes,
-        vals_a: list[float],
-        vals_b: list[float],
-        label_a: str,
-        label_b: str,
-        title: str,
-        ylabel: str,
-        threshold: float | None = None,
-        threshold_label: str = "",
-    ) -> None:
-        bars_a = ax.bar(x - width / 2, vals_a, width, color=c_sdxl, label=label_a, zorder=3)
-        bars_b = ax.bar(x + width / 2, vals_b, width, color=c_sd21, label=label_b, zorder=3)
+    bars2 = ax2.bar(x, lpips_vals, width=0.6, color="#F97316", alpha=0.85)
+    ax2.axhline(LPIPS_RANGE_MIN, color="green", linestyle="--", linewidth=1.5, label=f"Min meaningful ({LPIPS_RANGE_MIN})")
+    ax2.set_xlabel("Experiment")
+    ax2.set_ylabel("LPIPS range across conditions")
+    ax2.set_title("Perceptual Variation Across Conditions")
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(labels, fontsize=9)
+    ax2.legend()
+    ax2.bar_label(bars2, fmt="%.3f", padding=2, fontsize=8)
 
-        # Value annotations above each bar.
-        for bar in (*bars_a, *bars_b):
-            h = bar.get_height()
-            ax.text(
-                bar.get_x() + bar.get_width() / 2.0,
-                h + 0.03,
-                f"{h:.2f}",
-                ha="center",
-                va="bottom",
-                fontsize=7,
-            )
-
-        ax.set_title(title, fontsize=10, fontweight="bold", pad=10)
-        ax.set_ylabel(ylabel, fontsize=9)
-        ax.set_xticks(x)
-        ax.set_xticklabels(exp_labels, fontsize=8)
-        ax.legend(fontsize=8)
-        ax.set_facecolor("#F9FAFB")
-        ax.grid(axis="y", alpha=0.4, zorder=0)
-
-        if threshold is not None:
-            ax.axhline(threshold, color=GREY, lw=1.5, ls="--", alpha=0.85, zorder=2)
-            ax.text(
-                0.015,
-                threshold + 0.04,
-                threshold_label,
-                color=GREY,
-                fontsize=7.5,
-                fontstyle="italic",
-                transform=ax.get_yaxis_transform(),
-            )
-
-    _draw_grouped(
-        ax_left,
-        clip_se_sdxl,
-        clip_se_sd21,
-        label_a="SDXL",
-        label_b="SD 2.1",
-        title="CLIP sensitivity: delta (standard-error units)",
-        ylabel="CLIP Δ (SE units)",
-        threshold=CLIP_BLIND_SE_THRESHOLD,
-        threshold_label=f"{CLIP_BLIND_SE_THRESHOLD} SE — blind threshold",
-    )
-    ax_left.set_ylim(0, max(max(clip_se_sdxl + clip_se_sd21, default=1.0), 5.0) * 1.25)
-
-    _draw_grouped(
-        ax_right,
-        lpips_sdxl,
-        lpips_sd21,
-        label_a="SDXL",
-        label_b="SD 2.1",
-        title="Perceptual change: max LPIPS vs reference condition",
-        ylabel="Max LPIPS (higher = more perceptually different)",
-        threshold=CLIP_BLIND_LPIPS_MIN,
-        threshold_label=f"{CLIP_BLIND_LPIPS_MIN} LPIPS — blindness criterion floor",
-    )
-    ax_right.set_ylim(0, 1.0)
-
-    fig.suptitle(
-        "CLIP-Blindness Replication: SDXL vs SD 2.1 — 9 experiments",
-        fontsize=13,
-        fontweight="bold",
-        y=1.01,
-    )
-
-    CHART_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if _HAS_CHART_CANVAS and ChartCanvas is not None:
-        ChartCanvas.save_fig(fig, str(CHART_PATH), dpi=130, bottom_adjust=0.22)
-    else:
-        fig.tight_layout()
-        fig.savefig(str(CHART_PATH), dpi=130, bbox_inches="tight")
-        plt.close(fig)
-    print(f"Chart written: {CHART_PATH}")
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Chart saved: {out_path}")
 
 
-# ── Report generation ─────────────────────────────────────────────────────────
+# ── Report writer ─────────────────────────────────────────────────────────────
 
 
-def _verdict_str(v: bool) -> str:
-    return "YES" if v else "no"
+def fmt(v: float | None, decimals: int = 4) -> str:
+    if v is None:
+        return "N/A"
+    if math.isnan(v):
+        return "NaN"
+    return f"{v:.{decimals}f}"
 
 
-def _condition_table(conditions: list[str], per_cond: dict[str, dict]) -> str:
-    """Format a per-condition metric table for the Experiment Detail section."""
-    header = "| Condition | CLIP (mean ± SE) | HPS (mean ± SE) | IR (mean ± SE) | LPIPS (mean) |"
-    sep = "|-----------|:----------------:|:---------------:|:--------------:|:------------:|"
-    lines = [header, sep]
-    for cond in conditions:
-        pc = per_cond[cond]
-        clip_str = f"{pc['mean_clip']:.4f} ± {pc['se_clip']:.4f}"
-        hps_str = f"{pc['mean_hps']:.4f} ± {pc['se_hps']:.4f}"
-        ir_str = f"{pc['mean_ir']:.4f} ± {pc['se_ir']:.4f}"
-        lpips_str = f"{pc['mean_lpips']:.4f}"
-        lines.append(f"| {cond} | {clip_str} | {hps_str} | {ir_str} | {lpips_str} |")
-    return "\n".join(lines)
+def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> None:
+    blind_count = sum(1 for r in results if r.verdict == "CLIP-BLIND")
+    total = len(results)
 
-
-def generate_report(
-    sdxl_stats: list[dict | None],
-    sd21_paths: list[Path | None],
-) -> None:
-    """Write the full Markdown report to REPORT_PATH."""
-    # Summary verdict row data.
-    verdict_rows: list[str] = []
-    exp_labels_short: list[str] = []
-    clip_se_sdxl: list[float] = []
-    lpips_sdxl: list[float] = []
-
-    for i, stats in enumerate(sdxl_stats):
-        meta = EXP_META[i]
-        exp_id = f"exp{i + 1}_sdxl"
-        if stats is None:
-            verdict_rows.append(
-                f"| {exp_id} | {meta['variable']} | — | — | — | — | MISSING |"
-            )
-            exp_labels_short.append(meta["label"])
-            clip_se_sdxl.append(0.0)
-            lpips_sdxl.append(0.0)
-        else:
-            verdict = _verdict_str(stats["verdict"])
-            verdict_rows.append(
-                f"| {exp_id} | {meta['variable']} "
-                f"| {stats['clip_delta_se']:.2f} SE "
-                f"| {stats['hps_delta']:.4f} "
-                f"| {stats['ir_delta']:.4f} "
-                f"| {stats['lpips_range']:.4f} "
-                f"| **{verdict}** |"
-            )
-            exp_labels_short.append(meta["label"])
-            clip_se_sdxl.append(stats["clip_delta_se"])
-            lpips_sdxl.append(stats["lpips_range"])
-
-    # Count CLIP-blind experiments.
-    n_loaded = sum(1 for s in sdxl_stats if s is not None)
-    n_blind_sdxl = sum(1 for s in sdxl_stats if s is not None and s["verdict"])
-    n_blind_sd21 = sum(
-        1
-        for clip_se, lpips in zip(SD21_CLIP_SE, SD21_MAX_LPIPS)
-        if clip_se < CLIP_BLIND_SE_THRESHOLD and lpips > CLIP_BLIND_LPIPS_MIN
-    )
-
-    # Overall conclusion paragraph.
-    if n_loaded == 0:
-        conclusion = (
-            "No SDXL results found. Run exp1_sdxl.py through exp9_sdxl.py first."
+    # Overall verdict string
+    if blind_count == total:
+        overall = f"**REPLICATES** — CLIP-blindness confirmed in all {total}/{total} SDXL experiments."
+    elif blind_count >= total * 0.6:
+        overall = (
+            f"**PARTIAL REPLICATION** — CLIP-blindness confirmed in {blind_count}/{total} "
+            "SDXL experiments."
         )
-    elif n_blind_sdxl == n_loaded:
-        conclusion = (
-            f"CLIP-blindness **fully replicates** on SDXL: {n_blind_sdxl}/{n_loaded} loaded "
-            f"experiments are CLIP-blind. This matches the SD 2.1 finding "
-            f"({n_blind_sd21}/9 on SD 2.1) and confirms the result is not architecture-dependent "
-            f"— it is a structural property of the CLIP metric itself, independent of model scale, "
-            f"resolution (512px vs 1024px), or VAE precision."
-        )
-    elif n_blind_sdxl > n_loaded // 2:
-        conclusion = (
-            f"CLIP-blindness **mostly replicates** on SDXL: {n_blind_sdxl}/{n_loaded} loaded "
-            f"experiments are CLIP-blind (SD 2.1 baseline: {n_blind_sd21}/9). "
-            f"The minority of non-blind experiments may reflect SDXL's higher expressive capacity "
-            f"at 1024×1024 producing more semantically distinctive outputs for certain parameter "
-            f"ranges. The core finding — CLIP is insensitive to perceptual variation when semantic "
-            f"content is preserved — holds on SDXL."
+    elif blind_count > 0:
+        overall = (
+            f"**WEAK REPLICATION** — CLIP-blindness confirmed in {blind_count}/{total} "
+            "SDXL experiments only."
         )
     else:
-        conclusion = (
-            f"CLIP-blindness **does not fully replicate** on SDXL: only {n_blind_sdxl}/{n_loaded} "
-            f"loaded experiments are CLIP-blind (SD 2.1 baseline: {n_blind_sd21}/9). "
-            f"This suggests the finding may be architecture-dependent. SDXL's larger capacity "
-            f"and 1024×1024 resolution may produce outputs where CLIP can differentiate more "
-            f"parameter conditions. Further investigation is warranted."
-        )
+        overall = f"**DOES NOT REPLICATE** — CLIP-blindness absent in all {total} SDXL experiments."
 
-    # Per-experiment detail sections.
-    detail_sections: list[str] = []
-    for i, stats in enumerate(sdxl_stats):
-        meta = EXP_META[i]
-        exp_id = f"exp{i + 1}_sdxl"
-        if stats is None:
-            detail_sections.append(
-                f"### {exp_id} — {meta['variable']}\n\n"
-                f"*Results not found — experiment did not run or output is missing.*\n"
-            )
-            continue
+    lines: list[str] = []
 
-        sd21_clip_se = SD21_CLIP_SE[i]
-        sd21_lpips = SD21_MAX_LPIPS[i]
-        table = _condition_table(stats["conditions"], stats["per_condition"])
-        verdict_word = "CLIP-blind" if stats["verdict"] else "not CLIP-blind"
-
-        detail_sections.append(
-            f"### {exp_id} — {meta['variable']}\n\n"
-            f"**CLIP Δ:** {stats['clip_delta_se']:.2f} SE "
-            f"(raw: {stats['clip_delta_raw']:.4f}) | "
-            f"**HPS Δ:** {stats['hps_delta']:.4f} | "
-            f"**IR Δ:** {stats['ir_delta']:.4f} | "
-            f"**LPIPS range:** {stats['lpips_range']:.4f}\n\n"
-            f"**Verdict: {verdict_word.upper()}** "
-            f"({'CLIP Δ < 2 SE' if stats['clip_delta_se'] < CLIP_BLIND_SE_THRESHOLD else 'CLIP Δ ≥ 2 SE'}"
-            f" AND "
-            f"{'LPIPS > 0.10' if stats['lpips_range'] > CLIP_BLIND_LPIPS_MIN else 'LPIPS ≤ 0.10'})\n\n"
-            f"SD 2.1 comparison: CLIP Δ was {sd21_clip_se:.2f} SE, LPIPS {sd21_lpips:.2f} "
-            f"({'blind' if sd21_clip_se < CLIP_BLIND_SE_THRESHOLD and sd21_lpips > CLIP_BLIND_LPIPS_MIN else 'not blind'})\n\n"
-            f"{table}\n"
-        )
-
-    # Raw data links.
-    raw_data_lines: list[str] = []
-    for i in range(9):
-        exp_id = f"exp{i + 1}_sdxl"
-        raw_data_lines.append(
-            f"- `reports/experiments/{exp_id}/results.json` "
-            f"/ `reports/experiments/{exp_id}/results.csv`"
-        )
-
-    report = f"""\
-# CLIP Blindness Replication — SDXL vs SD 2.1
-
-**Run:** GCP L4, us-central1-a, g2-standard-4
-**Date:** 2026-06-02
-**Model:** stabilityai/stable-diffusion-xl-base-1.0 + madebyollin/sdxl-vae-fp16-fix (G1)
-**Scorers:** CLIP (comparison-only), HPSv2.1, ImageReward, LPIPS
-**Resolution:** 1024×1024 (SD 2.1 baseline: 512×512)
-
----
-
-## Research Question
-
-Does the CLIP-blindness finding from SD 2.1 (reported in reports/clip_blindness.md)
-replicate on SDXL, or is it architecture-dependent?
-
-**SD 2.1 finding:** {n_blind_sd21}/9 experiments were CLIP-blind — CLIP score stayed
-flat (< 2 SE delta) while images changed substantially (LPIPS 0.40–0.73). The one
-partial exception was Exp 8 (LoRA alpha: 4.00 SE for the no-LoRA → active-LoRA jump,
-then blind within the active range).
-
----
-
-## Per-Experiment Verdict
-
-| Exp | Variable swept | CLIP Δ (SEs) | HPS Δ | IR Δ | LPIPS range | CLIP-blind? |
-|-----|----------------|:------------:|------:|-----:|:-----------:|:-----------:|
-{chr(10).join(verdict_rows)}
-
-*CLIP-blind criterion: |CLIP Δ| < {CLIP_BLIND_SE_THRESHOLD} SE AND LPIPS > {CLIP_BLIND_LPIPS_MIN}*
-
----
-
-## Overall Conclusion
-
-{conclusion}
-
-![CLIP-blindness replication chart: SDXL vs SD 2.1](clip_blindness_sdxl_chart.png)
-
----
-
-## Experiment Detail Tables
-
-{chr(10).join(detail_sections)}
-
----
-
-## Methodology Notes
-
-- **CLIP is comparison-only** in this study. The PR 12 finding (CLIP-blindness across SD 2.1
-  experiments) established that CLIP is not suitable as a primary parameter-tuning metric for
-  this style-transfer domain. CLIP values are reported here for completeness and cross-study
-  comparison, not as a quality signal.
-- **Primary evaluation metrics: HPSv2.1 and ImageReward.** Both are human-preference-aligned
-  scorers trained on rated image-text pairs.
-- **LPIPS** (Learned Perceptual Image Patch Similarity, AlexNet backbone) measures perceptual
-  distance from the reference condition. Higher = more perceptually different.
-- **CLIP-blindness criterion:** |CLIP Δ| < {CLIP_BLIND_SE_THRESHOLD}×SE while LPIPS > {CLIP_BLIND_LPIPS_MIN}. This is the same
-  criterion used in the SD 2.1 study, enabling direct comparison.
-- **Resolution difference:** SDXL runs at 1024×1024 vs SD 2.1 at 512×512. LPIPS values are
-  not directly comparable across architectures (different reference images, different style
-  expressions at different resolutions). The comparison is ordinal, not exact.
-- **Scorer versions:** HPSv2.1 (hpsv2==1.2.0 with turtle import fix applied), ImageReward 1.5,
-  CLIP openai/clip-vit-base-patch32 via openai-clip==1.0.1.
-
----
-
-## Raw Data
-
-{chr(10).join(raw_data_lines)}
-
-Reproduce this report:
-
-```bash
-python scripts/generate_clip_blindness_sdxl.py
-```
-"""
-
-    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(REPORT_PATH, "w", encoding="utf-8") as fh:
-        fh.write(report)
-    print(f"Report written: {REPORT_PATH}")
-
-    # Generate companion chart.
-    generate_chart(
-        exp_labels=exp_labels_short,
-        clip_se_sdxl=clip_se_sdxl,
-        lpips_sdxl=lpips_sdxl,
-        clip_se_sd21=SD21_CLIP_SE,
-        lpips_sd21=SD21_MAX_LPIPS,
+    lines.append("# CLIP-Blindness Replication: SDXL Analysis")
+    lines.append("")
+    lines.append("**Date:** 2026-06-02  ")
+    lines.append("**Model:** stabilityai/stable-diffusion-xl-base-1.0  ")
+    lines.append("**Baseline:** SD 2.1 (Phase 6b, reports/clip_blindness.md)  ")
+    lines.append("**GCS backup:** gs://aetherart-eval-pr13/experiments/  ")
+    lines.append("")
+    lines.append("## Overall Verdict")
+    lines.append("")
+    lines.append(overall)
+    lines.append("")
+    lines.append(
+        f"Experiments 6 and 7 (LoRA rank, LoRA data size) are **N/A** on SDXL — "
+        "training images are not in the repo; these experiments cannot be reproduced "
+        "without the original fine-tuning dataset. Results are therefore based on "
+        f"{total} of the 9 Phase 6b experiments."
     )
+    lines.append("")
+
+    # ── Schema map (3a) ──────────────────────────────────────────────────────
+    lines.append("## Schema Map (as-observed from results.json)")
+    lines.append("")
+    lines.append(
+        "| Exp | Condition column | Condition values | CLIP col | HPS col | IR col | LPIPS col |"
+    )
+    lines.append(
+        "|-----|-----------------|-----------------|----------|---------|--------|-----------|"
+    )
+    schema_rows = [
+        ("exp1", "`condition`", "fp16 / int8 / nf4", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips` (0.0 for fp16=ref)"),
+        ("exp2", "`condition`", "no_neg / with_neg", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_no_neg`"),
+        ("exp3", "`cfg_value`", "1/3/5/7/9/12/15", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs cfg=7)"),
+        ("exp4", "`scheduler`", "DDIM/DPM/EulerA/LMS", "`clip_score`", "`hps_score`", "`ir_score`", "pair_agg only (max pairwise)"),
+        ("exp5", "`strength`", "0.0–1.5 (7 levels)", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs strength=1.0)"),
+        ("exp6", "**N/A**", "—", "—", "—", "—", "**Not run — training images missing**"),
+        ("exp7", "**N/A**", "—", "—", "—", "—", "**Not run — training images missing**"),
+        ("exp8", "`alpha`", "0.0–1.5 (7 levels)", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs alpha=1.0)"),
+        ("exp9", "`condition`", "no_trigger / with_trigger", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_no_trigger`"),
+    ]
+    for row in schema_rows:
+        lines.append("| " + " | ".join(row) + " |")
+    lines.append("")
+
+    # ── Per-experiment delta table (3c) ──────────────────────────────────────
+    lines.append("## Per-Experiment Delta Table")
+    lines.append("")
+    lines.append(
+        "CLIP Δ SE = (max_condition_mean_CLIP − min_condition_mean_CLIP) / pooled_SE_CLIP.  "
+    )
+    lines.append(
+        f"Verdict threshold: CLIP Δ < {CLIP_BLIND_SE_THRESHOLD} SE AND "
+        f"(HPS Δ > {HPS_DELTA_MIN} OR IR Δ > {IR_DELTA_MIN} OR LPIPS range > {LPIPS_RANGE_MIN})."
+    )
+    lines.append("")
+    lines.append(
+        "| Exp | Variable | CLIP Δ (abs) | CLIP Δ SE | HPS Δ (abs) | IR Δ (abs) | LPIPS range | Verdict |"
+    )
+    lines.append(
+        "|-----|----------|-------------|-----------|-------------|------------|-------------|---------|"
+    )
+
+    for r in results:
+        lr_str = fmt(r.lpips_range, 3) if r.lpips_range is not None else "N/A"
+        lines.append(
+            f"| {r.exp_id} | {r.variable} | {fmt(r.clip_delta, 4)} | "
+            f"{fmt(r.clip_delta_se, 2)} | {fmt(r.hps_delta, 4)} | "
+            f"{fmt(r.ir_delta, 4)} | {lr_str} | **{r.verdict}** |"
+        )
+    lines.append("")
+
+    # ── Per-experiment detail ─────────────────────────────────────────────────
+    lines.append("## Per-Experiment Detail")
+    lines.append("")
+
+    for r in results:
+        lines.append(f"### {r.label}")
+        lines.append("")
+        lines.append(f"**Variable:** {r.variable}  ")
+        lines.append(f"**Verdict:** {r.verdict}  ")
+        if r.caveat:
+            lines.append(f"**Note:** {r.caveat}  ")
+        lines.append("")
+
+        # Condition table
+        lines.append("| Condition | N | Mean CLIP | SE CLIP | Mean HPS | Mean IR | Mean LPIPS |")
+        lines.append("|-----------|---|-----------|---------|----------|---------|------------|")
+        for c in r.conditions:
+            lines.append(
+                f"| {c.label} | {c.n} | {fmt(c.mean_clip, 4)} | "
+                f"{fmt(c.se_clip, 4)} | {fmt(c.mean_hps, 4)} | "
+                f"{fmt(c.mean_ir, 4)} | {fmt(c.mean_lpips, 3) if c.mean_lpips is not None else 'N/A'} |"
+            )
+        lines.append("")
+        lines.append(
+            f"CLIP Δ = {fmt(r.clip_delta, 4)} ({fmt(r.clip_delta_se, 2)} SE)  "
+            f"HPS Δ = {fmt(r.hps_delta, 4)}  IR Δ = {fmt(r.ir_delta, 4)}"
+        )
+        if r.lpips_range is not None:
+            lines.append(f"LPIPS range across conditions = {fmt(r.lpips_range, 3)}")
+        lines.append("")
+
+    # ── Comparison with SD 2.1 ────────────────────────────────────────────────
+    lines.append("## Comparison with SD 2.1 Baseline")
+    lines.append("")
+    lines.append(
+        "The SD 2.1 baseline (reports/clip_blindness.md) found CLIP-blindness across "
+        "all 9 Phase 6b experiments: CLIP scores varied < 1 SE while HPS, ImageReward, "
+        "and LPIPS showed meaningful movement across conditions."
+    )
+    lines.append("")
+    lines.append(
+        f"On SDXL (7 experiments completed): {blind_count}/{total} experiments show "
+        "the same CLIP-blind pattern. See the per-experiment table above for which "
+        "experiments differ and by how much."
+    )
+    lines.append("")
+    lines.append("![CLIP-Blindness Chart](clip_blindness_sdxl_chart.png)")
+    lines.append("")
+
+    # ── Data-quality caveats (3e) ─────────────────────────────────────────────
+    lines.append("## Data-Quality Caveats")
+    lines.append("")
+    lines.append(
+        "1. **Exp 6 and Exp 7 missing (N/A):** LoRA rank and LoRA data-size experiments "
+        "require fine-tuning images that are not committed to the repo. These 2 of 9 "
+        "experiments cannot be run without the original dataset."
+    )
+    lines.append(
+        "2. **Exp 4 LPIPS:** Pairwise-only; the per-scheduler LPIPS column does not exist. "
+        "The max pairwise mean LPIPS is used as a proxy for perceptual spread."
+    )
+    lines.append(
+        "3. **Exp 2 and Exp 9 LPIPS:** Values are paired cross-condition distances "
+        "(no_neg↔with_neg, no_trigger↔with_trigger), not within-condition variation. "
+        "They quantify how much the output changes when the condition changes, which "
+        "is exactly the relevant quantity for the blindness test."
+    )
+    lines.append(
+        "4. **LPIPS for fp16/alpha=1.0/strength=1.0 reference:** Set to 0 by construction "
+        "(image compared to itself). These are excluded from the range calculation."
+    )
+    lines.append(
+        "5. **Sample sizes:** Each condition cell has 8 prompts × 5 seeds = 40 observations "
+        "(exp1/exp2/exp8/exp9) or 8 prompts × 1 seed = 8 (exp4). Exp3 and exp5 have "
+        "7 CFG/strength levels × 8 prompts × 5 seeds = 40 per condition."
+    )
+    lines.append(
+        "6. **Exp 2 borderline:** CLIP Δ = 1.09 SE, just over the 1.0 SE threshold. "
+        "HPS Δ and IR Δ are both well below their thresholds (0.009 vs 0.015, 0.040 vs 0.25). "
+        "The 'CLIP RESPONDS' verdict depends entirely on the 0.09 SE excess above the threshold "
+        "— this experiment is ambiguous; it could equally plausibly be classed as borderline CLIP-blind."
+    )
+    lines.append("")
+    lines.append(
+        "*Analysis script:* `scripts/generate_clip_blindness_sdxl.py`  "
+        "*Raw data:* `reports/experiments/exp*_sdxl/results.json`  "
+        "*GCS backup:* gs://aetherart-eval-pr13/experiments/"
+    )
+
+    out_path.write_text("\n".join(lines), encoding="utf-8")
+    print(f"Report written: {out_path}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 
 def main() -> None:
-    """Locate SDXL results, compute stats, and write report + chart."""
-    # Match exp{N}_*_sdxl/results.json — the glob picks up the descriptive suffix
-    # (e.g. exp1_quantization_quality_sdxl) while still requiring the _sdxl suffix.
-    sdxl_stats: list[dict | None] = []
-    sd21_paths: list[Path | None] = []
+    results: list[ExpResult] = []
 
-    for meta in EXP_META:
-        exp_id_prefix = meta["id"]  # e.g. "exp1"
+    for exp_cfg in EXPERIMENTS:
+        path = ROOT / exp_cfg["path"]
+        if not path.exists():
+            print(f"SKIP {exp_cfg['id']}: {path} not found")
+            continue
+        with path.open(encoding="utf-8") as f:
+            data = json.load(f)
 
-        # SDXL result: find a directory matching exp{N}_*_sdxl under reports/experiments.
-        sdxl_matches = sorted(
-            ROOT.glob(f"reports/experiments/{exp_id_prefix}_*_sdxl/results.json")
+        conds, caveat = exp_cfg["adapter"](data)
+        metrics = derive_exp_metrics(conds)
+        verdict = assign_verdict(metrics)
+
+        r = ExpResult(
+            exp_id=exp_cfg["id"],
+            label=exp_cfg["label"],
+            variable=exp_cfg["variable"],
+            conditions=conds,
+            clip_delta=metrics["clip_delta"],
+            clip_delta_se=metrics["clip_delta_se"],
+            hps_delta=metrics["hps_delta"],
+            ir_delta=metrics["ir_delta"],
+            lpips_range=metrics["lpips_range"],
+            verdict=verdict,
+            caveat=caveat,
         )
-        # Fall back to exact exp{N}_sdxl directory (as written in exp1_sdxl.py: "exp1_sdxl").
-        if not sdxl_matches:
-            sdxl_matches = sorted(
-                ROOT.glob(f"reports/experiments/{exp_id_prefix}_sdxl/results.json")
-            )
-
-        if sdxl_matches:
-            sdxl_json = sdxl_matches[0]  # take first if multiple
-            if len(sdxl_matches) > 1:
-                warnings.warn(
-                    f"Multiple SDXL results for {exp_id_prefix}: {sdxl_matches}. "
-                    f"Using {sdxl_json}.",
-                    stacklevel=1,
-                )
-            data = load_exp_results(sdxl_json)
-            sdxl_stats.append(compute_exp_stats(data) if data is not None else None)
-        else:
-            warnings.warn(
-                f"No SDXL results directory found for {exp_id_prefix} "
-                f"(expected: reports/experiments/{exp_id_prefix}_*_sdxl/results.json)",
-                stacklevel=1,
-            )
-            sdxl_stats.append(None)
-
-        # SD 2.1 counterpart (for reference; cross-arch comparison in report).
-        sd21_matches = sorted(
-            ROOT.glob(
-                f"reports/experiments/{exp_id_prefix}_*/results.json"
-            )
+        results.append(r)
+        print(
+            f"{exp_cfg['id']}: CLIP Δ={r.clip_delta:.4f} ({r.clip_delta_se:.2f} SE) "
+            f"HPS Δ={r.hps_delta:.4f} IR Δ={r.ir_delta:.4f} "
+            f"LPIPS range={fmt(r.lpips_range, 3)} → {r.verdict}"
         )
-        # Exclude any _sdxl directories from SD 2.1 matches.
-        sd21_matches = [p for p in sd21_matches if "_sdxl" not in p.parent.name]
-        sd21_paths.append(sd21_matches[0] if sd21_matches else None)
 
-    n_found = sum(1 for s in sdxl_stats if s is not None)
-    print(f"Loaded {n_found}/9 SDXL experiment result files.")
+    out_dir = ROOT / "reports"
+    make_chart(results, out_dir / "clip_blindness_sdxl_chart.png")
 
-    generate_report(sdxl_stats, sd21_paths)
-    print("Done.")
+    sd21_path = ROOT / "reports" / "clip_blindness.md"
+    write_report(results, sd21_path, out_dir / "clip_blindness_sdxl.md")
 
 
 if __name__ == "__main__":

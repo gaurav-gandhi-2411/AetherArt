@@ -1,0 +1,789 @@
+{
+  "experiment": "exp4_sdxl",
+  "date": "2026-06-02",
+  "model": "stabilityai/stable-diffusion-xl-base-1.0",
+  "size": 1024,
+  "schedulers": [
+    "DDIM",
+    "DPM",
+    "EulerA",
+    "LMS"
+  ],
+  "steps": 30,
+  "cfg": 7.5,
+  "seed": 42,
+  "scorers": [
+    "clip",
+    "hps",
+    "imagereward",
+    "lpips"
+  ],
+  "pairs": [
+    "DDIM-DPM",
+    "DDIM-EulerA",
+    "DDIM-LMS",
+    "DPM-EulerA",
+    "DPM-LMS",
+    "EulerA-LMS"
+  ],
+  "sched_agg": {
+    "DDIM": {
+      "mean_clip": 0.317454625,
+      "se_clip": 0.008955445721414228,
+      "mean_hps": 0.2585755,
+      "mean_ir": 0.480887625,
+      "mean_lat": 21.2085,
+      "n": 8
+    },
+    "DPM": {
+      "mean_clip": 0.311573625,
+      "se_clip": 0.010201000824389557,
+      "mean_hps": 0.258575375,
+      "mean_ir": 0.551812625,
+      "mean_lat": 16.664375,
+      "n": 8
+    },
+    "EulerA": {
+      "mean_clip": 0.3111595,
+      "se_clip": 0.009159607902556278,
+      "mean_hps": 0.256958125,
+      "mean_ir": 0.597281625,
+      "mean_lat": 16.605249999999998,
+      "n": 8
+    },
+    "LMS": {
+      "mean_clip": 0.3156205,
+      "se_clip": 0.009543041112694182,
+      "mean_hps": 0.25950625,
+      "mean_ir": 0.537075375,
+      "mean_lat": 16.577875,
+      "n": 8
+    }
+  },
+  "pair_agg": {
+    "DDIM-DPM": {
+      "mean_lpips": 0.273092,
+      "se_lpips": 0.041669434777955476,
+      "n": 8
+    },
+    "DDIM-EulerA": {
+      "mean_lpips": 0.67585025,
+      "se_lpips": 0.03801956995734001,
+      "n": 8
+    },
+    "DDIM-LMS": {
+      "mean_lpips": 0.280067,
+      "se_lpips": 0.03158978737379263,
+      "n": 8
+    },
+    "DPM-EulerA": {
+      "mean_lpips": 0.67688425,
+      "se_lpips": 0.041526506394259796,
+      "n": 8
+    },
+    "DPM-LMS": {
+      "mean_lpips": 0.226833125,
+      "se_lpips": 0.042444770668749854,
+      "n": 8
+    },
+    "EulerA-LMS": {
+      "mean_lpips": 0.678658375,
+      "se_lpips": 0.04154320882524323,
+      "n": 8
+    }
+  },
+  "n_prompts": 8,
+  "total_images": 32,
+  "pair_rows": [
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.444453
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.161212
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.199042
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.467437
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.23134
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.193723
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.277949
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "DPM",
+      "pair": "DDIM-DPM",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.20958
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.668353
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.580654
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.643488
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.752701
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.908018
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.596944
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.639034
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "EulerA",
+      "pair": "DDIM-EulerA",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.61761
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.456337
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.137187
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.253592
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.32806
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.272582
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.273526
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.27477
+    },
+    {
+      "scheduler_a": "DDIM",
+      "scheduler_b": "LMS",
+      "pair": "DDIM-LMS",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.244482
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.674404
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.577605
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.641981
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.748988
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.935458
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.589296
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.630532
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "EulerA",
+      "pair": "DPM-EulerA",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.61681
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.221284
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.07542
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.215606
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.481758
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.123045
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.267576
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.207734
+    },
+    {
+      "scheduler_a": "DPM",
+      "scheduler_b": "LMS",
+      "pair": "DPM-LMS",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.222242
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p01_portrait",
+      "lpips_value": 0.688293
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p02_landscape",
+      "lpips_value": 0.581233
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p03_abstract",
+      "lpips_value": 0.645841
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p04_text",
+      "lpips_value": 0.747714
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p05_texture",
+      "lpips_value": 0.933468
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p06_arch",
+      "lpips_value": 0.572592
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p07_hands",
+      "lpips_value": 0.642627
+    },
+    {
+      "scheduler_a": "EulerA",
+      "scheduler_b": "LMS",
+      "pair": "EulerA-LMS",
+      "prompt_id": "p08_crowd",
+      "lpips_value": 0.617499
+    }
+  ],
+  "results": [
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "ukiyo-e portrait of an elderly woman, dramatic light, woodblock print style",
+      "seed": 42,
+      "latency_s": 52.7,
+      "clip_score": 0.335582,
+      "hps_score": 0.32666,
+      "ir_score": -0.028127,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p01_portrait_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "ukiyo-e misty mountain valley at sunrise, pine forest, golden hour, woodblock print",
+      "seed": 42,
+      "latency_s": 17.136,
+      "clip_score": 0.32928,
+      "hps_score": 0.288574,
+      "ir_score": 1.556537,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p02_landscape_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "ukiyo-e geometric abstract composition, intersecting circles and triangles, color blocks",
+      "seed": 42,
+      "latency_s": 16.651,
+      "clip_score": 0.269828,
+      "hps_score": 0.226929,
+      "ir_score": 0.44728,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p03_abstract_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p04_text",
+      "prompt_text": "ukiyo-e vintage print with bold lettering, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 16.701,
+      "clip_score": 0.304832,
+      "hps_score": 0.221436,
+      "ir_score": 0.798561,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p04_text_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p05_texture",
+      "prompt_text": "ukiyo-e extreme close-up of rough stone wall, water drops, micro detail",
+      "seed": 42,
+      "latency_s": 16.599,
+      "clip_score": 0.324959,
+      "hps_score": 0.203613,
+      "ir_score": -1.887221,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p05_texture_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p06_arch",
+      "prompt_text": "ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light",
+      "seed": 42,
+      "latency_s": 16.568,
+      "clip_score": 0.315585,
+      "hps_score": 0.261475,
+      "ir_score": 0.839317,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p06_arch_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p07_hands",
+      "prompt_text": "ukiyo-e two hands clasped together, natural light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.622,
+      "clip_score": 0.304974,
+      "hps_score": 0.249146,
+      "ir_score": 0.743309,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p07_hands_seed42.png"
+    },
+    {
+      "scheduler": "DDIM",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "ukiyo-e busy street market in Edo, dozens of people, lantern light, night scene",
+      "seed": 42,
+      "latency_s": 16.691,
+      "clip_score": 0.354597,
+      "hps_score": 0.290771,
+      "ir_score": 1.377445,
+      "image_path": "reports/experiments/exp4_sdxl/images/DDIM/p08_crowd_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "ukiyo-e portrait of an elderly woman, dramatic light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.644,
+      "clip_score": 0.331263,
+      "hps_score": 0.311035,
+      "ir_score": 0.746675,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p01_portrait_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "ukiyo-e misty mountain valley at sunrise, pine forest, golden hour, woodblock print",
+      "seed": 42,
+      "latency_s": 16.626,
+      "clip_score": 0.329392,
+      "hps_score": 0.294922,
+      "ir_score": 1.590925,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p02_landscape_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "ukiyo-e geometric abstract composition, intersecting circles and triangles, color blocks",
+      "seed": 42,
+      "latency_s": 16.717,
+      "clip_score": 0.267725,
+      "hps_score": 0.233521,
+      "ir_score": 0.276989,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p03_abstract_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p04_text",
+      "prompt_text": "ukiyo-e vintage print with bold lettering, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 16.677,
+      "clip_score": 0.303634,
+      "hps_score": 0.219482,
+      "ir_score": 0.957463,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p04_text_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p05_texture",
+      "prompt_text": "ukiyo-e extreme close-up of rough stone wall, water drops, micro detail",
+      "seed": 42,
+      "latency_s": 16.742,
+      "clip_score": 0.311786,
+      "hps_score": 0.206055,
+      "ir_score": -1.943966,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p05_texture_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p06_arch",
+      "prompt_text": "ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light",
+      "seed": 42,
+      "latency_s": 16.696,
+      "clip_score": 0.302746,
+      "hps_score": 0.273193,
+      "ir_score": 0.995343,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p06_arch_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p07_hands",
+      "prompt_text": "ukiyo-e two hands clasped together, natural light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.592,
+      "clip_score": 0.285629,
+      "hps_score": 0.238647,
+      "ir_score": 0.465894,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p07_hands_seed42.png"
+    },
+    {
+      "scheduler": "DPM",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "ukiyo-e busy street market in Edo, dozens of people, lantern light, night scene",
+      "seed": 42,
+      "latency_s": 16.621,
+      "clip_score": 0.360414,
+      "hps_score": 0.291748,
+      "ir_score": 1.325178,
+      "image_path": "reports/experiments/exp4_sdxl/images/DPM/p08_crowd_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "ukiyo-e portrait of an elderly woman, dramatic light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.565,
+      "clip_score": 0.300222,
+      "hps_score": 0.289307,
+      "ir_score": 0.528109,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p01_portrait_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "ukiyo-e misty mountain valley at sunrise, pine forest, golden hour, woodblock print",
+      "seed": 42,
+      "latency_s": 16.631,
+      "clip_score": 0.344187,
+      "hps_score": 0.30835,
+      "ir_score": 1.347731,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p02_landscape_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "ukiyo-e geometric abstract composition, intersecting circles and triangles, color blocks",
+      "seed": 42,
+      "latency_s": 16.63,
+      "clip_score": 0.274824,
+      "hps_score": 0.236694,
+      "ir_score": -0.17021,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p03_abstract_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p04_text",
+      "prompt_text": "ukiyo-e vintage print with bold lettering, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 16.638,
+      "clip_score": 0.281184,
+      "hps_score": 0.233154,
+      "ir_score": 1.148135,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p04_text_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p05_texture",
+      "prompt_text": "ukiyo-e extreme close-up of rough stone wall, water drops, micro detail",
+      "seed": 42,
+      "latency_s": 16.537,
+      "clip_score": 0.30881,
+      "hps_score": 0.204102,
+      "ir_score": -1.412524,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p05_texture_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p06_arch",
+      "prompt_text": "ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light",
+      "seed": 42,
+      "latency_s": 16.607,
+      "clip_score": 0.32326,
+      "hps_score": 0.264893,
+      "ir_score": 0.825222,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p06_arch_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p07_hands",
+      "prompt_text": "ukiyo-e two hands clasped together, natural light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.598,
+      "clip_score": 0.312223,
+      "hps_score": 0.242554,
+      "ir_score": 0.795492,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p07_hands_seed42.png"
+    },
+    {
+      "scheduler": "EulerA",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "ukiyo-e busy street market in Edo, dozens of people, lantern light, night scene",
+      "seed": 42,
+      "latency_s": 16.636,
+      "clip_score": 0.344566,
+      "hps_score": 0.276611,
+      "ir_score": 1.716298,
+      "image_path": "reports/experiments/exp4_sdxl/images/EulerA/p08_crowd_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p01_portrait",
+      "prompt_text": "ukiyo-e portrait of an elderly woman, dramatic light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.574,
+      "clip_score": 0.331032,
+      "hps_score": 0.313232,
+      "ir_score": 0.871484,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p01_portrait_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p02_landscape",
+      "prompt_text": "ukiyo-e misty mountain valley at sunrise, pine forest, golden hour, woodblock print",
+      "seed": 42,
+      "latency_s": 16.492,
+      "clip_score": 0.329409,
+      "hps_score": 0.295166,
+      "ir_score": 1.560627,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p02_landscape_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p03_abstract",
+      "prompt_text": "ukiyo-e geometric abstract composition, intersecting circles and triangles, color blocks",
+      "seed": 42,
+      "latency_s": 16.653,
+      "clip_score": 0.265366,
+      "hps_score": 0.235596,
+      "ir_score": -0.267799,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p03_abstract_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p04_text",
+      "prompt_text": "ukiyo-e vintage print with bold lettering, retro typography, worn paper texture",
+      "seed": 42,
+      "latency_s": 16.524,
+      "clip_score": 0.307581,
+      "hps_score": 0.223633,
+      "ir_score": 0.768364,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p04_text_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p05_texture",
+      "prompt_text": "ukiyo-e extreme close-up of rough stone wall, water drops, micro detail",
+      "seed": 42,
+      "latency_s": 16.613,
+      "clip_score": 0.309873,
+      "hps_score": 0.203735,
+      "ir_score": -1.823336,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p05_texture_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p06_arch",
+      "prompt_text": "ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light",
+      "seed": 42,
+      "latency_s": 16.602,
+      "clip_score": 0.331703,
+      "hps_score": 0.25293,
+      "ir_score": 0.887232,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p06_arch_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p07_hands",
+      "prompt_text": "ukiyo-e two hands clasped together, natural light, woodblock print style",
+      "seed": 42,
+      "latency_s": 16.582,
+      "clip_score": 0.296588,
+      "hps_score": 0.251465,
+      "ir_score": 0.81198,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p07_hands_seed42.png"
+    },
+    {
+      "scheduler": "LMS",
+      "prompt_id": "p08_crowd",
+      "prompt_text": "ukiyo-e busy street market in Edo, dozens of people, lantern light, night scene",
+      "seed": 42,
+      "latency_s": 16.583,
+      "clip_score": 0.353412,
+      "hps_score": 0.300293,
+      "ir_score": 1.488051,
+      "image_path": "reports/experiments/exp4_sdxl/images/LMS/p08_crowd_seed42.png"
+    }
+  ]
+}
