@@ -171,6 +171,14 @@ PYEOF
 echo "RUNNING" | gcloud storage cp - "${GCS_BUCKET}/STATUS"
 gcloud storage cp "$LOG_FILE" "${GCS_BUCKET}/eval_run.log" || true
 
+# ── Pull already-completed experiment results from GCS ────────────────────────
+# Avoids re-running exp1-5 if this is a resume after a mid-run failure.
+echo "Pulling already-completed experiment results from GCS..."
+gcloud storage cp -r "/experiments" "/reports/" 2>/dev/null || true
+DONE_EXPS=$(ls "/reports/experiments/" 2>/dev/null | grep '_sdxl' | tr '
+' ' ')
+echo "Already done: ${DONE_EXPS:-none}"
+
 # ── Run experiments ───────────────────────────────────────────────────────────
 EXPS=(
     exp1_sdxl
