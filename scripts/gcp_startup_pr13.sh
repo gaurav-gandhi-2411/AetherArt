@@ -181,14 +181,16 @@ DONE_EXPS=$(find "${REPO_DIR}/reports/experiments" -maxdepth 1 -name "*_sdxl" -t
 echo "Already done: ${DONE_EXPS:-none}"
 
 # ── Run experiments ───────────────────────────────────────────────────────────
+# exp6 (LoRA rank) and exp7 (LoRA data size) require training data (data/lora/ukiyo-e/images/)
+# not committed to the git repo. Training fails at step 0 with FileNotFoundError.
+# Budget constraint (~$8 remaining) also prevents 4-8h training runs.
+# These are documented as N/A in clip_blindness_sdxl.md.
 EXPS=(
     exp1_sdxl
     exp2_sdxl
     exp3_sdxl
     exp4_sdxl
     exp5_sdxl
-    exp6_sdxl
-    exp7_sdxl
     exp8_sdxl
     exp9_sdxl
 )
