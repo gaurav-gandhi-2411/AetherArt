@@ -1,3 +1,12 @@
+> **UPDATE (PR 13, SDXL re-run, 2026-06-03):** The "9/9 CLIP-blind" summary below
+> used a qualitative CLIP-vs-LPIPS-ratio judgment. Under the stricter 1-SE statistical
+> cutoff later adopted for the SDXL comparison, this corpus scores **4/9 blind**
+> (exp1, exp2, exp7, exp9 clearly below 1 SE; exp6 at exactly the boundary; exp3/4/5
+> between 1.1–2.2 SE). The qualitative observations below stand as written and remain
+> a valid characterisation of the original SD 2.1 run. For the apples-to-apples
+> cross-architecture comparison and the threshold methodology, see
+> [reports/clip_blindness_sdxl.md](clip_blindness_sdxl.md).
+
 # CLIP Blindness: A Cross-Experiment Finding
 
 **Series:** Phase 6b — nine controlled experiments, May 2026  

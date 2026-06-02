@@ -138,6 +138,18 @@ This was the sharpest illustration in the series of why CLIP cannot guide LoRA t
 
 ---
 
+## June 2026 — Phase 7: SDXL CLIP-blindness replication (PR 13)
+
+Re-ran all 9 Phase 6b experiments on SDXL base (`stabilityai/stable-diffusion-xl-base-1.0`) on a GCP L4. L4 stockouts across the ~11 h run required three separate VMs; exp6 and exp7 were skipped due to a setup gap (training dataset not staged on the eval VM — recoverable, not lost).
+
+Result: **WEAK REPLICATION — 3/7 experiments CLIP-blind on SDXL** (exp1 quantization: 0.24 SE; exp4 scheduler: 0.67 SE; exp9 trigger token: 0.84 SE). SDXL CLIP responds to semantically meaningful sweeps that SD 2.1 missed — CFG scale jumped from 1.10 SE on SD 2.1 to 7.01 SE on SDXL; LoRA alpha from 4.00 SE to 7.21 SE. The blindness that remains on SDXL is confined to rendering-level changes that don't alter semantic content.
+
+The more important finding came from comparing baselines. Re-running forced a re-examination of the SD 2.1 "9/9 blind" claim: that headline used a qualitative CLIP-vs-LPIPS ratio judgment, not a hard threshold. Under the same 1-SE statistical cutoff applied to SDXL, the SD 2.1 corpus recomputes to **4/9 blind** — exp3 (1.10 SE), exp4 (1.80 SE), and exp5 (2.20 SE) were called blind qualitatively because LPIPS was large, not because CLIP was statistically flat. The sensitivity table in `reports/clip_blindness_sdxl.md` shows SDXL is less blind than SD 2.1 at every threshold tested (3–5/7 vs 4–8/9), so the direction of partial replication is robust, but the SD 2.1 baseline headline was overstated.
+
+**Corrected headline:** CLIP-blindness is real on SD 2.1 for rendering-level changes (quantization, trigger token) and borderline for semantic sweeps (negative prompt, scheduler). On SDXL it is substantially weaker: the architecture's stronger CLIP alignment means semantic sweeps register clearly above noise. The finding is architecture-dependent and more nuanced than first reported.
+
+---
+
 ## Phase 7 carry-over — deferred ruff violations
 
 <!-- TODO(PR-14): ruff cleanup deferred — fold ruff --fix --unsafe-fixes into PR 14 (coverage threshold enforcement). These are stylistic, not bugs. -->

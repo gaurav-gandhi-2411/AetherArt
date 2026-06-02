@@ -39,6 +39,18 @@ extend-ignore = ["E203"]
 "scripts/experiments/exp7_lora_data_size.py" = ["E402", "E501"]
 "scripts/experiments/exp8_lora_alpha.py" = ["E402", "E501"]
 "scripts/experiments/exp9_lora_trigger.py" = ["E402", "E501"]
+# SDXL ports — same ignore rationale as SD 2.1 originals
+"scripts/experiments/exp1_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp2_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp3_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp4_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp5_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp6_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp7_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp8_sdxl.py" = ["E402", "E501"]
+"scripts/experiments/exp9_sdxl.py" = ["E402", "E501"]
+# E501: markdown table rows and schema tuples can't wrap cleanly at 100 chars
+"scripts/generate_clip_blindness_sdxl.py" = ["E402", "E501"]
 
 [tool.mypy]
 python_version = "3.10"
