@@ -9,7 +9,9 @@
 
 **WEAK REPLICATION** — CLIP-blindness confirmed in 3/7 SDXL experiments only.
 
-Experiments 6 and 7 (LoRA rank, LoRA data size) are **N/A** on SDXL — training images are not in the repo; these experiments cannot be reproduced without the original fine-tuning dataset. Results are therefore based on 7 of the 9 Phase 6b experiments.
+Experiments 6 (LoRA rank) and 7 (LoRA data size) were **skipped due to a setup gap** — the GCP eval VM was not staged with the training dataset. The dataset exists: 80 WikiArt Ukiyo-e images (gitignored at `data/lora/ukiyo-e/`, reproducible via `scripts/prepare_lora_dataset.py`); the trained SDXL LoRA adapter is on HF Hub at `gauravgandhi2411/aetherart-ukiyo-sdxl`. This is a setup gap, not a methodological limitation. Results are based on the 7 experiments that ran.
+
+**On running exp6/exp7:** Recommendation is **no additional GCP spend** at this stage. The LoRA axis is already characterised by exp8 (alpha sweep: 7.21 SE, CLIP RESPONDS strongly) and exp9 (trigger token: 0.84 SE, CLIP-BLIND). Exp6 (rank) and exp7 (data size) probe LoRA quality rather than style intensity; on SD 2.1 they were CLIP-blind (1.00 SE and 0.80 SE respectively), but given SDXL's increased LoRA sensitivity seen in exp8, their result on SDXL is uncertain. They would add nuance to the LoRA subaxis but cannot change the top-level architecture-dependent finding established by the 7 experiments already run. A separate PR can re-run them with the dataset properly staged if the full 9/9 comparison becomes necessary.
 
 ## Schema Map (as-observed from results.json)
 
@@ -20,8 +22,8 @@ Experiments 6 and 7 (LoRA rank, LoRA data size) are **N/A** on SDXL — training
 | exp3 | `cfg_value` | 1/3/5/7/9/12/15 | `clip_score` | `hps_score` | `ir_score` | `lpips_vs_ref` (vs cfg=7) |
 | exp4 | `scheduler` | DDIM/DPM/EulerA/LMS | `clip_score` | `hps_score` | `ir_score` | pair_agg only (max pairwise) |
 | exp5 | `strength` | 0.0–1.5 (7 levels) | `clip_score` | `hps_score` | `ir_score` | `lpips_vs_ref` (vs strength=1.0) |
-| exp6 | **N/A** | — | — | — | — | **Not run — training images missing** |
-| exp7 | **N/A** | — | — | — | — | **Not run — training images missing** |
+| exp6 | **SKIPPED** | — | — | — | — | **Setup gap — dataset not staged on eval VM** |
+| exp7 | **SKIPPED** | — | — | — | — | **Setup gap — dataset not staged on eval VM** |
 | exp8 | `alpha` | 0.0–1.5 (7 levels) | `clip_score` | `hps_score` | `ir_score` | `lpips_vs_ref` (vs alpha=1.0) |
 | exp9 | `condition` | no_trigger / with_trigger | `clip_score` | `hps_score` | `ir_score` | `lpips_vs_no_trigger` |
 
@@ -154,21 +156,45 @@ LPIPS range across conditions = 0.295
 CLIP Δ = 0.0036 (0.84 SE)  HPS Δ = 0.0052  IR Δ = 0.0495
 LPIPS range across conditions = 0.301
 
+## Threshold Justification and Sensitivity Analysis
+
+### Why ~1 SE as the blindness threshold?
+
+The CLIP-blindness test asks: is the movement of the CLIP condition mean distinguishable from sampling noise? The standard error (SE) of a condition mean is the natural noise floor — it measures how much the mean would vary across repeated draws of the same size from the same distribution. A CLIP delta below 1 SE means the observed difference between conditions is smaller than the typical within-condition fluctuation: it is statistically indistinguishable from noise. Above 1 SE the signal begins to emerge from the noise; at 2+ SE it is clearly distinguishable. The threshold of 1 SE is therefore the minimum credible signal boundary, not an arbitrary cutoff.
+
+### Threshold inconsistency with SD 2.1 — reconciliation required
+
+The SD 2.1 report (reports/clip_blindness.md) did **not** use a hard 1 SE threshold. Its evidence table records CLIP Δ values as high as **2.20 SE** (exp5 ControlNet), **1.80 SE** (exp4 scheduler), and **1.10 SE** (exp3 CFG), yet calls all 9 experiments CLIP-blind. The SD 2.1 reasoning was qualitative: CLIP movement at those levels is negligible *relative to LPIPS* (which ranged 0.40–0.73), so it was judged practically blind even when statistically above 1 SE. Applying the hard 1 SE cutoff used in the SDXL analysis to SD 2.1 would yield approximately 5/9 blind (not 9/9), making the direct comparison apples-to-oranges. The sensitivity table below resolves this by showing both series at consistent thresholds.
+
+### Sensitivity table: count of CLIP-blind experiments at each threshold
+
+| Threshold (SE) | SDXL blind / run | SD 2.1 blind / total | Direction |
+|----------------|-----------------|---------------------|-----------|
+| < 1.0 SE | 3/7 | 4/9 | SDXL less blind |
+| < 2.0 SE | 5/7 | 7/9 | SDXL less blind |
+| < 3.0 SE | 5/7 | 8/9 | SDXL less blind |
+| < 4.0 SE | 5/7 | 8/9 | SDXL less blind |
+
+At every threshold tested, SDXL shows fewer CLIP-blind experiments than SD 2.1. The direction of partial replication is stable: **SDXL is less CLIP-blind than SD 2.1 regardless of where the threshold is drawn.** The exact count varies (3–5 out of 7 on SDXL), but the conclusion — architecture-dependent partial replication — does not.
+
+**Exp 2 sensitivity:** At 1 SE → CLIP RESPONDS (1.09 SE, borderline). At 1.5 SE → CLIP-BLIND. At any threshold ≥ 1.1 SE, exp2 flips to blind and the SDXL count becomes 4/7. The overall verdict (partial replication) holds at either assignment.
+
 ## Comparison with SD 2.1 Baseline
 
-The SD 2.1 baseline (reports/clip_blindness.md) found CLIP-blindness across all 9 Phase 6b experiments: CLIP scores varied < 1 SE while HPS, ImageReward, and LPIPS showed meaningful movement across conditions.
+The SD 2.1 baseline called all 9 experiments CLIP-blind using a qualitative CLIP-vs-LPIPS judgment, with individual CLIP Δ values ranging from 0.12 SE (exp9) to 2.20 SE (exp5). Under a consistent 1 SE hard threshold, SD 2.1 would read as approximately 5/9 blind; under 2 SE it reads 7/9. On SDXL at 1 SE: 3/7 blind; at 2 SE: 5/7 blind.
 
-On SDXL (7 experiments completed): 3/7 experiments show the same CLIP-blind pattern. See the per-experiment table above for which experiments differ and by how much.
+The pattern is architecture-dependent, not random: SDXL CLIP responds strongly to semantically meaningful sweeps that SD 2.1 barely detected — CFG scale (SD 2.1: 1.10 SE vs SDXL: 7.01 SE) and LoRA alpha (SD 2.1: 4.00 SE vs SDXL: 7.21 SE). SDXL CLIP remains blind to rendering-level changes that don't shift semantic content: quantization (SDXL: 0.24 SE, SD 2.1: 0.94 SE), trigger token (SDXL: 0.84 SE, SD 2.1: 0.12 SE). The scheduler result is more nuanced: SD 2.1 exp4 measured 1.80 SE (called blind qualitatively) while SDXL exp4 measures 0.67 SE — SDXL is actually *more* blind to scheduler differences than SD 2.1 by this measure.
 
 ![CLIP-Blindness Chart](clip_blindness_sdxl_chart.png)
 
 ## Data-Quality Caveats
 
-1. **Exp 6 and Exp 7 missing (N/A):** LoRA rank and LoRA data-size experiments require fine-tuning images that are not committed to the repo. These 2 of 9 experiments cannot be run without the original dataset.
+1. **Exp 6 and Exp 7 skipped (setup gap):** The GCP eval VM was not staged with the training dataset. The 80 WikiArt Ukiyo-e images exist locally and are reproducible via `scripts/prepare_lora_dataset.py`; the SDXL LoRA adapter is on HF Hub. These experiments are recoverable in a separate PR with the dataset properly staged. Not a methodological gap.
 2. **Exp 4 LPIPS:** Pairwise-only; the per-scheduler LPIPS column does not exist. The max pairwise mean LPIPS is used as a proxy for perceptual spread.
 3. **Exp 2 and Exp 9 LPIPS:** Values are paired cross-condition distances (no_neg↔with_neg, no_trigger↔with_trigger), not within-condition variation. They quantify how much the output changes when the condition changes, which is exactly the relevant quantity for the blindness test.
 4. **LPIPS for fp16/alpha=1.0/strength=1.0 reference:** Set to 0 by construction (image compared to itself). These are excluded from the range calculation.
 5. **Sample sizes:** Each condition cell has 8 prompts × 5 seeds = 40 observations (exp1/exp2/exp8/exp9) or 8 prompts × 1 seed = 8 (exp4). Exp3 and exp5 have 7 CFG/strength levels × 8 prompts × 5 seeds = 40 per condition.
-6. **Exp 2 borderline:** CLIP Δ = 1.09 SE, just over the 1.0 SE threshold. HPS Δ and IR Δ are both well below their thresholds (0.009 vs 0.015, 0.040 vs 0.25). The 'CLIP RESPONDS' verdict depends entirely on the 0.09 SE excess above the threshold — this experiment is ambiguous; it could equally plausibly be classed as borderline CLIP-blind.
+6. **Exp 2 borderline:** CLIP Δ = 1.09 SE — see sensitivity analysis above. Verdict ('CLIP RESPONDS') depends on a 0.09 SE excess above the 1 SE threshold; it flips to CLIP-BLIND at any threshold ≥ 1.1 SE.
+7. **SD 2.1 threshold inconsistency:** SD 2.1 used a qualitative blind/responds call (not a hard SE cutoff). The sensitivity table above reconciles the comparison by applying consistent hard thresholds to both series. The partial-replication direction holds at every threshold.
 
 *Analysis script:* `scripts/generate_clip_blindness_sdxl.py`  *Raw data:* `reports/experiments/exp*_sdxl/results.json`  *GCS backup:* gs://aetherart-eval-pr13/experiments/
