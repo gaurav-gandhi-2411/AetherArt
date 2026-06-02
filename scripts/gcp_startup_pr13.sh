@@ -1,5 +1,5 @@
 #!/bin/bash
-# gcp_startup_pr13.sh — PR 13 SDXL eval run startup script (v2)
+# gcp_startup_pr13.sh — PR 13 SDXL eval run startup script (v3)
 #
 # Fixed from v1:
 #   - REPO_DIR uses /tmp/ (always exists on DLVM; /home/user/ may not)
@@ -8,11 +8,13 @@
 #   - Use gcloud storage instead of gsutil (no Python dependency)
 #   - Teardown trap pushes log + partial results before VM deletion
 #   - Remove dead EXIT_CODE check (set -e exits immediately on failure)
+# v3: Auto-detect INSTANCE_NAME and ZONE from GCP metadata server (zone-agnostic)
 set -euo pipefail
 
-INSTANCE_NAME="aetherart-eval-001"
-ZONE="us-central1-a"
 PROJECT="review-iq-prod"
+# Auto-detect instance name and zone from GCP metadata server (works in any zone)
+INSTANCE_NAME=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/name" -H "Metadata-Flavor: Google")
+ZONE=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/zone" -H "Metadata-Flavor: Google" | awk -F/ '{print $NF}')
 GCS_BUCKET="gs://aetherart-eval-pr13"
 BRANCH="feat/pr13-sdxl-experiments"
 LOG_FILE="/tmp/eval_run.log"
