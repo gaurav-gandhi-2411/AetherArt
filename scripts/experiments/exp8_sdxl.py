@@ -75,7 +75,7 @@ atexit.register(cleanup_gpu)
 
 MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0"
 LORA_REPO = "gauravgandhi2411/aetherart-ukiyo-sdxl"
-LORA_LOCAL = ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "pytorch_lora_weights.safetensors"
+LORA_LOCAL = ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "ukiyo-e-sdxl-lora.safetensors"
 
 ALPHA_VALUES = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5]
 ALPHA_REF = 1.0
@@ -146,7 +146,7 @@ def _ensure_lora() -> Path:
 
     LORA_LOCAL.parent.mkdir(parents=True, exist_ok=True)
     path = hf_hub_download(
-        LORA_REPO, "pytorch_lora_weights.safetensors", local_dir=str(LORA_LOCAL.parent)
+        LORA_REPO, "ukiyo-e-sdxl-lora.safetensors", local_dir=str(LORA_LOCAL.parent)
     )
     return Path(path)
 

@@ -73,7 +73,7 @@ TRAIN_SEED = 42
 LORA_REPO = "gauravgandhi2411/aetherart-ukiyo-sdxl"
 LORA_PATHS = {
     4: ROOT / "data" / "lora" / "ukiyo-e-sdxl-rank4" / "pytorch_lora_weights.safetensors",
-    8: ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "pytorch_lora_weights.safetensors",
+    8: ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "ukiyo-e-sdxl-lora.safetensors",
     16: ROOT / "data" / "lora" / "ukiyo-e-sdxl-rank16" / "pytorch_lora_weights.safetensors",
 }
 LORA_OUTPUT_DIRS = {
@@ -127,7 +127,7 @@ def _ensure_rank8_lora() -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     hf_hub_download(
         LORA_REPO,
-        "pytorch_lora_weights.safetensors",
+        "ukiyo-e-sdxl-lora.safetensors",
         local_dir=str(path.parent),
     )
     return path

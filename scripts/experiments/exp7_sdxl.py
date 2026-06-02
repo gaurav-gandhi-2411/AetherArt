@@ -92,7 +92,7 @@ LORA_DIRS = {
 LORA_PATHS = {
     20: ROOT / "data" / "lora" / "ukiyo-e-sdxl-data20" / "pytorch_lora_weights.safetensors",
     40: ROOT / "data" / "lora" / "ukiyo-e-sdxl-data40" / "pytorch_lora_weights.safetensors",
-    80: ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "pytorch_lora_weights.safetensors",
+    80: ROOT / "data" / "lora" / "ukiyo-e-sdxl" / "ukiyo-e-sdxl-lora.safetensors",
 }
 
 # 6 prompts: same as SD 2.1 exp7 (with "ukyowood" trigger prefix)
@@ -141,7 +141,7 @@ def _ensure_rank8_lora() -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     hf_hub_download(
         LORA_REPO,
-        "pytorch_lora_weights.safetensors",
+        "ukiyo-e-sdxl-lora.safetensors",
         local_dir=str(path.parent),
     )
     return path

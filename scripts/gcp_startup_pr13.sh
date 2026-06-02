@@ -136,7 +136,7 @@ from pathlib import Path
 
 local = Path("data/lora/ukiyo-e-sdxl")
 local.mkdir(parents=True, exist_ok=True)
-dest = local / "pytorch_lora_weights.safetensors"
+dest = local / "ukiyo-e-sdxl-lora.safetensors"
 
 if dest.exists():
     import os
@@ -145,7 +145,7 @@ if dest.exists():
 else:
     hf_hub_download(
         repo_id="gauravgandhi2411/aetherart-ukiyo-sdxl",
-        filename="pytorch_lora_weights.safetensors",
+        filename="ukiyo-e-sdxl-lora.safetensors",
         local_dir=str(local),
     )
     print(f"SDXL LoRA downloaded to {dest}")
@@ -173,7 +173,7 @@ for EXP in "${EXPS[@]}"; do
     echo "=== Running ${EXP} at $(date) ==="
     ${PYTHON} "scripts/experiments/${EXP}.py"
     # Push this experiment's results immediately so partial results survive a later failure
-    gcloud storage cp -r reports/experiments/ "${GCS_BUCKET}/" 2>/dev/null || true
+    gcloud storage cp -r reports/experiments "${GCS_BUCKET}/" 2>/dev/null || true
     gcloud storage cp "$LOG_FILE" "${GCS_BUCKET}/eval_run.log" || true
     echo "=== ${EXP} complete at $(date) ==="
 done
