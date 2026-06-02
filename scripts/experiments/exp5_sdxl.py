@@ -55,7 +55,11 @@ matplotlib.use("Agg")
 import lpips as lpips_lib  # noqa: E402
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
-from diffusers import AutoencoderKL, ControlNetModel, StableDiffusionXLControlNetPipeline  # noqa: E402
+from diffusers import (  # noqa: E402
+    AutoencoderKL,
+    ControlNetModel,
+    StableDiffusionXLControlNetPipeline,
+)
 from PIL import Image  # noqa: E402
 
 from aetherart import clip_scorer  # noqa: E402

@@ -19,7 +19,7 @@ import json
 import math
 import statistics
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -388,7 +388,6 @@ def make_chart(results: list[ExpResult], out_path: Path) -> None:
     lpips_vals = [r.lpips_range if r.lpips_range is not None else 0.0 for r in results]
 
     x = np.arange(len(labels))
-    width = 0.35
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     fig.suptitle("CLIP-Blindness Replication — SDXL", fontsize=14, fontweight="bold")
@@ -464,7 +463,7 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
     lines.append(overall)
     lines.append("")
     lines.append(
-        f"Experiments 6 (LoRA rank) and 7 (LoRA data size) were **skipped due to a setup gap** — "
+        "Experiments 6 (LoRA rank) and 7 (LoRA data size) were **skipped due to a setup gap** — "
         "the GCP eval VM was not staged with the training dataset. The dataset exists: "
         "80 WikiArt Ukiyo-e images (gitignored at `data/lora/ukiyo-e/`, reproducible via "
         "`scripts/prepare_lora_dataset.py`); the trained SDXL LoRA adapter is on HF Hub "
@@ -639,7 +638,7 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         "At every threshold tested, SDXL shows fewer CLIP-blind experiments than SD 2.1. "
         "The direction of partial replication is stable: **SDXL is less CLIP-blind than SD 2.1 "
         "regardless of where the threshold is drawn.** "
-        f"The exact count varies (3–5 out of 7 on SDXL), but the conclusion — "
+        "The exact count varies (3–5 out of 7 on SDXL), but the conclusion — "
         "architecture-dependent partial replication — does not."
     )
     lines.append("")

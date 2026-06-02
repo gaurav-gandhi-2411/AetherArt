@@ -63,7 +63,6 @@ from aetherart.visualization import (  # noqa: E402
     GREEN,
     GREY,
     ORANGE,
-    PURPLE,
     RED,
     TEAL,
     ChartCanvas,
@@ -403,7 +402,7 @@ canvas.save(str(CHARTS_DIR / "clip_by_alpha.png"))
 hps_max = float(hps_arr.max())
 canvas_hps = ChartCanvas(
     figsize=(9, 4.5),
-    title=f"HPS score vs LoRA alpha — SDXL Ukiyo-e",
+    title="HPS score vs LoRA alpha — SDXL Ukiyo-e",
     ylabel="Mean HPS score",
     top_margin_pct=0.22,
 )

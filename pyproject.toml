@@ -49,7 +49,8 @@ extend-ignore = ["E203"]
 "scripts/experiments/exp7_sdxl.py" = ["E402", "E501"]
 "scripts/experiments/exp8_sdxl.py" = ["E402", "E501"]
 "scripts/experiments/exp9_sdxl.py" = ["E402", "E501"]
-"scripts/generate_clip_blindness_sdxl.py" = ["E402"]
+# E501: markdown table rows and schema tuples can't wrap cleanly at 100 chars
+"scripts/generate_clip_blindness_sdxl.py" = ["E402", "E501"]
 
 [tool.mypy]
 python_version = "3.10"

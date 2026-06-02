@@ -64,7 +64,15 @@ from aetherart.eval_hps import release_hps, score_hps  # noqa: E402
 from aetherart.eval_ir import release_image_reward, score_image_reward  # noqa: E402
 from aetherart.gpu_hygiene import cleanup_gpu  # noqa: E402
 from aetherart.sdxl_pipeline import load_sdxl_base  # noqa: E402
-from aetherart.visualization import BLUE, GREEN, GREY, ORANGE, PURPLE, RED, ChartCanvas  # noqa: E402
+from aetherart.visualization import (  # noqa: E402
+    BLUE,
+    GREEN,
+    GREY,
+    ORANGE,
+    PURPLE,
+    RED,
+    ChartCanvas,
+)
 
 atexit.register(cleanup_gpu)
 
