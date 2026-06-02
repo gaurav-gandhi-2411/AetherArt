@@ -187,7 +187,7 @@ def run_cfg(cfg_val: float, pipe: StableDiffusionXLPipeline) -> list[dict]:
                     "clip_score": None,
                     "hps_score": None,
                     "ir_score": None,
-                    "lpips_vs_ref": None,   # vs cfg=CFG_REF
+                    "lpips_vs_ref": None,  # vs cfg=CFG_REF
                     "lpips_vs_prev": None,  # vs previous CFG value
                     "image_path": (img_dir / fname).relative_to(ROOT).as_posix(),
                 }

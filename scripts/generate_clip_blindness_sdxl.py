@@ -162,9 +162,7 @@ def adapter_exp2(data: dict) -> tuple[list[ConditionStats], str]:
     # lpips_vs_no_neg is a paired distance (same value for both conditions, per seed/prompt).
     # Compute mean cross-condition distance. Represent as: no_neg=0.0, with_neg=lp_mean
     # so that lpips_range = lp_mean - 0.0 = lp_mean.
-    conds, _ = _adapter_generic_condition(
-        rows, cond_key="condition", lpips_col="lpips_vs_no_neg"
-    )
+    conds, _ = _adapter_generic_condition(rows, cond_key="condition", lpips_col="lpips_vs_no_neg")
     lp_all = [r["lpips_vs_no_neg"] for r in rows]
     lp_mean = mean(lp_all)
     for c in conds:
@@ -366,9 +364,7 @@ def assign_verdict(metrics: dict) -> str:
     lr = metrics["lpips_range"]
 
     other_moves = (
-        hd > HPS_DELTA_MIN
-        or iд > IR_DELTA_MIN
-        or (lr is not None and lr > LPIPS_RANGE_MIN)
+        hd > HPS_DELTA_MIN or iд > IR_DELTA_MIN or (lr is not None and lr > LPIPS_RANGE_MIN)
     )
     if math.isnan(cds):
         return "INDETERMINATE (SE unavailable)"
@@ -393,7 +389,13 @@ def make_chart(results: list[ExpResult], out_path: Path) -> None:
     fig.suptitle("CLIP-Blindness Replication — SDXL", fontsize=14, fontweight="bold")
 
     bars1 = ax1.bar(x, clip_ses, width=0.6, color="#2563EB", alpha=0.85)
-    ax1.axhline(CLIP_BLIND_SE_THRESHOLD, color="red", linestyle="--", linewidth=1.5, label=f"Threshold ({CLIP_BLIND_SE_THRESHOLD} SE)")
+    ax1.axhline(
+        CLIP_BLIND_SE_THRESHOLD,
+        color="red",
+        linestyle="--",
+        linewidth=1.5,
+        label=f"Threshold ({CLIP_BLIND_SE_THRESHOLD} SE)",
+    )
     ax1.set_xlabel("Experiment")
     ax1.set_ylabel("CLIP Δ (SE units)")
     ax1.set_title("CLIP Score Movement Across Conditions")
@@ -403,7 +405,13 @@ def make_chart(results: list[ExpResult], out_path: Path) -> None:
     ax1.bar_label(bars1, fmt="%.2f", padding=2, fontsize=8)
 
     bars2 = ax2.bar(x, lpips_vals, width=0.6, color="#F97316", alpha=0.85)
-    ax2.axhline(LPIPS_RANGE_MIN, color="green", linestyle="--", linewidth=1.5, label=f"Min meaningful ({LPIPS_RANGE_MIN})")
+    ax2.axhline(
+        LPIPS_RANGE_MIN,
+        color="green",
+        linestyle="--",
+        linewidth=1.5,
+        label=f"Min meaningful ({LPIPS_RANGE_MIN})",
+    )
     ax2.set_xlabel("Experiment")
     ax2.set_ylabel("LPIPS range across conditions")
     ax2.set_title("Perceptual Variation Across Conditions")
@@ -435,7 +443,9 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
 
     # Overall verdict string
     if blind_count == total:
-        overall = f"**REPLICATES** — CLIP-blindness confirmed in all {total}/{total} SDXL experiments."
+        overall = (
+            f"**REPLICATES** — CLIP-blindness confirmed in all {total}/{total} SDXL experiments."
+        )
     elif blind_count >= total * 0.6:
         overall = (
             f"**PARTIAL REPLICATION** — CLIP-blindness confirmed in {blind_count}/{total} "
@@ -496,15 +506,87 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         "|-----|-----------------|-----------------|----------|---------|--------|-----------|"
     )
     schema_rows = [
-        ("exp1", "`condition`", "fp16 / int8 / nf4", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips` (0.0 for fp16=ref)"),
-        ("exp2", "`condition`", "no_neg / with_neg", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_no_neg`"),
-        ("exp3", "`cfg_value`", "1/3/5/7/9/12/15", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs cfg=7)"),
-        ("exp4", "`scheduler`", "DDIM/DPM/EulerA/LMS", "`clip_score`", "`hps_score`", "`ir_score`", "pair_agg only (max pairwise)"),
-        ("exp5", "`strength`", "0.0–1.5 (7 levels)", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs strength=1.0)"),
-        ("exp6", "**SKIPPED**", "—", "—", "—", "—", "**Setup gap — dataset not staged on eval VM**"),
-        ("exp7", "**SKIPPED**", "—", "—", "—", "—", "**Setup gap — dataset not staged on eval VM**"),
-        ("exp8", "`alpha`", "0.0–1.5 (7 levels)", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_ref` (vs alpha=1.0)"),
-        ("exp9", "`condition`", "no_trigger / with_trigger", "`clip_score`", "`hps_score`", "`ir_score`", "`lpips_vs_no_trigger`"),
+        (
+            "exp1",
+            "`condition`",
+            "fp16 / int8 / nf4",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips` (0.0 for fp16=ref)",
+        ),
+        (
+            "exp2",
+            "`condition`",
+            "no_neg / with_neg",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips_vs_no_neg`",
+        ),
+        (
+            "exp3",
+            "`cfg_value`",
+            "1/3/5/7/9/12/15",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips_vs_ref` (vs cfg=7)",
+        ),
+        (
+            "exp4",
+            "`scheduler`",
+            "DDIM/DPM/EulerA/LMS",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "pair_agg only (max pairwise)",
+        ),
+        (
+            "exp5",
+            "`strength`",
+            "0.0–1.5 (7 levels)",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips_vs_ref` (vs strength=1.0)",
+        ),
+        (
+            "exp6",
+            "**SKIPPED**",
+            "—",
+            "—",
+            "—",
+            "—",
+            "**Setup gap — dataset not staged on eval VM**",
+        ),
+        (
+            "exp7",
+            "**SKIPPED**",
+            "—",
+            "—",
+            "—",
+            "—",
+            "**Setup gap — dataset not staged on eval VM**",
+        ),
+        (
+            "exp8",
+            "`alpha`",
+            "0.0–1.5 (7 levels)",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips_vs_ref` (vs alpha=1.0)",
+        ),
+        (
+            "exp9",
+            "`condition`",
+            "no_trigger / with_trigger",
+            "`clip_score`",
+            "`hps_score`",
+            "`ir_score`",
+            "`lpips_vs_no_trigger`",
+        ),
     ]
     for row in schema_rows:
         lines.append("| " + " | ".join(row) + " |")
@@ -571,9 +653,7 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
     # ── Threshold justification and sensitivity ───────────────────────────────
     lines.append("## Threshold Justification and Sensitivity Analysis")
     lines.append("")
-    lines.append(
-        "### Why ~1 SE as the blindness threshold?"
-    )
+    lines.append("### Why ~1 SE as the blindness threshold?")
     lines.append("")
     lines.append(
         "The CLIP-blindness test asks: is the movement of the CLIP condition mean "
@@ -587,9 +667,7 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         "boundary, not an arbitrary cutoff."
     )
     lines.append("")
-    lines.append(
-        "### Threshold inconsistency with SD 2.1 — reconciliation required"
-    )
+    lines.append("### Threshold inconsistency with SD 2.1 — reconciliation required")
     lines.append("")
     lines.append(
         "The SD 2.1 report (reports/clip_blindness.md) did **not** use a hard 1 SE threshold. "
@@ -610,8 +688,15 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
     # SDXL values computed in this script.
     # SD 2.1 CLIP Δ SE (from clip_blindness.md evidence table):
     sd21_se = {
-        "exp1": 0.94, "exp2": 0.83, "exp3": 1.10, "exp4": 1.80,
-        "exp5": 2.20, "exp6": 1.00, "exp7": 0.80, "exp8": 4.00, "exp9": 0.12,
+        "exp1": 0.94,
+        "exp2": 0.83,
+        "exp3": 1.10,
+        "exp4": 1.80,
+        "exp5": 2.20,
+        "exp6": 1.00,
+        "exp7": 0.80,
+        "exp8": 4.00,
+        "exp9": 0.12,
     }
     # exp8 SD 2.1: the 4.00 SE is for no-LoRA → active-LoRA jump;
     # within-active range CLIP is flat, but we use the full-sweep value for consistency
@@ -629,8 +714,10 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         sd21_blind = sum(1 for v in sd21_se.values() if v < thr)
         sdxl_frac = f"{sdxl_blind}/{len(sdxl_se)}"
         sd21_frac = f"{sd21_blind}/{len(sd21_se)}"
-        direction = "SDXL less blind" if sdxl_blind < sd21_blind else (
-            "equal" if sdxl_blind == sd21_blind else "SDXL more blind"
+        direction = (
+            "SDXL less blind"
+            if sdxl_blind < sd21_blind
+            else ("equal" if sdxl_blind == sd21_blind else "SDXL more blind")
         )
         lines.append(f"| < {thr:.1f} SE | {sdxl_frac} | {sd21_frac} | {direction} |")
     lines.append("")

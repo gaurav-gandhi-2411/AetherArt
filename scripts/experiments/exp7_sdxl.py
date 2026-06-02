@@ -222,12 +222,18 @@ def train_subset(n: int) -> None:
     cmd = [
         sys.executable,
         str(ROOT / "scripts" / "train_lora.py"),
-        "--base", "sdxl",
-        "--rank", str(RANK),
-        "--max-train-steps", str(TRAIN_STEPS),
-        "--seed", str(TRAIN_SEED),
-        "--output-dir", str(out_dir),
-        "--data-dir", str(data_dir),
+        "--base",
+        "sdxl",
+        "--rank",
+        str(RANK),
+        "--max-train-steps",
+        str(TRAIN_STEPS),
+        "--seed",
+        str(TRAIN_SEED),
+        "--output-dir",
+        str(out_dir),
+        "--data-dir",
+        str(data_dir),
     ]
 
     t0 = time.monotonic()

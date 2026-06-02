@@ -307,8 +307,14 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "condition", "prompt_id", "seed", "latency_s",
-    "clip_score", "hps_score", "ir_score", "lpips_vs_no_trigger",
+    "condition",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "hps_score",
+    "ir_score",
+    "lpips_vs_no_trigger",
     "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
@@ -363,9 +369,7 @@ for cond, rows in by_cond.items():
         "mean_lat": statistics.mean(lats),
         "mean_lpips": statistics.mean(lpips_vals) if lpips_vals else None,
         "se_lpips": (
-            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5
-            if len(lpips_vals) > 1
-            else None
+            statistics.stdev(lpips_vals) / len(lpips_vals) ** 0.5 if len(lpips_vals) > 1 else None
         ),
     }
 
@@ -482,6 +486,7 @@ print(f"Charts written to {CHARTS_DIR}")
 
 clip_range_se = abs(clip_delta) / pooled_se if pooled_se > 0 else float("inf")
 lpips_range_val = max(per_prompt_lpips) - min(per_prompt_lpips)
+
 
 def _clip_verdict(delta: float, se: float) -> str:
     if abs(delta) < se:

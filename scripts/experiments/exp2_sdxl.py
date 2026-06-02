@@ -94,7 +94,9 @@ PROMPTS = {
 }
 # with_neg uses a more thorough negative prompt than SD 2.1 exp2 to better cover
 # SDXL's common failure modes (calligraphy artefacts, signatures at 1024px).
-NEG_PROMPT = "low quality, blurry, deformed, ugly, bad anatomy, watermark, text, calligraphy, signature"
+NEG_PROMPT = (
+    "low quality, blurry, deformed, ugly, bad anatomy, watermark, text, calligraphy, signature"
+)
 STEPS = 30
 CFG = 7.5
 SIZE = 1024
@@ -215,9 +217,7 @@ release_image_reward()
 print("\nComputing LPIPS between conditions (no_neg vs with_neg)...")
 
 no_neg_by_key: dict[tuple, str] = {
-    (r["prompt_id"], r["seed"]): r["image_path"]
-    for r in all_rows
-    if r["condition"] == "no_neg"
+    (r["prompt_id"], r["seed"]): r["image_path"] for r in all_rows if r["condition"] == "no_neg"
 }
 
 for r in all_rows:

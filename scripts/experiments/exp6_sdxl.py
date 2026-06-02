@@ -154,11 +154,16 @@ def train_rank(rank: int) -> None:
     cmd = [
         sys.executable,
         str(ROOT / "scripts" / "train_lora.py"),
-        "--base", "sdxl",
-        "--rank", str(rank),
-        "--max-train-steps", str(TRAIN_STEPS),
-        "--seed", str(TRAIN_SEED),
-        "--output-dir", str(out_dir),
+        "--base",
+        "sdxl",
+        "--rank",
+        str(rank),
+        "--max-train-steps",
+        str(TRAIN_STEPS),
+        "--seed",
+        str(TRAIN_SEED),
+        "--output-dir",
+        str(out_dir),
     ]
 
     t0 = time.monotonic()

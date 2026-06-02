@@ -461,8 +461,12 @@ int8_lat_ratio = int8_a["mean_lat"] / fp16_a["mean_lat"]
 nf4_lat_ratio = nf4_a["mean_lat"] / fp16_a["mean_lat"]
 int8_vram_saving_mb = fp16_a["mean_vram"] - int8_a["mean_vram"]
 nf4_vram_saving_mb = fp16_a["mean_vram"] - nf4_a["mean_vram"]
-int8_vram_saving_pct = (1 - int8_a["mean_vram"] / fp16_a["mean_vram"]) * 100 if fp16_a["mean_vram"] > 0 else 0.0
-nf4_vram_saving_pct = (1 - nf4_a["mean_vram"] / fp16_a["mean_vram"]) * 100 if fp16_a["mean_vram"] > 0 else 0.0
+int8_vram_saving_pct = (
+    (1 - int8_a["mean_vram"] / fp16_a["mean_vram"]) * 100 if fp16_a["mean_vram"] > 0 else 0.0
+)
+nf4_vram_saving_pct = (
+    (1 - nf4_a["mean_vram"] / fp16_a["mean_vram"]) * 100 if fp16_a["mean_vram"] > 0 else 0.0
+)
 
 
 def _clip_verdict(delta: float, se: float) -> str:

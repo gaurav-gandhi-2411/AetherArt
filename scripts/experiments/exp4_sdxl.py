@@ -103,9 +103,7 @@ PROMPTS = {
     "p03_abstract": (
         "ukiyo-e geometric abstract composition, intersecting circles and triangles, color blocks"
     ),
-    "p04_text": (
-        "ukiyo-e vintage print with bold lettering, retro typography, worn paper texture"
-    ),
+    "p04_text": ("ukiyo-e vintage print with bold lettering, retro typography, worn paper texture"),
     "p05_texture": "ukiyo-e extreme close-up of rough stone wall, water drops, micro detail",
     "p06_arch": "ukiyo-e interior of a Japanese temple, wooden pillars, soft lantern light",
     "p07_hands": "ukiyo-e two hands clasped together, natural light, woodblock print style",
@@ -324,8 +322,16 @@ CSV_PATH = OUT / "results.csv"
 PAIRS_CSV_PATH = OUT / "results_pairs.csv"
 JSON_PATH = OUT / "results.json"
 
-csv_fields = ["scheduler", "prompt_id", "seed", "latency_s", "clip_score",
-              "hps_score", "ir_score", "image_path"]
+csv_fields = [
+    "scheduler",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "hps_score",
+    "ir_score",
+    "image_path",
+]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
     writer.writeheader()

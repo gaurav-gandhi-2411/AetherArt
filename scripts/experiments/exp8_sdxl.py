@@ -302,8 +302,15 @@ CSV_PATH = OUT / "results.csv"
 JSON_PATH = OUT / "results.json"
 
 csv_fields = [
-    "alpha", "prompt_id", "seed", "latency_s",
-    "clip_score", "hps_score", "ir_score", "lpips_vs_ref", "image_path",
+    "alpha",
+    "prompt_id",
+    "seed",
+    "latency_s",
+    "clip_score",
+    "hps_score",
+    "ir_score",
+    "lpips_vs_ref",
+    "image_path",
 ]
 with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=csv_fields, extrasaction="ignore")
@@ -384,16 +391,19 @@ xlabels = [f"α={a}" for a in ALPHA_VALUES]
 clip_max = float(clip_arr.max())
 canvas = ChartCanvas(
     figsize=(9, 4.5),
-    title=(
-        f"CLIP score vs LoRA alpha — SDXL Ukiyo-e, {len(PROMPTS)} prompts × {len(SEEDS)} seeds"
-    ),
+    title=(f"CLIP score vs LoRA alpha — SDXL Ukiyo-e, {len(PROMPTS)} prompts × {len(SEEDS)} seeds"),
     ylabel="Mean CLIP score",
     top_margin_pct=0.22,
 )
 canvas.set_ylim(0.0, clip_max * 1.35)
 canvas.add_bars(
-    x, clip_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=clip_max * 0.015, value_size=8,
+    x,
+    clip_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=clip_max * 0.015,
+    value_size=8,
 )
 canvas.set_xticks(x, xlabels, fontsize=9)
 canvas.save(str(CHARTS_DIR / "clip_by_alpha.png"))
@@ -408,8 +418,13 @@ canvas_hps = ChartCanvas(
 )
 canvas_hps.set_ylim(0.0, hps_max * 1.35)
 canvas_hps.add_bars(
-    x, hps_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=hps_max * 0.015, value_size=8,
+    x,
+    hps_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=hps_max * 0.015,
+    value_size=8,
 )
 canvas_hps.set_xticks(x, xlabels, fontsize=9)
 canvas_hps.save(str(CHARTS_DIR / "hps_by_alpha.png"))
@@ -424,8 +439,13 @@ canvas2 = ChartCanvas(
 )
 canvas2.set_ylim(0.0, max(lpips_ref_max * 1.5, 0.05))
 canvas2.add_bars(
-    x, lpips_ref_arr, colors=colors, width=0.6,
-    value_fmt="{:.4f}", value_pad=max(lpips_ref_max * 0.05, 0.002), value_size=8,
+    x,
+    lpips_ref_arr,
+    colors=colors,
+    width=0.6,
+    value_fmt="{:.4f}",
+    value_pad=max(lpips_ref_max * 0.05, 0.002),
+    value_size=8,
 )
 canvas2.set_xticks(x, xlabels, fontsize=9)
 canvas2.save(str(CHARTS_DIR / "lpips_vs_ref.png"))
