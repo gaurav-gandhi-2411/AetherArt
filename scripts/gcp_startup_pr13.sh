@@ -96,6 +96,7 @@ ${PIP} install -q "hpsv2==1.2.0"
 ${PIP} install -q "image-reward==1.5" --no-deps
 ${PIP} install -q "fairscale==0.4.13" "openai-clip==1.0.1" "timm==1.0.27"
 ${PIP} install -q lpips
+${PIP} install -q matplotlib datasets
 echo "Python deps installed."
 
 # ── hpsv2 1.2.0 turtle import fix ────────────────────────────────────────────
