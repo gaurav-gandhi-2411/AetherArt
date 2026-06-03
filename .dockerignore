@@ -1,0 +1,63 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Python caches and build artifacts
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.egg-info
+dist/
+build/
+
+# Model weights — downloaded at runtime from HF Hub, never baked in
+*.safetensors
+*.pt
+*.ckpt
+*.bin
+
+# Data, generated outputs, reports
+data/
+outputs/
+reports/
+
+# Test, dev, and CI-only code
+tests/
+scripts/
+notebooks/
+.github/
+.pre-commit-config.yaml
+
+# Documentation assets (not needed in container)
+docs/
+
+# Dev config and secrets
+.env
+.env.*
+*.env
+
+# Modal-specific deploy wrapper (not used in container)
+modal_app.py
+
+# Dev-only requirements and tooling
+requirements-dev.txt
+requirements-lock.txt
+pyproject.toml
+
+# Project docs
+CONTRIBUTING.md
+plan.md
+PLAN.md
+README.md
+spaces/
+
+# Claude project files
+.claude/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
