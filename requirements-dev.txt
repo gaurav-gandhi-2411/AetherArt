@@ -6,6 +6,10 @@ pytest-cov==6.2.1
 ruff==0.15.13
 mypy==1.16.0
 
+# Modal demo deployment — dev dependency only, NOT in requirements.txt
+# (Modal SDK is not a production runtime dependency)
+modal==1.4.3
+
 # eval-only scorer deps — eval harness only, NOT production runtime
 # These packages have unresolvable pip conflicts so they are NOT listed as direct
 # pip install targets here; they are managed in .github/workflows/ci.yml.
