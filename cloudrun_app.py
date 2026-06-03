@@ -188,9 +188,10 @@ def generate(
     if blocked:
         return None, f"**Blocked:** {blocked}"
 
-    # Block until the background loader finishes (cold start: ~90–180 s).
-    if not _models_ready.wait(timeout=270):
-        return None, "**Models still loading** — please retry in a moment."
+    # Non-blocking check — Cloud Run drops idle SSE streams after ~60 s,
+    # so we return immediately with a retry message rather than blocking.
+    if not _models_ready.is_set():
+        return None, "⏳ **Models loading on cold start** — please retry in ~30 seconds."
 
     if sdxl_pipe is None or cn_pipe is None:
         return None, "**Error:** Model loading failed at startup — check container logs."
