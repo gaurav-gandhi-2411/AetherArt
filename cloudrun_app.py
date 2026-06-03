@@ -14,6 +14,7 @@ MODES:
 SAFETY: AETHERART_ENABLE_SAFETY=1 injected at deploy time via Cloud Run env var.
 HF token: mounted from Secret Manager as HUGGINGFACEHUB_API_TOKEN — never baked in image.
 """
+
 from __future__ import annotations
 
 import os
@@ -313,8 +314,7 @@ with gr.Blocks(title="AetherArt — Cloud Run L4") as demo:
                 value="hyper_8step",
                 label="Generation Mode",
                 info=(
-                    "ControlNet modes require a conditioning image "
-                    "(expand the accordion below)."
+                    "ControlNet modes require a conditioning image (expand the accordion below)."
                 ),
             )
             prompt = gr.Textbox(
@@ -330,8 +330,7 @@ with gr.Blocks(title="AetherArt — Cloud Run L4") as demo:
             )
             with gr.Accordion("ControlNet conditioning image", open=False):
                 gr.Markdown(
-                    "Required only for ControlNet modes. "
-                    "Upload the source image to condition on."
+                    "Required only for ControlNet modes. Upload the source image to condition on."
                 )
                 control_image = gr.Image(
                     label="Conditioning Image",
