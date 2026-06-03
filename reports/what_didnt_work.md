@@ -74,6 +74,20 @@ The error's cause: the rank and data ablations required additional infrastructur
 
 ---
 
+## License surprises
+
+### SDXL Turbo: ADD license is non-commercial research only
+
+SDXL Turbo ships under the Stability AI SDXL Turbo Research License (ADD — Adversarial Diffusion Distillation), which permits non-commercial research use only. This is materially different from the SDXL 1.0 base model license and from most Stability AI release terms — easy to overlook when pulling a model ID from a paper or leaderboard.
+
+The practical consequence: Turbo cannot be included in a demo that is commercially framed, and a portfolio demo targeting company recruiters is commercial-intent even if it charges nothing. When this project's Cloud Run demo went live, Turbo was already absent — a coincidence of the earlier CPU pivot — but the license is the correct reason to exclude it regardless of hardware.
+
+The gate added in PR 10 (`AETHERART_ENABLE_LEGACY=1` required to load `sdxl_turbo.py`) preserves the research experiments without shipping Turbo by default. This is the right pattern when a model's license is narrower than the project's deployment intent: evaluate it, document it, gate it, don't delete it. The `generate_four_tier_showcase.py` and related research scripts still work; they just need the env var set explicitly, which surfaces the license decision at every invocation.
+
+This is a separate issue from the "CPU Space pivot" entry under Abandoned approaches above. That was a hardware constraint. This is a licensing constraint that holds regardless of hardware.
+
+---
+
 ## Unanswered questions
 
 **Multi-subject prompts and SD 2.1's structural limits.** The bottom-scoring prompts in the benchmark — "artificial intelligence," "a dragon," "a coffee mug" — score low not because the scheduler or step count is wrong, but because SD 2.1 is not well-calibrated for abstract or contextually complex subjects. These are training distribution failures, not generation parameter failures. Fixing them requires either a different base model (SDXL, SD 3) or targeted fine-tuning data — neither of which fits the hardware constraints.

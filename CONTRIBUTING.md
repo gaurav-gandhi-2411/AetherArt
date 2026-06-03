@@ -257,6 +257,14 @@ The codebase is designed to degrade gracefully:
 
 The `aetherart/gpu_hygiene.py` module handles cleanup safely when CUDA is unavailable — all torch calls are wrapped in try/except ImportError.
 
+## Gated models
+
+**SDXL Turbo** (`aetherart/sdxl_turbo.py`) requires `AETHERART_ENABLE_LEGACY=1` to load. Its license (Stability AI SDXL Turbo Research License) permits non-commercial research use only, making it unsuitable for the commercial-intent demo. Set the env var when running Turbo-dependent scripts locally:
+
+```bash
+AETHERART_ENABLE_LEGACY=1 python scripts/generate_four_tier_showcase.py
+```
+
 ## Project layout
 
 ```

@@ -142,7 +142,9 @@ class TestHealth:
         r = _make_registry()
         h = r.health()
         assert "not_loaded" in h["base"]
-        assert "not_loaded" in h["turbo"]
+        # turbo reports "gated" or "not_loaded" depending on AETHERART_ENABLE_LEGACY;
+        # either way it must not report "ok" when no pipeline is loaded
+        assert "ok" not in h["turbo"]
         assert "not_loaded" in h["quantized"]
 
     def test_health_shows_ok_after_base_init(self):
