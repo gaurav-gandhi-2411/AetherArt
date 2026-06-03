@@ -16,6 +16,7 @@ Design decisions:
 from __future__ import annotations
 
 import gc
+import os
 from collections import OrderedDict
 from typing import Any, Literal, Optional
 
@@ -326,7 +327,12 @@ class ModelRegistry:
             result["sdxl_base"] = "loaded"
         else:
             result["sdxl_base"] = "not_loaded"
-        result["turbo"] = "ok" if self._turbo is not None else "not_loaded"
+        if self._turbo is not None:
+            result["turbo"] = "ok"
+        elif os.environ.get("AETHERART_ENABLE_LEGACY") != "1":
+            result["turbo"] = "gated (set AETHERART_ENABLE_LEGACY=1)"
+        else:
+            result["turbo"] = "not_loaded"
         if self._quant is not None:
             result["quantized"] = f"ok ({self._quant_mode})"
         else:
