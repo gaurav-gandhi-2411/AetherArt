@@ -1,7 +1,9 @@
 """AetherArt Cloud Run demo — L4 GPU, SDXL + Hyper-SD 8-step + Ukiyo-e LoRA + ControlNet Union.
 
 Serves the 4-mode curated app as a standard Gradio server bound to 0.0.0.0:$PORT.
-Cloud Run injects $PORT; models load once at container startup (not per request).
+Cloud Run injects $PORT; models load in a background thread so Gradio starts
+immediately and the startup probe passes within seconds. generate() blocks until
+the background load is complete.
 
 MODES:
   hyper_8step (default) — Hyper-SD 8-step LoRA + Ukiyo-e LoRA composed, CFG=5, EulerDiscrete
@@ -15,6 +17,7 @@ HF token: mounted from Secret Manager as HUGGINGFACEHUB_API_TOKEN — never bake
 from __future__ import annotations
 
 import os
+import threading
 import time
 
 import gradio as gr
@@ -46,69 +49,96 @@ _HYPER_8STEP_WEIGHTS = "Hyper-SDXL-8steps-lora.safetensors"
 # Diffusers 0.35 ControlNetUnion control_mode integers.
 _CTYPE_TO_INT: dict[str, int] = {"depth": 1, "canny": 3}
 
-# ── Model loading — runs once at container startup ──────────────────────────
-# Cloud Run startup probe waits up to 240 s for the port to open; model
-# loading takes ~90–120 s on a cold L4, well within that window.
+# ── Background model loader ─────────────────────────────────────────────────
+# Models load in a daemon thread so Gradio can bind the port immediately.
+# Cloud Run's startup probe sees the HTTP server within seconds.
+# generate() calls _models_ready.wait() so the first request blocks until ready.
 
-print("[demo] Loading fp16-fix VAE…")
-vae = AutoencoderKL.from_pretrained(_SDXL_VAE_FIX, torch_dtype=torch.float16)
+_models_ready = threading.Event()
 
-print("[demo] Loading SDXL base pipeline…")
-sdxl_pipe = StableDiffusionXLPipeline.from_pretrained(
-    _SDXL_MODEL,
-    vae=vae,
-    torch_dtype=torch.float16,
-    variant="fp16",
-    use_safetensors=True,
-).to("cuda")
+# Populated by _load_models(); referenced by generate() after the event is set.
+vae: AutoencoderKL | None = None
+sdxl_pipe: StableDiffusionXLPipeline | None = None
+cn_pipe: StableDiffusionXLControlNetUnionPipeline | None = None
+_depth_processor: AutoImageProcessor | None = None
+_depth_model: AutoModelForDepthEstimation | None = None
+_sched_dpm: DPMSolverMultistepScheduler | None = None
+_sched_euler: EulerDiscreteScheduler | None = None
 
-# apply_safety_checker is a no-op for SDXL; prompt blocklist is the primary guard.
-apply_safety_checker(sdxl_pipe)
 
-print("[demo] Loading Ukiyo-e LoRA from HF Hub…")
-sdxl_pipe.load_lora_weights(
-    _HF_UKIYO_LORA_REPO,
-    weight_name=_HF_UKIYO_LORA_WEIGHTS,
-    adapter_name="ukiyo_e",
-)
+def _load_models() -> None:
+    global vae, sdxl_pipe, cn_pipe, _depth_processor, _depth_model, _sched_dpm, _sched_euler
 
-print("[demo] Loading Hyper-SD 8-step LoRA from HF Hub…")
-sdxl_pipe.load_lora_weights(
-    _HYPER_SD_REPO,
-    weight_name=_HYPER_8STEP_WEIGHTS,
-    adapter_name="hyper_8step",
-)
+    try:
+        print("[demo] Loading fp16-fix VAE…")
+        vae = AutoencoderKL.from_pretrained(_SDXL_VAE_FIX, torch_dtype=torch.float16)
 
-_base_sched_config = sdxl_pipe.scheduler.config
-_sched_dpm = DPMSolverMultistepScheduler.from_config(_base_sched_config)
-_sched_euler = EulerDiscreteScheduler.from_config(
-    _base_sched_config, timestep_spacing="trailing"
-)
+        print("[demo] Loading SDXL base pipeline…")
+        sdxl_pipe = StableDiffusionXLPipeline.from_pretrained(
+            _SDXL_MODEL,
+            vae=vae,
+            torch_dtype=torch.float16,
+            variant="fp16",
+            use_safetensors=True,
+        ).to("cuda")
 
-# Boot state: Hyper-8step + Ukiyo-e LoRA composed (demo default).
-# 8-step chosen over 4-step: CFG-preserved so the LoRA composes and negative prompts work.
-sdxl_pipe.enable_lora()
-sdxl_pipe.set_adapters(["hyper_8step", "ukiyo_e"], adapter_weights=[1.0, 0.8])
-sdxl_pipe.scheduler = _sched_euler
+        # apply_safety_checker is a no-op for SDXL; prompt blocklist is the primary guard.
+        apply_safety_checker(sdxl_pipe)
 
-print("[demo] Loading ControlNetUnionModel…")
-cn_model = ControlNetUnionModel.from_pretrained(_CONTROLNET_UNION, torch_dtype=torch.float16)
+        print("[demo] Loading Ukiyo-e LoRA from HF Hub…")
+        sdxl_pipe.load_lora_weights(
+            _HF_UKIYO_LORA_REPO,
+            weight_name=_HF_UKIYO_LORA_WEIGHTS,
+            adapter_name="ukiyo_e",
+        )
 
-print("[demo] Building ControlNet pipeline…")
-cn_pipe = StableDiffusionXLControlNetUnionPipeline.from_pretrained(
-    _SDXL_MODEL,
-    controlnet=cn_model,
-    vae=vae,
-    torch_dtype=torch.float16,
-    variant="fp16",
-    use_safetensors=True,
-).to("cuda")
+        print("[demo] Loading Hyper-SD 8-step LoRA from HF Hub…")
+        sdxl_pipe.load_lora_weights(
+            _HYPER_SD_REPO,
+            weight_name=_HYPER_8STEP_WEIGHTS,
+            adapter_name="hyper_8step",
+        )
 
-print("[demo] Loading depth estimator…")
-_depth_processor = AutoImageProcessor.from_pretrained(_DEPTH_ESTIMATOR)
-_depth_model = AutoModelForDepthEstimation.from_pretrained(_DEPTH_ESTIMATOR).to("cuda")
+        _base_sched_config = sdxl_pipe.scheduler.config
+        _sched_dpm = DPMSolverMultistepScheduler.from_config(_base_sched_config)
+        _sched_euler = EulerDiscreteScheduler.from_config(
+            _base_sched_config, timestep_spacing="trailing"
+        )
 
-print("[demo] All models ready — container hot.")
+        # Boot state: Hyper-8step + Ukiyo-e LoRA composed (demo default).
+        # 8-step chosen over 4-step: CFG-preserved so the LoRA composes and negative prompts work.
+        sdxl_pipe.enable_lora()
+        sdxl_pipe.set_adapters(["hyper_8step", "ukiyo_e"], adapter_weights=[1.0, 0.8])
+        sdxl_pipe.scheduler = _sched_euler
+
+        print("[demo] Loading ControlNetUnionModel…")
+        cn_model = ControlNetUnionModel.from_pretrained(
+            _CONTROLNET_UNION, torch_dtype=torch.float16
+        )
+
+        print("[demo] Building ControlNet pipeline…")
+        cn_pipe = StableDiffusionXLControlNetUnionPipeline.from_pretrained(
+            _SDXL_MODEL,
+            controlnet=cn_model,
+            vae=vae,
+            torch_dtype=torch.float16,
+            variant="fp16",
+            use_safetensors=True,
+        ).to("cuda")
+
+        print("[demo] Loading depth estimator…")
+        _depth_processor = AutoImageProcessor.from_pretrained(_DEPTH_ESTIMATOR)
+        _depth_model = AutoModelForDepthEstimation.from_pretrained(_DEPTH_ESTIMATOR).to("cuda")
+
+        print("[demo] All models ready — container hot.")
+    except Exception as exc:
+        # Log and mark ready anyway so the UI can surface the error.
+        print(f"[demo] FATAL: model loading failed — {exc}")
+    finally:
+        _models_ready.set()
+
+
+threading.Thread(target=_load_models, daemon=True).start()
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────
@@ -125,9 +155,9 @@ def _preprocess_canny(img: PILImage.Image) -> PILImage.Image:
 
 
 def _preprocess_depth(img: PILImage.Image) -> PILImage.Image:
-    inputs = _depth_processor(images=img, return_tensors="pt").to("cuda")
+    inputs = _depth_processor(images=img, return_tensors="pt").to("cuda")  # type: ignore[union-attr]
     with torch.no_grad():
-        outputs = _depth_model(**inputs)
+        outputs = _depth_model(**inputs)  # type: ignore[union-attr]
     depth = outputs.predicted_depth
     depth = torch.nn.functional.interpolate(
         depth.unsqueeze(1),
@@ -157,6 +187,13 @@ def generate(
     blocked = check_prompt(prompt)
     if blocked:
         return None, f"**Blocked:** {blocked}"
+
+    # Block until the background loader finishes (cold start: ~90–180 s).
+    if not _models_ready.wait(timeout=270):
+        return None, "**Models still loading** — please retry in a moment."
+
+    if sdxl_pipe is None or cn_pipe is None:
+        return None, "**Error:** Model loading failed at startup — check container logs."
 
     actual_seed = int(seed_val) if seed_val is not None else 42
     device = "cuda" if torch.cuda.is_available() else "cpu"
