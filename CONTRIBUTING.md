@@ -89,6 +89,164 @@ GitHub Actions runs on every push to `main` and on PRs:
 
 All five must pass. See `.github/workflows/ci.yml` for the exact commands.
 
+## Modal demo deployment
+
+The `modal_app.py` at the repo root is the recruiter-facing demo on Modal's free-tier A10G GPU.
+
+**Prerequisites**
+
+1. Install Modal SDK (dev dep only — not in `requirements.txt`):
+   ```bash
+   pip install modal==1.4.3
+   ```
+2. Authenticate once:
+   ```bash
+   modal setup
+   ```
+3. Create a Modal secret named **`huggingface`** in the [Modal dashboard](https://modal.com/secrets) with key `HUGGINGFACEHUB_API_TOKEN` set to your HF token.  Without this secret the app will not start.
+
+**Stage B — ephemeral serve (dev / verify)**
+
+```bash
+modal serve modal_app.py
+```
+
+This spins up a temporary A10G container and prints an ephemeral public URL.  The URL lives only while the command runs.  Use it to verify cold-start time and that all four live modes work before deploying.
+
+**Stage C — persistent deploy (after verification)**
+
+```bash
+modal deploy modal_app.py
+```
+
+Deploys to a persistent URL.  Containers spin up on request and idle down after 5 minutes.  Run this only after Stage B is verified.
+
+**Live demo modes**
+
+| Mode key | Description |
+|---|---|
+| `hyper_8step` | Hyper-SD 8-step LoRA, EulerDiscrete, CFG=5 (demo default) |
+| `ukiyo_e` | Ukiyo-e LoRA from `gauravgandhi2411/aetherart-ukiyo-sdxl`, DPM-Solver++ |
+| `sdxl_base` | SDXL 1.0 base, 30-step DPM-Solver++, no LoRA |
+| `controlnet_canny` | ControlNet Union, Canny preprocessing, requires uploaded image |
+| `controlnet_depth` | ControlNet Union, depth preprocessing, requires uploaded image |
+
+Safety guard (`AETHERART_ENABLE_SAFETY=1`) is baked into the Modal image; the prompt blocklist in `aetherart/safety.py` runs on every request.  Flux and SD 2.1 paths are local-only and are not served by the demo.
+
+## Cloud Run demo deployment (GCP L4)
+
+The `cloudrun_app.py` at the repo root is the primary recruiter-facing demo, deployed on GCP Cloud Run with an NVIDIA L4 GPU and scale-to-zero (₹0 idle).
+
+**Project:** `aetherart-497918` · **Region:** `us-central1` · **Image registry:** `us-central1-docker.pkg.dev/aetherart-497918/aetherart-demo/app`
+
+**Prerequisites**
+
+1. Authenticate gcloud and set the project:
+   ```bash
+   gcloud auth login
+   gcloud config set project aetherart-497918
+   ```
+2. Create a Secret Manager secret for the HF token (one-time setup):
+   ```bash
+   # Enable Secret Manager if not already enabled
+   gcloud services enable secretmanager.googleapis.com --project aetherart-497918
+
+   # Create the secret (paste token when prompted)
+   printf '%s' "YOUR_HF_TOKEN" | gcloud secrets create huggingface-token \
+     --project=aetherart-497918 \
+     --replication-policy=automatic \
+     --data-file=-
+
+   # Grant the default Cloud Run service account read access
+   gcloud secrets add-iam-policy-binding huggingface-token \
+     --project=aetherart-497918 \
+     --member="serviceAccount:473907703523-compute@developer.gserviceaccount.com" \
+     --role="roles/secretmanager.secretAccessor"
+   ```
+
+**Build the image (Cloud Build)**
+
+```bash
+gcloud builds submit \
+  --tag us-central1-docker.pkg.dev/aetherart-497918/aetherart-demo/app:v1 \
+  --project aetherart-497918 \
+  .
+```
+
+Cloud Build uses `.gcloudignore` to exclude large/dev-only files from the upload.
+
+**Deploy to Cloud Run (Stage C — after build verification)**
+
+```bash
+gcloud run deploy aetherart-demo \
+  --image us-central1-docker.pkg.dev/aetherart-497918/aetherart-demo/app:v1 \
+  --region us-central1 \
+  --project aetherart-497918 \
+  --gpu 1 \
+  --gpu-type nvidia-l4 \
+  --cpu 4 \
+  --memory 16Gi \
+  --min-instances 0 \
+  --max-instances 1 \
+  --concurrency 1 \
+  --timeout 300 \
+  --no-gpu-zonal-redundancy \
+  --set-secrets HUGGINGFACEHUB_API_TOKEN=huggingface-token:latest \
+  --set-env-vars AETHERART_ENABLE_SAFETY=1 \
+  --allow-unauthenticated
+```
+
+Key config rationale:
+- `--min-instances 0` — scale-to-zero; ₹0 cost while idle
+- `--max-instances 1` — one GPU instance maximum; prevents parallel cost overrun
+- `--concurrency 1` — GPU-bound; one generation at a time
+- `--no-gpu-zonal-redundancy` — single-zone placement; required for the `nvidia_l4_gpu_allocation_no_zonal_redundancy` quota granted on this project
+- `--timeout 300` — request timeout (model load completes before first request; generation takes 5–30 s)
+- `--allow-unauthenticated` — public recruiter demo
+
+**Live demo modes**
+
+| Mode key | Description |
+|---|---|
+| `hyper_8step` | Hyper-SD 8-step + Ukiyo-e LoRA composed, EulerDiscrete, CFG=5 **[default]** |
+| `ukiyo_e` | Ukiyo-e LoRA from `gauravgandhi2411/aetherart-ukiyo-sdxl`, 30-step DPM-Solver++ |
+| `controlnet_canny` | ControlNet Union, Canny preprocessing, requires uploaded image |
+| `controlnet_depth` | ControlNet Union, depth preprocessing, requires uploaded image |
+
+Cold start (~2 min on L4): models load once at container startup; warm generations are ~5 s (Hyper) / ~15 s (LoRA / ControlNet).
+
+## Modal demo deployment (alternate reference)
+
+`modal_app.py` is kept in the repo as a reference for deploying on Modal (A10G). It is no longer the primary deploy target. See the Cloud Run section above for the current production path.
+
+**Prerequisites**
+
+1. Install Modal SDK (dev dep only — not in `requirements.txt`):
+   ```bash
+   pip install modal==1.4.3
+   ```
+2. Authenticate once:
+   ```bash
+   modal setup
+   ```
+3. Create a Modal secret named **`huggingface`** in the [Modal dashboard](https://modal.com/secrets) with key `HUGGINGFACEHUB_API_TOKEN` set to your HF token.  Without this secret the app will not start.
+
+**Stage B — ephemeral serve (dev / verify)**
+
+```bash
+modal serve modal_app.py
+```
+
+This spins up a temporary A10G container and prints an ephemeral public URL.  The URL lives only while the command runs.  Use it to verify cold-start time and that all four live modes work before deploying.
+
+**Stage C — persistent deploy (after verification)**
+
+```bash
+modal deploy modal_app.py
+```
+
+Deploys to a persistent URL.  Containers spin up on request and idle down after 5 minutes.  Run this only after Stage B is verified.
+
 ## GPU vs CPU paths
 
 The codebase is designed to degrade gracefully:

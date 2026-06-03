@@ -1,0 +1,59 @@
+# .gcloudignore — controls what gets uploaded to Cloud Build.
+# Inherits all .gitignore rules (which exclude models/, data/lora/, outputs/, etc.)
+# then adds additional build-context-only exclusions.
+#!include:.gitignore
+
+# Explicitly exclude large model dirs in case gitignore path matching differs
+models/
+data/
+
+# Python caches
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.egg-info
+dist/
+build/
+
+# Model weight files (belt-and-suspenders — also covered via models/)
+*.safetensors
+*.pt
+*.ckpt
+*.bin
+
+# Test, CI, dev-only, and non-app files
+tests/
+scripts/
+notebooks/
+.github/
+.pre-commit-config.yaml
+docs/
+reports/
+modal_app.py
+
+# Dev config / secrets
+.env
+.env.*
+*.env
+
+# Dev-only requirements and tooling
+requirements-dev.txt
+requirements-lock.txt
+pyproject.toml
+
+# Other top-level non-essentials
+spaces/
+plan.md
+PLAN.md
+README.md
+CONTRIBUTING.md
+
+# Claude project files
+.claude/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
