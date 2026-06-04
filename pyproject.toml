@@ -1,7 +1,9 @@
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 markers = [
     "gpu: requires CUDA GPU (auto-skipped when cuda is unavailable)",
 ]
+addopts = "--cov=aetherart --cov-fail-under=55"
 
 [tool.ruff]
 line-length = 100
