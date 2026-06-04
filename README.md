@@ -1,7 +1,6 @@
 # AetherArt — Diffusion Inference on a Laptop GPU
 
 [![Cloud Run demo](https://img.shields.io/badge/☁️%20Live%20Demo-Cloud%20Run%20L4-blue)](https://aetherart-demo-473907703523.us-central1.run.app)
-[![Hugging Face Spaces](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)
 [![GitHub](https://img.shields.io/badge/GitHub-AetherArt-181717?logo=github)](https://github.com/gaurav-gandhi-2411/AetherArt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -10,9 +9,6 @@
 **[→ Cloud Run (NVIDIA L4, fast)](https://aetherart-demo-473907703523.us-central1.run.app)**  
 SDXL + Ukiyo-e LoRA, Hyper-8step fast default, ControlNet, safety guard.
 ~5–7 min cold start (model download), then fast (~8 s/image on L4).
-
-**[→ HF Space (CPU, slow)](https://huggingface.co/spaces/gauravgandhi2411/AetherArt)**  
-Architecture demo on the free CPU tier — generation takes ~8–15 min.
 
 ---
 
@@ -49,7 +45,7 @@ This project spans two generations of diffusion models. The evolution is documen
 - SD 2.1 inference on 8 GB VRAM via fp16 + model CPU offload — 3.2 s/image
 - Rank-8 Ukiyo-e LoRA trained in 2 h 8 min on 80 WikiArt images at 512×512
 - ControlNet Canny + Depth with 2-entry LRU pipeline cache
-- LCM 4-step (0.6 s) and SDXL Turbo 1-step speed tiers
+- LCM 4-step (0.6 s); SDXL Turbo 1-step explored as a comparison (uses SDXL architecture, now gated behind `AETHERART_ENABLE_LEGACY=1`)
 - INT8 + NF4 quantization via bitsandbytes
 - 360-run CLIP benchmark: 4 schedulers × 3 step counts × 30 prompts
 - Nine Phase 6b experiments on CLIP-blindness (quantization, CFG, ControlNet, LoRA params)
@@ -98,9 +94,11 @@ The artifact is still present at 1024, but it reads as a learned stylistic eleme
 
 → Full results: [reports/findings.md](reports/findings.md)
 
-### 4. The underfitting paradox
+### 4. The underfitting paradox (SD 2.1)
 
-Rank-4 LoRA scored *higher* on CLIP than rank-8 (0.3384 vs 0.3337); data-20 scored higher than data-80. Underfit models produce more literal keyword matches; CLIP rewards literalness, not visual quality. This is the sharpest illustration of why CLIP cannot guide LoRA training decisions.
+**SD 2.1 only.** Rank-4 LoRA scored *higher* on CLIP than rank-8 (0.3384 vs 0.3337); data-20 scored higher than data-80. Underfit models produce more literal keyword matches; CLIP rewards literalness, not visual quality. SDXL exp6/exp7 (rank and data-size ablations) were not run — dataset staging gap on the eval VM. This finding is SD 2.1-specific until replicated on SDXL.
+
+→ Source: [reports/experiments/exp6_lora_rank/findings.md](reports/experiments/exp6_lora_rank/findings.md) · [reports/experiments/exp7_lora_data_size/findings.md](reports/experiments/exp7_lora_data_size/findings.md)
 
 ---
 
@@ -201,7 +199,6 @@ evaluations independently selected the checkpoint-1000 step count.
 adds measurable value above SDXL's pretraining priors (deeper Hiroshige teal/blue palette,
 warm coral-pink atmospheric haze, characteristic flat-plane foliage treatment).
 
-![Checkpoint comparison: ckpt-500, ckpt-1000, ckpt-1500](reports/lora_training_summary_sdxl.md)
 *Full checkpoint analysis: [reports/lora_training_summary_sdxl.md](reports/lora_training_summary_sdxl.md)*
 
 ### SD 2.1 Ukiyo-e LoRA (legacy)
@@ -230,11 +227,11 @@ See [docs/depth_estimators.md](docs/depth_estimators.md) for the rationale.
 
 | Precision | Peak VRAM (SD 2.1 Exp 1) | vs fp16 | Avg latency |
 |-----------|------------------------:|---------|-------------|
-| fp16 (default) | 1803 MB | — | 2.7 s/img |
-| 8-bit INT8 | **2210 MB** | **+407 MB** | 9.6 s/img |
-| 4-bit NF4 | 1382 MB | −421 MB | 4.7 s/img |
+| fp16 (default) | 1803 MB | — | 4.4 s/img |
+| 8-bit INT8 | **2210 MB** | **+407 MB** | 12.3 s/img |
+| 4-bit NF4 | 1382 MB | −421 MB | 6.4 s/img |
 
-INT8 costs *more* VRAM under CPU offload (bitsandbytes allocates a full fp16 compute buffer for dequantization). NF4 savings survive because 4-bit compression outpaces the buffer cost. Details: [reports/quantization_benchmark.md](reports/quantization_benchmark.md)
+INT8 costs *more* VRAM under CPU offload (bitsandbytes allocates a full fp16 compute buffer for dequantization). NF4 savings survive because 4-bit compression outpaces the buffer cost. Details: [reports/experiments/exp1_quantization_quality/findings.md](reports/experiments/exp1_quantization_quality/findings.md)
 
 ---
 
@@ -246,9 +243,11 @@ INT8 costs *more* VRAM under CPU offload (bitsandbytes allocates a full fp16 com
 |------|------:|------------------|---------|
 | Standard fp16 | 30 | **3.2 s/img** | Full baseline |
 | LCM fast (4-step) | 4 | **0.6 s/img — 5.3×** | Moderate reduction |
-| SDXL Turbo (1-step) | 1 | **3.3 s/img** | Lower; 2.6B vs 865M params |
+| SDXL Turbo (1-step, SDXL model) | 1 | **3.3 s/img** | Lower; separate SDXL arch (`AETHERART_ENABLE_LEGACY=1`) |
 
 SDXL Turbo is wall-time-equivalent to SD 2.1 on RTX 3070: one pass through a 2.6B U-Net equals 30 passes through an 865M U-Net. The real Turbo speedup (10–30×) shows on A100/H100.
+
+*Timing figures (3.2 s, 0.6 s, 3.3 s) from informal measurements in [docs/lab_notebook.md](docs/lab_notebook.md) — not from the 360-run benchmark harness.*
 
 ---
 
@@ -336,13 +335,13 @@ AetherArt/
 
 | Experiment | SD 2.1 result | SDXL result |
 |---|---|---|
-| Quantization quality | CLIP-blind (0.24 SE) | CLIP-blind (0.24 SE) — rendering change |
+| Quantization quality | CLIP-blind (0.94 SE) | CLIP-blind (0.24 SE) — rendering change |
 | CFG scale sweep | CLIP-blind (1.10 SE) | CLIP-responsive (7.01 SE) |
 | Scheduler visual | CLIP-blind (1.80 SE) | CLIP-blind (0.67 SE) |
-| ControlNet strength | CLIP-blind (2.20 SE) | CLIP-responsive (3.59 SE) |
+| ControlNet strength | CLIP-blind (2.20 SE) | CLIP-responsive (1.66 SE) |
 | LoRA alpha sweep | CLIP-blind (4.00 SE) | CLIP-responsive (7.21 SE) |
-| Trigger token | CLIP-blind (0.84 SE) | CLIP-blind (0.84 SE) — rendering change |
-| Negative prompt | CLIP-blind (0.48 SE) | CLIP-blind (0.40 SE) — rendering change |
+| Trigger token | CLIP-blind (0.12 SE) | CLIP-blind (0.84 SE) — rendering change |
+| Negative prompt | CLIP-blind (0.83 SE) | CLIP-responsive (1.09 SE) |
 
 → [reports/clip_blindness_sdxl.md](reports/clip_blindness_sdxl.md)
 
