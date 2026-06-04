@@ -225,7 +225,7 @@ See [docs/depth_estimators.md](docs/depth_estimators.md) for the rationale.
 
 ### Quantization
 
-| Precision | Peak VRAM (SD 2.1 Exp 1) | vs fp16 | Avg latency |
+| Precision | Peak VRAM (SD 2.1 Exp 1) | vs fp16 | Avg latency (model CPU offload) |
 |-----------|------------------------:|---------|-------------|
 | fp16 (default) | 1803 MB | — | 4.4 s/img |
 | 8-bit INT8 | **2210 MB** | **+407 MB** | 12.3 s/img |
@@ -241,7 +241,7 @@ INT8 costs *more* VRAM under CPU offload (bitsandbytes allocates a full fp16 com
 
 | Mode | Steps | RTX 3070 (local) | Quality |
 |------|------:|------------------|---------|
-| Standard fp16 | 30 | **3.2 s/img** | Full baseline |
+| Standard fp16 (no CPU offload) | 30 | **3.2 s/img** | Full baseline |
 | LCM fast (4-step) | 4 | **0.6 s/img — 5.3×** | Moderate reduction |
 | SDXL Turbo (1-step, SDXL model) | 1 | **3.3 s/img** | Lower; separate SDXL arch (`AETHERART_ENABLE_LEGACY=1`) |
 
