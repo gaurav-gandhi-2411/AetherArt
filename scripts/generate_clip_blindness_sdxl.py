@@ -478,9 +478,7 @@ def write_report(results: list[ExpResult], sd21_path: Path, out_path: Path) -> N
         "80 WikiArt Ukiyo-e images (gitignored at `data/lora/ukiyo-e/`, reproducible via "
         "`scripts/prepare_lora_dataset.py`); the trained SDXL LoRA adapter is on HF Hub "
         "at `gauravgandhi2411/aetherart-ukiyo-sdxl`. This is a setup gap, not a "
-        "methodological limitation. Results are based on the {total} experiments that ran.".format(
-            total=total
-        )
+        f"methodological limitation. Results are based on the {total} experiments that ran."
     )
     lines.append("")
     lines.append(

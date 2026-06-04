@@ -18,7 +18,7 @@ from __future__ import annotations
 import gc
 import os
 from collections import OrderedDict
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from .gpu_hygiene import cleanup_gpu
 from .logger import get_logger
@@ -36,19 +36,19 @@ class ModelRegistry:
     def __init__(self) -> None:
         self._base: AetherModel = AetherModel()
         self._turbo: Any = None
-        self._quant: Optional[Any] = None  # at most 1 quantized pipeline
-        self._quant_mode: Optional[str] = None  # "8bit" or "4bit"
+        self._quant: Any | None = None  # at most 1 quantized pipeline
+        self._quant_mode: str | None = None  # "8bit" or "4bit"
         self._active_lora: str = "none"
-        self._base_init_error: Optional[str] = None
-        self._sdxl_base: Optional[Any] = None
-        self._sdxl_base_init_error: Optional[str] = None
-        self._sdxl_quantized: Optional[Any] = None
-        self._sdxl_quantized_bits: Optional[int] = None
-        self._sdxl_quantized_init_error: Optional[str] = None
+        self._base_init_error: str | None = None
+        self._sdxl_base: Any | None = None
+        self._sdxl_base_init_error: str | None = None
+        self._sdxl_quantized: Any | None = None
+        self._sdxl_quantized_bits: int | None = None
+        self._sdxl_quantized_init_error: str | None = None
         # LRU-2 cache for SDXL ControlNet Union pipelines.
         # Key: (ctype, lora_name, lora_alpha)  Value: pipeline object
         self._sdxl_cn_cache: OrderedDict[tuple[str, str, float], Any] = OrderedDict()
-        self._sdxl_cn_init_error: Optional[str] = None
+        self._sdxl_cn_init_error: str | None = None
 
     # ── Base SD 2.1 / SDXL ──────────────────────────────────────────────────
 

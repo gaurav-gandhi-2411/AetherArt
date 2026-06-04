@@ -130,10 +130,7 @@ def preprocess_canny(
     except ImportError as exc:
         raise RuntimeError("opencv-python is required for Canny preprocessing") from exc
 
-    if isinstance(image, Image.Image):
-        image_np = np.array(image.convert("RGB"))
-    else:
-        image_np = np.array(image)
+    image_np = np.array(image.convert("RGB")) if isinstance(image, Image.Image) else np.array(image)
 
     gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
     edges = cv2.Canny(gray, low_threshold, high_threshold)

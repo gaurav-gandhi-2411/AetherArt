@@ -153,7 +153,7 @@ def _ensure_lora() -> Path:
 # ── Pipeline and LoRA loading ─────────────────────────────────────────────────
 
 
-def load_lora(pipe: "object") -> None:  # StableDiffusionXLPipeline
+def load_lora(pipe: object) -> None:  # StableDiffusionXLPipeline
     """Download LoRA if needed, load into pipeline, and set alpha=1.0."""
     lora_path = _ensure_lora()
     pipe.load_lora_weights(  # type: ignore[union-attr]
@@ -168,7 +168,7 @@ def load_lora(pipe: "object") -> None:  # StableDiffusionXLPipeline
 # ── Generation ────────────────────────────────────────────────────────────────
 
 
-def generate_condition(condition: str, pipe: "object") -> list[dict]:  # StableDiffusionXLPipeline
+def generate_condition(condition: str, pipe: object) -> list[dict]:  # StableDiffusionXLPipeline
     """Generate all 8 prompts × 5 seeds for one trigger condition."""
     rows: list[dict] = []
     img_dir = IMG_DIR / condition

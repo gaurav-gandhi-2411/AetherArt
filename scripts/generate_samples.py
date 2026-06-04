@@ -9,6 +9,7 @@ Usage (from repo root, aetherart conda env, requires CUDA GPU):
 Estimated time on RTX 3070 8 GB: ~15 minutes (all tiers).
 """
 
+import contextlib
 import json
 import time
 from pathlib import Path
@@ -65,10 +66,8 @@ def save_sample(img: Image.Image, meta: dict, path: Path) -> None:
 
 
 def free_pipe(pipe):
-    try:
+    with contextlib.suppress(Exception):
         pipe.to("cpu")
-    except Exception:
-        pass
     del pipe
     if torch.cuda.is_available():
         torch.cuda.empty_cache()

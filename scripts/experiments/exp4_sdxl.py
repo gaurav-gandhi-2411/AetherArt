@@ -156,7 +156,7 @@ def _lpips_pair(path_a: str, path_b: str) -> float:
 
 def generate_scheduler(
     sched_name: str,
-    pipe: "object",  # StableDiffusionXLPipeline
+    pipe: object,  # StableDiffusionXLPipeline
 ) -> list[dict]:
     """Generate 8 images for one scheduler condition and return row dicts."""
     # Swap scheduler in place — one pipeline load for all schedulers
