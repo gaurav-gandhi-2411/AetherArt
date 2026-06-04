@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 
 from .config import cfg
 from .logger import get_logger
+from .utils import preferred_dtype_kwarg
 
 logger = get_logger(__name__)
 
@@ -51,7 +52,7 @@ MODEL_ID = "sd2-community/stable-diffusion-2-1"
 
 def load_sd21_quantized(
     bits: Literal[4, 8] = 8,
-) -> "StableDiffusionPipeline":
+) -> StableDiffusionPipeline:
     """Load SD 2.1 with bitsandbytes quantization on the U-Net.
 
     Args:
@@ -123,18 +124,25 @@ def load_sdxl_quantized(bits: Literal[4, 8] = 4) -> Any:
         bnb_4bit_compute_dtype=torch.float16,
     )
 
+    # preferred_dtype_kwarg picks 'torch_dtype' or 'dtype' for diffusers compat
+    unet_dtype_kw = preferred_dtype_kwarg(UNet2DConditionModel.from_pretrained) or "torch_dtype"
+    vae_dtype_kw = preferred_dtype_kwarg(AutoencoderKL.from_pretrained) or "torch_dtype"
+    pipe_dtype_kw = (
+        preferred_dtype_kwarg(StableDiffusionXLPipeline.from_pretrained) or "torch_dtype"
+    )
+
     logger.info("Loading SDXL UNet (%sbit) from '%s'...", bits, cfg.sdxl_model)
     unet = UNet2DConditionModel.from_pretrained(
         cfg.sdxl_model,
         subfolder="unet",
         quantization_config=quant_config,
-        torch_dtype=torch.float16,
+        **{unet_dtype_kw: torch.float16},
     )
 
     logger.info("Loading fp16-fix VAE from '%s'...", cfg.sdxl_vae_fix)
     vae = AutoencoderKL.from_pretrained(
         cfg.sdxl_vae_fix,
-        torch_dtype=torch.float16,
+        **{vae_dtype_kw: torch.float16},
     )
 
     logger.info("Constructing SDXL pipeline...")
@@ -142,13 +150,13 @@ def load_sdxl_quantized(bits: Literal[4, 8] = 4) -> Any:
         cfg.sdxl_model,
         unet=unet,
         vae=vae,
-        torch_dtype=torch.float16,
+        **{pipe_dtype_kw: torch.float16},
         variant="fp16",
         use_safetensors=True,
     )
 
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
-    logger.info("Scheduler set to DPMSolverMultistep")
+    logger.info("Scheduler set to DPMSolverMultistep (quantized path)")
 
     pipe.enable_model_cpu_offload()
     logger.info("Enabled model CPU offload")

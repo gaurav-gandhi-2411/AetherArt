@@ -183,10 +183,7 @@ def main():
             if not args.dry_run:
                 processed = center_crop_resize(img, OUTPUT_SIZE)
                 processed.save(img_dir / filename, "JPEG", quality=90)
-                if use_blip:
-                    caption = caption_blip(img)
-                else:
-                    caption = caption_template(artist_int)
+                caption = caption_blip(img) if use_blip else caption_template(artist_int)
             else:
                 caption = caption_template(artist_int)
 

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import inspect
 from contextlib import nullcontext
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any
 
 import torch
 
@@ -11,6 +10,7 @@ if TYPE_CHECKING:
 
 from .config import cfg
 from .logger import get_logger
+from .utils import build_pretrained_kwargs, preferred_dtype_kwarg
 
 logger = get_logger(__name__)
 
@@ -31,41 +31,9 @@ except Exception:
     InferenceClient = None  # type: ignore[assignment, misc]
 
 
-def _preferred_dtype_kwarg(fn) -> Optional[str]:
-    """
-    Inspect a callable (usually Pipeline.from_pretrained) and decide whether it
-    accepts 'torch_dtype' or 'dtype' or neither.
-    """
-    try:
-        sig = inspect.signature(fn)
-        params = sig.parameters
-        if "torch_dtype" in params:
-            return "torch_dtype"
-        if "dtype" in params:
-            return "dtype"
-    except Exception:
-        logger.debug("Could not inspect signature for %s", getattr(fn, "__name__", str(fn)))
-    return None
-
-
-def _build_pretrained_kwargs(fn, dtype, hf_token: Optional[str]) -> Dict[str, Any]:
-    """
-    Build kwargs for from_pretrained that use the right dtype kwarg name
-    depending on the pipeline implementation. Also include use_auth_token
-    if provided.
-    """
-    kwargs: Dict[str, Any] = {}
-    kw_name = _preferred_dtype_kwarg(fn)
-    if kw_name:
-        kwargs[kw_name] = dtype
-    else:
-        logger.debug(
-            "No dtype kwarg detected for function %s; loading without dtype kwarg",
-            getattr(fn, "__name__", str(fn)),
-        )
-    if hf_token:
-        kwargs["token"] = hf_token
-    return kwargs
+# Module-level aliases kept for any external code that imported these directly.
+_preferred_dtype_kwarg = preferred_dtype_kwarg
+_build_pretrained_kwargs = build_pretrained_kwargs
 
 
 class AetherModel:
@@ -73,14 +41,14 @@ class AetherModel:
     Encapsulates model init + generation with VRAM & performance mitigations.
     """
 
-    def __init__(self, model_id: Optional[str] = None) -> None:
+    def __init__(self, model_id: str | None = None) -> None:
         self.model_id: str = model_id or cfg.default_model
-        self.hf_token: Optional[str] = cfg.hf_token
+        self.hf_token: str | None = cfg.hf_token
         self.use_inference: bool = cfg.use_inference
         self.pipe: Any = None  # diffusers pipeline; typed as Any (messy hierarchy)
-        self.backend: Optional[str] = None  # 'local' or 'inference'
+        self.backend: str | None = None  # 'local' or 'inference'
         self.inference_client: Any = None
-        self.optimizations: Dict[str, str] = {}
+        self.optimizations: dict[str, str] = {}
 
     def init(self, model_choice: str | None = None) -> None:
         """
@@ -225,8 +193,8 @@ class AetherModel:
         guidance: float = cfg.default_guidance,
         width: int = cfg.default_width,
         height: int = cfg.default_height,
-        seed: Optional[int] = None,
-    ) -> "Image.Image":
+        seed: int | None = None,
+    ) -> Image.Image:
         """
         Simple wrapper that runs the pipeline synchronously and returns a PIL image.
         Note: the app's generate stream uses MODEL.pipe directly to pass callback arguments

@@ -15,14 +15,24 @@ exclude = [
 [tool.ruff.lint]
 # E/F/W: pycodestyle errors+warnings and pyflakes (flake8 equivalents)
 # I: isort import ordering
-# UP/B/SIM deferred — pre-existing violations require a cleanup PR first
-select = ["E", "F", "I", "W"]
+# UP: modern Python syntax (deprecated typing aliases, f-strings, etc.)
+# B: flake8-bugbear (common bug patterns)
+# SIM: flake8-simplify (code simplification)
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
 extend-ignore = ["E203"]
 
 [tool.ruff.lint.per-file-ignores]
 # Vendored HuggingFace training scripts — not our code to reformat
-"scripts/_diffusers_train_text_to_image_lora.py" = ["E501"]
+# B904/B007/SIM910/SIM102/B905: all pre-existing patterns in vendored HF script
+"scripts/_diffusers_train_text_to_image_lora.py" = ["E501", "B904", "B007", "SIM910", "SIM102", "B905", "UP009"]
 "scripts/_diffusers_train_text_to_image_lora_sdxl.py" = ["ALL"]
+# One-off diagnostic/smoke scripts — intentionally non-standard import order
+"scripts/_ir_diag.py" = ["ALL"]
+"scripts/_ir_diag2.py" = ["ALL"]
+"scripts/_ir_diag3.py" = ["ALL"]
+"scripts/_ir_test.py" = ["ALL"]
+# PR 12 GPU smoke test — deferred imports after model-path setup, not production code
+"scripts/_pr12_smoke.py" = ["E402", "F541", "I001"]
 # sys.path.insert before imports is intentional for standalone script execution
 "scripts/eval.py" = ["E402"]
 "scripts/_resume_samples.py" = ["E402"]
@@ -49,7 +59,8 @@ extend-ignore = ["E203"]
 "scripts/experiments/exp5_sdxl.py" = ["E402", "E501"]
 "scripts/experiments/exp6_sdxl.py" = ["E402", "E501"]
 "scripts/experiments/exp7_sdxl.py" = ["E402", "E501"]
-"scripts/experiments/exp8_sdxl.py" = ["E402", "E501"]
+# SIM113: done-counter pattern in completed experiment script — enumerate refactor not worth the churn
+"scripts/experiments/exp8_sdxl.py" = ["E402", "E501", "SIM113"]
 "scripts/experiments/exp9_sdxl.py" = ["E402", "E501"]
 # E501: markdown table rows and schema tuples can't wrap cleanly at 100 chars
 "scripts/generate_clip_blindness_sdxl.py" = ["E402", "E501"]

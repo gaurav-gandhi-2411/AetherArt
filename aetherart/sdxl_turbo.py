@@ -17,12 +17,14 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import torch
 
 if TYPE_CHECKING:
     from PIL import Image
+
+import contextlib
 
 from .logger import get_logger
 
@@ -97,10 +99,10 @@ def generate_turbo(
     pipe: Any,
     prompt: str,
     negative_prompt: str = "",
-    seed: Optional[int] = None,
+    seed: int | None = None,
     width: int = 512,
     height: int = 512,
-) -> tuple["Image.Image", dict[str, Any]]:
+) -> tuple[Image.Image, dict[str, Any]]:
     """Generate one image with SDXL Turbo (1 step, guidance=0.0).
 
     Returns (PIL.Image, metadata_dict).
@@ -128,10 +130,8 @@ def generate_turbo(
 
 def free_turbo_pipeline(pipe: Any) -> None:
     """Unload pipeline and release VRAM."""
-    try:
+    with contextlib.suppress(Exception):
         pipe.to("cpu")
-    except Exception:
-        pass
     del pipe
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
