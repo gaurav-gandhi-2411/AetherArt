@@ -346,7 +346,7 @@ def generate_charts(results: list[dict], run_date: str) -> list[str]:
         for sched in schedulers
     ]
     bars = ax.bar(schedulers, avg_vram, color=[sched_color[s] for s in schedulers])
-    for bar, val in zip(bars, avg_vram):
+    for bar, val in zip(bars, avg_vram, strict=False):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 0.005,
@@ -723,11 +723,11 @@ def main() -> None:
         # Filter out None images
         _valid = [
             (img, p, r)
-            for img, p, r in zip(_imgs_phase2, _prompts_phase2, ok_results_phase2)
+            for img, p, r in zip(_imgs_phase2, _prompts_phase2, ok_results_phase2, strict=False)
             if img is not None
         ]
         if _valid:
-            _valid_imgs, _valid_prompts, _valid_results = zip(*_valid)
+            _valid_imgs, _valid_prompts, _valid_results = zip(*_valid, strict=False)
             _valid_imgs = list(_valid_imgs)
             _valid_prompts = list(_valid_prompts)
             _valid_results = list(_valid_results)
@@ -740,7 +740,7 @@ def main() -> None:
 
             try:
                 hps_scores = score_hps(_valid_imgs, _valid_prompts)
-                for r, s in zip(_valid_results, hps_scores):
+                for r, s in zip(_valid_results, hps_scores, strict=False):
                     r["hps_score"] = round(s, 6)
                 logger.info("HPSv2.1 scoring complete.")
             except Exception as e:
@@ -754,7 +754,7 @@ def main() -> None:
 
             try:
                 ir_scores = score_image_reward(_valid_imgs, _valid_prompts)
-                for r, s in zip(_valid_results, ir_scores):
+                for r, s in zip(_valid_results, ir_scores, strict=False):
                     r["image_reward_score"] = round(s, 6)
                 logger.info("ImageReward scoring complete.")
             except Exception as e:
@@ -814,7 +814,7 @@ def main() -> None:
                             d = _lpips_fn(valid_t[i], valid_t[j]).item()
                         dists.append(d)
                 avg_dist = sum(dists) / len(dists)
-                for r, t in zip(prompt_group, imgs_t):
+                for r, t in zip(prompt_group, imgs_t, strict=False):
                     r["lpips_score"] = round(avg_dist if t is not None else 0.0, 6)
             logger.info("LPIPS scoring complete.")
         except Exception as e:

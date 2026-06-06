@@ -76,7 +76,7 @@ def score_image_reward(
 
     model, _ = _load()
     scores = []
-    for img, prompt in zip(images, prompts):
+    for img, prompt in zip(images, prompts, strict=False):
         s = model.score(prompt, img)
         scores.append(float(s))
     return scores

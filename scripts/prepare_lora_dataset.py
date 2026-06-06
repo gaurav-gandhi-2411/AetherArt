@@ -158,7 +158,7 @@ def main():
         images = table["image"].to_pylist()
 
         shard_ukiyo = 0
-        for style, artist_int, img_struct in zip(styles, artists, images):
+        for style, artist_int, img_struct in zip(styles, artists, images, strict=False):
             total_scanned += 1
             if style != UKIYO_E_STYLE_IDX:
                 continue
@@ -183,10 +183,7 @@ def main():
             if not args.dry_run:
                 processed = center_crop_resize(img, OUTPUT_SIZE)
                 processed.save(img_dir / filename, "JPEG", quality=90)
-                if use_blip:
-                    caption = caption_blip(img)
-                else:
-                    caption = caption_template(artist_int)
+                caption = caption_blip(img) if use_blip else caption_template(artist_int)
             else:
                 caption = caption_template(artist_int)
 

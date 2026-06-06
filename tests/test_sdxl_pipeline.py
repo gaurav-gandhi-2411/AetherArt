@@ -89,15 +89,16 @@ class TestReleaseSdxlPipeline:
     def test_release_sdxl_pipeline_clears_cache(self):
         mock_pipe = MagicMock()
 
-        with patch("aetherart.sdxl_pipeline.gc") as mock_gc:
-            with patch("aetherart.sdxl_pipeline.cfg"):
-                import torch
+        with patch("aetherart.sdxl_pipeline.gc") as mock_gc, patch("aetherart.sdxl_pipeline.cfg"):
+            import torch
 
-                with patch.object(torch.cuda, "is_available", return_value=True):
-                    with patch.object(torch.cuda, "empty_cache") as mock_empty:
-                        from aetherart.sdxl_pipeline import release_sdxl_pipeline
+            with (
+                patch.object(torch.cuda, "is_available", return_value=True),
+                patch.object(torch.cuda, "empty_cache") as mock_empty,
+            ):
+                from aetherart.sdxl_pipeline import release_sdxl_pipeline
 
-                        release_sdxl_pipeline(mock_pipe)
+                release_sdxl_pipeline(mock_pipe)
 
-                        mock_gc.collect.assert_called_once()
-                        mock_empty.assert_called_once()
+                mock_gc.collect.assert_called_once()
+                mock_empty.assert_called_once()

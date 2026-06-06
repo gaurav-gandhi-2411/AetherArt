@@ -5,6 +5,7 @@ No real pipelines are loaded. AetherModel is mocked throughout.
 
 from __future__ import annotations
 
+import contextlib
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -69,9 +70,11 @@ class TestEnsureBase:
 
     def test_ensure_base_caches_failure(self):
         r = _make_registry()
-        with patch.object(r._base, "init", side_effect=RuntimeError("no GPU")):
-            with pytest.raises(RuntimeError, match="Base model init failed"):
-                r.ensure_base()
+        with (
+            patch.object(r._base, "init", side_effect=RuntimeError("no GPU")),
+            pytest.raises(RuntimeError, match="Base model init failed"),
+        ):
+            r.ensure_base()
         assert r._base_init_error is not None
 
     def test_ensure_base_raises_on_cached_failure(self):
@@ -128,11 +131,11 @@ class TestQuantized:
 
         mock_4bit = MagicMock()
         # Patch the deferred import inside get_quantized
-        with patch("aetherart.quantization.load_sd21_quantized", return_value=mock_4bit):
-            try:
-                r.get_quantized(4)
-            except Exception:
-                pass  # scheduler swap may fail without a real diffusers pipe
+        with (
+            patch("aetherart.quantization.load_sd21_quantized", return_value=mock_4bit),
+            contextlib.suppress(Exception),  # scheduler swap may fail without a real diffusers pipe
+        ):
+            r.get_quantized(4)
         # Key invariant: the 8-bit pipe must have been evicted
         assert r._quant is not fake_8bit
 
@@ -245,9 +248,11 @@ class TestSdxlBase:
 
     def test_registry_get_sdxl_base_caches_failure(self):
         r = _make_registry()
-        with patch("aetherart.sdxl_pipeline.load_sdxl_base", side_effect=RuntimeError("no GPU")):
-            with pytest.raises(RuntimeError, match="SDXL base init failed"):
-                r.get_sdxl_base()
+        with (
+            patch("aetherart.sdxl_pipeline.load_sdxl_base", side_effect=RuntimeError("no GPU")),
+            pytest.raises(RuntimeError, match="SDXL base init failed"),
+        ):
+            r.get_sdxl_base()
         assert r._sdxl_base_init_error is not None
 
     def test_registry_get_sdxl_base_raises_on_cached_failure(self):
@@ -318,9 +323,11 @@ class TestSdxlQuantizedRegistry:
         r._sdxl_quantized_bits = 4
 
         mock_8bit = MagicMock()
-        with patch("aetherart.quantization.load_sdxl_quantized", return_value=mock_8bit):
-            with patch("aetherart.quantization.release_quantized_pipeline"):
-                r.get_sdxl_quantized(bits=8)
+        with (
+            patch("aetherart.quantization.load_sdxl_quantized", return_value=mock_8bit),
+            patch("aetherart.quantization.release_quantized_pipeline"),
+        ):
+            r.get_sdxl_quantized(bits=8)
 
         assert r._sdxl_quantized is not mock_4bit
         assert r._sdxl_quantized_bits == 8

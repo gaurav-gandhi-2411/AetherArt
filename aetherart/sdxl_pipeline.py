@@ -11,6 +11,7 @@ import gc
 
 from .config import cfg
 from .logger import get_logger
+from .utils import preferred_dtype_kwarg
 
 logger = get_logger(__name__)
 
@@ -22,7 +23,7 @@ except Exception:  # pragma: no cover
     StableDiffusionXLPipeline = None  # type: ignore[assignment, misc]
 
 
-def load_sdxl_base() -> "StableDiffusionXLPipeline":
+def load_sdxl_base() -> StableDiffusionXLPipeline:
     """Load SDXL base pipeline with fp16-fix VAE and DPM-Solver++ scheduler.
 
     G1 (mandatory): VAE is constructed first from cfg.sdxl_vae_fix to avoid
@@ -33,21 +34,31 @@ def load_sdxl_base() -> "StableDiffusionXLPipeline":
     if AutoencoderKL is None or StableDiffusionXLPipeline is None:
         raise RuntimeError("diffusers is not installed; cannot load SDXL pipeline")
 
+    # preferred_dtype_kwarg() picks 'torch_dtype' or 'dtype' based on the
+    # diffusers version — diffusers ≥ 0.36 renamed the param to 'dtype'.
+    dtype_kw = preferred_dtype_kwarg(AutoencoderKL.from_pretrained) or "torch_dtype"
     logger.info("Loading fp16-fix VAE from '%s'…", cfg.sdxl_vae_fix)
     vae = AutoencoderKL.from_pretrained(
         cfg.sdxl_vae_fix,
-        torch_dtype=torch.float16,
+        **{dtype_kw: torch.float16},
     )
 
+    pipe_dtype_kw = (
+        preferred_dtype_kwarg(StableDiffusionXLPipeline.from_pretrained) or "torch_dtype"
+    )
     logger.info("Loading SDXL base pipeline from '%s'…", cfg.sdxl_model)
     pipe = StableDiffusionXLPipeline.from_pretrained(
         cfg.sdxl_model,
         vae=vae,
-        torch_dtype=torch.float16,
+        **{pipe_dtype_kw: torch.float16},
         variant="fp16",
         use_safetensors=True,
     )
 
+    # When loading LoRA weights into SDXL, diffusers may emit a warning like
+    # "Some weights of CLIPTextModel were not initialized…expected not noise".
+    # This is benign — it fires because the LoRA only covers UNet keys and
+    # CLIPTextModel is intentionally left at its pre-trained weights.
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     logger.info("Scheduler set to DPMSolverMultistep")
 
@@ -66,7 +77,7 @@ def load_sdxl_base() -> "StableDiffusionXLPipeline":
     return pipe
 
 
-def release_sdxl_pipeline(pipe: "StableDiffusionXLPipeline") -> None:
+def release_sdxl_pipeline(pipe: StableDiffusionXLPipeline) -> None:
     """Delete a pipeline and reclaim GPU memory."""
     del pipe
     gc.collect()

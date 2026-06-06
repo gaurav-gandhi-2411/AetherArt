@@ -74,13 +74,9 @@ for p in points:
     dx, dy = 0.15, 0.0004
     if p["sched"] == "DPM" and p["steps"] == 20:
         dy = 0.0010
-    elif p["sched"] == "DDIM" and p["steps"] == 20:
+    elif p["sched"] == "DDIM" and p["steps"] == 20 or p["sched"] == "LMS" and p["steps"] == 30:
         dy = -0.0012
-    elif p["sched"] == "LMS" and p["steps"] == 30:
-        dy = -0.0012
-    elif p["sched"] == "EulerA" and p["steps"] == 30:
-        dy = 0.0008
-    elif p["sched"] == "DPM" and p["steps"] == 30:
+    elif p["sched"] == "EulerA" and p["steps"] == 30 or p["sched"] == "DPM" and p["steps"] == 30:
         dy = 0.0008
     ax.annotate(
         f"{p['sched']}@{p['steps']}",

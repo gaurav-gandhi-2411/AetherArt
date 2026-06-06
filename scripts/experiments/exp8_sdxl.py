@@ -153,7 +153,7 @@ def _ensure_lora() -> Path:
 # ── Pipeline and LoRA loading ─────────────────────────────────────────────────
 
 
-def load_lora_once(pipe: "object") -> None:  # StableDiffusionXLPipeline
+def load_lora_once(pipe: object) -> None:  # StableDiffusionXLPipeline
     """Download LoRA if needed then load it into the pipeline once."""
     lora_path = _ensure_lora()
     pipe.load_lora_weights(  # type: ignore[union-attr]
@@ -164,7 +164,7 @@ def load_lora_once(pipe: "object") -> None:  # StableDiffusionXLPipeline
     print(f"SDXL LoRA loaded: {lora_path.name}")
 
 
-def set_alpha(pipe: "object", alpha: float) -> None:  # StableDiffusionXLPipeline
+def set_alpha(pipe: object, alpha: float) -> None:  # StableDiffusionXLPipeline
     """Set the LoRA adapter weight without reloading weights."""
     pipe.set_adapters(["ukiyo_e"], adapter_weights=[alpha])  # type: ignore[union-attr]
 
@@ -172,7 +172,7 @@ def set_alpha(pipe: "object", alpha: float) -> None:  # StableDiffusionXLPipelin
 # ── Generation loop ───────────────────────────────────────────────────────────
 
 
-def run_alpha(alpha: float, pipe: "object") -> list[dict]:  # StableDiffusionXLPipeline
+def run_alpha(alpha: float, pipe: object) -> list[dict]:  # StableDiffusionXLPipeline
     """Generate 8 prompts × 5 seeds at one alpha value and return row dicts."""
     set_alpha(pipe, alpha)
     rows: list[dict] = []

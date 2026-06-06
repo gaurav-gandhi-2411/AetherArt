@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import gc
 from collections import OrderedDict
 from pathlib import Path
@@ -159,10 +160,8 @@ def get_pipeline(
                 "Loading LoRA '%s' (alpha=%.2f) into ControlNet pipeline", lora_name, lora_alpha
             )
             pipe.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name)
-            try:
+            with contextlib.suppress(Exception):
                 pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
-            except Exception:
-                pass
         else:
             logger.warning("LoRA '%s' not found in registry — skipping", lora_name)
 

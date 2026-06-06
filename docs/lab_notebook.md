@@ -284,4 +284,7 @@ The live SD 2.1 Hub card (`gauravgandhi2411/aetherart-ukiyo-sd21`) still reads "
 **For PR 14:** update the live SD 2.1 card to: "Both visual evaluations independently selected the checkpoint-1000 step count — at 512 for SD 2.1 and 1024 for SDXL." This requires:
 1. Edit `docs/model_cards/sd21_ukiyo_e.md` locally
 2. Re-run `python scripts/publish_lora_sd21.py` to push the updated card to the Hub
+
+<!-- logged 2026-06-05 after PR 14 merge -->
+SD 2.1 Hub card re-push pending — local card reconciled (PR 14, e7fefa7), needs write-token upload via `scripts/publish_lora_sd21.py`.
 Same pattern as the cross-link re-publish (no new code, pure Hub I/O action).

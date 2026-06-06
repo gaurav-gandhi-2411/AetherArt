@@ -40,7 +40,7 @@ def measure_clip_score(images: list, prompts: list) -> float:
         import numpy as np
 
         scores = []
-        for img, text in zip(images, prompts):
+        for img, text in zip(images, prompts, strict=False):
             img_t = preprocess(img).unsqueeze(0).to("cuda")
             tok = clip.tokenize([text], truncate=True).to("cuda")
             with torch.no_grad():

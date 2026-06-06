@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 from typing import Any
 
@@ -62,10 +63,8 @@ def unload_lora(pipeline: Any) -> None:
 
 
 def _unload_safe(pipeline: Any) -> None:
-    try:
+    with contextlib.suppress(Exception):
         pipeline.unload_lora_weights()
-    except Exception:
-        pass
 
 
 def get_trigger_token(lora_name: str) -> str:

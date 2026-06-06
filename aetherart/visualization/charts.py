@@ -27,7 +27,6 @@ Usage (multi-panel — blend_dynamics style):
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union
 
 import matplotlib.patches as mpatches  # noqa: F401 — re-exported for callers
 import matplotlib.pyplot as plt
@@ -81,12 +80,12 @@ class _Callout:
 
 # ── geometry ──────────────────────────────────────────────────────────────────
 def _segment_crosses_bar(
-    p1: Tuple[float, float],
-    p2: Tuple[float, float],
+    p1: tuple[float, float],
+    p2: tuple[float, float],
     bar_x: float,
     bar_h: float,
     bar_w: float,
-    obs_top: Optional[float] = None,
+    obs_top: float | None = None,
 ) -> bool:
     """True if segment p1→p2 strictly intersects the bar obstacle zone.
 
@@ -108,7 +107,7 @@ def _segment_crosses_bar(
     q_ = [x0 - xmin, xmax - x0, y0 - ymin, ymax - y0]
 
     t0, t1 = 0.0, 1.0
-    for pi, qi in zip(p_, q_):
+    for pi, qi in zip(p_, q_, strict=False):
         if abs(pi) < 1e-12:
             if qi < 0.0:
                 return False  # parallel and strictly outside
@@ -140,10 +139,10 @@ class ChartCanvas:
 
     def __init__(
         self,
-        figsize: Tuple[float, float],
+        figsize: tuple[float, float],
         title: str,
         ylabel: str,
-        xlabel: Optional[str] = None,
+        xlabel: str | None = None,
         top_margin_pct: float = 0.18,
     ) -> None:
         self.fig, self.ax = plt.subplots(figsize=figsize)
@@ -167,7 +166,7 @@ class ChartCanvas:
         ylabel: str,
         title_color: str = "black",
         top_margin_pct: float = 0.18,
-    ) -> "ChartCanvas":
+    ) -> ChartCanvas:
         """Wrap an existing axes (e.g. one panel of plt.subplots(1, 2))."""
         obj = cls.__new__(cls)
         obj.fig = fig
@@ -181,14 +180,14 @@ class ChartCanvas:
         return obj
 
     def _init_state(self) -> None:
-        self._bars: List[_Bar] = []
-        self._callouts: List[_Callout] = []
-        self._phase_labels: List[Tuple[float, str]] = []  # (x_center, text)
-        self._phase_seps: List[float] = []  # separator x positions
-        self._ylim: Optional[Tuple[float, float]] = None
+        self._bars: list[_Bar] = []
+        self._callouts: list[_Callout] = []
+        self._phase_labels: list[tuple[float, str]] = []  # (x_center, text)
+        self._phase_seps: list[float] = []  # separator x positions
+        self._ylim: tuple[float, float] | None = None
         self._callout_cursor: float = 0.0  # auto-stacking y cursor
         self._bar_width: float = 0.62
-        self._title_ymin_data: Optional[float] = None  # populated by _render_and_cache_title()
+        self._title_ymin_data: float | None = None  # populated by _render_and_cache_title()
 
     # ── data methods ──────────────────────────────────────────────────────────
 
@@ -196,14 +195,14 @@ class ChartCanvas:
         self,
         x: np.ndarray,
         y: np.ndarray,
-        colors: Union[List[str], str],
+        colors: list[str] | str,
         width: float = 0.62,
         value_fmt: str = "{:.4f}",
         value_size: float = 9.5,
         value_pad: float = 0.012,
         value_labels: bool = True,
         zorder: int = 3,
-        hatch: Optional[str] = None,
+        hatch: str | None = None,
         alpha: float = 1.0,
         edgecolor: str = "white",
         linewidth: float = 0.6,
@@ -222,7 +221,7 @@ class ChartCanvas:
 
         bars = self.ax.bar(x, y, color=colors, **kw)
 
-        for rect, v in zip(bars, y):
+        for rect, v in zip(bars, y, strict=False):
             cx = rect.get_x() + rect.get_width() / 2
             if value_labels:
                 self.ax.text(
@@ -297,7 +296,7 @@ class ChartCanvas:
         lw: float = 1.2,
         ls: str = "--",
         alpha: float = 0.7,
-        label: Optional[str] = None,
+        label: str | None = None,
         zorder: int = 2,
     ) -> None:
         """Horizontal reference line (e.g. SN28 reference, clip boundary)."""
@@ -333,7 +332,7 @@ class ChartCanvas:
     def set_xticks(
         self,
         ticks: np.ndarray,
-        labels: List[str],
+        labels: list[str],
         fontsize: float = 9.5,
     ) -> None:
         self.ax.set_xticks(ticks)
@@ -352,10 +351,10 @@ class ChartCanvas:
         fontweight: str = "normal",
         x_offset: float = 0.0,
         y_offset: float = 0.0,
-        facecolor: Optional[str] = None,
+        facecolor: str | None = None,
         arrowlw: float = 1.3,
         arrowstyle: str = "->",
-        connectionstyle: Optional[str] = None,
+        connectionstyle: str | None = None,
         same_row: bool = False,
     ) -> None:
         """
@@ -440,11 +439,11 @@ class ChartCanvas:
 
     def add_legend(
         self,
-        handles: List,
+        handles: list,
         ncol: int = 4,
         fontsize: float = 9,
         loc: str = "lower left",
-        bbox_to_anchor: Tuple = (0.0, -0.22),
+        bbox_to_anchor: tuple = (0.0, -0.22),
     ) -> None:
         """Legend always placed outside the chart body."""
         self.ax.legend(
@@ -491,7 +490,7 @@ class ChartCanvas:
         # span * 0.005 ≈ small breathing gap
         return bar.label_top + span * 0.028 + span * 0.005
 
-    def validate(self) -> List[str]:
+    def validate(self) -> list[str]:
         """
         Return a list of violation strings (empty = clean chart).
 
@@ -502,7 +501,7 @@ class ChartCanvas:
             (bar body + value label region above it).
         2b. The arrow tip must not land inside the target bar's value label zone.
         """
-        violations: List[str] = []
+        violations: list[str] = []
         if not self._ylim:
             return violations
 

@@ -1,10 +1,12 @@
 import atexit
+import contextlib
 import json
 import os
 import random
 import time
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any
 
 import gradio as gr
 import torch
@@ -95,11 +97,11 @@ def _run_sd21(
     speed_mode: str,
     memory_mode: str,
     control_type: str,
-    control_image: Optional[Any],
+    control_image: Any | None,
     control_scale: float,
     canny_low: int,
     canny_high: int,
-    step_callback: Optional[callable] = None,
+    step_callback: callable | None = None,
 ) -> tuple:
     """SD 2.1 generation (standard / LCM / quantized). Returns (PIL.Image, gen_time_s, vram_mb)."""
     if torch.cuda.is_available():
@@ -160,10 +162,8 @@ def _run_sd21(
                 lora_mod.load_lora(active_pipe, lora_name, lora_alpha)
                 REGISTRY.active_lora = lora_name
             elif lora_name != "none":
-                try:
+                with contextlib.suppress(Exception):
                     active_pipe.set_adapters(["default"], adapter_weights=[lora_alpha])
-                except Exception:
-                    pass
 
         if use_controlnet:
             ctrl_img = control_image.resize((width, height), Image.LANCZOS)
@@ -236,13 +236,13 @@ def _run_turbo(
             width=width,
             height=height,
         )
-    except torch.cuda.OutOfMemoryError:
+    except torch.cuda.OutOfMemoryError as err:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         REGISTRY.release_turbo()
         raise RuntimeError(
             "SDXL Turbo ran out of VRAM. Try Standard or LCM mode which require less memory."
-        )
+        ) from err
 
     gen_time = time.time() - t0
     vram_mb = (torch.cuda.max_memory_allocated() / 1024**2) if torch.cuda.is_available() else 0.0
@@ -267,8 +267,8 @@ def generate_stream(
     guidance: float,
     width: int,
     height: int,
-    seed: Optional[int],
-    control_image: Optional[Any] = None,
+    seed: int | None,
+    control_image: Any | None = None,
     control_type: str = "none",
     control_scale: float = 1.0,
     canny_low: int = 100,
@@ -278,8 +278,8 @@ def generate_stream(
     auto_trigger: bool = True,
     speed_mode: str = "standard",
     memory_mode: str = "fp16",
-    progress: gr.Progress = gr.Progress(),
-) -> Generator[tuple[Optional[Image.Image], str], None, None]:
+    progress: gr.Progress = gr.Progress(),  # noqa: B008 — Gradio inspects the default value to detect progress bars
+) -> Generator[tuple[Image.Image | None, str], None, None]:
     """Stream a status message, run generation, yield the final image."""
     try:
         if not prompt or not prompt.strip():
@@ -381,10 +381,8 @@ def generate_stream(
         and MODEL.backend == "local"
         and getattr(MODEL, "pipe", None) is not None
     ):
-        try:
+        with contextlib.suppress(Exception):
             scheduler_name = MODEL.pipe.scheduler.__class__.__name__
-        except Exception:
-            pass
 
     md: dict[str, Any] = {
         "prompt": prompt,
@@ -458,11 +456,11 @@ def load_from_png(file_path: str | None) -> tuple:
 
 
 def preview_control_map(
-    image: Optional[Any],
+    image: Any | None,
     control_type: str,
     canny_low: int,
     canny_high: int,
-) -> Optional[Image.Image]:
+) -> Image.Image | None:
     if image is None or control_type == "none":
         return None
     try:
