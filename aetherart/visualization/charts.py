@@ -466,7 +466,7 @@ class ChartCanvas:
         """
         try:
             self.fig.canvas.draw()
-            renderer = self.fig.canvas.get_renderer()  # type: ignore[attr-defined]
+            renderer = self.fig.canvas.get_renderer()
             bbox = self.ax.title.get_window_extent(renderer=renderer)
             inv = self.ax.transData.inverted()
             _, y_bottom = inv.transform((bbox.x0, bbox.y0))
