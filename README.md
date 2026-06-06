@@ -23,7 +23,7 @@ The ukiyo-e (Japanese woodblock-print) style is the demo subject, not the projec
 ## What's technically interesting
 
 - **SD 2.1 → SDXL modernization** — upgraded the base model from 512×512 to 1024×1024; replaced two separate ControlNet checkpoints with ControlNet Union; fp16-fix VAE is a required component (without it, every SDXL FP16 generation silently fails)
-- **8 GB VRAM fit** — FP16 precision + NF4 4-bit quantization via bitsandbytes (−421 MB vs FP16) + model CPU offload; peak usage 6.2 GB with NF4
+- **8 GB VRAM fit** — NF4 4-bit quantization (bitsandbytes) + model CPU offload; SDXL NF4 peaks at 2.6 GB, SDXL FP16 + Ukiyo-e LoRA peaks at 6.2 GB — both measured on GCP L4, both fit an 8 GB GPU
 - **Hyper-SD 8-step fast mode** — ByteDance LoRA cuts DPM-Solver++ from 30 steps to 8 (~8 s/image on L4) while keeping CFG guidance and negative prompts intact; 4-step variant also integrated
 - **Ukiyo-e LoRA** — rank-8 adapter trained on 80 WikiArt images, 4 h 26 min on GCP L4 (~$3.50); checkpoint selected from a 500/1000/1500 sweep scored by HPSv2.1 + ImageReward
 - **ControlNet** — Canny edge + depth-map conditioning; two depth estimators in use (dpt-hybrid-midas vs depth-anything-small-hf) for documented security and licensing reasons
@@ -45,7 +45,7 @@ cd AetherArt
 conda create -n aetherart python=3.10 -y
 conda activate aetherart
 pip install -r requirements.txt
-python app.py          # Gradio UI at http://localhost:7860 — downloads ~10 GB on first run
+python cloudrun_app.py  # same 4 modes as the live demo at http://localhost:7860 — downloads ~10 GB on first run
 ```
 
 No GPU required for tests (all heavy deps mocked):
@@ -54,7 +54,7 @@ No GPU required for tests (all heavy deps mocked):
 pytest -q              # 229 tests, ~60 s
 ```
 
-VRAM: SDXL NF4 ~6 GB minimum; SDXL FP16 ~10 GB. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full dev environment including CUDA-specific torch install and exact package lock.
+VRAM: measured on GCP L4 with `enable_model_cpu_offload()` — SDXL FP16 + Ukiyo-e LoRA 6.2 GB peak, SDXL NF4 2.6 GB peak. An 8 GB GPU is sufficient. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full dev environment including CUDA-specific torch install and exact package lock.
 
 ---
 
