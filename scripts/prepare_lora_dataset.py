@@ -158,7 +158,7 @@ def main():
         images = table["image"].to_pylist()
 
         shard_ukiyo = 0
-        for style, artist_int, img_struct in zip(styles, artists, images):
+        for style, artist_int, img_struct in zip(styles, artists, images, strict=False):
             total_scanned += 1
             if style != UKIYO_E_STYLE_IDX:
                 continue

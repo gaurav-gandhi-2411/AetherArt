@@ -82,7 +82,7 @@ def score_hps(
         # hpsv2.score() public API: (imgs_path, prompt, hps_version) only.
         # The internal img_score.score() has a cp= kwarg but the public API does not.
         raw = hpsv2.score(batch, prompt, hps_version=hps_version)
-        for idx, s in zip(indices, raw):
+        for idx, s in zip(indices, raw, strict=False):
             scores[idx] = float(s)
 
     return scores  # type: ignore[return-value]

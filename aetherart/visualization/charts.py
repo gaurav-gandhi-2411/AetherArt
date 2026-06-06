@@ -107,7 +107,7 @@ def _segment_crosses_bar(
     q_ = [x0 - xmin, xmax - x0, y0 - ymin, ymax - y0]
 
     t0, t1 = 0.0, 1.0
-    for pi, qi in zip(p_, q_):
+    for pi, qi in zip(p_, q_, strict=False):
         if abs(pi) < 1e-12:
             if qi < 0.0:
                 return False  # parallel and strictly outside
@@ -221,7 +221,7 @@ class ChartCanvas:
 
         bars = self.ax.bar(x, y, color=colors, **kw)
 
-        for rect, v in zip(bars, y):
+        for rect, v in zip(bars, y, strict=False):
             cx = rect.get_x() + rect.get_width() / 2
             if value_labels:
                 self.ax.text(

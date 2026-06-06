@@ -106,10 +106,12 @@ class TestDatasetsStubbedImport:
             fake_ir = MagicMock()
             fake_ir.load.return_value = MagicMock()
 
-            with patch.dict(sys.modules, {"ImageReward": fake_ir}):
-                with patch("torch.cuda.is_available", return_value=False):
-                    mod._model = None
-                    mod._load()
+            with (
+                patch.dict(sys.modules, {"ImageReward": fake_ir}),
+                patch("torch.cuda.is_available", return_value=False),
+            ):
+                mod._model = None
+                mod._load()
 
             # Only a real datasets module (with __version__) is acceptable;
             # a stub (ModuleType without __version__) means the cleanup was skipped.

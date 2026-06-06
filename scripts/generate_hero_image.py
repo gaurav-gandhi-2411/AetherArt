@@ -77,7 +77,7 @@ def build_grid(images: list[Image.Image]) -> Image.Image:
     except Exception:
         font = ImageFont.load_default()
 
-    for idx, (img, label) in enumerate(zip(images, LABELS)):
+    for idx, (img, label) in enumerate(zip(images, LABELS, strict=False)):
         row, col = divmod(idx, 2)
         x = pad + col * (THUMB_W + pad)
         y = pad + row * (THUMB_H + label_h + pad)
