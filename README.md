@@ -37,7 +37,7 @@ The trigger word `ukyowood` activates the woodblock-print style. Without it you 
 ### Ukiyo-e LoRA outputs — with measured eval scores
 
 All four generated at seed 42, DPM-Solver++ 30 steps, 1024×1024 on GCP L4.
-Scores from [`reports/eval_results_20260601_013328.json`](reports/eval_results_20260601_013328.json) — HPS and ImageReward are the operative quality metrics (CLIP is blind to style; see [CLIP-blindness](#the-clip-blindness-correction) below).
+Scores from eval run `20260601_013328` (GCP L4, 2026-06-01, DPM/30 steps) — HPS and ImageReward are the operative quality metrics (CLIP is blind to style; see [CLIP-blindness](#the-clip-blindness-correction) below).
 
 <table>
   <tr>
