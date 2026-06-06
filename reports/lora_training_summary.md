@@ -93,9 +93,7 @@ Checkpoint-1000 produces the same structural style quality as checkpoint-750 —
 | **1000** | **Same structure as 500/750 with warmer amber tones. Best match to Hokusai sunset palette.** |
 | 1500 | Visually indistinguishable from 1000. No improvement; loss uptick (0.495 vs 0.268) suggests overfitting onset. |
 
-![Fuji progression: baseline → ckpt-500 → ckpt-1000 → ckpt-1500](lora_fuji_progression.png)
-
-*Left to right: baseline, ckpt-500, ckpt-1000 (selected), ckpt-1500. Prompt: "ukyowood ukiyo-e print of Mount Fuji at sunset"*
+*Left to right: baseline, ckpt-500, ckpt-1000 (selected), ckpt-1500. Prompt: "ukyowood ukiyo-e print of Mount Fuji at sunset". Progression image removed from working tree (available in git history).*
 
 ---
 
@@ -113,4 +111,4 @@ This is set as the default negative in `aetherart/lora.py` and auto-appended whe
 
 ## Full Comparison Grid
 
-See `reports/lora_checkpoint_comparison.png` — 6 rows (baseline + 5 checkpoints) × 6 prompts.
+Full comparison grid (6 rows: baseline + 5 checkpoints × 6 prompts) removed from working tree — available in git history.

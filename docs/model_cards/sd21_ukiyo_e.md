@@ -81,5 +81,6 @@ text, watermark, calligraphy, signature, words, letters
 ## Links
 
 - **AetherArt repository:** https://github.com/gaurav-gandhi-2411/AetherArt
+- **Full training report:** [`reports/lora_training_summary.md`](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/lora_training_summary.md) — 2 h 8 min on RTX 3070 8 GB, checkpoint-1000 selected by visual evaluation across 500/1000/1500.
 - **CLIP-blindness finding:** see [`reports/clip_blindness.md`](https://github.com/gaurav-gandhi-2411/AetherArt/blob/main/reports/clip_blindness.md) — nine Phase 6b experiments showing CLIP delta <1 SE while LPIPS ranged 0.40–0.73; underfitting paradox; why CLIP cannot guide LoRA training decisions.
 - **Companion SDXL adapter (1024×1024):** [`gauravgandhi2411/aetherart-ukiyo-sdxl`](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sdxl) — same rank-8, same dataset, trained on GCP L4. Both visual evaluations independently selected the checkpoint-1000 step count — at 512 for SD 2.1 and 1024 for SDXL.
