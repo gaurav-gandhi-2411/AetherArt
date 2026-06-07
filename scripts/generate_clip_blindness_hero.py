@@ -36,8 +36,8 @@ import numpy as np  # noqa: E402
 OUT_PATH = ROOT / "reports" / "showcase" / "clip_blindness_hero.png"
 
 # ── Palette (consistent with aetherart.visualization.charts) ──────────────────
-TEAL = "#1A7F7A"       # BLIND experiments
-ORANGE = "#E07B39"     # RESPONDS experiments
+TEAL = "#1A7F7A"  # BLIND experiments
+ORANGE = "#E07B39"  # RESPONDS experiments
 GREY_LINE = "#999999"
 LPIPS_BAR = "#2C6FAC"  # LPIPS panel bars (blue)
 BG = "#FFFFFF"
@@ -64,7 +64,9 @@ def _group(rows: list[dict], key: str) -> dict[str, list[dict]]:
     return out
 
 
-def _delta_and_se(rows: list[dict], cond_key: str, clip_col: str = "clip_score") -> tuple[float, float]:
+def _delta_and_se(
+    rows: list[dict], cond_key: str, clip_col: str = "clip_score"
+) -> tuple[float, float]:
     """Return (clip_delta_SE, pooled_SE) using the same formula as generate_clip_blindness_sdxl."""
     groups = _group(rows, cond_key)
     cond_means, cond_ses = [], []
@@ -113,8 +115,7 @@ def load_exp3() -> tuple[float, float]:
     data = json.loads((ROOT / "reports/experiments/exp3_sdxl/results.json").read_text())
     rows = data["results"]
     clip_dse, _ = _delta_and_se(rows, "cfg_value")
-    # LPIPS vs ref (cfg=7); exclude ref rows (lpips_vs_ref == 0.0)
-    lp_vals = [r["lpips_vs_ref"] for r in rows if r.get("lpips_vs_ref") is not None and r["cfg_value"] != 7]
+    # LPIPS vs ref (cfg=7); exclude ref condition from range calculation
     groups_cfg = _group(rows, "cfg_value")
     cfg_lp = []
     for cfg, g in groups_cfg.items():
@@ -199,12 +200,22 @@ def load_exp9() -> tuple[float, float]:
 # Verified expected values (from reports/clip_blindness_sdxl.md, lines 36–43)
 # Used only for assertion; chart always plots from re-derived values above.
 _EXPECTED_CLIP_SE = {
-    "exp1": 0.24, "exp2": 1.09, "exp3": 7.01,
-    "exp4": 0.67, "exp5": 1.66, "exp8": 7.21, "exp9": 0.84,
+    "exp1": 0.24,
+    "exp2": 1.09,
+    "exp3": 7.01,
+    "exp4": 0.67,
+    "exp5": 1.66,
+    "exp8": 7.21,
+    "exp9": 0.84,
 }
 _EXPECTED_LPIPS = {
-    "exp1": 0.203, "exp2": 0.374, "exp3": 0.343,
-    "exp4": 0.452, "exp5": 0.618, "exp8": 0.295, "exp9": 0.301,
+    "exp1": 0.203,
+    "exp2": 0.374,
+    "exp3": 0.343,
+    "exp4": 0.452,
+    "exp5": 0.618,
+    "exp8": 0.295,
+    "exp9": 0.301,
 }
 
 
@@ -229,37 +240,42 @@ def main() -> None:
     exp9 = load_exp9()
 
     raw: dict[str, tuple[float, float]] = {
-        "exp1": exp1, "exp2": exp2, "exp3": exp3, "exp4": exp4,
-        "exp5": exp5, "exp8": exp8, "exp9": exp9,
+        "exp1": exp1,
+        "exp2": exp2,
+        "exp3": exp3,
+        "exp4": exp4,
+        "exp5": exp5,
+        "exp8": exp8,
+        "exp9": exp9,
     }
 
     print("\nVerification against reports/clip_blindness_sdxl.md (lines 36–43):")
     for eid, (clip_dse, lpips) in raw.items():
         _assert_close(f"{eid} CLIP_SE", clip_dse, _EXPECTED_CLIP_SE[eid])
-        _assert_close(f"{eid} LPIPS",   lpips,    _EXPECTED_LPIPS[eid], tol=0.03)
+        _assert_close(f"{eid} LPIPS", lpips, _EXPECTED_LPIPS[eid], tol=0.03)
 
     # ── Assemble rows sorted ascending by CLIP Δ SE ───────────────────────────
     rows = [
         # (short label,        clip_dse,    lpips_range, verdict)
-        ("Quantization",       raw["exp1"][0], raw["exp1"][1], "BLIND"),
-        ("Scheduler",          raw["exp4"][0], raw["exp4"][1], "BLIND"),
-        ("Trigger token",      raw["exp9"][0], raw["exp9"][1], "BLIND"),
-        ("Neg prompt",         raw["exp2"][0], raw["exp2"][1], "RESPONDS"),
+        ("Quantization", raw["exp1"][0], raw["exp1"][1], "BLIND"),
+        ("Scheduler", raw["exp4"][0], raw["exp4"][1], "BLIND"),
+        ("Trigger token", raw["exp9"][0], raw["exp9"][1], "BLIND"),
+        ("Neg prompt", raw["exp2"][0], raw["exp2"][1], "RESPONDS"),
         ("ControlNet strength", raw["exp5"][0], raw["exp5"][1], "RESPONDS"),
-        ("CFG scale (1–15)",   raw["exp3"][0], raw["exp3"][1], "RESPONDS"),
+        ("CFG scale (1–15)", raw["exp3"][0], raw["exp3"][1], "RESPONDS"),
         ("LoRA alpha (0–1.5)", raw["exp8"][0], raw["exp8"][1], "RESPONDS"),
     ]
     rows.sort(key=lambda r: r[1])  # ascending clip_dse
 
-    labels     = [r[0] for r in rows]
-    clip_ses   = np.array([r[1] for r in rows])
+    labels = [r[0] for r in rows]
+    clip_ses = np.array([r[1] for r in rows])
     lpips_rngs = np.array([r[2] for r in rows])
-    verdicts   = [r[3] for r in rows]
+    verdicts = [r[3] for r in rows]
 
     clip_colors = [TEAL if v == "BLIND" else ORANGE for v in verdicts]
 
     print("\nPlot data (sorted ascending by CLIP delta SE):")
-    for lbl, cs, lr, vd in zip(labels, clip_ses, lpips_rngs, verdicts):
+    for lbl, cs, lr, vd in zip(labels, clip_ses, lpips_rngs, verdicts, strict=True):
         print(f"  {lbl:25s}  CLIP={cs:.2f} SE   LPIPS={lr:.3f}   [{vd}]")
 
     # ── Figure: two horizontal bar panels sharing Y axis ─────────────────────
@@ -269,13 +285,12 @@ def main() -> None:
     # Left panel (70% width): CLIP Δ SE
     ax_clip = fig.add_axes([0.22, 0.13, 0.50, 0.73])
     # Right panel (25% width): LPIPS range
-    ax_lp   = fig.add_axes([0.74, 0.13, 0.22, 0.73])
+    ax_lp = fig.add_axes([0.74, 0.13, 0.22, 0.73])
 
     y = np.arange(len(labels))
 
     # ── Left: CLIP Δ SE ───────────────────────────────────────────────────────
-    bars = ax_clip.barh(y, clip_ses, color=clip_colors, height=0.55,
-                        edgecolor="none", zorder=3)
+    bars = ax_clip.barh(y, clip_ses, color=clip_colors, height=0.55, edgecolor="none", zorder=3)
     ax_clip.set_facecolor(BG)
     ax_clip.grid(axis="x", color=GRID, linewidth=0.8, zorder=1)
     ax_clip.spines[["top", "right", "left"]].set_visible(False)
@@ -293,27 +308,41 @@ def main() -> None:
 
     # Threshold line at 1 SE
     ax_clip.axvline(1.0, color=GREY_LINE, linestyle="--", linewidth=1.4, zorder=2)
-    ax_clip.text(1.05, len(labels) - 0.2, "1 SE\nthreshold",
-                 color=GREY_LINE, fontsize=8.5, fontstyle="italic", va="top")
+    ax_clip.text(
+        1.05,
+        len(labels) - 0.2,
+        "1 SE\nthreshold",
+        color=GREY_LINE,
+        fontsize=8.5,
+        fontstyle="italic",
+        va="top",
+    )
 
     # Value labels on bars
-    for bar, cs in zip(bars, clip_ses):
+    for bar, cs in zip(bars, clip_ses, strict=True):
         offset = 0.15 if cs < 1.0 else 0.15
-        ax_clip.text(cs + offset, bar.get_y() + bar.get_height() / 2,
-                     f"{cs:.2f}", va="center", fontsize=9.5, color="#444444")
+        ax_clip.text(
+            cs + offset,
+            bar.get_y() + bar.get_height() / 2,
+            f"{cs:.2f}",
+            va="center",
+            fontsize=9.5,
+            color="#444444",
+        )
 
     # Legend
     from matplotlib.patches import Patch
+
     legend_handles = [
-        Patch(facecolor=TEAL,   label="CLIP-BLIND   (< 1 SE)"),
+        Patch(facecolor=TEAL, label="CLIP-BLIND   (< 1 SE)"),
         Patch(facecolor=ORANGE, label="CLIP RESPONDS (≥ 1 SE)"),
     ]
-    ax_clip.legend(handles=legend_handles, loc="lower right", fontsize=9,
-                   framealpha=0.85, edgecolor=GRID)
+    ax_clip.legend(
+        handles=legend_handles, loc="lower right", fontsize=9, framealpha=0.85, edgecolor=GRID
+    )
 
     # ── Right: LPIPS range ────────────────────────────────────────────────────
-    ax_lp.barh(y, lpips_rngs, color=LPIPS_BAR, height=0.55,
-               alpha=0.75, edgecolor="none", zorder=3)
+    ax_lp.barh(y, lpips_rngs, color=LPIPS_BAR, height=0.55, alpha=0.75, edgecolor="none", zorder=3)
     ax_lp.set_facecolor(BG)
     ax_lp.grid(axis="x", color=GRID, linewidth=0.8, zorder=1)
     ax_lp.spines[["top", "right", "left"]].set_visible(False)
@@ -325,29 +354,48 @@ def main() -> None:
     ax_lp.set_xlim(0, 0.80)
     ax_lp.xaxis.set_major_locator(mticker.MultipleLocator(0.2))
 
-    for bar, lr in zip(ax_lp.patches, lpips_rngs):
-        ax_lp.text(lr + 0.02, bar.get_y() + bar.get_height() / 2,
-                   f"{lr:.3f}", va="center", fontsize=9, color="#444444")
+    for bar, lr in zip(ax_lp.patches, lpips_rngs, strict=False):
+        ax_lp.text(
+            lr + 0.02,
+            bar.get_y() + bar.get_height() / 2,
+            f"{lr:.3f}",
+            va="center",
+            fontsize=9,
+            color="#444444",
+        )
 
     # ── Titles ────────────────────────────────────────────────────────────────
     fig.text(
-        0.47, 0.96,
+        0.47,
+        0.96,
         "CLIP-Blindness Study — SDXL (7 experiments)",
-        ha="center", va="top", fontsize=14, fontweight="bold", color="#111111",
+        ha="center",
+        va="top",
+        fontsize=14,
+        fontweight="bold",
+        color="#111111",
     )
     fig.text(
-        0.47, 0.91,
+        0.47,
+        0.91,
         "Teal bars: CLIP cannot detect quality changes other metrics catch."
         "  |  Right panel: all experiments show large perceptual variation (LPIPS ≥ 0.20).",
-        ha="center", va="top", fontsize=9.5, color="#555555",
+        ha="center",
+        va="top",
+        fontsize=9.5,
+        color="#555555",
     )
 
     # Source note
     fig.text(
-        0.47, 0.01,
+        0.47,
+        0.01,
         "Source: reports/experiments/exp*_sdxl/results.json  |  "
         "Reproduced by scripts/generate_clip_blindness_hero.py",
-        ha="center", va="bottom", fontsize=7.5, color="#999999",
+        ha="center",
+        va="bottom",
+        fontsize=7.5,
+        color="#999999",
     )
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
