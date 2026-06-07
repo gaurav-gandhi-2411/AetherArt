@@ -126,20 +126,22 @@ The direction is stable: SDXL is less CLIP-blind than SD 2.1 regardless of where
 
 ## How it's built
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        Cloud Run demo                        │
-│  SDXL base + fp16-fix VAE  │  Hyper-8step LoRA (default)    │
-│  Ukiyo-e LoRA (optional)   │  ControlNet (Canny/Depth)       │
-│  Safety guard              │  NF4 quantized variant          │
-└──────────────────────────────────────────────────────────────┘
-
-ModelRegistry (pipeline singleton owner)
-  ├─ SDXL base (load_sdxl_base → sdxl_pipeline.py)
-  ├─ SDXL quantized (load_sdxl_quantized → quantization.py)
-  ├─ SDXL ControlNet [LRU-2 cache, keyed by (ctype, lora, alpha)]
-  ├─ SD 2.1 base (legacy)
-  └─ SD 2.1 ControlNet (legacy)
+```mermaid
+flowchart TD
+    subgraph CR["Cloud Run demo"]
+        direction LR
+        M1["Standard SDXL"]
+        M2["Fast mode · Hyper-8step LoRA"]
+        M3["Ukiyo-e style · LoRA adapter"]
+        M4["ControlNet · Canny / Depth"]
+        M5["NF4 quantized · 2.6 GB VRAM"]
+    end
+    CR --> MR["ModelRegistry\n(pipeline singleton owner)"]
+    MR --> P1["SDXL base\nsdxl_pipeline.py"]
+    MR --> P2["SDXL NF4 quantized\nquantization.py"]
+    MR --> P3["SDXL ControlNet\nLRU-2 cache"]
+    MR --> P4["SD 2.1 base · legacy"]
+    MR --> P5["SD 2.1 ControlNet · legacy"]
 ```
 
 | Component | Model | Role |
