@@ -18,6 +18,14 @@ if TYPE_CHECKING:
 _MODEL_ID = "openai/clip-vit-base-patch32"
 # Pins the CLIP scorer's own weights so a CI quality gate's threshold comparison isn't silently
 # invalidated by the scorer drifting to a new upstream revision between baseline and candidate.
+#
+# The CI-set value (CLIP_MODEL_REVISION=c237dc49a33fc61debc9276459120b7eac67e7ef, see
+# .github/workflows/{ci,eval}.yml) is deliberately NOT this repo's `main` HEAD. `main` ships
+# only pytorch_model.bin — no model.safetensors — and transformers refuses to torch.load a
+# .bin checkpoint on torch < 2.6 (CVE-2025-32434; the same issue docs/depth_estimators.md
+# documents for a different model). The pinned SHA above is the safetensors-converted revision,
+# verified to load with use_safetensors=True. Do NOT "clean this up" by repointing to `main` —
+# that silently breaks the CI gate on any torch < 2.6 runner.
 _MODEL_REVISION = os.environ.get("CLIP_MODEL_REVISION")
 _model = None
 _processor = None

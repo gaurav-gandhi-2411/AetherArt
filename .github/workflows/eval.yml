@@ -1,5 +1,10 @@
 name: Eval Gate
 
+# SEMANTICS: this is a post-merge REGRESSION DETECTOR on `main` (+ nightly), not a per-PR
+# blocker. A regression can still land on main via a normal merge — it is CAUGHT within a day
+# (next push-to-main run, or the nightly cron at worst), not PREVENTED at merge time the way a
+# required pull_request check would be. That is a deliberate tradeoff, not an oversight:
+#
 # NOT wired to pull_request: a measured, real run (docs/LATENCY_ROOT_CAUSE.md) shows a single
 # SD 2.1 / DPM / 30-step CPU generation takes ~162s on a modern laptop CPU; 30 prompts is
 # therefore ~80+ minutes, likely longer on a 2-core GitHub-hosted runner. Blocking every PR on
@@ -7,6 +12,10 @@ name: Eval Gate
 # runs post-merge (push to main) plus nightly, so a regression is caught within a day of landing
 # rather than shipping silently forever — the audit finding this closes
 # (docs/MODEL_AUDIT.md §4: CLIP/HPS/IR measured but never gated).
+#
+# Revisit: if GPU-backed CI runners become available (self-hosted or a paid GitHub-hosted GPU
+# tier), move this to pull_request so regressions are prevented at merge, not just detected
+# after.
 on:
   push:
     branches: [ main ]

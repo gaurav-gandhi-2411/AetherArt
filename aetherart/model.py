@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-from contextlib import nullcontext
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import torch
-
-if TYPE_CHECKING:
-    from PIL import Image
 
 from .config import cfg
 from .logger import get_logger
@@ -38,7 +34,11 @@ _build_pretrained_kwargs = build_pretrained_kwargs
 
 class AetherModel:
     """
-    Encapsulates model init + generation with VRAM & performance mitigations.
+    Encapsulates model init with VRAM & performance mitigations.
+
+    Exposes the loaded pipeline via `self.pipe` — callers (app.py, scripts/eval.py) invoke it
+    directly rather than through a wrapper method, so generation-time kwargs (callbacks, LoRA,
+    scheduler swaps) stay fully under caller control.
     """
 
     def __init__(self, model_id: str | None = None) -> None:
@@ -188,42 +188,3 @@ class AetherModel:
             self.optimizations["cudnn_benchmark"] = "enabled"
         except Exception:
             pass
-
-    def generate(
-        self,
-        prompt: str,
-        steps: int = cfg.default_steps,
-        guidance: float = cfg.default_guidance,
-        width: int = cfg.default_width,
-        height: int = cfg.default_height,
-        seed: int | None = None,
-    ) -> Image.Image:
-        """
-        Simple wrapper that runs the pipeline synchronously and returns a PIL image.
-        Note: the app's generate stream uses MODEL.pipe directly to pass callback arguments
-        for stepwise progress. This method remains useful for direct calls.
-        """
-        if self.backend == "local" and self.pipe is not None:
-            generator = None
-            if seed is not None:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
-                generator = torch.Generator(device=device).manual_seed(int(seed))
-            ctx = torch.autocast("cuda") if torch.cuda.is_available() else nullcontext()
-            with ctx:
-                out = self.pipe(
-                    prompt,
-                    num_inference_steps=int(steps),
-                    guidance_scale=float(guidance),
-                    width=int(width),
-                    height=int(height),
-                    generator=generator,
-                )
-                images = getattr(out, "images", None)
-                if images:
-                    return images[0]
-                if isinstance(out, (list, tuple)) and out:
-                    return out[0]
-                raise RuntimeError("Unexpected pipeline output structure")
-        if self.backend == "inference" and self.inference_client is not None:
-            return self.inference_client.text_to_image(prompt, model=self.model_id)
-        raise RuntimeError("Model backend not initialized.")
