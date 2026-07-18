@@ -102,7 +102,10 @@ class AetherModel:
             try:
                 dtype_val = torch.float16 if torch.cuda.is_available() else torch.float32
                 kwargs = _build_pretrained_kwargs(
-                    StableDiffusionPipeline.from_pretrained, dtype_val, self.hf_token
+                    StableDiffusionPipeline.from_pretrained,
+                    dtype_val,
+                    self.hf_token,
+                    cfg.default_model_revision,
                 )
                 self.pipe = StableDiffusionPipeline.from_pretrained(model_to_load, **kwargs)
                 self._apply_optimizations()

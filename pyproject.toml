@@ -2,6 +2,7 @@
 testpaths = ["tests"]
 markers = [
     "gpu: requires CUDA GPU (auto-skipped when cuda is unavailable)",
+    "gen_smoke: real (unmocked) generation — network + compute, run as its own CI step",
 ]
 addopts = "--cov=aetherart --cov-fail-under=55"
 

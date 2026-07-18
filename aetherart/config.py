@@ -36,6 +36,7 @@ def _env_float(key: str, default: float) -> float:
 @dataclass
 class Config:
     default_model: str = os.environ.get("HF_MODEL_ID", "sd2-community/stable-diffusion-2-1")
+    default_model_revision: str | None = os.environ.get("HF_MODEL_REVISION")
     sdxl_model: str = "stabilityai/stable-diffusion-xl-base-1.0"
     sdxl_vae_fix: str = "madebyollin/sdxl-vae-fp16-fix"
     hyper_sd_repo: str = "ByteDance/Hyper-SD"

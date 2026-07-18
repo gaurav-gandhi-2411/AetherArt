@@ -7,6 +7,7 @@ Typical good generations score 0.20–0.35.
 
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 import torch
@@ -15,6 +16,9 @@ if TYPE_CHECKING:
     from PIL import Image
 
 _MODEL_ID = "openai/clip-vit-base-patch32"
+# Pins the CLIP scorer's own weights so a CI quality gate's threshold comparison isn't silently
+# invalidated by the scorer drifting to a new upstream revision between baseline and candidate.
+_MODEL_REVISION = os.environ.get("CLIP_MODEL_REVISION")
 _model = None
 _processor = None
 _device: str | None = None
@@ -26,8 +30,13 @@ def _load() -> tuple:
         from transformers import CLIPModel, CLIPProcessor
 
         _device = "cuda" if torch.cuda.is_available() else "cpu"
-        _model = CLIPModel.from_pretrained(_MODEL_ID, use_safetensors=True).to(_device)
-        _processor = CLIPProcessor.from_pretrained(_MODEL_ID)
+        # "main" is HF's default branch name — passing it explicitly when _MODEL_REVISION is
+        # unset is equivalent to omitting revision=, while keeping the type plain `str` for mypy.
+        revision = _MODEL_REVISION or "main"
+        _model = CLIPModel.from_pretrained(_MODEL_ID, use_safetensors=True, revision=revision).to(
+            _device
+        )
+        _processor = CLIPProcessor.from_pretrained(_MODEL_ID, revision=revision)
         _model.eval()
     return _model, _processor, _device
 
