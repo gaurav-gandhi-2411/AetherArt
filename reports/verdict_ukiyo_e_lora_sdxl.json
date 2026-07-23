@@ -1,0 +1,1622 @@
+[
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_001",
+    "prompt": "artificial intelligence",
+    "seed": 42,
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_001_seed42.png",
+    "latency_s": 55.06,
+    "std": 57.559,
+    "mean": 131.747,
+    "clip_score_context_only": 0.2593,
+    "lpips_vs_base": 0.618411,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    }
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_001",
+    "prompt": "artificial intelligence",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_001_seed43.png",
+    "latency_s": 67.35,
+    "std": 53.838,
+    "mean": 132.991,
+    "clip_score_context_only": 0.2615,
+    "lpips_vs_base": 0.695294
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_001",
+    "prompt": "artificial intelligence",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_001_seed44.png",
+    "latency_s": 49.63,
+    "std": 55.544,
+    "mean": 125.481,
+    "clip_score_context_only": 0.2613,
+    "lpips_vs_base": 0.754298
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_002",
+    "prompt": "a shiba inu",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_002_seed42.png",
+    "latency_s": 48.94,
+    "std": 47.0,
+    "mean": 133.707,
+    "clip_score_context_only": 0.2889,
+    "lpips_vs_base": 0.60786
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_002",
+    "prompt": "a shiba inu",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_002_seed43.png",
+    "latency_s": 49.97,
+    "std": 52.617,
+    "mean": 145.257,
+    "clip_score_context_only": 0.2885,
+    "lpips_vs_base": 0.662278
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_002",
+    "prompt": "a shiba inu",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_002_seed44.png",
+    "latency_s": 49.64,
+    "std": 61.793,
+    "mean": 136.394,
+    "clip_score_context_only": 0.3059,
+    "lpips_vs_base": 0.720309
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_003",
+    "prompt": "a dragon",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_003_seed42.png",
+    "latency_s": 70.77,
+    "std": 59.821,
+    "mean": 122.217,
+    "clip_score_context_only": 0.2945,
+    "lpips_vs_base": 0.650779
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_003",
+    "prompt": "a dragon",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_003_seed43.png",
+    "latency_s": 53.44,
+    "std": 67.704,
+    "mean": 122.404,
+    "clip_score_context_only": 0.2718,
+    "lpips_vs_base": 0.639471
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_003",
+    "prompt": "a dragon",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_003_seed44.png",
+    "latency_s": 56.42,
+    "std": 71.533,
+    "mean": 116.522,
+    "clip_score_context_only": 0.283,
+    "lpips_vs_base": 0.64023
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_004",
+    "prompt": "a shiba inu wearing a beret and black turtleneck",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_004_seed42.png",
+    "latency_s": 56.47,
+    "std": 67.572,
+    "mean": 126.812,
+    "clip_score_context_only": 0.3652,
+    "lpips_vs_base": 0.562575
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_004",
+    "prompt": "a shiba inu wearing a beret and black turtleneck",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_004_seed43.png",
+    "latency_s": 54.26,
+    "std": 62.692,
+    "mean": 151.953,
+    "clip_score_context_only": 0.258,
+    "lpips_vs_base": 0.544653
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_004",
+    "prompt": "a shiba inu wearing a beret and black turtleneck",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_004_seed44.png",
+    "latency_s": 56.16,
+    "std": 65.446,
+    "mean": 137.067,
+    "clip_score_context_only": 0.3229,
+    "lpips_vs_base": 0.676258
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_005",
+    "prompt": "a corgi wearing a red bowtie and a purple party hat",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.7,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_005_seed42.png",
+    "latency_s": 54.56,
+    "std": 70.946,
+    "mean": 130.998,
+    "clip_score_context_only": 0.3991,
+    "lpips_vs_base": 0.550242
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_005",
+    "prompt": "a corgi wearing a red bowtie and a purple party hat",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.7,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_005_seed43.png",
+    "latency_s": 55.11,
+    "std": 59.695,
+    "mean": 143.209,
+    "clip_score_context_only": 0.378,
+    "lpips_vs_base": 0.626612
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_005",
+    "prompt": "a corgi wearing a red bowtie and a purple party hat",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.7,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_005_seed44.png",
+    "latency_s": 54.87,
+    "std": 69.599,
+    "mean": 145.844,
+    "clip_score_context_only": 0.3936,
+    "lpips_vs_base": 0.530886
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_006",
+    "prompt": "an eagle swooping down to catch a mouse",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_006_seed42.png",
+    "latency_s": 52.61,
+    "std": 64.291,
+    "mean": 126.176,
+    "clip_score_context_only": 0.2917,
+    "lpips_vs_base": 0.641493
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_006",
+    "prompt": "an eagle swooping down to catch a mouse",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_006_seed43.png",
+    "latency_s": 26.05,
+    "std": 59.835,
+    "mean": 138.417,
+    "clip_score_context_only": 0.2893,
+    "lpips_vs_base": 0.581306
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_006",
+    "prompt": "an eagle swooping down to catch a mouse",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_006_seed44.png",
+    "latency_s": 26.93,
+    "std": 65.142,
+    "mean": 126.185,
+    "clip_score_context_only": 0.2792,
+    "lpips_vs_base": 0.62345
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_007",
+    "prompt": "an elephant using its trunk to blow into a tuba",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_007_seed42.png",
+    "latency_s": 24.81,
+    "std": 46.88,
+    "mean": 124.308,
+    "clip_score_context_only": 0.2567,
+    "lpips_vs_base": 0.575413
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_007",
+    "prompt": "an elephant using its trunk to blow into a tuba",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_007_seed43.png",
+    "latency_s": 23.07,
+    "std": 50.961,
+    "mean": 135.037,
+    "clip_score_context_only": 0.2751,
+    "lpips_vs_base": 0.522895
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_007",
+    "prompt": "an elephant using its trunk to blow into a tuba",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.75
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_007_seed44.png",
+    "latency_s": 22.57,
+    "std": 45.652,
+    "mean": 122.174,
+    "clip_score_context_only": 0.2918,
+    "lpips_vs_base": 0.678322
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_008",
+    "prompt": "a dolphin in an astronaut suit on saturn",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_008_seed42.png",
+    "latency_s": 22.47,
+    "std": 65.275,
+    "mean": 116.678,
+    "clip_score_context_only": 0.3081,
+    "lpips_vs_base": 0.60017
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_008",
+    "prompt": "a dolphin in an astronaut suit on saturn",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_008_seed43.png",
+    "latency_s": 22.95,
+    "std": 67.615,
+    "mean": 127.683,
+    "clip_score_context_only": 0.3041,
+    "lpips_vs_base": 0.538946
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_008",
+    "prompt": "a dolphin in an astronaut suit on saturn",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_008_seed44.png",
+    "latency_s": 22.55,
+    "std": 68.338,
+    "mean": 120.614,
+    "clip_score_context_only": 0.3141,
+    "lpips_vs_base": 0.582167
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_009",
+    "prompt": "an oil painting of a sailboat at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_009_seed42.png",
+    "latency_s": 22.16,
+    "std": 46.929,
+    "mean": 120.767,
+    "clip_score_context_only": 0.3534,
+    "lpips_vs_base": 0.441797
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_009",
+    "prompt": "an oil painting of a sailboat at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_009_seed43.png",
+    "latency_s": 22.21,
+    "std": 52.309,
+    "mean": 124.402,
+    "clip_score_context_only": 0.3377,
+    "lpips_vs_base": 0.469877
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_009",
+    "prompt": "an oil painting of a sailboat at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_009_seed44.png",
+    "latency_s": 22.23,
+    "std": 59.522,
+    "mean": 119.949,
+    "clip_score_context_only": 0.3235,
+    "lpips_vs_base": 0.522746
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_010",
+    "prompt": "A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.6,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_010_seed42.png",
+    "latency_s": 22.77,
+    "std": 59.947,
+    "mean": 121.394,
+    "clip_score_context_only": 0.3399,
+    "lpips_vs_base": 0.537338
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_010",
+    "prompt": "A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.6,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_010_seed43.png",
+    "latency_s": 22.13,
+    "std": 61.442,
+    "mean": 129.845,
+    "clip_score_context_only": 0.3331,
+    "lpips_vs_base": 0.496519
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_010",
+    "prompt": "A tornado made of sharks crashing into a skyscraper. painting in the style of Hokusai.",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.7,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_010_seed44.png",
+    "latency_s": 22.1,
+    "std": 69.205,
+    "mean": 119.535,
+    "clip_score_context_only": 0.3485,
+    "lpips_vs_base": 0.485152
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_011",
+    "prompt": "a coffee mug",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_011_seed42.png",
+    "latency_s": 22.1,
+    "std": 40.427,
+    "mean": 131.026,
+    "clip_score_context_only": 0.3113,
+    "lpips_vs_base": 0.611614
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_011",
+    "prompt": "a coffee mug",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_011_seed43.png",
+    "latency_s": 22.38,
+    "std": 45.731,
+    "mean": 140.696,
+    "clip_score_context_only": 0.2873,
+    "lpips_vs_base": 0.651348
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_011",
+    "prompt": "a coffee mug",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_011_seed44.png",
+    "latency_s": 22.08,
+    "std": 40.291,
+    "mean": 123.358,
+    "clip_score_context_only": 0.1864,
+    "lpips_vs_base": 0.736602
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_012",
+    "prompt": "a red lego block",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_012_seed42.png",
+    "latency_s": 22.77,
+    "std": 57.197,
+    "mean": 131.318,
+    "clip_score_context_only": 0.2868,
+    "lpips_vs_base": 0.643881
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_012",
+    "prompt": "a red lego block",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_012_seed43.png",
+    "latency_s": 23.4,
+    "std": 60.719,
+    "mean": 130.699,
+    "clip_score_context_only": 0.2719,
+    "lpips_vs_base": 0.666678
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_012",
+    "prompt": "a red lego block",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_012_seed44.png",
+    "latency_s": 22.76,
+    "std": 54.673,
+    "mean": 116.708,
+    "clip_score_context_only": 0.282,
+    "lpips_vs_base": 0.642496
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_013",
+    "prompt": "an ornate, high-backed mahogany chair with a red cushion",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_013_seed42.png",
+    "latency_s": 22.82,
+    "std": 66.392,
+    "mean": 134.219,
+    "clip_score_context_only": 0.3301,
+    "lpips_vs_base": 0.561716
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_013",
+    "prompt": "an ornate, high-backed mahogany chair with a red cushion",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_013_seed43.png",
+    "latency_s": 22.65,
+    "std": 66.356,
+    "mean": 142.108,
+    "clip_score_context_only": 0.314,
+    "lpips_vs_base": 0.636876
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_013",
+    "prompt": "an ornate, high-backed mahogany chair with a red cushion",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_013_seed44.png",
+    "latency_s": 23.08,
+    "std": 59.078,
+    "mean": 130.277,
+    "clip_score_context_only": 0.2965,
+    "lpips_vs_base": 0.548114
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_014",
+    "prompt": "A bowl of Pho served with bean sprouts on top",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_014_seed42.png",
+    "latency_s": 23.4,
+    "std": 63.006,
+    "mean": 136.813,
+    "clip_score_context_only": 0.2718,
+    "lpips_vs_base": 0.469285
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_014",
+    "prompt": "A bowl of Pho served with bean sprouts on top",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_014_seed43.png",
+    "latency_s": 23.14,
+    "std": 58.479,
+    "mean": 146.429,
+    "clip_score_context_only": 0.2933,
+    "lpips_vs_base": 0.607574
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_014",
+    "prompt": "A bowl of Pho served with bean sprouts on top",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_014_seed44.png",
+    "latency_s": 22.21,
+    "std": 78.241,
+    "mean": 138.092,
+    "clip_score_context_only": 0.3001,
+    "lpips_vs_base": 0.377974
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_015",
+    "prompt": "a bloody mary cocktail next to a napkin",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_015_seed42.png",
+    "latency_s": 22.22,
+    "std": 57.963,
+    "mean": 131.738,
+    "clip_score_context_only": 0.3206,
+    "lpips_vs_base": 0.636533
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_015",
+    "prompt": "a bloody mary cocktail next to a napkin",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_015_seed43.png",
+    "latency_s": 22.61,
+    "std": 51.835,
+    "mean": 151.042,
+    "clip_score_context_only": 0.2314,
+    "lpips_vs_base": 0.687094
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_015",
+    "prompt": "a bloody mary cocktail next to a napkin",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_015_seed44.png",
+    "latency_s": 22.08,
+    "std": 56.064,
+    "mean": 125.697,
+    "clip_score_context_only": 0.297,
+    "lpips_vs_base": 0.609255
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_016",
+    "prompt": "A bare kitchen has wood cabinets and white appliances",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_016_seed42.png",
+    "latency_s": 22.24,
+    "std": 56.021,
+    "mean": 137.654,
+    "clip_score_context_only": 0.2963,
+    "lpips_vs_base": 0.555793
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_016",
+    "prompt": "A bare kitchen has wood cabinets and white appliances",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_016_seed43.png",
+    "latency_s": 23.03,
+    "std": 52.81,
+    "mean": 141.244,
+    "clip_score_context_only": 0.2977,
+    "lpips_vs_base": 0.510467
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_016",
+    "prompt": "A bare kitchen has wood cabinets and white appliances",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_016_seed44.png",
+    "latency_s": 26.6,
+    "std": 64.514,
+    "mean": 134.75,
+    "clip_score_context_only": 0.2592,
+    "lpips_vs_base": 0.628715
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_017",
+    "prompt": "a room with two chairs and a painting of the Statue of Liberty",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_017_seed42.png",
+    "latency_s": 26.53,
+    "std": 49.156,
+    "mean": 130.476,
+    "clip_score_context_only": 0.3151,
+    "lpips_vs_base": 0.563687
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_017",
+    "prompt": "a room with two chairs and a painting of the Statue of Liberty",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_017_seed43.png",
+    "latency_s": 28.93,
+    "std": 57.303,
+    "mean": 135.615,
+    "clip_score_context_only": 0.3253,
+    "lpips_vs_base": 0.564132
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_017",
+    "prompt": "a room with two chairs and a painting of the Statue of Liberty",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_017_seed44.png",
+    "latency_s": 28.11,
+    "std": 52.85,
+    "mean": 128.063,
+    "clip_score_context_only": 0.3465,
+    "lpips_vs_base": 0.499904
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_018",
+    "prompt": "waterfall",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_018_seed42.png",
+    "latency_s": 29.2,
+    "std": 58.079,
+    "mean": 131.189,
+    "clip_score_context_only": 0.2893,
+    "lpips_vs_base": 0.692189
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_018",
+    "prompt": "waterfall",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_018_seed43.png",
+    "latency_s": 25.07,
+    "std": 64.28,
+    "mean": 141.649,
+    "clip_score_context_only": 0.305,
+    "lpips_vs_base": 0.538206
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_018",
+    "prompt": "waterfall",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_018_seed44.png",
+    "latency_s": 24.19,
+    "std": 67.792,
+    "mean": 129.995,
+    "clip_score_context_only": 0.2883,
+    "lpips_vs_base": 0.619419
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_019",
+    "prompt": "a fall landscape with a small cottage next to a lake",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_019_seed42.png",
+    "latency_s": 26.59,
+    "std": 44.895,
+    "mean": 127.799,
+    "clip_score_context_only": 0.2709,
+    "lpips_vs_base": 0.610696
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_019",
+    "prompt": "a fall landscape with a small cottage next to a lake",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_019_seed43.png",
+    "latency_s": 26.42,
+    "std": 53.667,
+    "mean": 132.883,
+    "clip_score_context_only": 0.2657,
+    "lpips_vs_base": 0.665957
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_019",
+    "prompt": "a fall landscape with a small cottage next to a lake",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_019_seed44.png",
+    "latency_s": 28.48,
+    "std": 66.981,
+    "mean": 122.763,
+    "clip_score_context_only": 0.2739,
+    "lpips_vs_base": 0.649601
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_020",
+    "prompt": "a professional photo of a sunset behind the grand canyon",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_020_seed42.png",
+    "latency_s": 27.28,
+    "std": 58.341,
+    "mean": 118.517,
+    "clip_score_context_only": 0.2772,
+    "lpips_vs_base": 0.541243
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_020",
+    "prompt": "a professional photo of a sunset behind the grand canyon",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_020_seed43.png",
+    "latency_s": 28.56,
+    "std": 57.209,
+    "mean": 129.162,
+    "clip_score_context_only": 0.2812,
+    "lpips_vs_base": 0.518167
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_020",
+    "prompt": "a professional photo of a sunset behind the grand canyon",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_020_seed44.png",
+    "latency_s": 26.27,
+    "std": 57.886,
+    "mean": 122.65,
+    "clip_score_context_only": 0.2874,
+    "lpips_vs_base": 0.580439
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_021",
+    "prompt": "a cityscape at night with a full moon",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_021_seed42.png",
+    "latency_s": 23.93,
+    "std": 40.335,
+    "mean": 101.986,
+    "clip_score_context_only": 0.3144,
+    "lpips_vs_base": 0.407145
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_021",
+    "prompt": "a cityscape at night with a full moon",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_021_seed43.png",
+    "latency_s": 28.3,
+    "std": 46.722,
+    "mean": 113.448,
+    "clip_score_context_only": 0.3044,
+    "lpips_vs_base": 0.730692
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_021",
+    "prompt": "a cityscape at night with a full moon",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_021_seed44.png",
+    "latency_s": 27.35,
+    "std": 45.276,
+    "mean": 106.234,
+    "clip_score_context_only": 0.2963,
+    "lpips_vs_base": 0.53343
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_022",
+    "prompt": "a young girl playing piano",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_022_seed42.png",
+    "latency_s": 24.6,
+    "std": 55.23,
+    "mean": 129.324,
+    "clip_score_context_only": 0.2862,
+    "lpips_vs_base": 0.633628
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_022",
+    "prompt": "a young girl playing piano",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_022_seed43.png",
+    "latency_s": 49.73,
+    "std": 51.01,
+    "mean": 137.683,
+    "clip_score_context_only": 0.25,
+    "lpips_vs_base": 0.648246
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_022",
+    "prompt": "a young girl playing piano",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.75
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_022_seed44.png",
+    "latency_s": 29.11,
+    "std": 50.807,
+    "mean": 129.944,
+    "clip_score_context_only": 0.291,
+    "lpips_vs_base": 0.670839
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_023",
+    "prompt": "a ballet dancer next to a waterfall",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_023_seed42.png",
+    "latency_s": 28.05,
+    "std": 47.511,
+    "mean": 138.983,
+    "clip_score_context_only": 0.3117,
+    "lpips_vs_base": 0.659496
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_023",
+    "prompt": "a ballet dancer next to a waterfall",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.2,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_023_seed43.png",
+    "latency_s": 23.68,
+    "std": 51.35,
+    "mean": 142.103,
+    "clip_score_context_only": 0.261,
+    "lpips_vs_base": 0.757182
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_023",
+    "prompt": "a ballet dancer next to a waterfall",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.75
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_023_seed44.png",
+    "latency_s": 22.68,
+    "std": 53.493,
+    "mean": 137.645,
+    "clip_score_context_only": 0.31,
+    "lpips_vs_base": 0.656177
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_024",
+    "prompt": "the Beatles crossing Abbey road",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_024_seed42.png",
+    "latency_s": 25.49,
+    "std": 83.273,
+    "mean": 124.005,
+    "clip_score_context_only": 0.3084,
+    "lpips_vs_base": 0.390507
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_024",
+    "prompt": "the Beatles crossing Abbey road",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_024_seed43.png",
+    "latency_s": 22.63,
+    "std": 86.934,
+    "mean": 135.714,
+    "clip_score_context_only": 0.3121,
+    "lpips_vs_base": 0.481926
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_024",
+    "prompt": "the Beatles crossing Abbey road",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_024_seed44.png",
+    "latency_s": 24.4,
+    "std": 78.627,
+    "mean": 130.093,
+    "clip_score_context_only": 0.3147,
+    "lpips_vs_base": 0.525327
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_025",
+    "prompt": "a bundle of blue and yellow flowers in a vase",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_025_seed42.png",
+    "latency_s": 24.1,
+    "std": 61.774,
+    "mean": 138.909,
+    "clip_score_context_only": 0.3495,
+    "lpips_vs_base": 0.555744
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_025",
+    "prompt": "a bundle of blue and yellow flowers in a vase",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_025_seed43.png",
+    "latency_s": 27.46,
+    "std": 74.362,
+    "mean": 137.511,
+    "clip_score_context_only": 0.3836,
+    "lpips_vs_base": 0.456667
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_025",
+    "prompt": "a bundle of blue and yellow flowers in a vase",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_025_seed44.png",
+    "latency_s": 26.99,
+    "std": 68.495,
+    "mean": 132.47,
+    "clip_score_context_only": 0.3374,
+    "lpips_vs_base": 0.560563
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_026",
+    "prompt": "a steam locomotive speeding through a desert",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_026_seed42.png",
+    "latency_s": 26.12,
+    "std": 58.848,
+    "mean": 140.611,
+    "clip_score_context_only": 0.3313,
+    "lpips_vs_base": 0.587172
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_026",
+    "prompt": "a steam locomotive speeding through a desert",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_026_seed43.png",
+    "latency_s": 26.4,
+    "std": 59.081,
+    "mean": 139.989,
+    "clip_score_context_only": 0.3327,
+    "lpips_vs_base": 0.666689
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_026",
+    "prompt": "a steam locomotive speeding through a desert",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.95
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_026_seed44.png",
+    "latency_s": 26.82,
+    "std": 62.795,
+    "mean": 134.836,
+    "clip_score_context_only": 0.3437,
+    "lpips_vs_base": 0.617494
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_027",
+    "prompt": "a large white yacht tossed about in a stormy sea",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_027_seed42.png",
+    "latency_s": 26.99,
+    "std": 61.747,
+    "mean": 133.044,
+    "clip_score_context_only": 0.2867,
+    "lpips_vs_base": 0.642016
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_027",
+    "prompt": "a large white yacht tossed about in a stormy sea",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_027_seed43.png",
+    "latency_s": 26.19,
+    "std": 73.118,
+    "mean": 136.155,
+    "clip_score_context_only": 0.2739,
+    "lpips_vs_base": 0.726554
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_027",
+    "prompt": "a large white yacht tossed about in a stormy sea",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_027_seed44.png",
+    "latency_s": 26.61,
+    "std": 67.661,
+    "mean": 133.493,
+    "clip_score_context_only": 0.2671,
+    "lpips_vs_base": 0.660079
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_028",
+    "prompt": "the Eiffel Tower",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_028_seed42.png",
+    "latency_s": 27.56,
+    "std": 51.932,
+    "mean": 135.599,
+    "clip_score_context_only": 0.2634,
+    "lpips_vs_base": 0.671037
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_028",
+    "prompt": "the Eiffel Tower",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_028_seed43.png",
+    "latency_s": 27.13,
+    "std": 52.721,
+    "mean": 145.956,
+    "clip_score_context_only": 0.2711,
+    "lpips_vs_base": 0.619338
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_028",
+    "prompt": "the Eiffel Tower",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_028_seed44.png",
+    "latency_s": 41.9,
+    "std": 56.713,
+    "mean": 131.95,
+    "clip_score_context_only": 0.2662,
+    "lpips_vs_base": 0.60025
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_029",
+    "prompt": "The Statue of Liberty with the Manhattan skyline in the background.",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_029_seed42.png",
+    "latency_s": 22.41,
+    "std": 64.263,
+    "mean": 139.069,
+    "clip_score_context_only": 0.2877,
+    "lpips_vs_base": 0.724352
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_029",
+    "prompt": "The Statue of Liberty with the Manhattan skyline in the background.",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_029_seed43.png",
+    "latency_s": 22.18,
+    "std": 79.778,
+    "mean": 144.234,
+    "clip_score_context_only": 0.2772,
+    "lpips_vs_base": 0.640259
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_029",
+    "prompt": "The Statue of Liberty with the Manhattan skyline in the background.",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_029_seed44.png",
+    "latency_s": 22.32,
+    "std": 75.17,
+    "mean": 131.722,
+    "clip_score_context_only": 0.2878,
+    "lpips_vs_base": 0.647604
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_030",
+    "prompt": "Golden Gate bridge on the surface of Mars",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_030_seed42.png",
+    "latency_s": 22.22,
+    "std": 62.328,
+    "mean": 122.868,
+    "clip_score_context_only": 0.2713,
+    "lpips_vs_base": 0.619941
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_030",
+    "prompt": "Golden Gate bridge on the surface of Mars",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_030_seed43.png",
+    "latency_s": 22.29,
+    "std": 65.064,
+    "mean": 134.545,
+    "clip_score_context_only": 0.2844,
+    "lpips_vs_base": 0.651049
+  },
+  {
+    "family": "ukiyo_e_lora_sdxl",
+    "prompt_id": "pp_030",
+    "prompt": "Golden Gate bridge on the surface of Mars",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\ukiyo_e_lora_sdxl\\pp_030_seed44.png",
+    "latency_s": 22.05,
+    "std": 67.591,
+    "mean": 123.012,
+    "clip_score_context_only": 0.2969,
+    "lpips_vs_base": 0.663505
+  }
+]

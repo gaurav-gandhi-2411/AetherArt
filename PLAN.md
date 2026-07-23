@@ -54,3 +54,47 @@
       Landed as 3 separate PRs (#22 CI gate, #23 revision pinning, #24 smoke test)
       after the original combined PR #20 (508+/-8 diff) tripped this repo's
       merge-gate size hook — each split PR carries its own verifier review artifact.
+
+---
+
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-23)**
+
+- [x] `docs/MODEL_AUDIT.md`, `docs/LATENCY_ROOT_CAUSE.md` — prior-session groundwork (repo runs
+      5 model families, not 2; phantom 11GB-VRAM report row traced to GCP L4 contention).
+- [x] All 5 non-LoRA families scored on identical 30-prompt×3-seed set, 0 errors —
+      `reports/verdict_{sd21_base,sdxl_base,hyper_4step,hyper_8step,sdxl_controlnet_union}.json`.
+- [x] Hyper-SD 4-step vs. 8-step HPS inversion root-caused (`docs/MODEL_VERDICT.md` §3):
+      config-routing confirmed correct (falsified plumbing-bug hypothesis); real cause is
+      CFG-driven exposure collapse on the 8-step CFG-preserving variant (16% severe
+      underexposure, 7% black-crush at guidance_scale=5.0 — already the least-bad point in
+      Hyper-SD's own documented 5-8 range; no in-spec fix exists). Verdict: route to
+      `hyper_4step`, not `hyper_8step`.
+  - [x] Bug found + fixed while building the LoRA A/B harness: `run_ukiyo_e_lora_family`
+        (`scripts/model_verdict_harness.py`) called the Ollama VLM judge inline while the
+        SDXL+LoRA pipeline was still GPU-resident — same VRAM-oversubscription pathology as
+        `docs/LATENCY_ROOT_CAUSE.md`. Fixed to a two-phase pattern (defer VLM scoring until
+        after the pipeline is released), matching the existing HPS-deferral pattern.
+  - [x] LoRA A/B complete: published checkpoint-1000 vs. curated retrain, n=90 each, 0 errors
+        (`reports/verdict_ukiyo_e_lora_sdxl{,_curated}.json`). Primary 30-prompt benchmark is a
+        wash on all 4 axes (paired diff, all < 1 SEM). Supplementary targeted check on 4
+        ukiyo-e-style prompts (`reports/lora_ab_targeted.json`, n=12 paired) shows
+        `artifact_absence` crossing the project's 2×SEM bar (2.03) — borderline-significant on a
+        small, fragile sample. **Curated retrain NOT promoted** on current evidence; recommend a
+        larger targeted eval (more portrait/figure subjects) before a final call.
+- [x] Verifier pass on `docs/MODEL_VERDICT.md` — flagged one real issue: §4.1 and §4.2 used
+      inconsistent diff-SEM methodology (paired vs. independent-quadrature) without stating
+      either. Fixed by making paired-diff explicit and consistent across both; §4.2's
+      recomputation with the correct paired method changed its conclusion (1.80 SEM → 2.03 SEM,
+      now crosses the bar). All other sections (§2, §3, §4.2's raw means, curation-report counts)
+      verified exact against raw JSON, zero discrepancies.
+- **Autonomy setup (partially blocked, not silently worked around):**
+  - Branch protection on `main` already permits merge-without-human-approval
+    (`required_pull_request_reviews.required_approving_review_count: 0`, confirmed via
+    `gh api repos/.../branches/main/protection`) — no GitHub-side change was needed.
+  - The local mechanical merge-gate hook (`hook_guard_merge.py`, enforcing rule 70a) blocked
+    PR #20 (508+/-8 diff, over the ~400-line reviewable-diff gate). Per explicit user decision
+    this session: **left PR #20 and (transitively, since it's stacked) PR #21 as drafts for
+    manual merge** rather than splitting or overriding the gate.
+  - Both HF model-card draft PRs (`refs/pr/1` on `aetherart-ukiyo-sdxl` and `aetherart-ukiyo-sd21`)
+    are still open — blocked on a **read-only** HF token (`api.whoami()` confirms
+    `role: read`); merging them needs a write-scoped token or manual action on huggingface.co.

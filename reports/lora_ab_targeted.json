@@ -1,0 +1,266 @@
+[
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_001_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_001_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_001_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_002_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 0.9
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_002_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_002_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_003_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_003_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_003_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_004_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 0.9
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_004_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\published_lora_004_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_001_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_001_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_001_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_002_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_002_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_002_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_003_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 0.9
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_003_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_003_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 42,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_004_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 43,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_004_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 44,
+    "vlm_judge": {
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_targeted\\curated_lora_004_seed44.png"
+  }
+]
