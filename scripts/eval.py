@@ -529,6 +529,12 @@ def parse_args() -> argparse.Namespace:
         dest="negative_prompt",
         help="Negative prompt applied to all generations (default: empty).",
     )
+    p.add_argument(
+        "--run-id",
+        default=None,
+        help="Override the auto-generated timestamp run ID (default: current timestamp). "
+        "Lets callers (e.g. CI) predict the output report filename deterministically.",
+    )
     return p.parse_args()
 
 
@@ -571,7 +577,7 @@ def main() -> None:
 
     total_combos = len(prompts) * len(schedulers) * len(steps_list)
 
-    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_id = args.run_id or datetime.now().strftime("%Y%m%d_%H%M%S")
     run_date = datetime.now().isoformat(timespec="seconds")
 
     # Resolve model choice: --base takes precedence over --model when set

@@ -53,6 +53,14 @@ class TestScorersFlagParsing:
         args = self._parse(["--num-images", "5"])
         assert args.num_images == 5
 
+    def test_run_id_flag_parsed(self):
+        args = self._parse(["--run-id", "ci-gate-123"])
+        assert args.run_id == "ci-gate-123"
+
+    def test_run_id_defaults_to_none(self):
+        args = self._parse([])
+        assert args.run_id is None
+
 
 class TestGenerateThenScoreOrdering:
     """Verify that HPS/IR scoring happens AFTER the generation pipeline is released."""
