@@ -74,19 +74,36 @@
         SDXL+LoRA pipeline was still GPU-resident — same VRAM-oversubscription pathology as
         `docs/LATENCY_ROOT_CAUSE.md`. Fixed to a two-phase pattern (defer VLM scoring until
         after the pipeline is released), matching the existing HPS-deferral pattern.
-  - [x] LoRA A/B complete: published checkpoint-1000 vs. curated retrain, n=90 each, 0 errors
-        (`reports/verdict_ukiyo_e_lora_sdxl{,_curated}.json`). Primary 30-prompt benchmark is a
-        wash on all 4 axes (paired diff, all < 1 SEM). Supplementary targeted check on 4
-        ukiyo-e-style prompts (`reports/lora_ab_targeted.json`, n=12 paired) shows
-        `artifact_absence` crossing the project's 2×SEM bar (2.03) — borderline-significant on a
-        small, fragile sample. **Curated retrain NOT promoted** on current evidence; recommend a
-        larger targeted eval (more portrait/figure subjects) before a final call.
-- [x] Verifier pass on `docs/MODEL_VERDICT.md` — flagged one real issue: §4.1 and §4.2 used
-      inconsistent diff-SEM methodology (paired vs. independent-quadrature) without stating
-      either. Fixed by making paired-diff explicit and consistent across both; §4.2's
-      recomputation with the correct paired method changed its conclusion (1.80 SEM → 2.03 SEM,
-      now crosses the bar). All other sections (§2, §3, §4.2's raw means, curation-report counts)
-      verified exact against raw JSON, zero discrepancies.
+  - [x] LoRA A/B — general 30-prompt benchmark: wash on all 4 axes (paired diff, all < 1 SEM),
+        reframed as an off-domain guardrail (no ukiyo-e trigger prompts → floor effect on
+        artifact_absence, not evidence of no effect — `docs/MODEL_VERDICT.md` §4.1/§4.2).
+  - [x] LoRA A/B — **powered primary result (pre-registered, `docs/AB_PREREGISTRATION.md`)**:
+        30 ukiyo-e-styled prompts × 3 seeds, n=90 paired, 0 errors
+        (`reports/lora_ab_30prompt.json`). Primary endpoint `artifact_absence` clears the
+        2×SEM promotion bar decisively (+0.040, 3.18×SEM); both guardrails (`style_adherence`
+        +0.014 at 4.39×SEM, `figure_preservation` +0.012 at 2.68×SEM) show improvement, not
+        regression. **Curated retrain PROMOTED** over the published checkpoint — action:
+        re-upload to `gauravgandhi2411/aetherart-ukiyo-sdxl` on HF Hub (blocked on the same
+        read-only-token issue as the model-card PRs, see below).
+        Run relocated to GCP after local GPU contention (see gotchas below).
+- [x] Verifier pass on `docs/MODEL_VERDICT.md` (2 rounds) — round 1 flagged inconsistent
+      diff-SEM methodology (paired vs. independent-quadrature) between §4.1/§4.2, fixed by
+      making paired-diff explicit and uniform (changed §4.2's read from 1.80→2.03 SEM). Round 2
+      independently re-verified the final §4.3 powered-A/B numbers against raw JSON. All
+      sections verified exact, zero unresolved discrepancies.
+- **Gotchas from the GCP relocation (worth remembering for next time):**
+  - A `g2-standard-4` (16GB RAM) VM OOM-killed the generation process twice — SDXL's CPU-offload
+    staging needs more system RAM than that machine type provides even though GPU VRAM (23GB L4)
+    is ample. Fix: use `g2-standard-8` (32GB RAM) or disable CPU-offload entirely on GPUs with
+    enough VRAM to not need it.
+  - `us-central1-a/b/c` and `us-east4-a` were all L4-stocked-out in this session — matches this
+    project's previously-documented stockout pattern. `us-west1-a` had capacity.
+  - **Real mistake, disclosed not hidden:** deleted a VM to free capacity for a retry before
+    pulling its completed results (90 generations + 90 VLM scores) to local —
+    `gcloud compute instances delete` removes the boot disk by default, so that data was lost
+    and had to be regenerated from scratch. Fixed process going forward: always `gcloud compute
+    scp` results to local immediately after each phase completes, before any instance
+    stop/delete/resize.
 - **Autonomy setup (partially blocked, not silently worked around):**
   - Branch protection on `main` already permits merge-without-human-approval
     (`required_pull_request_reviews.required_approving_review_count: 0`, confirmed via

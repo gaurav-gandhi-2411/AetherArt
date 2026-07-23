@@ -309,16 +309,56 @@ built specifically to fix both gaps (n and figure-subject coverage).
   guardrails are non-inferior. A null or negative primary result is reported as such — it is not
   grounds to keep looking for a threshold that passes.
 
-*(Results filled in after the pre-registered run completes — see `docs/AB_PREREGISTRATION.md`
-for the full 30-prompt set and generation/scoring methodology.)*
+**Results** (`reports/lora_ab_30prompt.json`, n=90 each, 0 errors; generated on a GCP L4 instance
+after local GPU contention with a concurrent unrelated job made this run impractical locally —
+see the provenance note at the end of this section):
 
-### 4.4 Verdict
+| Metric | Published (mean) | Curated (mean) | Paired diff | Paired SEM | diff/SEM |
+|---|---|---|---|---|---|
+| `artifact_absence` (**PRIMARY**) | 0.8833 | 0.9233 | **+0.0400** | 0.0126 | **3.182** |
+| `style_adherence` (guardrail) | 0.8883 | 0.9022 | +0.0139 | 0.0032 | 4.391 |
+| `figure_preservation` (guardrail) | 0.9689 | 0.9811 | +0.0122 | 0.0046 | 2.680 |
 
-**PENDING §4.3.** The pre-registered decision rule (§4.3) determines promotion; do not render a
-verdict here until that run completes — the preliminary n=12 check (§4.2) is suggestive but was
-explicitly built to be superseded, not relied on for the final call. The §4.1 guardrail result
-(no regression on `style_adherence`/`figure_preservation` off-domain) already holds regardless of
-how §4.3 resolves.
+**Primary endpoint clears the pre-registered threshold decisively** (3.18 vs. the 2.0 bar — not
+a borderline crossing like the n=12 preliminary check's 2.03). **Both guardrails are not just
+non-inferior but positive** — the curated checkpoint scores higher on `style_adherence` and
+`figure_preservation` too, so there is no evidence of a quality-for-artifact-absence tradeoff.
+This is a properly powered (n=90, not n=12), pre-registered, paired result — the strongest
+evidence produced in this evaluation.
+
+**Provenance note (GPU relocation):** this run could not complete locally in reasonable time
+because a concurrent, unrelated job (`scripts/d2_train.py`, a different project) was monopolizing
+this machine's single shared 8GB GPU. Per explicit direction, the run was moved to a GCP L4
+instance (`aetherart-497918`, ultimately `us-west1-a` after `us-central1-a/b/c` and `us-east4-a`
+all hit a regional L4 capacity stockout — consistent with this project's previously-documented
+L4-stockout pattern). One real operational mistake occurred and is disclosed here rather than
+smoothed over: the first VM (`g2-standard-4`, 16GB RAM) OOM-killed the generation process twice
+(confirmed via `dmesg`: `Out of memory: Killed process ... python3`) because SDXL's CPU-offload
+staging needs more system RAM than that machine type provides — fixed by moving to
+`g2-standard-8` (32GB RAM). Separately, the original VM was deleted (to free capacity for a
+retry) **before** its completed published-checkpoint results (90 generations + 90 VLM scores)
+were pulled to local, and `gcloud compute instances delete` removes the boot disk by default —
+that data was lost and had to be regenerated from scratch (same script, same seeds, so the
+regenerated result is not a "second attempt" biased by anything except ordinary run-to-run
+sampling noise). All GCP resources (2 instances across the session, one disk) were fully torn
+down afterward — confirmed via `gcloud compute instances/disks/addresses list`, all empty.
+
+### 4.4 Verdict: PROMOTE the curated retrain
+
+Per the pre-registered decision rule (§4.3): **promote if and only if the primary endpoint
+clears the 2×SEM threshold AND neither guardrail regresses.** Both conditions are met — primary
+clears at 3.18×SEM, and both guardrails show improvement rather than regression. **The curated
+retrain is promoted over the published checkpoint-1000.** This is not a borderline or
+"promising but unconfirmed" call like the preliminary n=12 check produced — it is a clean result
+from the properly powered, pre-registered design this project's own methodology required before
+rendering a final verdict.
+
+This also resolves §4.2's fragility concern: the n=12 preliminary check's directionally-correct
+but marginal signal (2.03×SEM) is now confirmed by a 90-pair result with a much larger margin
+(3.18×SEM) and a materially larger effect size (+0.040 vs. the general benchmark's washed +0.013)
+on prompts that actually exercise the calligraphy-artifact defect. The §4.1 guardrail result (no
+regression on the general benchmark) still holds independently, and is now reinforced by §4.3's
+guardrails also showing no regression on the domain-matched set.
 
 ---
 
@@ -331,34 +371,33 @@ how §4.3 resolves.
 | `hyper_4step` | production-quality — **recommended fast path** | Best HPS+CLIP+latency of all 5 families. |
 | `hyper_8step` | needs-improvement | 16% severe-underexposure rate at spec-compliant config; strictly dominated by `hyper_4step` on every measured axis. Not recommended for production traffic; keep `hyper_4step` as the routed default. |
 | `sdxl_controlnet_union` | production-quality (quality) / needs-improvement (latency) | Quality on par with `sdxl_base`; 546.6s latency requires CPU offload on this 8GB card — a hardware-fit issue, not a model-quality one. |
-| Ukiyo-e LoRA — published checkpoint-1000 | production-quality (current champion) | No regression vs. curated retrain found on any axis; remains the published, shipped artifact. |
-| Ukiyo-e LoRA — curated retrain | **PENDING §4.3** | Guardrails pass (no regression off-domain, §4.1); preliminary n=12 targeted check suggestive (2.03 SEM, §4.2) but explicitly superseded by the pre-registered n=90 primary run (§4.3) — verdict renders once that completes. |
+| Ukiyo-e LoRA — published checkpoint-1000 | superseded — **promote curated retrain** | Curated retrain measurably improves `artifact_absence` (+0.040, 3.18×SEM, n=90 paired, pre-registered) with no regression — improvement, in fact — on either guardrail (§4.3). |
+| Ukiyo-e LoRA — curated retrain | production-quality — **new champion** | Pre-registered primary endpoint clears the 2×SEM bar decisively (3.18); both guardrails (`style_adherence`, `figure_preservation`) improve rather than merely hold steady. Promote to replace the published HF checkpoint. |
 
 ---
 
 ## 6. Final routing decision
 
 **Does the current lineup clear the bar to train and publish a new model, or does something
-need fixing first? Something needs fixing/clarifying first — not a hard blocker, but not a clean
-green light either:**
+need fixing first? One fix remains before a clean green light: `hyper_8step`'s routing (item 1).
+The LoRA question that motivated most of this audit is now resolved — promote the curated
+retrain (item 2).**
 
 1. **`hyper_8step` should not be routed to production as currently configured** (§3) — it is
    strictly dominated by `hyper_4step` on HPS, CLIP, and latency, and has a 16%
    severe-underexposure defect rate. Action: change the default/recommended Hyper-SD variant in
    any user-facing routing logic to `hyper_4step`. This is a config/docs fix, not a retrain.
-2. **The Ukiyo-e curated retrain's promotion decision is PENDING §4.3's pre-registered run** —
-   guardrails already pass (§4.1: no off-domain regression), and a preliminary n=12 targeted
-   check was suggestive (2.03 SEM, §4.2) but was explicitly built to be superseded rather than
-   relied on. The pre-registered 30-prompt ukiyo-e-styled run (§4.3, primary endpoint
-   `artifact_absence`, threshold 2×SEM paired, fixed before running) renders the actual call.
-   Until then: treat the published checkpoint-1000 as the continued champion and the curated
-   checkpoint as a promising, not-yet-confirmed experiment.
-3. **All 5 non-LoRA families and the published Ukiyo-e LoRA are production-quality** on the
-   metrics measured here, with `sdxl_controlnet_union`'s latency flagged as a hardware-fit
-   constraint (8GB VRAM + CPU offload), not a quality defect.
+2. **Promote the curated retrain and update the published HF model card** (§4.3) — the
+   pre-registered, properly powered (n=90 paired) primary result clears the promotion threshold
+   decisively (3.18×SEM vs. the 2.0 bar) with both guardrails improving rather than regressing.
+   Action: re-upload `checkpoint-1000` from `data/lora/ukiyo-e/training_output_sdxl_curated/` to
+   `gauravgandhi2411/aetherart-ukiyo-sdxl` on HF Hub, replacing the current published weights,
+   and note the promotion (with these numbers and their provenance) in the model card's
+   changelog. This is the ~$3.85–4.35 GCP retrain spend paying off, measured rather than assumed.
+3. **All 5 non-LoRA families are production-quality** on the metrics measured here, with
+   `sdxl_controlnet_union`'s latency flagged as a hardware-fit constraint (8GB VRAM + CPU
+   offload), not a quality defect.
 4. **Training and publishing a genuinely new model under the current recipe is not recommended
    until (1) is fixed** — publishing a 6th family without first correcting a known, dominated,
    defect-prone configuration in the existing lineup would compound the same class of issue this
-   whole audit was launched to catch. (2) does not block new-model work by itself (it's a
-   decision about one existing artifact, not the pipeline), but should be resolved so the
-   published Ukiyo-e model card accurately reflects which checkpoint is current.
+   whole audit was launched to catch. (2) is now resolved (promote curated), not a blocker.

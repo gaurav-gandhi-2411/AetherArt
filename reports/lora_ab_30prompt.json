@@ -1,0 +1,2522 @@
+[
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.44,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_001_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.72,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_001_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.77,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_001_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.78,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_002_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.79,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_002_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.94,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_002_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.93,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_003_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.03,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_003_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 16.99,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_003_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.08,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_004_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.08,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_004_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.17,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_004_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.22,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_005_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.23,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_005_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_005_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.26,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_006_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.75
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_006_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_006_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_007_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_007_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.27,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_007_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_008_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_008_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_008_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_009_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_009_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_009_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_010_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_010_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_010_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_011_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.26,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_011_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_011_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_012_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_012_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_012_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.21,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_013_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_013_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_013_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_014_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_014_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_014_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_015_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_015_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_015_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_016_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_016_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.43,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_016_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_017_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_017_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_017_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_018_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_018_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_018_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_019_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_019_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_019_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_020_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.43,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_020_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_020_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_021_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_021_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_021_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_022_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.27,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_022_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_022_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_023_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_023_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.27,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_023_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_024_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.27,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_024_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_024_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_025_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_025_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_025_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_026_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_026_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_026_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_027_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_027_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_027_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.46,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_028_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_028_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_028_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_029_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_029_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_029_seed44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_030_seed42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_030_seed43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/published_lora_030_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 28.11,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_001_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_001_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 16.86,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_001_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.6,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_002_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 16.72,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_002_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_002",
+    "prompt": "ukyowood ukiyo-e print of a crane over ocean waves",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.8,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_002_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.89,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_003_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 16.97,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_003_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.05,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_003_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.0,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_004_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.06,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_004_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_004",
+    "prompt": "ukyowood ukiyo-e print of cherry blossoms along a river",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.08,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_004_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.21,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_005_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.23,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_005_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_005",
+    "prompt": "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.22,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_005_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_006_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.24,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_006_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_006_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_007_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_007_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.28,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_007_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.3,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_008_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_008_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_008_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_009_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_009_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_009_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_010_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_010_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_010_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_011_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_011_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_011",
+    "prompt": "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_011_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.44,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_012_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.33,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_012_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_012_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_013_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_013_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_013",
+    "prompt": "ukyowood ukiyo-e woodblock print of a mother and child by a river bank",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_013_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_014_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_014_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.29,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_014_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_015_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_015_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_015",
+    "prompt": "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.44,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_015_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.4,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_016_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_016_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_016",
+    "prompt": "ukyowood ukiyo-e print of a merchant selling fish at a market stall",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_016_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.27,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_017_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_017_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_017_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.32,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_018_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_018_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_018_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.44,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_019_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_019_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_019_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_020_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_020_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.43,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_020_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_021_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_021_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.42,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_021_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_022_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_022_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_022_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_023_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_023_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_023",
+    "prompt": "ukyowood ukiyo-e woodblock print of a full moon over a pine forest",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_023_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_024_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_024_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "error": null,
+    "latency_s": 17.34,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_024_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_025_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.36,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_025_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_025_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_026_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_026_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_026",
+    "prompt": "ukyowood ukiyo-e print of autumn maple leaves along a mountain path",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.43,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_026_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.39,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_027_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_027_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_027",
+    "prompt": "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_027_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_028_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_028_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "latency_s": 17.37,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_028_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.35,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_029_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.31,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_029_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_029",
+    "prompt": "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.44,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_029_seed44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 42,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_030_seed42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 43,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.41,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_030_seed43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 44,
+    "vlm_judge": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 17.38,
+    "image_path": "/tmp/AetherArt/outputs/verdict/lora_ab_30prompt/curated_lora_030_seed44.png"
+  }
+]
