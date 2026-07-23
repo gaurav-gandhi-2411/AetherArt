@@ -113,6 +113,16 @@
     An exit-code check on the scp alone would not have caught the original incident — the scp
     itself always "succeeded"; what was missing was verifying the copy's *content* before the
     point of no return.
+  - **Separate incident, same session's later work:** a single "research N Indian-art
+    candidates" subagent dispatch fanned out into its own parallel subagent tree and hit a
+    session usage limit mid-task — several candidates' research was lost (had to be redone
+    directly, not via another delegated dispatch) and the failure wasn't visible until the
+    notification arrived. **Fixed globally, not just here:** `C:\Users\gaura\.claude\CLAUDE.md`
+    rule 70c now caps subagent dispatch depth at one level — the orchestrator dispatches
+    executors/verifiers/research agents directly; a dispatched agent does not itself dispatch
+    further subagents. If a task's scope wants its own fan-out, that fan-out happens at the
+    orchestrator level (dispatch the N parallel agents directly), not delegated to one agent
+    to decide for itself.
 - **Autonomy setup (partially blocked, not silently worked around):**
   - Branch protection on `main` already permits merge-without-human-approval
     (`required_pull_request_reviews.required_approving_review_count: 0`, confirmed via

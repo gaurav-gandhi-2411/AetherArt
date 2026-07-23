@@ -18,8 +18,13 @@ Families and their metrics:
           (a) LPIPS distance from the matched sdxl_base output (same prompt+seed, no LoRA)
           (b) a local Ollama vision-language judge (qwen2.5vl:7b, zero cost, no paid API)
               scoring style_adherence / figure_preservation / artifact_absence on a 0-1
-              rubric. CLIP is still recorded for transparency/context but is explicitly
-              NOT used to render a verdict for this family.
+              rubric, via THREE INDEPENDENT single-axis calls per image (one axis per call,
+              no other axis named or in context) — see SINGLE_AXIS_JUDGE_PROMPTS below. A
+              prior single-call multi-axis design (all three axes requested in one call) was
+              replaced after a halo-effect check (docs/MODEL_VERDICT.md SS4.5) found it
+              produces correlated ratings that don't hold up under independent scoring.
+              CLIP is still recorded for transparency/context but is explicitly NOT used to
+              render a verdict for this family.
 
 sdxl_controlnet_union and ukiyo_e_lora_sdxl both reuse sdxl_base's own saved output images
 (same prompt+seed) as their conditioning/reference source rather than double-generating —
@@ -62,20 +67,30 @@ GUIDANCE_DEFAULT = 7.5
 OLLAMA_URL = "http://localhost:11434/api/generate"
 VLM_MODEL = "qwen2.5vl:7b"
 
-VLM_JUDGE_PROMPT = """You are judging a text-to-image generation from a Ukiyo-e (Japanese
-woodblock print) style LoRA adapter, for the prompt: "{prompt}"
+# Independent single-axis judge prompts — one Ollama call per axis, no other axis named or
+# implied in that call's prompt or context. This replaced a single-call multi-axis design
+# (one call asking for all three scores at once) after a halo-effect check
+# (docs/MODEL_VERDICT.md SS4.5) found that design produces correlated ratings that do not hold
+# up under independent scoring — e.g. a genuine artifact_absence improvement partly "bled into"
+# the judge's style_adherence/figure_preservation scores. Independent-axis scoring is now this
+# harness's default, not an opt-in variant — see tests/test_model_verdict_harness.py for the
+# regression test asserting one Ollama call per axis.
+SINGLE_AXIS_JUDGE_PROMPTS: dict[str, str] = {
+    "style_adherence": """You are judging a single image against one question only.
+Question: does this image look like an authentic Ukiyo-e (Japanese woodblock print) - flat
+color planes, characteristic line work, traditional palette?
+Respond with ONLY a JSON object: {{"style_adherence": <float 0.0-1.0>}}""",
+    "figure_preservation": """You are judging a single image against one question only.
+Question: are the subjects/figures in this image anatomically coherent and recognizable (not
+melted, distorted, or missing)? The image was generated from this prompt: "{prompt}"
+Respond with ONLY a JSON object: {{"figure_preservation": <float 0.0-1.0>}}""",
+    "artifact_absence": """You are judging a single image against one question only.
+Question: is this image FREE of embedded text, watermarks, signatures, cartouches, or seal/
+script marks (1.0 = totally clean, 0.0 = heavily covered in text artifacts)?
+Respond with ONLY a JSON object: {{"artifact_absence": <float 0.0-1.0>}}""",
+}
 
-Score this image on three axes, each a float 0.0-1.0:
-1. style_adherence: does it look like an authentic Ukiyo-e woodblock print (flat color
-   planes, characteristic line work, traditional palette)?
-2. figure_preservation: are the described subjects/figures anatomically coherent and
-   recognizable (not melted/distorted/missing)?
-3. artifact_absence: is the image FREE of embedded text, signatures, calligraphy,
-   cartouches, or script/seal marks (1.0 = totally clean, 0.0 = heavily covered in text
-   artifacts)?
-
-Respond with ONLY a JSON object:
-{{"style_adherence": <float>, "figure_preservation": <float>, "artifact_absence": <float>}}"""
+VLM_JUDGE_AXES: tuple[str, ...] = ("style_adherence", "figure_preservation", "artifact_absence")
 
 
 def load_prompts() -> list[dict]:
@@ -150,32 +165,58 @@ def score_lpips_pair(img_a: Image.Image, img_b: Image.Image) -> float:
         return float(_lpips_fn(ta, tb).item())
 
 
+def _ollama_generate_json(prompt_text: str, b64_image: str) -> dict:
+    """One Ollama call, no axis-crossing: the request body carries exactly one prompt and one
+    image. Split out so it's independently mockable/countable in tests — see
+    tests/test_model_verdict_harness.py's assertion that scoring one image calls this once
+    per axis (3 total), never once for all axes."""
+    import requests
+
+    resp = requests.post(
+        OLLAMA_URL,
+        json={
+            "model": VLM_MODEL,
+            "prompt": prompt_text,
+            "images": [b64_image],
+            "stream": False,
+            "format": "json",
+            # Ollama's default served context window for this model can be as small as 4096
+            # tokens - too small for a longer judge prompt plus a high-resolution image's token
+            # count (root-caused via a real "exceeds the available context size" 400 error from
+            # a Pattachitra-corpus curation run using a similarly-shaped prompt, not assumed).
+            # qwen2.5vl:7b supports up to 128k context; 8192 is ample headroom here.
+            "options": {"num_ctx": 8192},
+        },
+        timeout=180,
+    )
+    resp.raise_for_status()
+    return json.loads(resp.json()["response"])
+
+
 def score_vlm_judge(img: Image.Image, prompt: str) -> dict | None:
+    """Independent single-axis scoring: one Ollama call per axis (3 total per image), each call
+    seeing only that axis's question — no other axis is named or implied. Returns the same
+    {"style_adherence": ..., "figure_preservation": ..., "artifact_absence": ...} shape the
+    prior single-call design returned, so callers/downstream JSON consumers are unaffected.
+    Returns None (whole record) if any one axis call fails, matching prior all-or-nothing
+    failure semantics.
+    """
     import io
 
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     b64 = base64.b64encode(buf.getvalue()).decode()
 
-    import requests
-
-    try:
-        resp = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": VLM_MODEL,
-                "prompt": VLM_JUDGE_PROMPT.format(prompt=prompt),
-                "images": [b64],
-                "stream": False,
-                "format": "json",
-            },
-            timeout=180,
-        )
-        resp.raise_for_status()
-        return json.loads(resp.json()["response"])
-    except Exception as e:
-        logger.warning("VLM judge call failed: %s", e)
-        return None
+    scores: dict[str, float] = {}
+    for axis in VLM_JUDGE_AXES:
+        prompt_text = SINGLE_AXIS_JUDGE_PROMPTS[axis].format(prompt=prompt)
+        try:
+            result = _ollama_generate_json(prompt_text, b64)
+            scores[axis] = float(result[axis])
+        except Exception as e:
+            logger.warning("VLM judge call failed (axis=%s): %s", axis, e)
+            return None
+    return scores
 
 
 # ── Family pipeline loaders ──────────────────────────────────────────────
