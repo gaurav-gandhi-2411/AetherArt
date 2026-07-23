@@ -42,4 +42,15 @@
 - [ ] PR 12 — HPSv2.1 + ImageReward eval integration
 - [ ] PR 13 — Phase 6b experiments migration to SDXL
 - [ ] PR 13b — HPSv3 GCP batch eval
-- [ ] PR 14 — Coverage threshold enforcement
+- [x] PR 14 — CI quality gate: frozen SD 2.1 30-prompt/seed-42 CLIP regression check
+      (`.github/workflows/eval.yml`, push-to-main + nightly + manual dispatch — not
+      per-PR, see that file's header comment for the measured-cost rationale) +
+      real (unmocked) generation smoke test on every push/PR
+      (`.github/workflows/ci.yml`, `tests/test_generation_smoke.py`) + HF revision
+      pinning across config/utils/model/clip_scorer. Coverage threshold
+      (`--cov-fail-under=55`) was already enforced via `pyproject.toml` before this.
+      HPS/ImageReward deliberately left out of the gate pending the
+      Windows/headless-Linux crash fixes tracked in `docs/lab_notebook.md:246-250,269`.
+      Landed as 3 separate PRs (#22 CI gate, #23 revision pinning, #24 smoke test)
+      after the original combined PR #20 (508+/-8 diff) tripped this repo's
+      merge-gate size hook — each split PR carries its own verifier review artifact.
