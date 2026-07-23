@@ -1,0 +1,91 @@
+name: Eval Gate
+
+# NOT wired to pull_request: a measured, real run (docs/LATENCY_ROOT_CAUSE.md) shows a single
+# SD 2.1 / DPM / 30-step CPU generation takes ~162s on a modern laptop CPU; 30 prompts is
+# therefore ~80+ minutes, likely longer on a 2-core GitHub-hosted runner. Blocking every PR on
+# that is impractical without GPU CI (a separate infra decision, not made here). Instead this
+# runs post-merge (push to main) plus nightly, so a regression is caught within a day of landing
+# rather than shipping silently forever — the audit finding this closes
+# (docs/MODEL_AUDIT.md §4: CLIP/HPS/IR measured but never gated).
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: "0 6 * * *"   # 06:00 UTC daily
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clip-regression-gate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+
+    env:
+      # Pinned model revisions — an audit finding (docs/MODEL_AUDIT.md §1) was that no
+      # from_pretrained call anywhere pinned a revision, so the eval baseline was silently
+      # exposed to upstream weight changes. These are commit SHAs, not the movable `main` ref
+      # (HF_MODEL_ID itself is left unset — cfg.default_model's own default already matches the
+      # anchor's model, sd2-community/stable-diffusion-2-1). CLIP_MODEL_REVISION is intentionally
+      # NOT openai/clip-vit-base-patch32's
+      # `main` HEAD — that revision only ships pytorch_model.bin, which transformers refuses to
+      # torch.load on torch < 2.6 (CVE-2025-32434, the same issue docs/depth_estimators.md
+      # already documents for a different model). This SHA is the safetensors-converted
+      # revision, verified to load locally before being pinned here.
+      HF_MODEL_REVISION: bb2154823665391b4fb29b0b9cf82a198964ee05
+      CLIP_MODEL_REVISION: c237dc49a33fc61debc9276459120b7eac67e7ef
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Cache Hugging Face hub weights (pinned revisions)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-cache-${{ env.HF_MODEL_REVISION }}-${{ env.CLIP_MODEL_REVISION }}
+
+      - name: Install package & dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
+
+      - name: Run frozen SD 2.1 30-prompt / seed-42 baseline (DPM, 30 steps, CLIP-only)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --run-id "ci-${{ github.run_id }}"
+        # HPS/ImageReward are deliberately excluded here (--scorers clip only): both have
+        # documented crash bugs (docs/lab_notebook.md:246-250,269 — Windows pyarrow SIGSEGV,
+        # headless-Linux hpsv2 tkinter import crash) that are not yet patched. Extend this gate
+        # to `--scorers clip,hps,imagereward` once PLAN.md tracks those fixes as landed.
+        # TODO(PR 14 follow-up): add HPS/ImageReward once docs/lab_notebook.md:246-250,269 are fixed.
+
+      - name: Check CLIP score against the SEM-derived regression threshold
+        run: |
+          python scripts/check_eval_gate.py \
+            --candidate "reports/eval_results_ci-${{ github.run_id }}.json" \
+            --scheduler DPM \
+            --steps 30 \
+            --n-sigma 2
+
+      - name: Upload eval report artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-gate-report-${{ github.run_id }}
+          path: |
+            reports/eval_results_ci-${{ github.run_id }}.json
+            reports/eval_results_ci-${{ github.run_id }}.md
+            reports/eval_charts/*ci-${{ github.run_id }}*
