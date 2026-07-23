@@ -101,9 +101,18 @@
   - **Real mistake, disclosed not hidden:** deleted a VM to free capacity for a retry before
     pulling its completed results (90 generations + 90 VLM scores) to local —
     `gcloud compute instances delete` removes the boot disk by default, so that data was lost
-    and had to be regenerated from scratch. Fixed process going forward: always `gcloud compute
-    scp` results to local immediately after each phase completes, before any instance
-    stop/delete/resize.
+    and had to be regenerated from scratch.
+  - **Hard rule going forward (codified as a guardrail, not just a habit):** never run
+    `gcloud compute instances delete` (or `stop`/`set-machine-type`, which also risk losing an
+    in-progress result if something goes wrong mid-resize) until every result file has been
+    `gcloud compute scp`'d to local AND positively verified — not just "the scp command exited
+    0," but a real content check (file exists, non-trivial size, and for JSON record files, the
+    expected record count with zero errors). `scripts/gcp_verify_before_teardown.py` codifies
+    this check — run it after every scp, before every teardown:
+    `python scripts/gcp_verify_before_teardown.py <local_path> --min-records N --no-errors`.
+    An exit-code check on the scp alone would not have caught the original incident — the scp
+    itself always "succeeded"; what was missing was verifying the copy's *content* before the
+    point of no return.
 - **Autonomy setup (partially blocked, not silently worked around):**
   - Branch protection on `main` already permits merge-without-human-approval
     (`required_pull_request_reviews.required_approving_review_count: 0`, confirmed via

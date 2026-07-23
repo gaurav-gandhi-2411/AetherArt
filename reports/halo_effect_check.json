@@ -1,0 +1,542 @@
+[
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_010",
+    "prompt": "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_010_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_003_42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_024_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_021_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_020_42.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_012",
+    "prompt": "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_012_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_009_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_008_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_003_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_003",
+    "prompt": "ukyowood ukiyo-e woodblock print of a samurai in a bamboo forest",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_003_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_008",
+    "prompt": "ukyowood ukiyo-e print of two children flying a kite in a garden",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.7
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_008_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_019_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_020",
+    "prompt": "ukyowood ukiyo-e print of a koi pond with lotus flowers",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_020_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_017_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_019",
+    "prompt": "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_019_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_024",
+    "prompt": "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 0.7
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_024_44.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_001",
+    "prompt": "ukyowood ukiyo-e woodblock print of Mount Fuji at sunset",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_001_43.png"
+  },
+  {
+    "checkpoint": "published",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/published_lora_014_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_025",
+    "prompt": "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_025_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_017",
+    "prompt": "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_017_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_021_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_007",
+    "prompt": "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.85
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_007_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_014",
+    "prompt": "ukyowood ukiyo-e print of a tea ceremony inside a wooden house",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_014_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_022",
+    "prompt": "ukyowood ukiyo-e print of an owl perched on a snow-covered branch",
+    "seed": 43,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_022_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_030",
+    "prompt": "ukyowood ukiyo-e print of a lantern-lit festival street at night",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_030_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_018",
+    "prompt": "ukyowood ukiyo-e print of a bridge over a river with travelers crossing",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_018_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_028",
+    "prompt": "ukyowood ukiyo-e print of a dancer performing with a fan",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_028_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_006",
+    "prompt": "ukyowood ukiyo-e print of a court lady playing a shamisen",
+    "seed": 44,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 0.95,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_006_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_009",
+    "prompt": "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 0.8
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_009_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "lora_021",
+    "prompt": "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass",
+    "seed": 42,
+    "original_single_call": {
+      "style_adherence": 0.9,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "independent_calls": {
+      "style_adherence": 0.95,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "image_path": "/tmp/AetherArt/outputs/verdict/halo_effect_check/curated_lora_021_42.png"
+  }
+]

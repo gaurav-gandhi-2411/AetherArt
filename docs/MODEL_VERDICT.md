@@ -320,11 +320,14 @@ see the provenance note at the end of this section):
 | `figure_preservation` (guardrail) | 0.9689 | 0.9811 | +0.0122 | 0.0046 | 2.680 |
 
 **Primary endpoint clears the pre-registered threshold decisively** (3.18 vs. the 2.0 bar — not
-a borderline crossing like the n=12 preliminary check's 2.03). **Both guardrails are not just
-non-inferior but positive** — the curated checkpoint scores higher on `style_adherence` and
-`figure_preservation` too, so there is no evidence of a quality-for-artifact-absence tradeoff.
-This is a properly powered (n=90, not n=12), pre-registered, paired result — the strongest
-evidence produced in this evaluation.
+a borderline crossing like the n=12 preliminary check's 2.03). At face value both guardrails are
+positive here too, with no evidence of a quality-for-artifact-absence tradeoff — **but see §4.5:
+a halo-effect check on the VLM judge (which scores all three axes in one call) found the
+guardrail improvements do not robustly survive independent single-axis scoring, so the claim
+scope for `style_adherence`/`figure_preservation` is narrowed to "no regression," not
+"improvement." The primary endpoint's result is unaffected and confirmed robust under the same
+check.** This is a properly powered (n=90, not n=12), pre-registered, paired result — the
+strongest evidence produced in this evaluation.
 
 **Provenance note (GPU relocation):** this run could not complete locally in reasonable time
 because a concurrent, unrelated job (`scripts/d2_train.py`, a different project) was monopolizing
@@ -347,8 +350,10 @@ down afterward — confirmed via `gcloud compute instances/disks/addresses list`
 
 Per the pre-registered decision rule (§4.3): **promote if and only if the primary endpoint
 clears the 2×SEM threshold AND neither guardrail regresses.** Both conditions are met — primary
-clears at 3.18×SEM, and both guardrails show improvement rather than regression. **The curated
-retrain is promoted over the published checkpoint-1000.** This is not a borderline or
+clears at 3.18×SEM, and neither guardrail regresses (§4.5 narrows "guardrails also improved" to
+"guardrails did not regress" after a halo-effect check — see that section; it does not affect
+this decision rule). **The curated retrain is promoted over the published checkpoint-1000.**
+This is not a borderline or
 "promising but unconfirmed" call like the preliminary n=12 check produced — it is a clean result
 from the properly powered, pre-registered design this project's own methodology required before
 rendering a final verdict.
@@ -357,8 +362,76 @@ This also resolves §4.2's fragility concern: the n=12 preliminary check's direc
 but marginal signal (2.03×SEM) is now confirmed by a 90-pair result with a much larger margin
 (3.18×SEM) and a materially larger effect size (+0.040 vs. the general benchmark's washed +0.013)
 on prompts that actually exercise the calligraphy-artifact defect. The §4.1 guardrail result (no
-regression on the general benchmark) still holds independently, and is now reinforced by §4.3's
-guardrails also showing no regression on the domain-matched set.
+regression on the general benchmark) still holds independently.
+
+**§4.5 below narrows the guardrail claim** — see that section before repeating "both guardrails
+improve" anywhere outside this document. The primary endpoint's promotion decision is unaffected.
+
+### 4.5 Halo-effect check on the VLM judge — claim scope correction for the guardrails
+
+**Why this check exists:** the judge that scored §4.3 (`scripts/_lora_ab_30prompt.py`'s
+`VLM_JUDGE_PROMPT`) asks for all three axes — `style_adherence`, `figure_preservation`,
+`artifact_absence` — in a **single Ollama call per image**. A single call scoring three related
+axes at once is a known setup for halo-biased ratings: the model can anchor all three numbers to
+one overall "this looks good/bad" impression rather than judging each axis on its own terms. All
+three axes improving together in §4.3 is consistent with either (a) three genuinely independent
+effects, or (b) the primary endpoint's real improvement bleeding into the judge's assessment of
+the other two axes. This was checked directly rather than assumed either way.
+
+**Method** (`scripts/_halo_effect_check.py`, `reports/halo_effect_check.json`): a deterministic
+random 30-image subsample of the 180-record §4.3 dataset (`random.seed(42)`, `random.sample`;
+18 published / 12 curated) was regenerated (same checkpoint/prompt/seed, so the images reproduce)
+and re-scored with **three independent Ollama calls per image, one per axis**, each prompt
+naming only that one axis with no mention of the other two. 0 errors, run on GCP (same L4
+relocation as §4.3's provenance note) and torn down after — see PLAN.md's teardown-guardrail entry.
+
+**Result 1 — inter-axis correlation, both regimes (n=30):**
+
+| Axis pair | Single-call (original) | Independent-call (new) |
+|---|---|---|
+| `style_adherence` × `figure_preservation` | +0.156 | −0.043 |
+| `style_adherence` × `artifact_absence` | +0.019 | −0.480 |
+| `figure_preservation` × `artifact_absence` | +0.117 | +0.238 |
+
+**This result is inconclusive on its own — not a clean "holds" or "drops materially."** At n=30,
+a Pearson correlation's standard error is roughly ±0.19-0.2; every value above is inside or near
+that noise band around the others. One pair's correlation modestly falls (style×figure), one
+swings from near-zero to moderately negative (style×artifact — not a drop from a *high* baseline,
+since the single-call value was already ~0), and one *rises* (figure×artifact) — the opposite of
+what a pure halo-effect story predicts. This pattern is consistent with sampling noise at a small
+n, not a clear signature either way.
+
+**Result 2 — the actually decision-relevant check: does each axis's curated-vs-published
+difference survive independent scoring, on this same subsample (unpaired, n=18 published /
+n=12 curated — smaller and noisier than §4.3's n=90 paired, but same direction test):**
+
+| Axis | Single-call diff (curated − published) | Independent-call diff |
+|---|---|---|
+| `artifact_absence` (**primary**) | +0.0847 | **+0.0611** |
+| `style_adherence` (guardrail) | +0.0139 | **+0.0083** (≈40% smaller) |
+| `figure_preservation` (guardrail) | +0.0000 | **−0.0028** (≈zero either way) |
+
+**Conclusion — claim scope, not verdict:**
+- **The primary endpoint's improvement is robust.** `artifact_absence` stays clearly positive
+  and substantively large under independent scoring — this is the result the promotion decision
+  (§4.4) rests on, and it holds.
+- **The guardrail "improvement" claims do not robustly survive independent scoring.**
+  `style_adherence`'s positive diff shrinks by roughly 40% under independent scoring; `figure_
+  preservation` shows essentially no difference under either regime on this subsample. Neither
+  is strong evidence of a halo effect specifically (the correlation data is too noisy to confirm
+  that mechanism cleanly), but neither is it evidence the guardrails genuinely *improved* —
+  it is exactly the ambiguous outcome the pre-registration anticipated needing a claim-scope
+  decision for.
+- **Per the pre-registered fallback rule: claim only non-inferiority on the guardrails, not
+  improvement.** `docs/MODEL_VERDICT.md` and any model card language must state
+  `style_adherence` and `figure_preservation` as **not regressed** (which both the §4.1 general
+  benchmark and this check's own numbers support — no diff here is negative enough to suggest
+  real regression) rather than "improved." Only `artifact_absence` (+0.040, 3.18×SEM, §4.3) is
+  claimed as a measured improvement.
+- **This does not change the promotion decision.** §4.4's verdict rests entirely on the primary
+  endpoint clearing its pre-registered threshold with no guardrail *regression* — both of which
+  still hold. It changes what can be said about the guardrails: "did not get worse," not "got
+  better."
 
 ---
 
@@ -371,8 +444,8 @@ guardrails also showing no regression on the domain-matched set.
 | `hyper_4step` | production-quality — **recommended fast path** | Best HPS+CLIP+latency of all 5 families. |
 | `hyper_8step` | needs-improvement | 16% severe-underexposure rate at spec-compliant config; strictly dominated by `hyper_4step` on every measured axis. Not recommended for production traffic; keep `hyper_4step` as the routed default. |
 | `sdxl_controlnet_union` | production-quality (quality) / needs-improvement (latency) | Quality on par with `sdxl_base`; 546.6s latency requires CPU offload on this 8GB card — a hardware-fit issue, not a model-quality one. |
-| Ukiyo-e LoRA — published checkpoint-1000 | superseded — **promote curated retrain** | Curated retrain measurably improves `artifact_absence` (+0.040, 3.18×SEM, n=90 paired, pre-registered) with no regression — improvement, in fact — on either guardrail (§4.3). |
-| Ukiyo-e LoRA — curated retrain | production-quality — **new champion** | Pre-registered primary endpoint clears the 2×SEM bar decisively (3.18); both guardrails (`style_adherence`, `figure_preservation`) improve rather than merely hold steady. Promote to replace the published HF checkpoint. |
+| Ukiyo-e LoRA — published checkpoint-1000 | superseded — **promote curated retrain** | Curated retrain measurably improves `artifact_absence` (+0.040, 3.18×SEM, n=90 paired, pre-registered) with no regression on either guardrail (§4.3; guardrail claim scope narrowed to non-inferiority after a halo-effect check, §4.5). |
+| Ukiyo-e LoRA — curated retrain | production-quality — **new champion** | Pre-registered primary endpoint clears the 2×SEM bar decisively (3.18); both guardrails (`style_adherence`, `figure_preservation`) hold steady, no regression (§4.5: a halo-effect check found their apparent improvement doesn't robustly survive independent scoring, so only non-inferiority is claimed for them). Promote to replace the published HF checkpoint. |
 
 ---
 
@@ -387,13 +460,18 @@ retrain (item 2).**
    strictly dominated by `hyper_4step` on HPS, CLIP, and latency, and has a 16%
    severe-underexposure defect rate. Action: change the default/recommended Hyper-SD variant in
    any user-facing routing logic to `hyper_4step`. This is a config/docs fix, not a retrain.
-2. **Promote the curated retrain and update the published HF model card** (§4.3) — the
-   pre-registered, properly powered (n=90 paired) primary result clears the promotion threshold
-   decisively (3.18×SEM vs. the 2.0 bar) with both guardrails improving rather than regressing.
-   Action: re-upload `checkpoint-1000` from `data/lora/ukiyo-e/training_output_sdxl_curated/` to
-   `gauravgandhi2411/aetherart-ukiyo-sdxl` on HF Hub, replacing the current published weights,
-   and note the promotion (with these numbers and their provenance) in the model card's
-   changelog. This is the ~$3.85–4.35 GCP retrain spend paying off, measured rather than assumed.
+2. **Promote the curated retrain and update the published HF model card** (§4.3, claim scope
+   per §4.5) — the pre-registered, properly powered (n=90 paired) primary result clears the
+   promotion threshold decisively (3.18×SEM vs. the 2.0 bar) with neither guardrail regressing.
+   Model-card language: claim a **measured improvement** on `artifact_absence` (+0.040,
+   3.18×SEM) and **no regression** (not "improvement") on `style_adherence`/`figure_preservation`
+   — a halo-effect check (§4.5) found the guardrails' apparent improvement doesn't robustly
+   survive independent single-axis VLM scoring. Action: re-upload `checkpoint-1000` from
+   `data/lora/ukiyo-e/training_output_sdxl_curated/` to `gauravgandhi2411/aetherart-ukiyo-sdxl`
+   on HF Hub — preserving the prior revision (106 downloads last month; do not destructively
+   overwrite), and note the promotion (with these numbers, their provenance, and the claim-scope
+   correction) in the model card's changelog. This is the ~$3.85–4.35 GCP retrain spend paying
+   off, measured rather than assumed.
 3. **All 5 non-LoRA families are production-quality** on the metrics measured here, with
    `sdxl_controlnet_union`'s latency flagged as a hardware-fit constraint (8GB VRAM + CPU
    offload), not a quality defect.
