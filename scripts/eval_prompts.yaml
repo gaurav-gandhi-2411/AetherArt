@@ -236,3 +236,163 @@ prompts:
     category: LoRA Validation
     parti_challenge: LoRA Style
     expected_difficulty: medium
+
+  # ── LORA A/B — 30-prompt powered set (docs/AB_PREREGISTRATION.md) ─────────
+  # Extends lora_001-004 to 30 total, with deliberately heavier figure/portrait coverage
+  # (the WikiArt calligraphy-artifact source images were portrait-style) than the original
+  # 4-prompt set, which had only one figure subject (lora_003) and it didn't discriminate.
+  - id: lora_005
+    prompt: "ukyowood ukiyo-e woodblock print of a woman in a kimono arranging flowers"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_006
+    prompt: "ukyowood ukiyo-e print of a court lady playing a shamisen"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_007
+    prompt: "ukyowood ukiyo-e woodblock print of a fisherman casting a net at dawn"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_008
+    prompt: "ukyowood ukiyo-e print of two children flying a kite in a garden"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_009
+    prompt: "ukyowood ukiyo-e woodblock print of an elderly monk reading beneath a pine tree"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_010
+    prompt: "ukyowood ukiyo-e print of a kabuki actor in a dramatic pose"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_011
+    prompt: "ukyowood ukiyo-e woodblock print of a farmer working in a rice paddy"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_012
+    prompt: "ukyowood ukiyo-e print of a geisha walking under a paper umbrella in the rain"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_013
+    prompt: "ukyowood ukiyo-e woodblock print of a mother and child by a river bank"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_014
+    prompt: "ukyowood ukiyo-e print of a tea ceremony inside a wooden house"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_015
+    prompt: "ukyowood ukiyo-e woodblock print of two sumo wrestlers in a match"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_016
+    prompt: "ukyowood ukiyo-e print of a merchant selling fish at a market stall"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_017
+    prompt: "ukyowood ukiyo-e woodblock print of a village street with wooden houses at dusk"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_018
+    prompt: "ukyowood ukiyo-e print of a bridge over a river with travelers crossing"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_019
+    prompt: "ukyowood ukiyo-e woodblock print of a waterfall in a mountain gorge"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_020
+    prompt: "ukyowood ukiyo-e print of a koi pond with lotus flowers"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_021
+    prompt: "ukyowood ukiyo-e woodblock print of a tiger prowling through tall grass"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_022
+    prompt: "ukyowood ukiyo-e print of an owl perched on a snow-covered branch"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_023
+    prompt: "ukyowood ukiyo-e woodblock print of a full moon over a pine forest"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_024
+    prompt: "ukyowood ukiyo-e print of Mount Fuji seen from a snowy village"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_025
+    prompt: "ukyowood ukiyo-e woodblock print of a boat sailing through a storm at sea"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_026
+    prompt: "ukyowood ukiyo-e print of autumn maple leaves along a mountain path"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_027
+    prompt: "ukyowood ukiyo-e woodblock print of a castle on a hill at sunset"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_028
+    prompt: "ukyowood ukiyo-e print of a dancer performing with a fan"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_029
+    prompt: "ukyowood ukiyo-e woodblock print of a group of pilgrims climbing a mountain trail"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
+
+  - id: lora_030
+    prompt: "ukyowood ukiyo-e print of a lantern-lit festival street at night"
+    category: LoRA Validation
+    parti_challenge: LoRA Style
+    expected_difficulty: medium
