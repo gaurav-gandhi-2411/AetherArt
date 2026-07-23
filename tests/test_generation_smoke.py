@@ -35,11 +35,10 @@ def test_real_generation_produces_a_valid_nonempty_image():
     )
 
     # Calls model.pipe(...) directly, exactly as app.py's generation stream and
-    # scripts/eval.py's run_single() do — NOT AetherModel.generate(), which wraps the call in an
-    # extra torch.autocast("cuda") on top of an already-fp16-loaded pipeline. That redundant
-    # autocast was found (while writing this test) to produce all-NaN/black output at low step
-    # counts; generate() has no callers anywhere in the codebase (dead code) so it isn't fixed
-    # here — see the PR description for the flagged follow-up.
+    # scripts/eval.py's run_single() do. AetherModel.generate() used to wrap this same call in
+    # an extra torch.autocast("cuda") on top of an already-fp16-loaded pipeline, which produced
+    # all-NaN/black output at any step count and had zero callers anywhere in the codebase —
+    # deleted in the post-PR-20 cleanup rather than fixed, since nothing used it.
     device = "cuda" if torch.cuda.is_available() else "cpu"
     generator = torch.Generator(device=device).manual_seed(42)
     out = model.pipe(
