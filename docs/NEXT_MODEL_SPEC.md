@@ -103,6 +103,55 @@ disqualified — SDXL already renders it well, and Flux competition already exis
 
 ---
 
+## 3.5 Pre-check result (run before any training commitment) — **PROCEED**
+
+Per this document's own pre-registered decision rule (stated before running: ≥50 clean images →
+proceed to spec-approved training; <50 → blocked, evaluate Kalamkari), the full corpus and VLM
+curation filter were run end-to-end as a pre-check, not a training run.
+
+**Corpus assembly** (`scripts/_fetch_pattachitra_corpus.py`, `reports/pattachitra_corpus_manifest.json`):
+139 unique files across the three Commons categories (`Category:Pattachitra`, `Category:Pattachitra
+in Odisha`, `Category:Pattachitra in West Bengal`), all downloaded (0 errors), 136 unique files on
+disk after filename-sanitization collisions. **Actual per-file licence, not assumed** — "Wikimedia
+Commons" is a host, not a licence:
+
+| Licence | Count |
+|---|---|
+| CC BY-SA 4.0 | 86 |
+| CC BY 2.0 | 21 |
+| CC BY 3.0 | 9 |
+| CC BY-SA 3.0 | 7 |
+| CC BY 4.0 | 7 |
+| Public domain | 5 |
+| CC0 | 4 |
+
+All 139 are commercial-compatible; **zero** flagged non-commercial/no-derivatives (the disqualifying
+markers checked: `noncommercial`, `nc-`/`-nc`, `nd-`/`-nd`).
+
+**VLM curation filter** (`scripts/_curate_pattachitra_corpus.py`, local Ollama `qwen2.5vl:7b`, zero
+cost, tailored to Pattachitra's actual contamination classes — museum labels/watermarks and
+documentary/process photos, not ukiyo-e's in-print calligraphy):
+
+| Metric | Value |
+|---|---|
+| Candidate images screened | 136 |
+| Clean (kept) | **111** |
+| Flagged | 25 |
+| Flag rate | 18.4% |
+| — text/watermark/museum label | 21 |
+| — not-artwork (process/documentary photo) | 4 |
+
+Flag rate is far lower than ukiyo-e's 71.2% (80→23) — Pattachitra's Commons corpus is
+predominantly clean scroll-painting reproductions, not scanned prints with embedded calligraphy;
+the dominant contamination class is museum/photography artifacts (labels, captions), a smaller
+and more mechanically-filterable problem than ukiyo-e's in-image script.
+
+**Decision: 111 ≥ 50 → PROCEED to spec-approved training.** Kalamkari fallback not needed. This
+pre-check does not itself authorize training spend — §5's cost estimate and GG's explicit
+approval are still required before any GCP run.
+
+---
+
 ## 4. Dataset-sourcing plan (for Pattachitra, primary recommendation)
 
 1. **Commons harvest:** pull all ~140 files across `Category:Pattachitra`, `Category:Pattachitra

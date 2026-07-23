@@ -1,0 +1,1634 @@
+[
+  {
+    "file_name": "A Portrait of Kamarnaba Deba by Bibhu Patnaik.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom right corner",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "An artist making Patachitra work.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Another painting by an artist from Raghurajpur village, Odisha, India.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Artist with Creation.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "visible in the top left corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows an artist at work, not a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Artist with Odisha Pattachitra DSCN1052 01.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama and Jagannath holding bows in their left hands, wit Wellcome V0017727.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama and Jagannath holding up their hands with Subhadra Wellcome V0017725.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama and Jagannath raising their right hands and holding Wellcome V0017728.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama, Subhadra and Jagannath in the temple at Puri, with Wellcome V0017729.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama, Subhadra and Jagannath in the temple at Puri, with Wellcome V0017730.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama, Subhadra and Jagannath in the temple at Puri, with Wellcome V0017732.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Balarama, Subhadra and Jagannath in three shrines surmounted Wellcome V0017726.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Banglar Pattachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Banglar Pattachitro.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 1.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 10.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 2.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 3.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 4.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 5.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 6.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 7.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 8.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Bengal patachitra 9.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Chau and Patachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "on the right side of the image",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a market/exhibition stall with various items, including a Pattachitra scroll painting and other artifacts."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Easy Pattachitra of Lord Jagarnath.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Eight-armed Ganesha - Patachitra - Tussore - Odisha - ACCN 2007-67 - Indian Museum - Kolkata 2015-09-26 3864.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Flow chart of patachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.95,
+      "text_location": "The image contains visible text in Bengali at the top and throughout the content.",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "This is not a clean reproduction of a Pattachitra painting itself, but rather an informational board or sign with text explaining the art form."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Four mithuna scenes (6124520839).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Jagannath Theme in Pattachitra-1.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Jagannath Theme in Pattachitra-2.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Jagannath Theme in Pattachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom right corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an art exhibition or gallery, as indicated by the 'BRITISH LIBRARY' text in the bottom right corner."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Jagannatha, Balabhadra, and Subhadra in the Jagganatha Temple LACMA M.82.107.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Kanchi-Kaveri Expedition Pattachitra outline.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Lakshmi puja in lakshmi sara, Nabadwip.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Lord Jagannath Patachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Mathura Vijay - Pattachitra of Odisha.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Medinipur Patachitra - durga.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Naagaa Dancer, Raghurajpur.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Odia Wikisource 2 badge.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.95,
+      "text_location": "bottom of the tag",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a lanyard with a badge, not a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Odisha Pattachitara Depicting Unconditional Love between Radha Krushna.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Odisha Pattachitra DSCN1052 02.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Odisha Pattachitra DSCN1052 04.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Odisha Pattachitra DSCN1052 08.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Odisha Pattachitra DSCN1052 09.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Painting on a wall at Raghurajpur.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom right corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an artist's studio or workshop, as indicated by the presence of clothing and other items hanging on the wall."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "PAINTING PATACHITRA.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra 1.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra 2.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.75,
+      "text_location": "visible on the left side of the image",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a market/exhibition stall with various Pattachitra paintings and other items, indicating it is not a clean reproduction but rather a scene from an event."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Patachitra 3.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra 4.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra artist at Book fair in Kolkata IMG 7109.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "visible on the water bottle and some papers",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows an artist at work, not a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Patachitra artist at work.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra artists work with immense care and passion.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra attracting tourists.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "visible on the right side of the image",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The main subject is a market/exhibition stall with people interacting, not a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Patachitra by Pampa Chitrakar.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "PATACHITRA KOLKATA WEST BENGAL P2100005.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra mela in Nabadwip.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom left corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a framed document or poster with text and an illustration, not a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Patachitra mela Nabadwip.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra mela, Nabadwip.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra Shilpi Nadira Chitrokor , Pingla, West Bengal.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a woman holding a baby in what appears to be an indoor setting with various decorations and crafts, rather than a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "not-artwork"
+  },
+  {
+    "file_name": "Patachitra stall.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patta Chitra 01.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patta Chitra 02.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patta Chitra 03.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7902.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7903.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.75,
+      "text_location": "top left corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a person observing the artwork, which suggests it is not a clean reproduction of the painting itself."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7907.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7908.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "top of the glass display case",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a photograph of a Pattachitra painting displayed in a museum or gallery setting, not a clean reproduction of the artwork itself."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra 01.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 02.jpeg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 03.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 04.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 05.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 06 2.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 06.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 07.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 08.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 09.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 10.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra 11.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra artist at work in Odisha, India.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra at Book fair in Kolkata IMG 7102.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra at Book fair in Kolkata IMG 7105.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra at Book fair in Kolkata IMG 7110.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra from Odisha in Subhas Chandra Bose's parental home, Cuttack, Odisha, India.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.95,
+      "text_location": "top of the image",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra Making.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.75,
+      "text_location": "top center",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an exhibition or gallery display, as indicated by the museum/gallery label at the top."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra of Akbar.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "left side",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an artist at work, as it shows the artist's hands and tools in the foreground."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra of Behula.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "left side and bottom left corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an artist at work, as it captures the artist's hands and tools in the foreground."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra of Jagannath.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra on saree.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16419877184).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16419912954).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16419923734).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16422146763).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16422156313).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16422248343).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16834889857).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16834900107).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16834997567).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16835015627).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "center and bottom of the image",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph or scan of text rather than a clean reproduction of a Pattachitra painting."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Pattachitra Painting (16854531288).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16854885920).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16856118409).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (16856215859).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17040932272).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17041493921).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17041543331).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17042344385).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17042370365).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17042427715).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra Painting (17042441695).jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pattachitra, Art Of Bengal.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4284.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4285.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4286.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "The image shows an artist at work, not a clean reproduction of the artwork itself."
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4291.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Peinture Radha Krishna par Jagiajit.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Pingla Patachitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a market scene with people and Pattachitra paintings displayed, but the focus is on the people rather than the artwork itself."
+    },
+    "flagged": true,
+    "reason": "not-artwork"
+  },
+  {
+    "file_name": "Portrait of Sarbajna Jagann\u0101tha Gajapati N\u0101r\u0101yan Deba l, Gouache on paper by Bibhu Patnaik.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom left and right corners",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Radha and Krishna tala pattachitra from Odisha, ink on palm leaf, artist unknown.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Raghurajpur 7.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Raghurajpur Artist.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Raghurajpur Pattachitra,ODISHA.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "SAHASRAKHSYA AHALYA.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.85,
+      "text_location": "bottom center and bottom right corners",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "Tala pattachitra from Odisha, ink on palm leaf, artist unknown.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Talapata Chitra.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "The painting by an artist from Raghurajpur.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "The Paintings on Betel nut (Areca nut) by the artists of Raghurajpur.JPG",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "Visitors from all across the world visits Pingla in Paschim Medinipur every year to see Patachitra paintings.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image shows a market scene with people and artwork, but the main subject is not a clean reproduction of a Pattachitra painting itself."
+    },
+    "flagged": true,
+    "reason": "not-artwork"
+  },
+  {
+    "file_name": "\u0993\u09a1\u09bc\u09bf\u09b6\u09be\u09b0 \u09aa\u099f\u099a\u09bf\u09a4\u09cd\u09b0.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": true,
+      "text_confidence": 0.75,
+      "text_location": "bottom left corner",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image appears to be a photograph of an exhibition or gallery setting, as indicated by the presence of what looks like a digital display screen and other objects in the foreground."
+    },
+    "flagged": true,
+    "reason": "text/watermark"
+  },
+  {
+    "file_name": "\u0995\u09cd\u09af\u09be\u09a8\u09ad\u09be\u09b8 \u099b\u09be\u09a1\u09bc\u09bf\u09af\u09bc\u09c7.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "\u09aa\u09b0\u09ae\u09cd\u09aa\u09b0\u09be.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  },
+  {
+    "file_name": "\u09ac\u09bf\u09a8\u09c1\u09a8\u09bf.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": false,
+      "not_artwork_reason": "The image depicts a scene of two women, one combing the other's hair, with colorful fabrics and paintings in the background. The focus is on the people rather than the artwork itself."
+    },
+    "flagged": true,
+    "reason": "not-artwork"
+  },
+  {
+    "file_name": "\u09ae\u09c7\u09a8\u09c1\u09b7\u09cd\u0995\u09cd\u09f0\u09bf\u09aa\u09cd\u099f \u09aa\u09c7\u0987\u09a3\u09cd\u099f\u09bf\u0982\u0964.jpg",
+    "vlm_verdict": {
+      "has_text_or_watermark": false,
+      "text_confidence": 0.0,
+      "text_location": "none",
+      "is_clean_artwork_reproduction": true,
+      "not_artwork_reason": "n/a"
+    },
+    "flagged": false,
+    "reason": "clean"
+  }
+]

@@ -1,0 +1,315 @@
+{
+  "detector": "qwen2.5vl:7b (local Ollama VLM judge)",
+  "total_candidate_images": 136,
+  "clean_count": 111,
+  "flagged_count": 25,
+  "flag_rate": 0.1838,
+  "flag_reason_breakdown": {
+    "text/watermark": 21,
+    "not-artwork": 4
+  },
+  "decision_rule": ">=50 clean -> PROCEED to spec-approved training; <50 -> BLOCKED, evaluate Kalamkari",
+  "decision": "PROCEED",
+  "flagged_detail": [
+    {
+      "file_name": "A Portrait of Kamarnaba Deba by Bibhu Patnaik.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom right corner",
+        "is_clean_artwork_reproduction": true,
+        "not_artwork_reason": "n/a"
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Artist with Creation.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "visible in the top left corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows an artist at work, not a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Chau and Patachitra.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "on the right side of the image",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a market/exhibition stall with various items, including a Pattachitra scroll painting and other artifacts."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Flow chart of patachitra.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.95,
+        "text_location": "The image contains visible text in Bengali at the top and throughout the content.",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "This is not a clean reproduction of a Pattachitra painting itself, but rather an informational board or sign with text explaining the art form."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Jagannath Theme in Pattachitra.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom right corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an art exhibition or gallery, as indicated by the 'BRITISH LIBRARY' text in the bottom right corner."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Odia Wikisource 2 badge.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.95,
+        "text_location": "bottom of the tag",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a lanyard with a badge, not a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Painting on a wall at Raghurajpur.JPG",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom right corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an artist's studio or workshop, as indicated by the presence of clothing and other items hanging on the wall."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Patachitra 2.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.75,
+        "text_location": "visible on the left side of the image",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a market/exhibition stall with various Pattachitra paintings and other items, indicating it is not a clean reproduction but rather a scene from an event."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Patachitra artist at Book fair in Kolkata IMG 7109.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "visible on the water bottle and some papers",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows an artist at work, not a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Patachitra attracting tourists.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "visible on the right side of the image",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The main subject is a market/exhibition stall with people interacting, not a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Patachitra mela in Nabadwip.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom left corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a framed document or poster with text and an illustration, not a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Patachitra Shilpi Nadira Chitrokor , Pingla, West Bengal.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": false,
+        "text_confidence": 0.0,
+        "text_location": "none",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a woman holding a baby in what appears to be an indoor setting with various decorations and crafts, rather than a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "not-artwork"
+    },
+    {
+      "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7903.JPG",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.75,
+        "text_location": "top left corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a person observing the artwork, which suggests it is not a clean reproduction of the painting itself."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra - Archaeological Activities Exhibition - Directorate of Archaeology & Museums - West Bengal - Kolkata 2014-09-14 7908.JPG",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "top of the glass display case",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a photograph of a Pattachitra painting displayed in a museum or gallery setting, not a clean reproduction of the artwork itself."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra from Odisha in Subhas Chandra Bose's parental home, Cuttack, Odisha, India.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.95,
+        "text_location": "top of the image",
+        "is_clean_artwork_reproduction": true,
+        "not_artwork_reason": "n/a"
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra Making.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.75,
+        "text_location": "top center",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an exhibition or gallery display, as indicated by the museum/gallery label at the top."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra of Akbar.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "left side",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an artist at work, as it shows the artist's hands and tools in the foreground."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra of Behula.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "left side and bottom left corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an artist at work, as it captures the artist's hands and tools in the foreground."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pattachitra Painting (16835015627).jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "center and bottom of the image",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph or scan of text rather than a clean reproduction of a Pattachitra painting."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Pingla Patachitra.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": false,
+        "text_confidence": 0.0,
+        "text_location": "none",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a market scene with people and Pattachitra paintings displayed, but the focus is on the people rather than the artwork itself."
+      },
+      "flagged": true,
+      "reason": "not-artwork"
+    },
+    {
+      "file_name": "Portrait of Sarbajna Jagann\u0101tha Gajapati N\u0101r\u0101yan Deba l, Gouache on paper by Bibhu Patnaik.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom left and right corners",
+        "is_clean_artwork_reproduction": true,
+        "not_artwork_reason": "n/a"
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "SAHASRAKHSYA AHALYA.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.85,
+        "text_location": "bottom center and bottom right corners",
+        "is_clean_artwork_reproduction": true,
+        "not_artwork_reason": "n/a"
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "Visitors from all across the world visits Pingla in Paschim Medinipur every year to see Patachitra paintings.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": false,
+        "text_confidence": 0.0,
+        "text_location": "none",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image shows a market scene with people and artwork, but the main subject is not a clean reproduction of a Pattachitra painting itself."
+      },
+      "flagged": true,
+      "reason": "not-artwork"
+    },
+    {
+      "file_name": "\u0993\u09a1\u09bc\u09bf\u09b6\u09be\u09b0 \u09aa\u099f\u099a\u09bf\u09a4\u09cd\u09b0.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": true,
+        "text_confidence": 0.75,
+        "text_location": "bottom left corner",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image appears to be a photograph of an exhibition or gallery setting, as indicated by the presence of what looks like a digital display screen and other objects in the foreground."
+      },
+      "flagged": true,
+      "reason": "text/watermark"
+    },
+    {
+      "file_name": "\u09ac\u09bf\u09a8\u09c1\u09a8\u09bf.jpg",
+      "vlm_verdict": {
+        "has_text_or_watermark": false,
+        "text_confidence": 0.0,
+        "text_location": "none",
+        "is_clean_artwork_reproduction": false,
+        "not_artwork_reason": "The image depicts a scene of two women, one combing the other's hair, with colorful fabrics and paintings in the background. The focus is on the people rather than the artwork itself."
+      },
+      "flagged": true,
+      "reason": "not-artwork"
+    }
+  ]
+}
