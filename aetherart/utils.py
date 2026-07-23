@@ -28,12 +28,20 @@ def preferred_dtype_kwarg(fn) -> str | None:
     return None
 
 
-def build_pretrained_kwargs(fn, dtype, hf_token: str | None = None) -> dict[str, Any]:
-    """Build from_pretrained kwargs with the correct dtype key and optional token."""
+def build_pretrained_kwargs(
+    fn, dtype, hf_token: str | None = None, revision: str | None = None
+) -> dict[str, Any]:
+    """Build from_pretrained kwargs with the correct dtype key, optional token, and revision.
+
+    revision pins a specific commit SHA so the loaded weights are reproducible instead of
+    silently tracking a repo's moving `main` ref.
+    """
     kwargs: dict[str, Any] = {}
     kw = preferred_dtype_kwarg(fn)
     if kw:
         kwargs[kw] = dtype
     if hf_token:
         kwargs["token"] = hf_token
+    if revision:
+        kwargs["revision"] = revision
     return kwargs
