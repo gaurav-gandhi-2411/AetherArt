@@ -1,0 +1,1168 @@
+[
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_001_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_001_43.png",
+    "has_detected_text": true,
+    "n_detections": 2,
+    "max_confidence": 0.9519,
+    "detections": [
+      {
+        "text": "W",
+        "confidence": 0.3561
+      },
+      {
+        "text": "In",
+        "confidence": 0.9519
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_001_44.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.0747,
+    "detections": [
+      {
+        "text": "\u671d",
+        "confidence": 0.0191
+      },
+      {
+        "text": "\u304c",
+        "confidence": 0.0747
+      },
+      {
+        "text": "\u8846",
+        "confidence": 0.0027
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_002_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_002_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.042,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.042
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_002_44.png",
+    "has_detected_text": true,
+    "n_detections": 2,
+    "max_confidence": 0.3392,
+    "detections": [
+      {
+        "text": "\u9732",
+        "confidence": 0.0192
+      },
+      {
+        "text": "\u8cb4",
+        "confidence": 0.3392
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_003_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_003_43.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.0025,
+    "detections": [
+      {
+        "text": "\u3046\u96db",
+        "confidence": 0.0025
+      },
+      {
+        "text": "n \u7c9f\u7fa91",
+        "confidence": 0.0009
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_003_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_004_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_004_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_004_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_005_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_005_43.png",
+    "has_detected_text": true,
+    "n_detections": 1,
+    "max_confidence": 0.6394,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.6394
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_005_44.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.1627,
+    "detections": [
+      {
+        "text": "\u300f",
+        "confidence": 0.1627
+      },
+      {
+        "text": "\u7cde",
+        "confidence": 0.0195
+      },
+      {
+        "text": "\u66fd",
+        "confidence": 0.1337
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_006_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_006_43.png",
+    "has_detected_text": false,
+    "n_detections": 5,
+    "max_confidence": 0.2325,
+    "detections": [
+      {
+        "text": "\u66f8",
+        "confidence": 0.0058
+      },
+      {
+        "text": "q",
+        "confidence": 0.0065
+      },
+      {
+        "text": "\u300f",
+        "confidence": 0.0032
+      },
+      {
+        "text": "1",
+        "confidence": 0.2325
+      },
+      {
+        "text": "5",
+        "confidence": 0.0251
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_006_44.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.01,
+    "detections": [
+      {
+        "text": "\u7d05",
+        "confidence": 0.003
+      },
+      {
+        "text": "\u7dbf",
+        "confidence": 0.0035
+      },
+      {
+        "text": "#",
+        "confidence": 0.01
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_007_42.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0013,
+    "detections": [
+      {
+        "text": "\u99a8",
+        "confidence": 0.0013
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_007_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_007_44.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.0128,
+    "detections": [
+      {
+        "text": "\u4e80",
+        "confidence": 0.0027
+      },
+      {
+        "text": "\u5ddd",
+        "confidence": 0.0128
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_008_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_008_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0004,
+    "detections": [
+      {
+        "text": "\u3050\u66b4\u30e5\u9f8d",
+        "confidence": 0.0004
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_008_44.png",
+    "has_detected_text": false,
+    "n_detections": 4,
+    "max_confidence": 0.1738,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.1738
+      },
+      {
+        "text": "#",
+        "confidence": 0.0249
+      },
+      {
+        "text": "#",
+        "confidence": 0.0611
+      },
+      {
+        "text": "\u6319",
+        "confidence": 0.0175
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_009_42.png",
+    "has_detected_text": true,
+    "n_detections": 3,
+    "max_confidence": 0.3695,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.3695
+      },
+      {
+        "text": "\u7fa9",
+        "confidence": 0.0043
+      },
+      {
+        "text": "\u5584",
+        "confidence": 0.0948
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_009_43.png",
+    "has_detected_text": false,
+    "n_detections": 4,
+    "max_confidence": 0.1883,
+    "detections": [
+      {
+        "text": "\u79c0",
+        "confidence": 0.0165
+      },
+      {
+        "text": "\u671b",
+        "confidence": 0.0002
+      },
+      {
+        "text": "\u6761",
+        "confidence": 0.0049
+      },
+      {
+        "text": "1",
+        "confidence": 0.1883
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_009_44.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.017,
+    "detections": [
+      {
+        "text": "'",
+        "confidence": 0.017
+      },
+      {
+        "text": "#",
+        "confidence": 0.0012
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_010_42.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0285,
+    "detections": [
+      {
+        "text": "#",
+        "confidence": 0.0285
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_010_43.png",
+    "has_detected_text": true,
+    "n_detections": 1,
+    "max_confidence": 0.9666,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.9666
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_010_44.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.0358,
+    "detections": [
+      {
+        "text": "\u83d6",
+        "confidence": 0.0358
+      },
+      {
+        "text": "",
+        "confidence": 0.0
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_011_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_011_43.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.0344,
+    "detections": [
+      {
+        "text": "\u7434",
+        "confidence": 0.0115
+      },
+      {
+        "text": "8",
+        "confidence": 0.0344
+      },
+      {
+        "text": "g",
+        "confidence": 0.0277
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_011_44.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.0051,
+    "detections": [
+      {
+        "text": "[",
+        "confidence": 0.0051
+      },
+      {
+        "text": "\u9db4",
+        "confidence": 0.0049
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_012_42.png",
+    "has_detected_text": false,
+    "n_detections": 8,
+    "max_confidence": 0.2173,
+    "detections": [
+      {
+        "text": "{",
+        "confidence": 0.0219
+      },
+      {
+        "text": "\u5f1f",
+        "confidence": 0.0327
+      },
+      {
+        "text": "\u767b\u4f1a",
+        "confidence": 0.0132
+      },
+      {
+        "text": "\u9593",
+        "confidence": 0.0013
+      },
+      {
+        "text": "\u9f62",
+        "confidence": 0.2173
+      },
+      {
+        "text": "@",
+        "confidence": 0.0989
+      },
+      {
+        "text": "3",
+        "confidence": 0.0404
+      },
+      {
+        "text": "\u6700",
+        "confidence": 0.0021
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_012_43.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.0556,
+    "detections": [
+      {
+        "text": "\u99a8",
+        "confidence": 0.0556
+      },
+      {
+        "text": "\u300f",
+        "confidence": 0.0139
+      },
+      {
+        "text": "\u83d6",
+        "confidence": 0.0097
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_012_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_013_42.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.1529,
+    "detections": [
+      {
+        "text": "m",
+        "confidence": 0.0158
+      },
+      {
+        "text": "\u6cc9",
+        "confidence": 0.0291
+      },
+      {
+        "text": "1",
+        "confidence": 0.1529
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_013_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_013_44.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.061,
+    "detections": [
+      {
+        "text": "\u3064\u753a\u6cc9",
+        "confidence": 0.0
+      },
+      {
+        "text": "\u300e1 ",
+        "confidence": 0.061
+      },
+      {
+        "text": "\u7d424",
+        "confidence": 0.0178
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_014_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_014_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_014_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_015_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_015_43.png",
+    "has_detected_text": false,
+    "n_detections": 8,
+    "max_confidence": 0.1053,
+    "detections": [
+      {
+        "text": "5",
+        "confidence": 0.0041
+      },
+      {
+        "text": "h",
+        "confidence": 0.0122
+      },
+      {
+        "text": ":",
+        "confidence": 0.1053
+      },
+      {
+        "text": "\u307e",
+        "confidence": 0.0038
+      },
+      {
+        "text": "\u85c1",
+        "confidence": 0.0105
+      },
+      {
+        "text": "\u7ca5",
+        "confidence": 0.0008
+      },
+      {
+        "text": "\u304e",
+        "confidence": 0.0996
+      },
+      {
+        "text": "\u611b",
+        "confidence": 0.0153
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_015_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0078,
+    "detections": [
+      {
+        "text": "#",
+        "confidence": 0.0078
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_016_42.png",
+    "has_detected_text": false,
+    "n_detections": 10,
+    "max_confidence": 0.218,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.0316
+      },
+      {
+        "text": ",",
+        "confidence": 0.0601
+      },
+      {
+        "text": "8",
+        "confidence": 0.2066
+      },
+      {
+        "text": "\"",
+        "confidence": 0.0211
+      },
+      {
+        "text": "#",
+        "confidence": 0.1553
+      },
+      {
+        "text": "\u8c4a",
+        "confidence": 0.218
+      },
+      {
+        "text": "\u67d3",
+        "confidence": 0.0236
+      },
+      {
+        "text": "\u7e41",
+        "confidence": 0.1018
+      },
+      {
+        "text": "\u5ec3\u30fb\u3044",
+        "confidence": 0.0002
+      },
+      {
+        "text": "\u7d2b",
+        "confidence": 0.0019
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_016_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0136,
+    "detections": [
+      {
+        "text": "%",
+        "confidence": 0.0136
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_016_44.png",
+    "has_detected_text": false,
+    "n_detections": 7,
+    "max_confidence": 0.1911,
+    "detections": [
+      {
+        "text": "\u559c",
+        "confidence": 0.0161
+      },
+      {
+        "text": "=",
+        "confidence": 0.0035
+      },
+      {
+        "text": "\u9732",
+        "confidence": 0.1911
+      },
+      {
+        "text": "\u308b",
+        "confidence": 0.0096
+      },
+      {
+        "text": "g9n",
+        "confidence": 0.1891
+      },
+      {
+        "text": "\u96f2",
+        "confidence": 0.0158
+      },
+      {
+        "text": "\u304a",
+        "confidence": 0.0077
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_017_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_017_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_017_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0034,
+    "detections": [
+      {
+        "text": "\u99a8@",
+        "confidence": 0.0034
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_018_42.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0021,
+    "detections": [
+      {
+        "text": "\u3093",
+        "confidence": 0.0021
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_018_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0006,
+    "detections": [
+      {
+        "text": "\u30c9",
+        "confidence": 0.0006
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_018_44.png",
+    "has_detected_text": false,
+    "n_detections": 3,
+    "max_confidence": 0.0315,
+    "detections": [
+      {
+        "text": "\u7d50",
+        "confidence": 0.0315
+      },
+      {
+        "text": "",
+        "confidence": 0.0
+      },
+      {
+        "text": "\u85e4",
+        "confidence": 0.0107
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_019_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_019_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.002,
+    "detections": [
+      {
+        "text": "\u96f6",
+        "confidence": 0.002
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_019_44.png",
+    "has_detected_text": true,
+    "n_detections": 2,
+    "max_confidence": 0.8419,
+    "detections": [
+      {
+        "text": "\u5712",
+        "confidence": 0.8419
+      },
+      {
+        "text": "\u5e63",
+        "confidence": 0.0116
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_020_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_020_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_020_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_021_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_021_43.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.1603,
+    "detections": [
+      {
+        "text": "\u5dddW",
+        "confidence": 0.1603
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_021_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0346,
+    "detections": [
+      {
+        "text": "#",
+        "confidence": 0.0346
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_022_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_022_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_022_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_023_42.png",
+    "has_detected_text": false,
+    "n_detections": 2,
+    "max_confidence": 0.1152,
+    "detections": [
+      {
+        "text": "z",
+        "confidence": 0.1152
+      },
+      {
+        "text": "~",
+        "confidence": 0.0022
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_023_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_023_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0,
+    "detections": [
+      {
+        "text": "\u65e9\u99c6\u3044\u8f38\u9df2",
+        "confidence": 0.0
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_024_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_024_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_024_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_025_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_025_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_025_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_026_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_026_43.png",
+    "has_detected_text": true,
+    "n_detections": 1,
+    "max_confidence": 0.3832,
+    "detections": [
+      {
+        "text": "\u4f1a",
+        "confidence": 0.3832
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_026_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_027_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_027_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_027_44.png",
+    "has_detected_text": true,
+    "n_detections": 2,
+    "max_confidence": 0.5279,
+    "detections": [
+      {
+        "text": "1",
+        "confidence": 0.219
+      },
+      {
+        "text": "1",
+        "confidence": 0.5279
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_028_42.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_028_43.png",
+    "has_detected_text": false,
+    "n_detections": 4,
+    "max_confidence": 0.2405,
+    "detections": [
+      {
+        "text": "\u5c71",
+        "confidence": 0.0364
+      },
+      {
+        "text": "\u76ee",
+        "confidence": 0.0135
+      },
+      {
+        "text": "#",
+        "confidence": 0.2405
+      },
+      {
+        "text": "\u3086",
+        "confidence": 0.0078
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_028_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0,
+    "detections": [
+      {
+        "text": "",
+        "confidence": 0.0
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_029_42.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0004,
+    "detections": [
+      {
+        "text": "o",
+        "confidence": 0.0004
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_029_43.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_029_44.png",
+    "has_detected_text": false,
+    "n_detections": 0,
+    "max_confidence": 0.0,
+    "detections": []
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_030_42.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.0111,
+    "detections": [
+      {
+        "text": "#",
+        "confidence": 0.0111
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_030_43.png",
+    "has_detected_text": true,
+    "n_detections": 5,
+    "max_confidence": 0.9991,
+    "detections": [
+      {
+        "text": "\u66b4",
+        "confidence": 0.0033
+      },
+      {
+        "text": "g",
+        "confidence": 0.0742
+      },
+      {
+        "text": "1",
+        "confidence": 0.9991
+      },
+      {
+        "text": "}",
+        "confidence": 0.0292
+      },
+      {
+        "text": "\u52dd",
+        "confidence": 0.0415
+      }
+    ]
+  },
+  {
+    "image_path": "outputs\\verdict\\lora_ab_base_comparison\\base_lora_030_44.png",
+    "has_detected_text": false,
+    "n_detections": 1,
+    "max_confidence": 0.1404,
+    "detections": [
+      {
+        "text": "\u99ac",
+        "confidence": 0.1404
+      }
+    ]
+  }
+]

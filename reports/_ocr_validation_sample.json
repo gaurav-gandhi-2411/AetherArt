@@ -1,0 +1,205 @@
+[
+  {
+    "group": "published",
+    "prompt_id": "lora_016",
+    "seed": 42,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_016_42.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_012",
+    "seed": 42,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_012_42.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_028",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_028_44.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_006",
+    "seed": 43,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_006_43.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_002",
+    "seed": 43,
+    "artifact_absence": 0.5,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_002_43.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_016",
+    "seed": 44,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_016_44.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_003",
+    "seed": 42,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_003_42.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_015",
+    "seed": 44,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_015_44.png"
+  },
+  {
+    "group": "published",
+    "prompt_id": "lora_026",
+    "seed": 42,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\published_lora_026_42.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_012",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_012_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_001",
+    "seed": 42,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_001_42.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_002",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_002_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_009",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_009_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_004",
+    "seed": 43,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_004_43.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_020",
+    "seed": 43,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_020_43.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_018",
+    "seed": 44,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_018_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_027",
+    "seed": 44,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_027_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_013",
+    "seed": 44,
+    "artifact_absence": 0.9,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_013_44.png"
+  },
+  {
+    "group": "curated",
+    "prompt_id": "lora_025",
+    "seed": 44,
+    "artifact_absence": 0.5,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_30prompt_independent\\curated_lora_025_44.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_025",
+    "seed": 42,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_025_42.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_003",
+    "seed": 43,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_003_43.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_004",
+    "seed": 43,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_004_43.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_022",
+    "seed": 44,
+    "artifact_absence": 1.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_022_44.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_006",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_006_44.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_001",
+    "seed": 44,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_001_44.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_006",
+    "seed": 43,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_006_43.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_005",
+    "seed": 43,
+    "artifact_absence": 0.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_005_43.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_030",
+    "seed": 44,
+    "artifact_absence": 0.9,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_030_44.png"
+  },
+  {
+    "group": "base",
+    "prompt_id": "lora_030",
+    "seed": 42,
+    "artifact_absence": 0.9,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\lora_ab_base_comparison\\base_lora_030_42.png"
+  }
+]

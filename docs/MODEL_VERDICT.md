@@ -651,6 +651,73 @@ carry residual artifact-inducing signal the current filter didn't catch), use a 
 set, or increase LoRA rank, rather than abandoning curation as an approach.** This materially
 changes the recommendation implied by a bare "no effect" reading of §4.6 alone.
 
+### 4.9 High-power binary artifact metric — attempted, validated with caveats, and found to be
+LESS powerful than the rubric (the opposite of the premise it was built to test)
+
+**Premise being tested:** artifact presence is naturally binary (text/calligraphy/cartouche
+detectable or not), and a paired proportion test on a binary outcome should have more power than
+a noisy continuous VLM rubric — the rubric's ~1,963-paired-sample requirement (§4.7) suggested
+the *instrument*, not `n`, was the bottleneck. This section builds and tests that instrument. The
+result contradicts the premise, and is reported as such rather than adjusted to fit it.
+
+**Detector** (`scripts/detect_text_artifacts.py`): EasyOCR with **both English and Japanese**
+readers (`['en', 'ja']`) — deliberately different from `scripts/curate_ukiyo_e_dataset.py`'s
+discarded English-only attempt, which false-positived on real woodblock-print brushwork texture
+during *training-image* curation. That failure mode does not transfer here by assumption; it was
+independently re-checked on *generated* images, a different population.
+
+**Validation** (`scripts/validate_text_detector.py`, `reports/text_detector_validation.json`): a
+stratified n=29 sample (published/curated/base, spanning the full observed VLM
+`artifact_absence` score range) was labeled by direct visual inspection — genuinely independent
+ground truth, not derived from the VLM score or the detector itself.
+
+| Decision rule | Precision | Recall | n flagged (of 29) |
+|---|---|---|---|
+| `max_confidence >= 0.3` (naive first attempt) | 1.000 | **0.227** | 5 |
+| `n_detections >= 1` ("any OCR region found, regardless of confidence") | 0.944 | **0.773** | 18 |
+
+The naive confidence threshold is unusable (misses 77% of true positives) — SDXL-generated
+pseudo-calligraphy is visually text-*shaped* but rarely legible enough for OCR's recognition step
+to score it confidently (this is why `n_detections` — did OCR find *anything* text-shaped at all
+— correlates with ground truth better than `max_confidence` does: Pearson r=0.47 vs. r=0.32).
+Switching to the `n_detections >= 1` rule is a real, moderately-validated detector (94%
+precision, 77% recall on n=29) — not a "fast negative" (it does correlate: r=0.65 against the
+VLM's own artifact signal) — but it is not error-free, and that imperfection matters below.
+
+**Applied to the full n=90 published/curated/base sets** (`scripts/compute_ocr_proportion_stats.py`,
+`reports/ocr_proportion_stats.json`), McNemar's exact test on paired binary outcomes:
+
+| Comparison | P(artifact\|A) | P(artifact\|B) | Diff | McNemar p |
+|---|---|---|---|---|
+| published vs. curated | 0.6111 | 0.5444 | −0.0667 | 0.480 |
+| base vs. published | 0.5333 | 0.6111 | +0.0778 | 0.281 |
+| base vs. curated | 0.5333 | 0.5444 | +0.0111 | 1.000 |
+
+Directionally consistent with §4.6/§4.8 (curated < published; base < both), but none reach
+significance — and **55.6% of published-vs-curated pairs are discordant** (one arm flagged, the
+other not) — a very high rate reflecting real image-to-image variance in whether a given
+generation's pseudo-text happens to render legibly enough for OCR, on top of the detector's own
+23% miss rate.
+
+**Power comparison — the premise fails:** the paired-proportion design's own MDE at n=90
+(from the observed 55.6% discordant fraction, same 80%-power/α=0.05 convention as §4.7) is
+**≈0.220** — nearly **6× worse** than the independent-axis VLM rubric's MDE of ~0.037 (§4.7), not
+better. **A binary proportion test is not automatically higher-power than a continuous rubric —
+that holds only when the underlying phenomenon is cleanly binary and the classifier is
+near-noise-free. Neither holds here:** "does this image contain OCR-legible text" is a lossier,
+higher-variance question than "how clean does this look on a continuous 0–1 scale," and
+binarizing throws away exactly the graded information that gave the rubric its (comparatively
+better, if still limited) sensitivity.
+
+**Conclusion: this metric does not resolve the power problem — it is reported as a negative
+result, not adjusted or reframed to appear positive.** The independent-axis VLM rubric remains
+the **primary** metric (best available sensitivity, MDE ~0.037); the OCR binary detector is
+reported as a **secondary, directionally-corroborating signal only**, with its validated 77%/94%
+recall/precision explicitly disclosed wherever it's cited. Per the task's own framing — "either
+[promotion changes or confirms] is a result" — the result here is that no better-powered zero-cost
+local instrument was found this pass; §4.7's ~1,963-sample requirement stands as the actual path
+to full resolution, and remains impractical at zero-cost-local scale.
+
 ---
 
 ## 5. Per-family verdict

@@ -1,0 +1,41 @@
+{
+  "published_vs_curated": {
+    "n": 90,
+    "both_flagged": 27,
+    "only_published": 28,
+    "only_curated": 22,
+    "neither": 13,
+    "rate_published": 0.6111,
+    "rate_curated": 0.5444,
+    "diff": -0.0667,
+    "mcnemar_p": 0.4799
+  },
+  "base_vs_published": {
+    "n": 90,
+    "both_flagged": 36,
+    "only_base": 12,
+    "only_published": 19,
+    "neither": 23,
+    "rate_base": 0.5333,
+    "rate_published": 0.6111,
+    "diff": 0.0778,
+    "mcnemar_p": 0.281
+  },
+  "base_vs_curated": {
+    "n": 90,
+    "both_flagged": 27,
+    "only_base": 21,
+    "only_curated": 22,
+    "neither": 20,
+    "rate_base": 0.5333,
+    "rate_curated": 0.5444,
+    "diff": 0.0111,
+    "mcnemar_p": 1.0
+  },
+  "power": {
+    "n": 90,
+    "observed_discordant_fraction": 0.5556,
+    "approx_mde_80pct_power": 0.2201,
+    "rubric_mde_for_comparison": 0.0374
+  }
+}

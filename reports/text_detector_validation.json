@@ -1,0 +1,13 @@
+{
+  "n": 29,
+  "tp": 5,
+  "fp": 0,
+  "tn": 7,
+  "fn": 17,
+  "precision_at_0.3": 1.0,
+  "recall_at_0.3": 0.2273,
+  "pearson_maxconf_vs_groundtruth": 0.3226,
+  "pearson_ndet_vs_groundtruth": 0.47,
+  "pearson_maxconf_vs_vlm_artifact": 0.5174,
+  "pearson_ndet_vs_vlm_artifact": 0.6476
+}
