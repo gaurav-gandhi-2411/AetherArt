@@ -57,7 +57,29 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24b)**
+
+- [x] **Follow-up audit (2026-07-24b) on the withdrawal below: validated, root-caused, refined.**
+      Four checks, per an explicit "don't accept a null from a possibly-broken measurement"
+      instruction: (1) **provenance** — directly verified (not assumed) the n=90 rescore ran
+      entirely on the num_ctx-fixed harness with zero degenerate/failed judge calls
+      (`docs/MODEL_VERDICT.md` §4.6's provenance table); (2) **root-caused the null** rather than
+      accepting "curation doesn't help" — LPIPS between the two arms (0.55) refutes "the arms are
+      identical"; a new `sdxl_base`-only (no LoRA) batch shows curation did NOT lose style signal
+      (curated's style lift vs. base is *more* significant than published's) and that **both LoRA
+      variants significantly regress `artifact_absence` vs. no adapter at all** — confirming
+      training does cause the artifact — with curation recovering ~16% of that regression in the
+      right direction, just not enough to clear the arm-to-arm bar at this n (§4.8); (3) **power
+      audit** — the n=90 design's 95% CI rules out the original +0.040 claim but its MDE (~0.037)
+      is close to the observed effect, so this is an underpowered result, not a demonstrated null;
+      language throughout corrected to "does not clear the bar," not "no effect" (§4.7);
+      (4) **reconciled** the Pattachitra 139-vs-136 file-count gap exactly — a case-insensitive
+      Windows/NTFS filename collision (distinct from the earlier race-condition bug), corrected
+      licence breakdown, flag rate/PROCEED decision unaffected (`docs/NEXT_MODEL_SPEC.md` §3.5).
+      **Net effect: the curation recipe is directionally validated, not disproven** — Pattachitra
+      training remains on hold until the judge/n power gap is addressed, not because the recipe
+      failed. New provenance scripts: `scripts/compute_lora_ab_power.py`,
+      `scripts/_lpips_between_arms.py`, `scripts/_lora_ab_base_comparison.py`.
 
 - [x] **Critical correction (2026-07-24): the LoRA A/B "PROMOTE" verdict below was withdrawn.**
       The +0.040/3.18×SEM headline was computed under single-call multi-axis VLM scoring — the
