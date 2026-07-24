@@ -37,6 +37,7 @@ teardown() {
     local exit_code=$?
     echo "[TEARDOWN] Exit code ${exit_code} — starting at $(date)" 2>&1 | tee -a "$LOG_FILE" || true
     gcloud storage cp "$LOG_FILE" "${GCS_BUCKET}/pattachitra_train_run.log" 2>/dev/null || true
+    gcloud storage cp /tmp/train_inner.log "${GCS_BUCKET}/pattachitra_train_inner.log" 2>/dev/null || true
     gcloud storage cp -r "${REPO_DIR}/data/lora/pattachitra-curated/training_output_sdxl_pattachitra_curated" \
         "${GCS_BUCKET}/" 2>/dev/null || true
     echo "[TEARDOWN] Writing DONE marker..."
@@ -97,7 +98,22 @@ gcloud storage cp -r "${GCS_BUCKET}/pattachitra-curated/images" data/lora/pattac
 gcloud storage cp "${GCS_BUCKET}/pattachitra-curated/metadata.jsonl" data/lora/pattachitra-curated/
 echo "Downloaded $(ls data/lora/pattachitra-curated/images | wc -l) images."
 
-echo "=== Starting training at $(date) ==="
+echo "=== Starting training at $(date) — see /tmp/train_inner.log for step-by-step progress ==="
+# CRITICAL: do NOT let this command's stdout/stderr reach the tee'd stream that feeds the GCE
+# serial console. Root-caused via an actual failure: tqdm's carriage-return progress bar
+# accumulates into one gigantic "line" (no real newline) from the log-scanner's perspective, and
+# google_metadata_script_runner's line scanner has a hard length limit - exceeding it crashed the
+# ENTIRE startup script with "bufio.Scanner: token too long" / "signal: broken pipe", silently
+# killing the training process too (it was writing to the now-broken pipe) with the instance left
+# running at zero GPU utilization until manually caught and stopped. Redirecting this command's
+# output to its own file (bypassing the inherited tee'd fd entirely) avoids the console pipe
+# altogether; `stdbuf`+`tr` also collapses \r into \n so the file itself stays readable/tail-able.
+INNER_LOG="/tmp/train_inner.log"
+touch "$INNER_LOG"
+# Push the inner log to GCS every 60s so progress is visible without SSH - training can run for
+# an unknown duration and polling GCS is much cheaper than repeated SSH round-trips.
+( while true; do sleep 60; gcloud storage cp "$INNER_LOG" "${GCS_BUCKET}/pattachitra_train_inner.log" 2>/dev/null || true; done ) &
+PUSH_LOG_PID=$!
 ${PYTHON} scripts/_diffusers_train_text_to_image_lora_sdxl.py \
     --pretrained_model_name_or_path="stabilityai/stable-diffusion-xl-base-1.0" \
     --pretrained_vae_model_name_or_path="madebyollin/sdxl-vae-fp16-fix" \
@@ -118,9 +134,14 @@ ${PYTHON} scripts/_diffusers_train_text_to_image_lora_sdxl.py \
     --num_validation_images=2 \
     --dataloader_num_workers=2 \
     --output_dir="data/lora/pattachitra-curated/training_output_sdxl_pattachitra_curated" \
-    --report_to="tensorboard"
+    --report_to="tensorboard" \
+    > >(tr '\r' '\n' > "$INNER_LOG") 2> >(tr '\r' '\n' >> "$INNER_LOG")
 
+kill "$PUSH_LOG_PID" 2>/dev/null || true
 echo "=== Training complete at $(date) ==="
+echo "=== Appending inner training log to main log ==="
+cat "$INNER_LOG" >> "$LOG_FILE" || true
+gcloud storage cp "$INNER_LOG" "${GCS_BUCKET}/pattachitra_train_inner.log" 2>/dev/null || true
 echo "=== Uploading checkpoints to GCS ==="
 gcloud storage cp -r "data/lora/pattachitra-curated/training_output_sdxl_pattachitra_curated" "${GCS_BUCKET}/"
 
