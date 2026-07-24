@@ -73,7 +73,13 @@ fi
 cd "$REPO_DIR"
 
 echo "=== Installing dependencies ==="
-${PIP} install -q --upgrade diffusers transformers accelerate peft datasets
+# Do NOT --upgrade transformers/accelerate/torch-adjacent packages - the DLVM image ships a
+# torch/torchaudio pairing those upgrades can break (root-caused via an actual failure: pip
+# install --upgrade transformers pulled a version whose loss module imports torchaudio, which
+# then failed with "undefined symbol: torch_library_impl" against the pre-baked torchaudio .so).
+# Only add what's actually missing on a generic pytorch DLVM image (diffusion-specific libs).
+${PIP} install -q diffusers peft datasets
+${PIP} show transformers accelerate 2>/dev/null | grep -E "^Name|^Version" || ${PIP} install -q transformers accelerate
 
 echo "=== Downloading curated Pattachitra corpus from GCS ==="
 mkdir -p data/lora/pattachitra-curated
