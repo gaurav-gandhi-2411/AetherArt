@@ -1,0 +1,2522 @@
+[
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 280.66,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_001_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 102.39,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_001_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 1743.87,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_001_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 68.18,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_002_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 261.43,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_002_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 76.0,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_002_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 43.68,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_003_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 3913.47,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_003_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.64,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_003_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_004_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.79,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_004_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.82,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_004_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.0,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.14,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_005_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.06,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_005_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_005_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.05,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_006_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.38,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_006_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.42,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_006_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_007_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_007_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.38,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_007_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_008_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.29,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_008_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_008_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.38,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_009_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 20.06,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_009_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.59,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_009_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_010_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.41,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_010_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.27,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_010_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.41,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_011_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.28,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_011_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.38,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_011_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.26,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_012_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.43,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_012_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.29,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_012_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.39,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_013_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.26,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_013_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.43,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_013_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.26,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_014_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.42,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_014_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.23,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_014_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_015_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.14,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_015_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.29,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_015_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_016_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.28,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_016_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.14,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_016_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.31,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_017_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_017_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.38,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_017_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_018_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_018_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.19,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_018_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.37,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_019_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_019_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.34,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_019_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.23,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_020_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.7,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.35,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_020_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.19,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_020_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_021_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.09,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_021_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.31,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_021_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_022_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.27,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_022_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.1,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_022_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.26,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_023_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_023_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.26,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_023_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.0,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.18,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_024_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.31,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_024_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.1,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_024_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_025_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_025_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.27,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_025_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.16,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_026_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.28,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_026_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.1,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_026_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.27,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_027_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_027_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.34,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_027_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_028_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_028_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_028_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.32,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_029_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.19,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_029_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_029_44.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.11,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_030_42.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.28,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_030_43.png"
+  },
+  {
+    "checkpoint": "base",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 19.07,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\base_pat_030_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 2579.2,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_001_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 23.72,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_001_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_001",
+    "prompt": "pattascroll Pattachitra painting of Lord Jagannath, Balabhadra, and Subhadra in a temple shrine",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.02,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_001_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.82,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_002_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.82,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_002_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_002",
+    "prompt": "pattascroll Pattachitra scroll painting of Krishna playing the flute under a tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.89,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_002_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.96,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_003_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_003_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_003",
+    "prompt": "pattascroll Pattachitra painting of Radha and Krishna dancing together",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.03,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_003_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.03,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_004_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.94,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_004_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_004",
+    "prompt": "pattascroll Pattachitra painting of a scene from the Ramayana, Rama drawing his bow",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.89,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_004_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.03,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_005_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.07,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_005_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_005",
+    "prompt": "pattascroll Pattachitra painting of Hanuman carrying a mountain of herbs",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.95,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_005_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_006_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.02,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_006_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_006",
+    "prompt": "pattascroll Pattachitra painting of the goddess Durga slaying a demon",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.09,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_006_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.11,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_007_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.1,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_007_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_007",
+    "prompt": "pattascroll Pattachitra scroll painting of a royal court scene with musicians",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.06,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_007_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.06,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_008_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 32.01,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_008_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_008",
+    "prompt": "pattascroll Pattachitra painting of a woman in a sari carrying a water pot",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 949.66,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_008_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.5,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_009_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.52,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_009_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_009",
+    "prompt": "pattascroll Pattachitra painting of a farmer plowing a field with oxen",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.54,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_009_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.3,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_010_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.14,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_010_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_010",
+    "prompt": "pattascroll Pattachitra painting of two women preparing rice in a village courtyard",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_010_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.12,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_011_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.17,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_011_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_011",
+    "prompt": "pattascroll Pattachitra painting of a fisherman casting a net from a wooden boat",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.33,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_011_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.89,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_012_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.13,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_012_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_012",
+    "prompt": "pattascroll Pattachitra painting of a bridal procession with musicians and drummers",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.86,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_012_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.98,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_013_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.86,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_013_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_013",
+    "prompt": "pattascroll Pattachitra painting of a mother and child seated under a mango tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.98,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_013_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_014_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.88,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_014_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_014",
+    "prompt": "pattascroll Pattachitra painting of temple dancers performing Odissi",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.94,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_014_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.95,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_015_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.73,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_015_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_015",
+    "prompt": "pattascroll Pattachitra painting of two wrestlers in a courtyard match",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.85,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_015_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.71,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_016_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.75,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_016_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_016",
+    "prompt": "pattascroll Pattachitra painting of a market scene with vendors selling fruit",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.78,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_016_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_017_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.68,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_017_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_017",
+    "prompt": "pattascroll Pattachitra painting of a village street lined with thatched-roof houses",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.9,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_017_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.65,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_018_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.68,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_018_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_018",
+    "prompt": "pattascroll Pattachitra painting of a stone bridge over a river with travelers",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.66,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_018_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.73,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_019_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.73,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_019_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_019",
+    "prompt": "pattascroll Pattachitra painting of a waterfall cascading through a forest",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.87,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_019_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.86,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_020_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.03,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_020_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_020",
+    "prompt": "pattascroll Pattachitra painting of a lotus pond with fish and water birds",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.92,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_020_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.7,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.88,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_021_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.62,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_021_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_021",
+    "prompt": "pattascroll Pattachitra painting of a tiger stalking through a bamboo grove",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.7,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.84,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_021_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.74,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_022_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.9,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_022_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_022",
+    "prompt": "pattascroll Pattachitra painting of a peacock displaying its feathers beside a tree",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.66,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_022_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.81,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_023_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.7,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_023_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_023",
+    "prompt": "pattascroll Pattachitra painting of an elephant procession with a howdah",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.8,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_023_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.72,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_024_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.83,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_024_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_024",
+    "prompt": "pattascroll Pattachitra painting of Mount Kailash with Shiva and Parvati",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.86,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_024_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.91,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_025_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.63,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_025_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_025",
+    "prompt": "pattascroll Pattachitra painting of a boat crossing a river during a storm",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.75,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_025_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.93,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_026_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.3,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 22.39,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_026_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_026",
+    "prompt": "pattascroll Pattachitra painting of autumn flowers along a temple wall",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.88,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_026_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.85,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.72,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_027_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.8,
+      "figure_preservation": 0.8,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.67,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_027_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_027",
+    "prompt": "pattascroll Pattachitra painting of a hilltop temple at sunset",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 1.0,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.9,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_027_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.74,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_028_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.84,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_028_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_028",
+    "prompt": "pattascroll Pattachitra painting of a dancer performing with a peacock fan",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.68,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_028_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.83,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_029_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.69,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_029_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_029",
+    "prompt": "pattascroll Pattachitra painting of pilgrims climbing steps to a shrine",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.83,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_029_44.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 42,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.85,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.61,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_030_42.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 43,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.87,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_030_43.png"
+  },
+  {
+    "checkpoint": "curated",
+    "prompt_id": "pat_030",
+    "prompt": "pattascroll Pattachitra painting of a lantern-lit festival procession at night",
+    "seed": 44,
+    "independent_calls": {
+      "style_adherence": 0.2,
+      "figure_preservation": 0.95,
+      "artifact_absence": 1.0
+    },
+    "error": null,
+    "latency_s": 21.75,
+    "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\verdict\\pattachitra_ab_base_comparison\\curated_pat_030_44.png"
+  }
+]

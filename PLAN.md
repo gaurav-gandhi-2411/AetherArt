@@ -57,7 +57,41 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24c)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25)**
+
+- [x] **Pattachitra LoRA: amended pre-registration, trained on GCP, evaluated — NOT published
+      (2026-07-25).** Amended `docs/PATTACHITRA_AB_PREREGISTRATION.md` before any training: dropped
+      the curated-vs-uncurated arm as a gating endpoint (ukiyo-e's own data showed that comparison
+      needs ≈1,963 samples to resolve, §4.7) and made curated-vs-`sdxl_base` (the comparisons that
+      *did* resolve cleanly for ukiyo-e, 1.68–7.23×SEM range) primary instead — trains one adapter,
+      not two, halving planned spend. **Manual QA before training:** spot-checked the 111
+      automated-"clean" Pattachitra images and found 11 were documentary/vendor photos a person's
+      face/torso dominated, or a genre mismatch — excluded, leaving 100 curated training images.
+      **Trained on GCP** (`g2-standard-8`/L4, `us-west1-a`, rank-8, 1500 steps) — 4 dependency
+      failures before a clean run, each root-caused and fixed in turn: (1) `pip install --upgrade
+      transformers` broke the DLVM's torchaudio pairing; (2) the break persisted without
+      `--upgrade` (pre-existing in the DLVM's own pre-installed transformers); (3) pinning
+      `transformers==4.46.0` to dodge it instead broke diffusers' need for a newer class; (4) the
+      actual fix — reinstalling torchaudio matched to the exact installed torch build — worked,
+      but the run then crashed via `bufio.Scanner: token too long` when tqdm's carriage-return
+      output exceeded GCE's serial-console line-scanner limit, silently killing training via broken
+      pipe while the instance kept running at 0% GPU utilization until caught via SSH and stopped
+      manually (~20 min of real but bounded, disclosed cost waste). Fixed by isolating the training
+      command's output from the console-feeding stream entirely. Fifth attempt succeeded: 1500/1500
+      steps, `scripts/gcp_verify_before_teardown.py` passed before manual instance deletion.
+      **Actual cost ≈$1.90–2.20** (~2.2 GPU-hours total across all attempts) against a $5–7.50
+      estimate and $10 hard stop. **Evaluated against `sdxl_base` (n=90 paired) — the adapter does
+      NOT beat base:** `style_adherence` regresses significantly (−2.234×SEM, the wrong direction
+      for a "lift"); `figure_preservation` regresses decisively (−7.226×SEM) — visually confirmed
+      on `pat_009` ("farmer plowing with oxen," same seed both arms): `sdxl_base` renders the
+      farmer correctly, the curated LoRA drops the human figure entirely, animals only.
+      `artifact_absence` is an uninformative ceiling effect (exactly 1.0 in both arms, 180/180
+      independent-regime scores — Pattachitra doesn't evoke SDXL's text-artifact tendency the way
+      "ukiyo-e" did). **Verdict: not published, reported as a finding — not retrained to chase a
+      better number** (`docs/MODEL_VERDICT.md` §7). Two concrete, testable hypotheses for a future
+      attempt if revisited: BLIP's generic auto-captions may be too low-information for a 100-image
+      rank-8 LoRA to learn robust subject-preserving associations; the corpus may still be too
+      compositionally narrow for this evaluation's more demanding 30-prompt set.
 
 - [x] **High-power metric attempt, model-card tradeoff disclosure, Pattachitra pre-registration
       (2026-07-24c).** Built and independently validated (n=29 visual-inspection sample) an

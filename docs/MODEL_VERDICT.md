@@ -769,3 +769,94 @@ original verdict — do NOT promote the curated retrain (item 2), per the correc
    defect-prone configuration in the existing lineup would compound the same class of issue this
    whole audit was launched to catch. (2) is now a closed question (do not promote), not a
    blocker either way — no further LoRA A/B action is pending.
+
+---
+
+## 7. Pattachitra LoRA — trained, evaluated against `sdxl_base`, and found NOT to beat it
+
+**Per `docs/PATTACHITRA_AB_PREREGISTRATION.md`'s amended design (fixed before this run): two arms
+only — `sdxl_base` and a single curated-corpus LoRA (no uncurated control) — with `style_adherence`
+and `artifact_absence` vs. `sdxl_base` as co-primary endpoints, `figure_preservation` vs. base as
+a non-inferiority guardrail, and mandatory MDE/CI reporting regardless of outcome.** Training: rank-8
+LoRA, 100 curated images (111 automated-clean minus 11 found on manual QA to be documentary/vendor
+photos or a mismatched visual genre — see below), 1500 steps, batch 1×grad-accum 4, lr 1e-4, fp16,
+seed 42, GCP `g2-standard-8`/L4, `us-west1-a`. Actual cost: ≈$1.90–2.20 (≈2.2 GPU-hours across one
+successful ~1h40m run plus ~30–35 min combined across four dependency-debugging attempts — all
+root-caused and disclosed in `PLAN.md`), against a $5–7.50 estimate and $10 hard stop.
+
+### 7.1 Manual QA finding on the training corpus (before training, not after)
+
+The automated VLM curation filter's 111 "clean" verdicts (`docs/NEXT_MODEL_SPEC.md` §3.5) were
+spot-checked by direct visual inspection before committing GCP spend. **11 of 111 were
+documentary/vendor photographs where a person's face or torso dominates a substantial fraction of
+the frame** — exactly the curation prompt's own stated exclusion criterion, missed by the
+automated filter. Filenames containing "artist at work," "stall," or "book fair" were a strong
+(not perfect) predictor: some book-fair-titled photos were legitimately clean close-ups of
+artwork, but most "artist [...] at work" ones showed a person's face/torso as a substantial
+fraction of the frame. One further image (painted spherical decorative objects, not flat scroll
+paintings) was excluded for visual-genre mismatch. Final training corpus: **100 images** (down
+from 111), still ≈4.3× ukiyo-e's curated set (23).
+
+### 7.2 Results — n=90 paired, curated LoRA vs. `sdxl_base`
+
+(`reports/pattachitra_ab_base_comparison.json`, `scripts/compute_pattachitra_ab_stats.py` →
+`reports/pattachitra_ab_stats.json`. 0 errors across 180 generations and 540 independent VLM calls.)
+
+| Endpoint | Base mean | Curated mean | Diff | SEM | diff/SEM | 95% CI | MDE@80% |
+|---|---|---|---|---|---|---|---|
+| `style_adherence` (primary A) | 0.3533 | 0.2928 | **−0.0606** | 0.0271 | **−2.234** | [−0.1137, −0.0074] | 0.0760 |
+| `artifact_absence` (primary B) | 1.0000 | 1.0000 | 0.0000 | 0.0000 | undefined (0/0) | — | — |
+| `figure_preservation` (guardrail) | 0.9767 | 0.9306 | **−0.0461** | 0.0064 | **−7.226** | [−0.0586, −0.0335] | 0.0179 |
+
+**Primary A (`style_adherence`) does NOT clear the bar — it clears it in the wrong direction.**
+The curated adapter scores *significantly lower* than `sdxl_base` on style adherence (−2.234×SEM),
+the opposite of a demonstrated lift. The observed effect (0.0606) sits close to but below this
+design's own 80%-power MDE (0.0760), so this result should be read as "a real, detected regression
+of modest size" rather than "a large, decisively powered one" — both are true statements that
+don't contradict each other (the significance test and the power/MDE characterization answer
+different questions, per the mandatory dual-reporting this pre-registration commits to).
+
+**Primary B (`artifact_absence`) is not a demonstrated ceiling — it is a ceiling effect that makes
+this endpoint uninformative for Pattachitra.** All 180 independent-regime scores (90 base + 90
+curated) are exactly 1.0 — zero variance in either arm. Direct visual inspection of sample images
+from both arms found no visible embedded text/watermarks in either, consistent with the score.
+**This is a genuinely different generative behavior from ukiyo-e**, where the same axis showed
+real variance and a measurable LoRA-induced regression (§4.8) — "ukiyo-e woodblock print" evokes
+SDXL's own text/caption-artifact tendencies in a way "Pattachitra painting" apparently does not.
+The 0/0 diff is reported as "no measurable difference because neither arm shows any artifact," not
+misread as "a significant improvement" (an infinite diff/SEM ratio from a zero-variance
+denominator is a degenerate case, not evidence of anything).
+
+**Guardrail (`figure_preservation`) REGRESSED decisively** (−7.226×SEM, far exceeding any
+reasonable MDE at this n — this is a large, robust effect, not a borderline one). **Root cause,
+visually confirmed, not just inferred from the statistic:** `pat_009` ("a farmer plowing a field
+with oxen"), same prompt and seed (42) in both arms — `sdxl_base` renders the farmer clearly and
+coherently; the curated LoRA's output **omits the human figure entirely**, showing only loose
+animals against a decorative background. This is a concrete, disclosed failure mode, not a scoring
+artifact: the LoRA sometimes fails to render the prompted subject at all. A plausible (not proven)
+contributing factor: **BLIP's auto-generated captions for the training set are frequently generic
+and low-information** ("painting of a group of people in a building with a man and woman," "a
+close up of a wall with many paintings on it") — weaker text-image conditioning signal than
+ukiyo-e's captions received, which may have made it harder for a rank-8 LoRA at 100 images to learn
+robust subject-preserving associations across this evaluation's more compositionally-demanding
+30-prompt set. This is a hypothesis for future work, not a claim requiring no further testing.
+
+### 7.3 Verdict — do NOT publish; report the finding, do not retrain to a better-looking result
+
+**Per the pre-registered decision rule and the explicit task instruction it was written under:
+this is a finding, reported as such.** The curated Pattachitra LoRA does not demonstrate a
+style-adherence lift over `sdxl_base` (it shows a significant regression instead) and
+significantly regresses figure/subject-preservation vs. `sdxl_base` (visually confirmed:
+prompted human figures sometimes go missing entirely). **This adapter should not be trained again
+with the same recipe expecting a different result, and should not be published.** If a Pattachitra
+LoRA is revisited, the evidence here points to two concrete, testable changes before another GCP
+run — not just re-running with more steps: (1) more specific, human-reviewed or VLM-generated
+captions in place of generic BLIP output, since caption quality is a plausible contributor to the
+subject-dropping failure; (2) a larger and/or more compositionally diverse training corpus, since
+100 images (though larger than ukiyo-e's 23) still measurably underperformed on a 30-prompt set
+spanning more varied compositions (group scenes, action poses, animals-with-figures) than the
+corpus's own auto-captioned distribution suggests it was rich in.
+
+| Family | Verdict | Basis |
+|---|---|---|
+| Pattachitra LoRA — curated retrain | **not published — regresses vs. `sdxl_base` on both measured axes** | §7.2: `style_adherence` −2.234×SEM (significant regression, not a lift); `figure_preservation` −7.226×SEM (large, robust regression, visually confirmed as a subject-dropping failure on at least one prompt); `artifact_absence` uninformative (ceiling effect, both arms at 1.0). Do not retrain to chase a better number — the finding is reported as evidence, not treated as a bug to iterate away. |
