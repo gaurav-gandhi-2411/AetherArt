@@ -57,7 +57,46 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-23)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24)**
+
+- [x] **Critical correction (2026-07-24): the LoRA A/B "PROMOTE" verdict below was withdrawn.**
+      The +0.040/3.18×SEM headline was computed under single-call multi-axis VLM scoring — the
+      halo-effect check (`docs/MODEL_VERDICT.md` §4.5) flagged this as a correlation risk but
+      only checked a small (n=30, unpaired) subsample and concluded the primary endpoint "held."
+      Extending the independent-axis rescore to the full n=90 **paired** set
+      (`scripts/_lora_ab_30prompt_independent.py`, `reports/lora_ab_30prompt_independent.json`,
+      stats via `scripts/compute_lora_ab_independent_stats.py`) found the primary endpoint at
+      only **+0.0078, 0.583×SEM** — the correlated-regime headline does not survive trusted
+      scoring. **Do not re-upload the curated checkpoint to HF.** Full writeup:
+      `docs/MODEL_VERDICT.md` §4.6; `docs/HF_MODEL_CARD_UPDATES.md` corrected to drop the
+      withdrawn claim. Independent single-axis scoring is now `model_verdict_harness.py`'s
+      default (was single-call), with a regression test (`tests/test_model_verdict_harness.py`)
+      asserting one Ollama call per axis.
+  - **Two bugs found and fixed while doing this rescore, both disclosed:**
+    1. **Ollama context-window bug:** the default served context (4096 tokens) was too small for
+       a judge prompt + high-resolution image on some inputs, causing silent
+       `exceed_context_size_error` 400s. Root-caused via the actual Ollama error body (not
+       assumed to be GPU contention, even though GPU contention was a live confound at the time).
+       Fixed via `num_ctx=8192`. Verified this did not silently corrupt the original §4.3
+       single-call dataset (zero null `vlm_judge` records there).
+    2. **Concurrent-instance race condition:** two instances of the (gitignored)
+       `scripts/_curate_pattachitra_corpus.py --resume` ended up running at the same time across
+       a context-compaction boundary, both doing unlocked read-modify-write on the same
+       classifications JSON — net effect was a few classifications reverting to
+       `vlm_call_failed` (not permanent data loss, since failed entries retry on the next
+       `--resume`, but wasted work). Root cause: launched a second resume without first
+       confirming the first instance had actually stopped. Going forward: always check for a
+       live process on the target script before relaunching a resume, not just check the
+       task-notification status (which reflects the bash-wrapper's tracking, not the
+       nohup'd child's actual liveness).
+  - **GPU-contention observation (not a bug, a real constraint):** running the SDXL generation
+    job and an Ollama VLM-judge job concurrently on the shared 8GB card caused genuine failures
+    (Ollama calls timing out at their 120s HTTP timeout, SDXL steps stalling to 40+s/it), not
+    just the expected slowdown — worse than the "cost is time only" assumption covers. Paused
+    the SDXL job to let the shorter Ollama-only job finish first, then resumed SDXL alone. A
+    separate, unrelated concurrent job on the same GPU (a different model, `qwen3:8b`, not part
+    of this project) was also observed contending at another point — see
+    [[project_gpu_contention]].
 
 - [x] `docs/MODEL_AUDIT.md`, `docs/LATENCY_ROOT_CAUSE.md` — prior-session groundwork (repo runs
       5 model families, not 2; phantom 11GB-VRAM report row traced to GCP L4 contention).

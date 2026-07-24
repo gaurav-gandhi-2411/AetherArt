@@ -346,7 +346,14 @@ regenerated result is not a "second attempt" biased by anything except ordinary 
 sampling noise). All GCP resources (2 instances across the session, one disk) were fully torn
 down afterward — confirmed via `gcloud compute instances/disks/addresses list`, all empty.
 
-### 4.4 Verdict: PROMOTE the curated retrain
+### 4.4 Verdict: PROMOTE the curated retrain — **withdrawn, see §4.6**
+
+**Correction (do not act on this section alone):** this verdict was computed from §4.3's
+correlated single-call scoring regime. §4.6 below re-runs the identical paired-diff analysis on
+the full n=90 set under the trusted independent-axis regime and finds the primary endpoint does
+**not** clear the promotion bar (0.583×SEM, not 3.182×SEM). This section is preserved as written
+for an honest record of what was originally concluded and why — see §4.6 for the corrected,
+current verdict.
 
 Per the pre-registered decision rule (§4.3): **promote if and only if the primary endpoint
 clears the 2×SEM threshold AND neither guardrail regresses.** Both conditions are met — primary
@@ -433,6 +440,81 @@ n=12 curated — smaller and noisier than §4.3's n=90 paired, but same directio
   still hold. It changes what can be said about the guardrails: "did not get worse," not "got
   better."
 
+### 4.6 Full n=90 paired independent-regime rescore — TRUSTED result, supersedes §4.3/§4.4/§4.5
+
+**This section is now the primary evidence for the LoRA A/B. §4.3's headline number was
+computed under single-call multi-axis scoring, the regime §4.5 flagged as a halo-effect risk.
+§4.5 itself only checked a small (n=30, unpaired within-axis) subsample and concluded the primary
+endpoint "held." That conclusion does not survive the full, properly-paired, n=90 independent
+rescore below — it is corrected here, not quietly dropped.**
+
+**Method** (`scripts/_lora_ab_30prompt_independent.py`, `reports/lora_ab_30prompt_independent.json`,
+stats computed by `scripts/compute_lora_ab_independent_stats.py`): all 180 images from §4.3's
+dataset (90 published + 90 curated) were regenerated deterministically (same checkpoint/prompt/
+seed) and every one rescored with the harness's independent single-axis judge (three separate
+Ollama calls per image, `scripts/model_verdict_harness.py`'s `SINGLE_AXIS_JUDGE_PROMPTS` — the
+same prompts §4.5 used, now applied to the full set instead of a 30-image subsample). 0 errors
+across all 180 regenerations and 540 independent VLM calls.
+
+**A systemic bug was found and fixed mid-run, disclosed here rather than smoothed over:** Ollama's
+default served context window (4096 tokens) was too small for a judge prompt plus a
+high-resolution image's token count on some inputs, causing `exceed_context_size_error` HTTP 400s.
+Root-caused via the literal Ollama error body (not assumed), fixed via `num_ctx=8192` in
+`_ollama_generate_json`. Verified this did **not** silently corrupt §4.3's original single-call
+dataset (`reports/lora_ab_30prompt.json` has zero null `vlm_judge` records) — the bug affected
+only the newer independent-scoring runs (this rescore and the Pattachitra curation pre-check,
+`docs/NEXT_MODEL_SPEC.md` §3.5), which were run to completion after the fix.
+
+**Results — paired diff (curated − published), n=90 matched prompt_id+seed pairs, same paired-diff
+methodology as §4.1/§4.3 (SEM on the 90 per-pair differences directly):**
+
+| Metric | Published (mean) | Curated (mean) | Paired diff | Paired SEM | diff/SEM |
+|---|---|---|---|---|---|
+| `artifact_absence` (**PRIMARY**) | 0.8722 | 0.8800 | **+0.0078** | 0.0133 | **0.583** |
+| `style_adherence` (guardrail) | 0.9444 | 0.9489 | +0.0044 | 0.0027 | 1.649 |
+| `figure_preservation` (guardrail) | 0.9789 | 0.9867 | +0.0078 | 0.0032 | 2.394 |
+
+**The primary endpoint does NOT clear the pre-registered 2×SEM promotion threshold under trusted
+scoring** (0.583, versus §4.3's correlated-regime 3.182). The effect that looked decisive under
+single-call scoring is consistent with a halo effect inflating it — §4.3's judge scored all three
+axes from one overall impression per image, and the primary endpoint's apparent improvement likely
+bled into (or was partly constituted by) that shared impression. A value-level check confirms
+this isn't a scoring artifact of a different kind: independent-regime `artifact_absence` scores
+are nearly identically distributed between checkpoints (published mode 0.8, 55/90 at 0.8, 34/90 at
+1.0; curated mode 0.8, 51/90 at 0.8, 37/90 at 1.0) — the two checkpoints are, on this trusted
+measure, indistinguishable on the primary endpoint.
+
+**Why §4.5's n=30 check missed this:** §4.5's "Result 2" (independent-call diff +0.0611) was
+computed on an **unpaired** subsample (18 published, 12 curated — different prompts in each group,
+not matched prompt+seed pairs) at a small n. This project's own established methodology (§4.1's
+methodology note) holds paired-diff as "the statistically correct and more powerful design for
+matched observations" specifically because unpaired comparisons at small n are more exposed to
+whichever prompts happen to land in each group. The full n=90 **paired** design used here is the
+correct comparison and this document defers to it.
+
+**Corrected verdict, per the pre-registered decision rule itself (§4.3: "a null or negative
+primary result is reported as such — it is not grounds to keep looking for a threshold that
+passes"): the curated retrain does NOT clear its own pre-registered promotion bar under the
+trusted (independent-axis) scoring regime. §4.4's "PROMOTE" verdict is withdrawn. Do not re-upload
+the curated checkpoint to HF Hub on the basis of this A/B — the measured effect is statistical
+noise (0.583×SEM), not a demonstrated improvement.** `docs/HF_MODEL_CARD_UPDATES.md` is corrected
+to match (no "measured improvement" claim). This does not mean the curated dataset/retrain is
+*worse* — `figure_preservation` clears 2×SEM in the improving direction here, and no guardrail
+shows regression — only that the specific claim this A/B set out to test (a measured
+`artifact_absence` improvement) is not supported once the judge's known correlation bias is
+removed. A genuinely powered re-test of the calligraphy-artifact hypothesis would need either a
+judge less prone to floor/ceiling clustering at 0.8 (both checkpoints' independent-regime
+`artifact_absence` scores cluster heavily at two values, 0.8 and 1.0 — a coarse, possibly
+discretized output that limits this judge's sensitivity) or a larger n.
+
+**One honest caveat about this correction itself:** the independent-axis judge's `artifact_absence`
+output is heavily concentrated on two values across all 180 independent-regime scores — 0.8
+(106/180) and 1.0 (71/180), with only 3 scores elsewhere (two at 0.5, one at 0.9) — suggesting the
+judge's output on this axis may itself be coarse/quantized rather than a finely-discriminating
+0–1 score. This is reported as a limitation of the zero-cost VLM-judge method, not grounds to
+discard the null result — the trusted regime is still the regime that must be reported, and it
+shows no significant primary-endpoint effect.
+
 ---
 
 ## 5. Per-family verdict
@@ -444,8 +526,8 @@ n=12 curated — smaller and noisier than §4.3's n=90 paired, but same directio
 | `hyper_4step` | production-quality — **recommended fast path** | Best HPS+CLIP+latency of all 5 families. |
 | `hyper_8step` | needs-improvement | 16% severe-underexposure rate at spec-compliant config; strictly dominated by `hyper_4step` on every measured axis. Not recommended for production traffic; keep `hyper_4step` as the routed default. |
 | `sdxl_controlnet_union` | production-quality (quality) / needs-improvement (latency) | Quality on par with `sdxl_base`; 546.6s latency requires CPU offload on this 8GB card — a hardware-fit issue, not a model-quality one. |
-| Ukiyo-e LoRA — published checkpoint-1000 | superseded — **promote curated retrain** | Curated retrain measurably improves `artifact_absence` (+0.040, 3.18×SEM, n=90 paired, pre-registered) with no regression on either guardrail (§4.3; guardrail claim scope narrowed to non-inferiority after a halo-effect check, §4.5). |
-| Ukiyo-e LoRA — curated retrain | production-quality — **new champion** | Pre-registered primary endpoint clears the 2×SEM bar decisively (3.18); both guardrails (`style_adherence`, `figure_preservation`) hold steady, no regression (§4.5: a halo-effect check found their apparent improvement doesn't robustly survive independent scoring, so only non-inferiority is claimed for them). Promote to replace the published HF checkpoint. |
+| Ukiyo-e LoRA — published checkpoint-1000 | **remains champion — not superseded** | §4.3's correlated-regime headline (+0.040, 3.18×SEM) does not survive the full n=90 paired independent-axis rescore (§4.6: +0.0078, 0.583×SEM — well below the 2×SEM promotion bar). §4.4's promotion verdict is withdrawn per §4.6. No HF re-upload. |
+| Ukiyo-e LoRA — curated retrain | **not promoted — trusted A/B shows no significant primary-endpoint effect** | §4.6 (full n=90 paired, independent single-axis scoring, the trusted regime per the halo-effect check that motivated it) finds `artifact_absence` at 0.583×SEM, not the 3.18×SEM the correlated single-call judge reported. No guardrail regresses, but the specific hypothesis this A/B was designed to test (a measured `artifact_absence` improvement) is not supported under trusted scoring. |
 
 ---
 
@@ -453,29 +535,29 @@ n=12 curated — smaller and noisier than §4.3's n=90 paired, but same directio
 
 **Does the current lineup clear the bar to train and publish a new model, or does something
 need fixing first? One fix remains before a clean green light: `hyper_8step`'s routing (item 1).
-The LoRA question that motivated most of this audit is now resolved — promote the curated
-retrain (item 2).**
+The LoRA question that motivated most of this audit is now resolved the other way from §4.4's
+original verdict — do NOT promote the curated retrain (item 2), per the corrected §4.6 result.**
 
 1. **`hyper_8step` should not be routed to production as currently configured** (§3) — it is
    strictly dominated by `hyper_4step` on HPS, CLIP, and latency, and has a 16%
    severe-underexposure defect rate. Action: change the default/recommended Hyper-SD variant in
    any user-facing routing logic to `hyper_4step`. This is a config/docs fix, not a retrain.
-2. **Promote the curated retrain and update the published HF model card** (§4.3, claim scope
-   per §4.5) — the pre-registered, properly powered (n=90 paired) primary result clears the
-   promotion threshold decisively (3.18×SEM vs. the 2.0 bar) with neither guardrail regressing.
-   Model-card language: claim a **measured improvement** on `artifact_absence` (+0.040,
-   3.18×SEM) and **no regression** (not "improvement") on `style_adherence`/`figure_preservation`
-   — a halo-effect check (§4.5) found the guardrails' apparent improvement doesn't robustly
-   survive independent single-axis VLM scoring. Action: re-upload `checkpoint-1000` from
-   `data/lora/ukiyo-e/training_output_sdxl_curated/` to `gauravgandhi2411/aetherart-ukiyo-sdxl`
-   on HF Hub — preserving the prior revision (106 downloads last month; do not destructively
-   overwrite), and note the promotion (with these numbers, their provenance, and the claim-scope
-   correction) in the model card's changelog. This is the ~$3.85–4.35 GCP retrain spend paying
-   off, measured rather than assumed.
+2. **Do NOT promote the curated retrain; do NOT re-upload to HF Hub on this A/B's basis** (§4.6
+   corrects §4.3/§4.4/§4.5 — the published checkpoint remains champion). The pre-registered
+   primary endpoint, measured under the trusted independent-axis regime, does not clear the
+   2×SEM promotion bar (0.583×SEM, not the correlated single-call judge's 3.182×SEM). Per this
+   project's own pre-registered decision rule, a null primary result is reported as such and is
+   not grounds to keep looking for a threshold that passes. `docs/HF_MODEL_CARD_UPDATES.md` is
+   corrected to drop the "measured improvement" claim. If the calligraphy-artifact hypothesis is
+   still worth testing, it needs either a less-coarse judge (§4.6 notes the independent-axis
+   `artifact_absence` score is concentrated on two values, 0.8 and 1.0, across 177 of 180 scores)
+   or a larger n
+   — not a re-analysis of this dataset under a different threshold.
 3. **All 5 non-LoRA families are production-quality** on the metrics measured here, with
    `sdxl_controlnet_union`'s latency flagged as a hardware-fit constraint (8GB VRAM + CPU
    offload), not a quality defect.
 4. **Training and publishing a genuinely new model under the current recipe is not recommended
    until (1) is fixed** — publishing a 6th family without first correcting a known, dominated,
    defect-prone configuration in the existing lineup would compound the same class of issue this
-   whole audit was launched to catch. (2) is now resolved (promote curated), not a blocker.
+   whole audit was launched to catch. (2) is now a closed question (do not promote), not a
+   blocker either way — no further LoRA A/B action is pending.

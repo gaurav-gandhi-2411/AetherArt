@@ -1,0 +1,28 @@
+{
+  "n_pairs": 90,
+  "scoring_regime": "independent single-axis (one Ollama call per axis)",
+  "source": "reports\\lora_ab_30prompt_independent.json",
+  "results": {
+    "style_adherence": {
+      "published_mean": 0.9444,
+      "curated_mean": 0.9489,
+      "paired_diff": 0.0044,
+      "paired_sem": 0.0027,
+      "diff_over_sem": 1.649
+    },
+    "figure_preservation": {
+      "published_mean": 0.9789,
+      "curated_mean": 0.9867,
+      "paired_diff": 0.0078,
+      "paired_sem": 0.0032,
+      "diff_over_sem": 2.394
+    },
+    "artifact_absence": {
+      "published_mean": 0.8722,
+      "curated_mean": 0.88,
+      "paired_diff": 0.0078,
+      "paired_sem": 0.0133,
+      "diff_over_sem": 0.583
+    }
+  }
+}
