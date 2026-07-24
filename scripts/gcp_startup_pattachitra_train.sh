@@ -73,13 +73,14 @@ fi
 cd "$REPO_DIR"
 
 echo "=== Installing dependencies ==="
-# Do NOT --upgrade transformers/accelerate/torch-adjacent packages - the DLVM image ships a
-# torch/torchaudio pairing those upgrades can break (root-caused via an actual failure: pip
-# install --upgrade transformers pulled a version whose loss module imports torchaudio, which
-# then failed with "undefined symbol: torch_library_impl" against the pre-baked torchaudio .so).
-# Only add what's actually missing on a generic pytorch DLVM image (diffusion-specific libs).
-${PIP} install -q diffusers peft datasets
-${PIP} show transformers accelerate 2>/dev/null | grep -E "^Name|^Version" || ${PIP} install -q transformers accelerate
+# Root-caused via TWO actual failures (not assumed): the DLVM's PRE-INSTALLED transformers
+# already has a broken import chain regardless of --upgrade - `from peft import LoraConfig`
+# transitively imports transformers' Bloom model, which pulls in a new "Parakeet RNNT" loss
+# module that unconditionally `import torchaudio`, and this DLVM's torchaudio .so fails to load
+# ("undefined symbol: torch_library_impl") independent of anything this script installs. Fix:
+# pin transformers to a version that predates the Parakeet/torchaudio loss dependency - this
+# training script needs nothing from that recent addition.
+${PIP} install -q diffusers peft datasets "transformers==4.46.0" "accelerate==1.1.1"
 
 echo "=== Downloading curated Pattachitra corpus from GCS ==="
 mkdir -p data/lora/pattachitra-curated
