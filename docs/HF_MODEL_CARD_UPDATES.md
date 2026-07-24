@@ -21,13 +21,18 @@ The originally-staged replacement claimed a **measured** `artifact_absence` impr
 artifact) in one call — a halo-effect risk `docs/MODEL_VERDICT.md` §4.5 flagged and §4.6 then
 confirmed materially inflates the apparent effect. Under independent single-axis scoring (each
 axis judged in its own call, no other axis in context), the same 90-pair dataset shows
-`artifact_absence` at +0.0078 (0.583×SEM) — statistical noise, not a demonstrated fix. **The live
+`artifact_absence` at +0.0078 (0.583×SEM) — well below the pre-registered promotion bar, so this
+is not a demonstrated fix. **This is not the same as "no effect exists"** — `docs/MODEL_VERDICT.md`
+§4.7 shows the design is underpowered to fully rule out a smaller true effect (its 95% CI does
+rule out the original +0.040 claim, but not a true effect in the ~0.01–0.03 range). The precise,
+supportable statement is "did not clear the pre-registered bar," not "no effect." **The live
 card's current "Calligraphy artefact (partially mitigated)" language should stay as-is.** It
 already honestly describes the unresolved state; nothing here supersedes it.
 
 If a future retrain/eval cycle does produce a properly-powered, independent-axis-scored
-improvement, `docs/MODEL_VERDICT.md` §4.6's numbers and methodology are the template to follow
-(paired diff, n≥90, one Ollama call per axis, pre-registered threshold) — not §4.3's now-corrected
+improvement, `docs/MODEL_VERDICT.md` §4.6–§4.8's numbers and methodology are the template to
+follow (paired diff, n≥90, one Ollama call per axis, pre-registered threshold, plus the §4.8-style
+root-cause diagnostics before accepting a null) — not §4.3's now-corrected
 single-call design.
 
 ## WITHDRAWN — do not apply: training details table row

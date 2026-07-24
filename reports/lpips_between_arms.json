@@ -1,0 +1,462 @@
+{
+  "summary": {
+    "n": 90,
+    "mean": 0.5504,
+    "stdev": 0.0685,
+    "min": 0.3853,
+    "max": 0.7273,
+    "median": 0.5503
+  },
+  "per_pair": [
+    {
+      "prompt_id": "lora_001",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5637710094451904
+    },
+    {
+      "prompt_id": "lora_001",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4873453378677368
+    },
+    {
+      "prompt_id": "lora_001",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.44445741176605225
+    },
+    {
+      "prompt_id": "lora_002",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5564829707145691
+    },
+    {
+      "prompt_id": "lora_002",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5289900898933411
+    },
+    {
+      "prompt_id": "lora_002",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5286613702774048
+    },
+    {
+      "prompt_id": "lora_003",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5486646294593811
+    },
+    {
+      "prompt_id": "lora_003",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5172867774963379
+    },
+    {
+      "prompt_id": "lora_003",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.6065252423286438
+    },
+    {
+      "prompt_id": "lora_004",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5581937432289124
+    },
+    {
+      "prompt_id": "lora_004",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5157297253608704
+    },
+    {
+      "prompt_id": "lora_004",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.45805269479751587
+    },
+    {
+      "prompt_id": "lora_005",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6035283207893372
+    },
+    {
+      "prompt_id": "lora_005",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5451322793960571
+    },
+    {
+      "prompt_id": "lora_005",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.6290740966796875
+    },
+    {
+      "prompt_id": "lora_006",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.604404866695404
+    },
+    {
+      "prompt_id": "lora_006",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5415012836456299
+    },
+    {
+      "prompt_id": "lora_006",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.6151884198188782
+    },
+    {
+      "prompt_id": "lora_007",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6122851371765137
+    },
+    {
+      "prompt_id": "lora_007",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4618968367576599
+    },
+    {
+      "prompt_id": "lora_007",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5233356356620789
+    },
+    {
+      "prompt_id": "lora_008",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.554489016532898
+    },
+    {
+      "prompt_id": "lora_008",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5142067074775696
+    },
+    {
+      "prompt_id": "lora_008",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.46667301654815674
+    },
+    {
+      "prompt_id": "lora_009",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5319068431854248
+    },
+    {
+      "prompt_id": "lora_009",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.44158947467803955
+    },
+    {
+      "prompt_id": "lora_009",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5496498346328735
+    },
+    {
+      "prompt_id": "lora_010",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5063513517379761
+    },
+    {
+      "prompt_id": "lora_010",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5344489216804504
+    },
+    {
+      "prompt_id": "lora_010",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5636482238769531
+    },
+    {
+      "prompt_id": "lora_011",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.7272562384605408
+    },
+    {
+      "prompt_id": "lora_011",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5555159449577332
+    },
+    {
+      "prompt_id": "lora_011",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.641498327255249
+    },
+    {
+      "prompt_id": "lora_012",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6607339382171631
+    },
+    {
+      "prompt_id": "lora_012",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5165518522262573
+    },
+    {
+      "prompt_id": "lora_012",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.6242378354072571
+    },
+    {
+      "prompt_id": "lora_013",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5841467976570129
+    },
+    {
+      "prompt_id": "lora_013",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4605042040348053
+    },
+    {
+      "prompt_id": "lora_013",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.572886049747467
+    },
+    {
+      "prompt_id": "lora_014",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.501452624797821
+    },
+    {
+      "prompt_id": "lora_014",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4881246089935303
+    },
+    {
+      "prompt_id": "lora_014",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.4442802667617798
+    },
+    {
+      "prompt_id": "lora_015",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5776300430297852
+    },
+    {
+      "prompt_id": "lora_015",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5911396741867065
+    },
+    {
+      "prompt_id": "lora_015",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5687980055809021
+    },
+    {
+      "prompt_id": "lora_016",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5154446363449097
+    },
+    {
+      "prompt_id": "lora_016",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.49078428745269775
+    },
+    {
+      "prompt_id": "lora_016",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5032429099082947
+    },
+    {
+      "prompt_id": "lora_017",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.636587381362915
+    },
+    {
+      "prompt_id": "lora_017",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5808959007263184
+    },
+    {
+      "prompt_id": "lora_017",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.4791811406612396
+    },
+    {
+      "prompt_id": "lora_018",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.4621204137802124
+    },
+    {
+      "prompt_id": "lora_018",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5517376661300659
+    },
+    {
+      "prompt_id": "lora_018",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.4451439082622528
+    },
+    {
+      "prompt_id": "lora_019",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.4659118354320526
+    },
+    {
+      "prompt_id": "lora_019",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.49279528856277466
+    },
+    {
+      "prompt_id": "lora_019",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.46980470418930054
+    },
+    {
+      "prompt_id": "lora_020",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6005542278289795
+    },
+    {
+      "prompt_id": "lora_020",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5660138130187988
+    },
+    {
+      "prompt_id": "lora_020",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.47917836904525757
+    },
+    {
+      "prompt_id": "lora_021",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6050732135772705
+    },
+    {
+      "prompt_id": "lora_021",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5704922080039978
+    },
+    {
+      "prompt_id": "lora_021",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.581393837928772
+    },
+    {
+      "prompt_id": "lora_022",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6179919838905334
+    },
+    {
+      "prompt_id": "lora_022",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5440651178359985
+    },
+    {
+      "prompt_id": "lora_022",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5091753005981445
+    },
+    {
+      "prompt_id": "lora_023",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5436458587646484
+    },
+    {
+      "prompt_id": "lora_023",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5509462952613831
+    },
+    {
+      "prompt_id": "lora_023",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5240718722343445
+    },
+    {
+      "prompt_id": "lora_024",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6410466432571411
+    },
+    {
+      "prompt_id": "lora_024",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.43317338824272156
+    },
+    {
+      "prompt_id": "lora_024",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.38529330492019653
+    },
+    {
+      "prompt_id": "lora_025",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6837981939315796
+    },
+    {
+      "prompt_id": "lora_025",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.7138860821723938
+    },
+    {
+      "prompt_id": "lora_025",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.6120695471763611
+    },
+    {
+      "prompt_id": "lora_026",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5822583436965942
+    },
+    {
+      "prompt_id": "lora_026",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.6011160612106323
+    },
+    {
+      "prompt_id": "lora_026",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.597732424736023
+    },
+    {
+      "prompt_id": "lora_027",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.7238516211509705
+    },
+    {
+      "prompt_id": "lora_027",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4987204372882843
+    },
+    {
+      "prompt_id": "lora_027",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5649785995483398
+    },
+    {
+      "prompt_id": "lora_028",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6570156812667847
+    },
+    {
+      "prompt_id": "lora_028",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5651817321777344
+    },
+    {
+      "prompt_id": "lora_028",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5805565118789673
+    },
+    {
+      "prompt_id": "lora_029",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.6741892695426941
+    },
+    {
+      "prompt_id": "lora_029",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.5415598154067993
+    },
+    {
+      "prompt_id": "lora_029",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5243207216262817
+    },
+    {
+      "prompt_id": "lora_030",
+      "seed": 42,
+      "lpips_published_vs_curated": 0.5547876358032227
+    },
+    {
+      "prompt_id": "lora_030",
+      "seed": 43,
+      "lpips_published_vs_curated": 0.4802905321121216
+    },
+    {
+      "prompt_id": "lora_030",
+      "seed": 44,
+      "lpips_published_vs_curated": 0.5040079355239868
+    }
+  ]
+}

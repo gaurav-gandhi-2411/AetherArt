@@ -110,14 +110,29 @@ proceed to spec-approved training; <50 → blocked, evaluate Kalamkari), the ful
 curation filter were run end-to-end as a pre-check, not a training run.
 
 **Corpus assembly** (`scripts/_fetch_pattachitra_corpus.py`, `reports/pattachitra_corpus_manifest.json`):
-139 unique files across the three Commons categories (`Category:Pattachitra`, `Category:Pattachitra
-in Odisha`, `Category:Pattachitra in West Bengal`), all downloaded (0 errors), 136 unique files on
-disk after filename-sanitization collisions. **Actual per-file licence, not assumed** — "Wikimedia
-Commons" is a host, not a licence:
+139 unique Commons *titles* across the three categories (`Category:Pattachitra`,
+`Category:Pattachitra in Odisha`, `Category:Pattachitra in West Bengal`), all downloaded with no
+reported errors — but only **136 unique files physically exist on disk**. This 139→136 gap was
+reconciled exactly (not assumed): it is a **distinct bug from the concurrent-instance race
+condition** found in the curation script (`PLAN.md`) — 3 pairs of Commons titles differ only in
+letter case (`File:Bengal patachitra 1.jpg` vs `File:Bengal Patachitra 1.jpg`, confirmed via HTTP
+HEAD to be genuinely different source images, different byte sizes: 3,789,829 vs 1,028,117 for
+pair 1, etc.). Windows/NTFS filesystems are case-insensitive, so both downloads wrote to what the
+OS treats as the *same* path — the later write in each pair silently overwrote the earlier one's
+content, even though both manifest entries correctly recorded a successful download (no
+exception was raised; the write itself succeeded). Verified which half of each pair survived by
+comparing on-disk file size against each URL's `Content-Length` — in all 3 cases the
+**lowercase**-titled variant's content is what persists; the uppercase-titled variant's content
+(all 3 licensed CC BY-SA 4.0) was never available to the curation step. The curation step itself
+has zero discrepancy: 136 files on disk in, 136 classified out (111 + 25).
+
+**Actual per-file licence of the 136 files that physically exist and were curated** (not the 139
+manifest entries, 3 of which reference overwritten, never-curated content) — "Wikimedia Commons"
+is a host, not a licence:
 
 | Licence | Count |
 |---|---|
-| CC BY-SA 4.0 | 86 |
+| CC BY-SA 4.0 | 83 |
 | CC BY 2.0 | 21 |
 | CC BY 3.0 | 9 |
 | CC BY-SA 3.0 | 7 |
@@ -125,8 +140,10 @@ Commons" is a host, not a licence:
 | Public domain | 5 |
 | CC0 | 4 |
 
-All 139 are commercial-compatible; **zero** flagged non-commercial/no-derivatives (the disqualifying
-markers checked: `noncommercial`, `nc-`/`-nc`, `nd-`/`-nd`).
+All 136 are commercial-compatible; **zero** flagged non-commercial/no-derivatives (the disqualifying
+markers checked: `noncommercial`, `nc-`/`-nc`, `nd-`/`-nd`) — this holds for both the 136 retained
+files and the 3 overwritten-and-lost ones (all CC BY-SA 4.0), so the case-collision bug has no
+licence-compliance impact, only a 3-image count impact already reflected in the 136 total below.
 
 **VLM curation filter** (`scripts/_curate_pattachitra_corpus.py`, local Ollama `qwen2.5vl:7b`, zero
 cost, tailored to Pattachitra's actual contamination classes — museum labels/watermarks and
@@ -145,6 +162,22 @@ Flag rate is far lower than ukiyo-e's 71.2% (80→23) — Pattachitra's Commons 
 predominantly clean scroll-painting reproductions, not scanned prints with embedded calligraphy;
 the dominant contamination class is museum/photography artifacts (labels, captions), a smaller
 and more mechanically-filterable problem than ukiyo-e's in-image script.
+
+**HOLD on training, independent of the corpus gate passing.** The corpus decision rule (≥50
+clean → PROCEED) is satisfied at 111. This is not a hold on the curation *recipe* — the ukiyo-e
+LoRA A/B's follow-up root-cause audit (`docs/MODEL_VERDICT.md` §4.8) found curation directionally
+validated: both LoRA variants significantly regress `artifact_absence` relative to no adapter
+(confirming training data does teach the artifact), and curation recovers a real ~16% of that
+regression in the correct direction. The hold is on the **evaluation method**: that recovered
+fraction was too small, relative to this VLM judge's per-pair noise at n=90, to independently
+clear the pre-registered promotion bar (§4.7's MDE for this judge/n is ~0.037, well above the
+observed +0.0078 effect). Training a new Pattachitra adapter and evaluating it with the same
+judge/n design risks producing a second verdict with the identical power problem — not because
+curation doesn't work, but because this specific measurement setup can't yet confirm gains at the
+magnitude curation realistically produces. Do not proceed to a training run until the judge
+reliability/power questions in §4.6–§4.8 are resolved (either a less coarse judge, a larger n
+design, or an accepted, explicitly-stated power limitation applied consistently across both LoRA
+projects).
 
 **Decision: 111 ≥ 50 → PROCEED to spec-approved training.** Kalamkari fallback not needed. This
 pre-check does not itself authorize training spend — §5's cost estimate and GG's explicit

@@ -460,10 +460,26 @@ across all 180 regenerations and 540 independent VLM calls.
 default served context window (4096 tokens) was too small for a judge prompt plus a
 high-resolution image's token count on some inputs, causing `exceed_context_size_error` HTTP 400s.
 Root-caused via the literal Ollama error body (not assumed), fixed via `num_ctx=8192` in
-`_ollama_generate_json`. Verified this did **not** silently corrupt §4.3's original single-call
-dataset (`reports/lora_ab_30prompt.json` has zero null `vlm_judge` records) — the bug affected
-only the newer independent-scoring runs (this rescore and the Pattachitra curation pre-check,
-`docs/NEXT_MODEL_SPEC.md` §3.5), which were run to completion after the fix.
+`_ollama_generate_json`.
+
+**Provenance audit — which runs executed on the buggy harness vs. the fixed one, checked
+directly rather than assumed** (a silent judge failure biases toward null, i.e. toward exactly
+the withdrawal this section makes, so this needed to be ruled out before treating the withdrawal
+as settled):
+
+| Dataset | Committed | Harness fix (commit `a6a8220`, 2026-07-24 04:03:26) | VLM scoring executed | Degenerate-value audit |
+|---|---|---|---|---|
+| `reports/lora_ab_30prompt.json` (§4.3 correlated-regime headline) | 2026-07-23 20:49:36 | Different script (`_lora_ab_30prompt.py`), never had `num_ctx` at all | Before the fix existed | 0/180 null `vlm_judge` records (checked directly) |
+| `reports/halo_effect_check.json` (§4.5, n=30 unpaired subsample) | 2026-07-24 01:16:55 | `_halo_effect_check.py` **lacks** `num_ctx` — theoretically vulnerable | Before the fix existed | 0/30 records have a `None` axis value (checked directly) — empirically clean despite the theoretical exposure |
+| `reports/lora_ab_30prompt_independent.json` (this section's n=90 rescore) | 2026-07-24 09:15:17 | Harness fix already on disk (committed 04:03:26) | **05:29–05:43** (published) and **08:52–09:06** (curated) same day — both hours after the fix | 0/180 error flags, 0/180 `None`/non-numeric/out-of-range axis values, 0 logged VLM call failures in either run's log (only two benign `diffusers` LoRA-prefix warnings per run, unrelated to scoring), 0 exact-`0.0` scores (the shape a silent-default sentinel would take if the code clamped on failure — it doesn't; a read of `score_vlm_judge` confirms any axis exception returns `None` for the whole record, never a defaulted number) |
+
+**Conclusion: the n=90 rescore that withdrew the promotion verdict ran entirely on the fixed
+harness, with a directly-verified zero silent-failure rate.** The withdrawal is not an artifact
+of the bug this session found — if anything, the bug being real and now-fixed is *why* this
+rescore is trustworthy where an unaudited one might not be. The n=30 halo-check subsample (§4.5)
+ran on the un-fixed script but happened not to trigger the bug in practice (verified, not
+assumed) — its divergence from this section's finding is explained by its unpaired/small-n design
+(below), not by judge corruption.
 
 **Results — paired diff (curated − published), n=90 matched prompt_id+seed pairs, same paired-diff
 methodology as §4.1/§4.3 (SEM on the 90 per-pair differences directly):**
@@ -478,11 +494,12 @@ methodology as §4.1/§4.3 (SEM on the 90 per-pair differences directly):**
 scoring** (0.583, versus §4.3's correlated-regime 3.182). The effect that looked decisive under
 single-call scoring is consistent with a halo effect inflating it — §4.3's judge scored all three
 axes from one overall impression per image, and the primary endpoint's apparent improvement likely
-bled into (or was partly constituted by) that shared impression. A value-level check confirms
-this isn't a scoring artifact of a different kind: independent-regime `artifact_absence` scores
-are nearly identically distributed between checkpoints (published mode 0.8, 55/90 at 0.8, 34/90 at
-1.0; curated mode 0.8, 51/90 at 0.8, 37/90 at 1.0) — the two checkpoints are, on this trusted
-measure, indistinguishable on the primary endpoint.
+bled into (or was partly constituted by) that shared impression. A value-level check shows this
+isn't a scoring artifact of a different kind: independent-regime `artifact_absence` scores are
+similarly distributed between checkpoints (published mode 0.8, 55/90 at 0.8, 34/90 at 1.0;
+curated mode 0.8, 51/90 at 0.8, 37/90 at 1.0). **§4.7 below shows this design is underpowered to
+fully rule out a smaller true effect, so "indistinguishable" overstates the finding — the precise
+claim is in §4.7, not here.**
 
 **Why §4.5's n=30 check missed this:** §4.5's "Result 2" (independent-call diff +0.0611) was
 computed on an **unpaired** subsample (18 published, 12 curated — different prompts in each group,
@@ -496,24 +513,143 @@ correct comparison and this document defers to it.
 primary result is reported as such — it is not grounds to keep looking for a threshold that
 passes"): the curated retrain does NOT clear its own pre-registered promotion bar under the
 trusted (independent-axis) scoring regime. §4.4's "PROMOTE" verdict is withdrawn. Do not re-upload
-the curated checkpoint to HF Hub on the basis of this A/B — the measured effect is statistical
-noise (0.583×SEM), not a demonstrated improvement.** `docs/HF_MODEL_CARD_UPDATES.md` is corrected
-to match (no "measured improvement" claim). This does not mean the curated dataset/retrain is
-*worse* — `figure_preservation` clears 2×SEM in the improving direction here, and no guardrail
-shows regression — only that the specific claim this A/B set out to test (a measured
-`artifact_absence` improvement) is not supported once the judge's known correlation bias is
-removed. A genuinely powered re-test of the calligraphy-artifact hypothesis would need either a
-judge less prone to floor/ceiling clustering at 0.8 (both checkpoints' independent-regime
-`artifact_absence` scores cluster heavily at two values, 0.8 and 1.0 — a coarse, possibly
-discretized output that limits this judge's sensitivity) or a larger n.
+the curated checkpoint to HF Hub on the basis of this A/B.** This decision follows directly from
+the 2×SEM promotion rule not being met — it does **not** require characterizing the true effect
+as zero, and §4.7 shows that stronger characterization isn't actually supported by this data
+(the design is underpowered below its own observed effect size). `docs/HF_MODEL_CARD_UPDATES.md`
+is corrected to match (no "measured improvement" claim, and no "no effect" claim either — "did
+not clear the pre-registered bar" is the precise, supportable statement). This does not mean the
+curated dataset/retrain is *worse* — `figure_preservation` clears 2×SEM in the improving direction
+here, and no guardrail shows regression — only that the specific claim this A/B set out to test (a
+measured `artifact_absence` improvement) is not supported once the judge's known correlation bias
+is removed. §4.8 tests three specific hypotheses for what's actually going on (arms are
+functionally identical / curated arm lost style signal / artifact originates in the base model's
+own prior) rather than stopping at "no effect found." A genuinely powered re-test of the
+calligraphy-artifact hypothesis would need either a judge less prone to floor/ceiling clustering
+at 0.8 (both checkpoints' independent-regime `artifact_absence` scores cluster heavily at two
+values, 0.8 and 1.0 — a coarse, possibly discretized output that limits this judge's sensitivity)
+or a larger n (§4.7 gives the actual n this would require).
 
 **One honest caveat about this correction itself:** the independent-axis judge's `artifact_absence`
 output is heavily concentrated on two values across all 180 independent-regime scores — 0.8
 (106/180) and 1.0 (71/180), with only 3 scores elsewhere (two at 0.5, one at 0.9) — suggesting the
 judge's output on this axis may itself be coarse/quantized rather than a finely-discriminating
 0–1 score. This is reported as a limitation of the zero-cost VLM-judge method, not grounds to
-discard the null result — the trusted regime is still the regime that must be reported, and it
-shows no significant primary-endpoint effect.
+discard the result — the trusted regime is still the regime that must be reported, and it does
+not clear the pre-registered promotion bar. Whether that means "no real effect" or "an underpowered
+design" is answered precisely in §4.7, not asserted here.
+
+### 4.7 Power/sensitivity audit — is 0.583×SEM a demonstrated null, or underpowered?
+
+**Do not conflate "does not clear the promotion bar" with "no effect exists" — these require
+different evidence.** Computed via `scripts/compute_lora_ab_power.py`
+(`reports/lora_ab_power_audit.json`), from the same n=90 paired `artifact_absence` differences
+used in §4.6 (observed SEM = 0.0133):
+
+| Quantity | Value |
+|---|---|
+| Observed paired diff | +0.0078 |
+| 95% CI on the true diff | [−0.0184, +0.0339] |
+| Minimum detectable effect (MDE) at 80% power | 0.0374 |
+| MDE at 90% power | 0.0432 |
+| Originally-claimed (correlated-regime, §4.3) effect | +0.0400 |
+
+**Two separate, both-true conclusions:**
+1. **The originally-claimed effect size (+0.040) is ruled out.** Its 95% CI upper bound (+0.0339)
+   is below +0.040 — this design has enough precision to say the §4.3 correlated-regime number
+   does not reflect the true effect under trusted scoring. This alone is sufficient grounds for
+   §4.6's withdrawal decision; it does not depend on point 2 below.
+2. **This design is underpowered to fully characterize a smaller true effect.** The observed
+   effect (+0.0078) is well below this design's own 80%-power MDE (0.0374) — meaning an n=90
+   paired design, given the per-image variance this judge actually produces, cannot reliably
+   distinguish "no true effect" from "a true effect somewhere below ~0.037" at the magnitude
+   observed here. **The correct characterization is "does not clear the 2×SEM promotion bar,
+   and the originally-claimed effect size is ruled out" — not "no effect" or "the checkpoints are
+   indistinguishable."** A true effect in the 0.01–0.03 range cannot be excluded by this data.
+
+**What n would be needed to resolve the remaining ambiguity:** achieving an MDE of ~0.008
+(order of the observed effect) at 80% power with this judge's observed per-pair diff stdev
+(0.1265) requires `n = ((1.96+0.8416) × 0.1265 / 0.008)²` ≈ **1,963 paired samples** — roughly 22×
+this study's n=90. That is not a "just add a bit more n" gap; closing it with this judge is
+impractical at zero-cost-local scale. §4.8 pursues cheaper, more diagnostic routes instead of
+just scaling n.
+
+### 4.8 Root-causing the null — three specific hypotheses, tested in order
+
+**"Curation doesn't help" is not accepted as a finding without first testing why the effect
+disappeared.** Three concrete hypotheses, each independently falsifiable:
+
+**(a) Are the two arms functionally the same model?** If the published and curated checkpoints
+produce near-identical images, the artifact hypothesis was never actually exercised — the
+"intervention" barely changed the output. Tested directly: LPIPS between the two arms' own
+outputs (not each-vs-base), same 90 matched prompt+seed pairs, via
+`scripts/_lpips_between_arms.py` (`reports/lpips_between_arms.json`):
+
+| Comparison | LPIPS mean ± stdev | n |
+|---|---|---|
+| Published vs. curated (same prompt+seed) | 0.5504 ± 0.0685 | 90 |
+| Published vs. `sdxl_base` (no LoRA), general benchmark (§4.1) | 0.6001 ± 0.0807 | 90 |
+| Curated vs. `sdxl_base` (no LoRA), general benchmark (§4.1) | 0.6055 ± 0.0812 | 90 |
+
+**Hypothesis (a) is REFUTED.** The two arms differ from each other (LPIPS 0.55) by almost as
+much as either differs from the un-adapted base model (LPIPS 0.60–0.61) — the curated retrain
+produced substantially different images, not a near-copy of the published checkpoint. Whatever
+caused the artifact_absence null, it is not "the intervention didn't actually change anything."
+
+**(b) Did the curated adapter (23 training images) lose general style signal relative to the
+published adapter (80 images)?** and **(c) does the text/cartouche artifact originate in
+`sdxl_base`'s own prior for "ukiyo-e"-styled prompts, independent of any LoRA?** — both tested by
+one new generation batch: `scripts/_lora_ab_base_comparison.py`
+(`reports/lora_ab_base_comparison.json`) regenerates the same 30 prompts × 3 seeds with
+`sdxl_base` and **no LoRA adapter at all** (the prompts' `ukyowood` trigger token is inert to a
+model that never saw it in training — these 90 images isolate what SDXL's pretraining alone
+already knows about "ukiyo-e" style from the prompt text), scored on all 3 independent axes.
+0 errors, 0 degenerate values (same audit as §4.6's provenance table). Paired lift vs. base
+(matched prompt_id+seed, n=90, same paired-diff/SEM methodology):
+
+| Axis | Published lift vs. base | SEM | lift/SEM | Curated lift vs. base | SEM | lift/SEM |
+|---|---|---|---|---|---|---|
+| `style_adherence` | +0.0056 | 0.0033 | 1.684 | **+0.0100** | 0.0036 | **2.816** |
+| `figure_preservation` | **−0.0178** | 0.0029 | **−6.167** | −0.0100 | 0.0024 | −4.173 |
+| `artifact_absence` | **−0.0500** | 0.0143 | **−3.489** | −0.0422 | 0.0136 | −3.107 |
+
+**Hypothesis (b) is REFUTED — the opposite of the concern is true.** The curated adapter's
+style-adherence lift over base (+0.0100, 2.82×SEM) is larger and *more* statistically significant
+than the published adapter's (+0.0056, 1.68×SEM — does not itself clear 2×SEM). 23 training
+images did not produce a weaker rank-8 LoRA on this axis; if anything the curated adapter shows
+the clearer style signal. (Both lifts are small in absolute terms because `sdxl_base` alone
+already scores 0.9389 on `style_adherence` for these ukiyo-e-styled prompts — a ceiling effect
+from SDXL's own pretraining already knowing this style reasonably well, leaving limited headroom
+for any LoRA to add.)
+
+**Hypothesis (c), as originally framed, is REFUTED — but a more specific and important version
+of it is CONFIRMED.** `sdxl_base` alone scores `artifact_absence` **0.9222** — clearly *higher*
+(cleaner) than either LoRA variant (published 0.8722, curated 0.8800). The artifact is not simply
+"already in the base model's prior, independent of any LoRA" (if that were true, base would score
+similarly low). Instead: **both LoRA variants show a large, individually significant
+`artifact_absence` regression relative to no adapter at all** (published −0.0500 at 3.49×SEM,
+curated −0.0422 at 3.11×SEM — both clear 2×SEM as real, decisive effects on their own). This
+confirms the original diagnosis's direction: training a LoRA on this WikiArt-sourced dataset
+(curated or not) teaches the model something that degrades `artifact_absence` relative to the
+base model's own behavior. **Curation does help, in the correct direction, by a real amount** —
+curated recovers 0.0078 of the published adapter's 0.0500 regression (≈16%) — **but the recovered
+fraction is small relative to the regression it's trying to fix, and too small relative to this
+judge's arm-to-arm noise floor (§4.6's SEM 0.0133) to independently clear the pre-registered
+2×SEM promotion bar in the direct published-vs-curated comparison**, even though each arm's own
+effect vs. base is unambiguous. The same internal-consistency check holds for
+`figure_preservation`: curated's smaller regression vs. base (−0.0100 vs. published's −0.0178)
+also recovers exactly +0.0078 — matching §4.6's arm-to-arm figure_preservation lift precisely,
+confirming these are the same effect viewed two ways, not independent artifacts.
+
+**Conclusion — which hypothesis the evidence supports:** not "curation doesn't help" (a) is
+refuted outright, and (b)/(c) both point to curation working as intended, directionally, on a
+real underlying LoRA-induced artifact regression — just not recovering enough of it (16%) to be
+statistically decisive at n=90 against this judge's noise. **The corrected framing for future
+work: this recipe (VLM-judge curation → rank-8 LoRA retrain) is directionally validated, not
+disproven — a next iteration should curate more aggressively (the 23-image kept set may still
+carry residual artifact-inducing signal the current filter didn't catch), use a larger training
+set, or increase LoRA rank, rather than abandoning curation as an approach.** This materially
+changes the recommendation implied by a bare "no effect" reading of §4.6 alone.
 
 ---
 
@@ -527,7 +663,7 @@ shows no significant primary-endpoint effect.
 | `hyper_8step` | needs-improvement | 16% severe-underexposure rate at spec-compliant config; strictly dominated by `hyper_4step` on every measured axis. Not recommended for production traffic; keep `hyper_4step` as the routed default. |
 | `sdxl_controlnet_union` | production-quality (quality) / needs-improvement (latency) | Quality on par with `sdxl_base`; 546.6s latency requires CPU offload on this 8GB card — a hardware-fit issue, not a model-quality one. |
 | Ukiyo-e LoRA — published checkpoint-1000 | **remains champion — not superseded** | §4.3's correlated-regime headline (+0.040, 3.18×SEM) does not survive the full n=90 paired independent-axis rescore (§4.6: +0.0078, 0.583×SEM — well below the 2×SEM promotion bar). §4.4's promotion verdict is withdrawn per §4.6. No HF re-upload. |
-| Ukiyo-e LoRA — curated retrain | **not promoted — trusted A/B shows no significant primary-endpoint effect** | §4.6 (full n=90 paired, independent single-axis scoring, the trusted regime per the halo-effect check that motivated it) finds `artifact_absence` at 0.583×SEM, not the 3.18×SEM the correlated single-call judge reported. No guardrail regresses, but the specific hypothesis this A/B was designed to test (a measured `artifact_absence` improvement) is not supported under trusted scoring. |
+| Ukiyo-e LoRA — curated retrain | **not promoted (gate not cleared) — but directionally validated, not disproven** | §4.6 (full n=90 paired, independent single-axis scoring) finds the arm-to-arm `artifact_absence` diff at 0.583×SEM, not the 3.18×SEM the correlated single-call judge reported; §4.7 confirms this design's 95% CI rules out the original +0.040 claim but is underpowered below its own MDE (~0.037) to call this a demonstrated null. §4.8's base-model comparison shows both LoRA variants regress `artifact_absence` significantly vs. no adapter (published −0.0500 at 3.49×SEM, curated −0.0422 at 3.11×SEM) — confirming LoRA training on this data does cause the artifact — and curation recovers ~16% of that regression (real, correctly-directioned, just not enough to clear the arm-to-arm bar at this n/judge). No guardrail regresses; curated's `style_adherence` lift vs. base is in fact clearer than published's (2.82×SEM vs. 1.68×SEM). |
 
 ---
 
@@ -546,13 +682,18 @@ original verdict — do NOT promote the curated retrain (item 2), per the correc
    corrects §4.3/§4.4/§4.5 — the published checkpoint remains champion). The pre-registered
    primary endpoint, measured under the trusted independent-axis regime, does not clear the
    2×SEM promotion bar (0.583×SEM, not the correlated single-call judge's 3.182×SEM). Per this
-   project's own pre-registered decision rule, a null primary result is reported as such and is
-   not grounds to keep looking for a threshold that passes. `docs/HF_MODEL_CARD_UPDATES.md` is
-   corrected to drop the "measured improvement" claim. If the calligraphy-artifact hypothesis is
-   still worth testing, it needs either a less-coarse judge (§4.6 notes the independent-axis
-   `artifact_absence` score is concentrated on two values, 0.8 and 1.0, across 177 of 180 scores)
-   or a larger n
-   — not a re-analysis of this dataset under a different threshold.
+   project's own pre-registered decision rule, a null-or-below-threshold primary result is
+   reported as such and is not grounds to keep looking for a threshold that passes.
+   `docs/HF_MODEL_CARD_UPDATES.md` is corrected to drop the "measured improvement" claim. **This
+   is a gate decision, not a verdict that curation doesn't work** — §4.8's base-model comparison
+   found both LoRA variants significantly regress `artifact_absence` relative to no adapter at
+   all (LoRA training on this data does cause the artifact, confirming the original diagnosis),
+   and curation recovers a real ~16% of that regression in the correct direction — just not
+   enough, relative to this judge's noise at n=90, to independently clear the arm-to-arm
+   promotion bar (§4.7: the MDE for this judge/n is ~0.037; closing the gap to the observed
+   +0.0078 effect would need ≈1,963 paired samples, impractical at zero-cost-local scale). The
+   recipe (VLM-curate → retrain) is directionally supported, not disproven; a next iteration
+   should curate more aggressively or scale the training set, not abandon curation.
 3. **All 5 non-LoRA families are production-quality** on the metrics measured here, with
    `sdxl_controlnet_union`'s latency flagged as a hardware-fit constraint (8GB VRAM + CPU
    offload), not a quality defect.

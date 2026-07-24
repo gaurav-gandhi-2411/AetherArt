@@ -1,0 +1,36 @@
+{
+  "n_pairs": 90,
+  "z_alpha_2_two_sided_005": 1.96,
+  "z_beta_80pct_power": 0.8416,
+  "z_beta_90pct_power": 1.2816,
+  "original_correlated_regime_claim": 0.04,
+  "results": {
+    "style_adherence": {
+      "observed_diff": 0.0044,
+      "sem": 0.0027,
+      "diff_over_sem": 1.649,
+      "ci95_lo": -0.0008,
+      "ci95_hi": 0.0097,
+      "mde_80pct_power": 0.0076,
+      "mde_90pct_power": 0.0087
+    },
+    "figure_preservation": {
+      "observed_diff": 0.0078,
+      "sem": 0.0032,
+      "diff_over_sem": 2.394,
+      "ci95_lo": 0.0014,
+      "ci95_hi": 0.0141,
+      "mde_80pct_power": 0.0091,
+      "mde_90pct_power": 0.0105
+    },
+    "artifact_absence": {
+      "observed_diff": 0.0078,
+      "sem": 0.0133,
+      "diff_over_sem": 0.583,
+      "ci95_lo": -0.0184,
+      "ci95_hi": 0.0339,
+      "mde_80pct_power": 0.0374,
+      "mde_90pct_power": 0.0432
+    }
+  }
+}
