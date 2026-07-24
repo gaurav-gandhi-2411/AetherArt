@@ -73,14 +73,23 @@ fi
 cd "$REPO_DIR"
 
 echo "=== Installing dependencies ==="
-# Root-caused via TWO actual failures (not assumed): the DLVM's PRE-INSTALLED transformers
-# already has a broken import chain regardless of --upgrade - `from peft import LoraConfig`
-# transitively imports transformers' Bloom model, which pulls in a new "Parakeet RNNT" loss
-# module that unconditionally `import torchaudio`, and this DLVM's torchaudio .so fails to load
-# ("undefined symbol: torch_library_impl") independent of anything this script installs. Fix:
-# pin transformers to a version that predates the Parakeet/torchaudio loss dependency - this
-# training script needs nothing from that recent addition.
-${PIP} install -q diffusers peft datasets "transformers==4.46.0" "accelerate==1.1.1"
+# Root-caused via THREE actual failures (not assumed):
+#   1. pip install --upgrade transformers -> broken torchaudio .so ("undefined symbol:
+#      torch_library_impl") when peft's import chain transitively touches transformers' Bloom
+#      model, which imports a new Parakeet-RNNT loss module that unconditionally `import
+#      torchaudio`.
+#   2. Same crash persisted WITHOUT --upgrade - the DLVM's pre-installed transformers already
+#      has this broken chain; it isn't something this script's pip calls caused.
+#   3. Pinning transformers==4.46.0 to dodge the Parakeet/torchaudio dependency instead broke
+#      diffusers, whose latest release needs `Dinov2WithRegistersConfig` (added well after
+#      4.46.0).
+# The actual root cause across all three is torchaudio's compiled extension being ABI-mismatched
+# against this DLVM's pre-installed torch build - not a transformers version question at all.
+# Fix: reinstall torchaudio from the official PyTorch wheel index, pinned to the exact installed
+# torch version, so the extension's compiled ABI actually matches.
+TORCH_VERSION=$(${PYTHON} -c "import torch; print(torch.__version__.split('+')[0])")
+${PIP} install -q --force-reinstall --no-deps "torchaudio==${TORCH_VERSION}" --index-url https://download.pytorch.org/whl/cu129
+${PIP} install -q diffusers transformers accelerate peft datasets
 
 echo "=== Downloading curated Pattachitra corpus from GCS ==="
 mkdir -p data/lora/pattachitra-curated
