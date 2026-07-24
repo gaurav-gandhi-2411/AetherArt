@@ -57,7 +57,28 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24b)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-24c)**
+
+- [x] **High-power metric attempt, model-card tradeoff disclosure, Pattachitra pre-registration
+      (2026-07-24c).** Built and independently validated (n=29 visual-inspection sample) an
+      EasyOCR-based binary artifact detector (`scripts/detect_text_artifacts.py`) to test whether
+      a binary proportion test could out-power the VLM rubric's ~1,963-sample requirement
+      (`docs/MODEL_VERDICT.md` §4.7). **Result: it doesn't — the opposite of the premise.** A naive
+      confidence threshold is unusable (23% recall; generated pseudo-calligraphy is rarely
+      OCR-legible); a revised "any detection" rule is moderately validated (94% precision, 77%
+      recall) but the resulting paired-proportion MDE at n=90 is ~0.22 — nearly 6× worse than the
+      rubric's ~0.037 — because 55.6% of published-vs-curated pairs are discordant (high
+      image-to-image noise in OCR legibility). Reported as a genuine negative result (`docs/MODEL_VERDICT.md`
+      §4.9), not reframed to look positive. The VLM rubric remains primary; OCR is a secondary,
+      non-gating signal. **Model card updated** (`docs/HF_MODEL_CARD_UPDATES.md`) with the plain,
+      unsoftened cost/benefit numbers: `sdxl_base` scores `artifact_absence` 0.9222 (cleaner than
+      either adapter); both adapters significantly regress it (published −0.0500/3.49×SEM, curated
+      −0.0422/3.11×SEM); the adapter's value is a modest style lift (curated 2.82×SEM, published
+      1.68×SEM over base). **Pattachitra pre-registered** (`docs/PATTACHITRA_AB_PREREGISTRATION.md`)
+      before any training — bakes in this session's lessons from the start (independent-axis
+      scoring only, base-model comparison as part of the primary design not an afterthought,
+      power/MDE reporting required regardless of outcome, OCR as non-gating secondary). **No
+      training authorized** — still needs GG's approval + GCP spend per `docs/NEXT_MODEL_SPEC.md` §5.
 
 - [x] **Follow-up audit (2026-07-24b) on the withdrawal below: validated, root-caused, refined.**
       Four checks, per an explicit "don't accept a null from a possibly-broken measurement"
