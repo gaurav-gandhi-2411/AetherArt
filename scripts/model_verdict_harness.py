@@ -383,8 +383,14 @@ def run_generation_family(
 
     logger.info("[%s] Loading pipeline...", family)
     pipe = build_pipe_fn()
-    logger.info("[%s] Pipeline ready. %d prompts x %d seeds = %d combos (%d already done)",
-                family, len(prompts), len(SEEDS), len(prompts) * len(SEEDS), len(completed))
+    logger.info(
+        "[%s] Pipeline ready. %d prompts x %d seeds = %d combos (%d already done)",
+        family,
+        len(prompts),
+        len(SEEDS),
+        len(prompts) * len(SEEDS),
+        len(completed),
+    )
 
     # ── Phase 1: generate + CLIP (pipeline stays loaded throughout) ──
     t_start = time.time()
@@ -429,15 +435,24 @@ def run_generation_family(
             save_partial(out_json, results)
             n_done_this_run += 1
 
-            status = "ERROR" if record.get("error") else (
-                f"clip={record.get('clip_score')} lat={record.get('latency_s')}s "
-                f"std={record.get('std')}"
+            status = (
+                "ERROR"
+                if record.get("error")
+                else (
+                    f"clip={record.get('clip_score')} lat={record.get('latency_s')}s "
+                    f"std={record.get('std')}"
+                )
             )
             logger.info("[%s] [%d done this run] %s: %s", family, n_done_this_run, key, status)
 
     elapsed = time.time() - t_start
-    logger.info("[%s] Generation phase done. %d generated this run in %.1f min. Total: %d",
-                family, n_done_this_run, elapsed / 60, len(results))
+    logger.info(
+        "[%s] Generation phase done. %d generated this run in %.1f min. Total: %d",
+        family,
+        n_done_this_run,
+        elapsed / 60,
+        len(results),
+    )
     assert_unique_records(results, ("prompt_id", "seed"))
 
     # ── Phase 2: release pipeline, score HPS on every image missing it ──
@@ -459,8 +474,15 @@ def run_generation_family(
                 r["hps_score"] = round(hps, 6) if hps is not None else None
                 save_partial(out_json, results)
                 if (i + 1) % 10 == 0 or i == len(need_hps) - 1:
-                    logger.info("[%s] HPS [%d/%d] %s_%s: hps=%s",
-                                family, i + 1, len(need_hps), r["prompt_id"], r["seed"], r["hps_score"])
+                    logger.info(
+                        "[%s] HPS [%d/%d] %s_%s: hps=%s",
+                        family,
+                        i + 1,
+                        len(need_hps),
+                        r["prompt_id"],
+                        r["seed"],
+                        r["hps_score"],
+                    )
             from aetherart.eval_hps import release_hps
 
             release_hps()
@@ -480,8 +502,14 @@ def build_sd21_base():
 
 def gen_sd21_base(pipe, prompt, seed, width, height):
     gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(seed)
-    out = pipe(prompt, num_inference_steps=30, guidance_scale=GUIDANCE_DEFAULT,
-               width=width, height=height, generator=gen)
+    out = pipe(
+        prompt,
+        num_inference_steps=30,
+        guidance_scale=GUIDANCE_DEFAULT,
+        width=width,
+        height=height,
+        generator=gen,
+    )
     return out.images[0]
 
 
@@ -493,8 +521,14 @@ def build_sdxl_base():
 
 def gen_sdxl_base(pipe, prompt, seed, width, height):
     gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(seed)
-    out = pipe(prompt, num_inference_steps=30, guidance_scale=GUIDANCE_DEFAULT,
-               width=width, height=height, generator=gen)
+    out = pipe(
+        prompt,
+        num_inference_steps=30,
+        guidance_scale=GUIDANCE_DEFAULT,
+        width=width,
+        height=height,
+        generator=gen,
+    )
     return out.images[0]
 
 
@@ -516,12 +550,15 @@ def gen_hyper(variant: str):
     defaults = HYPER_DEFAULTS[variant]
 
     def _gen(pipe, prompt, seed, width, height):
-        gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(seed)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        gen = torch.Generator(device=device).manual_seed(seed)
         out = pipe(
             prompt,
             num_inference_steps=defaults["num_inference_steps"],
             guidance_scale=defaults["guidance_scale"],
-            width=width, height=height, generator=gen,
+            width=width,
+            height=height,
+            generator=gen,
         )
         return out.images[0]
 
@@ -533,7 +570,9 @@ def build_ukiyo_e_lora_sdxl():
 
     pipe = load_sdxl_base()
     lora_path = ROOT / "data" / "lora" / "ukiyo-e" / "ukiyo-e-sdxl-lora.safetensors"
-    pipe.load_lora_weights(str(lora_path.parent), weight_name=lora_path.name, adapter_name="ukiyo_e")
+    pipe.load_lora_weights(
+        str(lora_path.parent), weight_name=lora_path.name, adapter_name="ukiyo_e"
+    )
     pipe.set_adapters(["ukiyo_e"], adapter_weights=[1.0])
     return pipe
 
@@ -550,14 +589,20 @@ def gen_ukiyo_e_lora(pipe, prompt, seed, width, height):
     gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(seed)
     full_prompt = f"{prompt}, {UKIYO_E_TRIGGER}, ukiyo-e woodblock print style"
     out = pipe(
-        full_prompt, negative_prompt=UKIYO_E_NEGATIVE,
-        num_inference_steps=30, guidance_scale=GUIDANCE_DEFAULT,
-        width=width, height=height, generator=gen,
+        full_prompt,
+        negative_prompt=UKIYO_E_NEGATIVE,
+        num_inference_steps=30,
+        guidance_scale=GUIDANCE_DEFAULT,
+        width=width,
+        height=height,
+        generator=gen,
     )
     return out.images[0]
 
 
-def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None, label: str) -> None:
+def run_ukiyo_e_lora_family(
+    args: argparse.Namespace, adapter_path: Path | None, label: str
+) -> None:
     """LPIPS-vs-sdxl_base + VLM judge (+ CLIP recorded for context, NOT the verdict metric).
 
     Two-phase, same rationale as run_generation_family's HPS deferral: the VLM judge is a
@@ -607,8 +652,12 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
                 continue
 
             record: dict[str, Any] = {
-                "family": label, "prompt_id": prompt_entry["id"],
-                "prompt": prompt_entry["prompt"], "seed": seed, "vlm_judge": None, "error": None,
+                "family": label,
+                "prompt_id": prompt_entry["id"],
+                "prompt": prompt_entry["prompt"],
+                "seed": seed,
+                "vlm_judge": None,
+                "error": None,
             }
             try:
                 t0 = time.time()
@@ -641,7 +690,10 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
             n_done += 1
             logger.info(
                 "[%s] [%d done] %s: lpips=%.4f clip(ctx)=%.4f",
-                label, n_done, key, record.get("lpips_vs_base", -1),
+                label,
+                n_done,
+                key,
+                record.get("lpips_vs_base", -1),
                 record.get("clip_score_context_only", -1),
             )
 
@@ -667,8 +719,15 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
             )
             save_partial(out_json, results)
             if (i + 1) % 10 == 0 or i == len(need_vlm) - 1:
-                logger.info("[%s] VLM [%d/%d] %s_%s: vlm=%s",
-                            label, i + 1, len(need_vlm), r["prompt_id"], r["seed"], r["vlm_judge"])
+                logger.info(
+                    "[%s] VLM [%d/%d] %s_%s: vlm=%s",
+                    label,
+                    i + 1,
+                    len(need_vlm),
+                    r["prompt_id"],
+                    r["seed"],
+                    r["vlm_judge"],
+                )
 
     logger.info("[%s] Done. %d records total.", label, len(results))
 
@@ -711,12 +770,18 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
             if key in completed:
                 continue
             if key not in base_results or base_results[key].get("error"):
-                logger.warning("[sdxl_controlnet_union] no matching sdxl_base result for %s, skipping", key)
+                logger.warning(
+                    "[sdxl_controlnet_union] no matching sdxl_base result for %s, skipping", key
+                )
                 continue
 
             record: dict[str, Any] = {
-                "family": "sdxl_controlnet_union", "prompt_id": prompt_entry["id"],
-                "prompt": prompt_entry["prompt"], "seed": seed, "hps_score": None, "error": None,
+                "family": "sdxl_controlnet_union",
+                "prompt_id": prompt_entry["id"],
+                "prompt": prompt_entry["prompt"],
+                "seed": seed,
+                "hps_score": None,
+                "error": None,
             }
             try:
                 base_img = Image.open(base_results[key]["image_path"])
@@ -724,9 +789,15 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
 
                 t0 = time.time()
                 img = generate_sdxl_controlnet(
-                    pipe, prompt_entry["prompt"], canny, ctype="canny",
-                    guidance_scale=GUIDANCE_DEFAULT, num_inference_steps=30,
-                    width=1024, height=1024, seed=seed,
+                    pipe,
+                    prompt_entry["prompt"],
+                    canny,
+                    ctype="canny",
+                    guidance_scale=GUIDANCE_DEFAULT,
+                    num_inference_steps=30,
+                    width=1024,
+                    height=1024,
+                    seed=seed,
                 )
                 latency = time.time() - t0
                 assert_no_degenerate_image(img, context=f"sdxl_controlnet_union:{key}")
@@ -747,8 +818,13 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
             completed.add(key)
             save_partial(out_json, results)
             n_done += 1
-            logger.info("[sdxl_controlnet_union] [%d done] %s: clip=%s lat=%ss",
-                        n_done, key, record.get("clip_score"), record.get("latency_s"))
+            logger.info(
+                "[sdxl_controlnet_union] [%d done] %s: clip=%s lat=%ss",
+                n_done,
+                key,
+                record.get("clip_score"),
+                record.get("latency_s"),
+            )
 
     logger.info("[sdxl_controlnet_union] Generation phase done. %d records total.", len(results))
     assert_unique_records(results, ("prompt_id", "seed"))
@@ -772,8 +848,14 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
             r["hps_score"] = round(hps, 6) if hps is not None else None
             save_partial(out_json, results)
             if (i + 1) % 10 == 0 or i == len(need_hps) - 1:
-                logger.info("[sdxl_controlnet_union] HPS [%d/%d] %s_%s: hps=%s",
-                            i + 1, len(need_hps), r["prompt_id"], r["seed"], r["hps_score"])
+                logger.info(
+                    "[sdxl_controlnet_union] HPS [%d/%d] %s_%s: hps=%s",
+                    i + 1,
+                    len(need_hps),
+                    r["prompt_id"],
+                    r["seed"],
+                    r["hps_score"],
+                )
         from aetherart.eval_hps import release_hps
 
         release_hps()
@@ -798,7 +880,12 @@ FAMILIES = {
     "ukiyo_e_lora_sdxl": lambda args: run_ukiyo_e_lora_family(args, None, "ukiyo_e_lora_sdxl"),
     "ukiyo_e_lora_sdxl_curated": lambda args: run_ukiyo_e_lora_family(
         args,
-        ROOT / "data" / "lora" / "ukiyo-e" / "training_output_sdxl_curated" / "checkpoint-1000"
+        ROOT
+        / "data"
+        / "lora"
+        / "ukiyo-e"
+        / "training_output_sdxl_curated"
+        / "checkpoint-1000"
         / "pytorch_lora_weights.safetensors",
         "ukiyo_e_lora_sdxl_curated",
     ),

@@ -329,6 +329,9 @@ class TestValidateJudgeScores:
         assert _mod.validate_judge_scores(scores) is None
 
     def test_nan_value_returns_none(self):
-        scores = {"style_adherence": float("nan"), "figure_preservation": 0.95,
-                   "artifact_absence": 1.0}
+        scores = {
+            "style_adherence": float("nan"),
+            "figure_preservation": 0.95,
+            "artifact_absence": 1.0,
+        }
         assert _mod.validate_judge_scores(scores) is None
