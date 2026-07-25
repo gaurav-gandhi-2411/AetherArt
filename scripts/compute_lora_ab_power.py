@@ -38,16 +38,20 @@ def main() -> None:
     assert len(pairs) == 90
 
     print(f"n = {len(pairs)} paired observations\n")
-    print(f"{'Metric':<22} {'Observed diff':>14} {'SEM':>8} {'diff/SEM':>9} "
-          f"{'95% CI':>24} {'MDE@80%':>9} {'MDE@90%':>9}")
+    print(
+        f"{'Metric':<22} {'Observed diff':>14} {'SEM':>8} {'diff/SEM':>9} "
+        f"{'95% CI':>24} {'MDE@80%':>9} {'MDE@90%':>9}"
+    )
 
     out = {}
     for axis in AXES:
-        diffs = [p["curated"]["independent_calls"][axis] - p["published"]["independent_calls"][axis]
-                 for p in pairs]
+        diffs = [
+            p["curated"]["independent_calls"][axis] - p["published"]["independent_calls"][axis]
+            for p in pairs
+        ]
         n = len(diffs)
         mean_diff = statistics.fmean(diffs)
-        sem = statistics.stdev(diffs) / (n ** 0.5)
+        sem = statistics.stdev(diffs) / (n**0.5)
         ratio = mean_diff / sem if sem else float("inf")
         ci_lo = mean_diff - Z_ALPHA_2 * sem
         ci_hi = mean_diff + Z_ALPHA_2 * sem
@@ -55,20 +59,27 @@ def main() -> None:
         mde_90 = (Z_ALPHA_2 + Z_BETA_90) * sem
 
         out[axis] = {
-            "observed_diff": round(mean_diff, 4), "sem": round(sem, 4),
+            "observed_diff": round(mean_diff, 4),
+            "sem": round(sem, 4),
             "diff_over_sem": round(ratio, 3),
-            "ci95_lo": round(ci_lo, 4), "ci95_hi": round(ci_hi, 4),
-            "mde_80pct_power": round(mde_80, 4), "mde_90pct_power": round(mde_90, 4),
+            "ci95_lo": round(ci_lo, 4),
+            "ci95_hi": round(ci_hi, 4),
+            "mde_80pct_power": round(mde_80, 4),
+            "mde_90pct_power": round(mde_90, 4),
         }
-        print(f"{axis:<22} {mean_diff:>+14.4f} {sem:>8.4f} {ratio:>9.3f} "
-              f"[{ci_lo:>+.4f}, {ci_hi:>+.4f}]      {mde_80:>9.4f} {mde_90:>9.4f}")
+        print(
+            f"{axis:<22} {mean_diff:>+14.4f} {sem:>8.4f} {ratio:>9.3f} "
+            f"[{ci_lo:>+.4f}, {ci_hi:>+.4f}]      {mde_80:>9.4f} {mde_90:>9.4f}"
+        )
 
     print()
     primary = out["artifact_absence"]
     original_claim = 0.0400
     print("=== Interpretation: artifact_absence (PRIMARY) ===")
-    print(f"Observed diff: {primary['observed_diff']:+.4f}, SEM: {primary['sem']:.4f}, "
-          f"diff/SEM: {primary['diff_over_sem']:.3f}")
+    print(
+        f"Observed diff: {primary['observed_diff']:+.4f}, SEM: {primary['sem']:.4f}, "
+        f"diff/SEM: {primary['diff_over_sem']:.3f}"
+    )
     print(f"95% CI on true diff: [{primary['ci95_lo']:+.4f}, {primary['ci95_hi']:+.4f}]")
     print(f"MDE at 80% power (this n, this observed variance): {primary['mde_80pct_power']:.4f}")
     print(f"MDE at 90% power: {primary['mde_90pct_power']:.4f}")
@@ -77,8 +88,8 @@ def main() -> None:
     ci_excludes_original_claim = primary["ci95_hi"] < original_claim
     verdict = (
         "RULES OUT the originally-claimed effect size (95% CI upper bound is below it)"
-        if ci_excludes_original_claim else
-        "does NOT rule out the originally-claimed effect size (falls within the 95% CI) - "
+        if ci_excludes_original_claim
+        else "does NOT rule out the originally-claimed effect size (falls within the 95% CI) - "
         "the design is UNDERPOWERED for an effect of that size, not a clean demonstrated null"
     )
     print(f"\nVerdict: this n=90 independent-axis result {verdict}.")
@@ -92,14 +103,20 @@ def main() -> None:
     )
 
     out_path = ROOT / "reports" / "lora_ab_power_audit.json"
-    out_path.write_text(json.dumps({
-        "n_pairs": 90,
-        "z_alpha_2_two_sided_005": Z_ALPHA_2,
-        "z_beta_80pct_power": Z_BETA_80,
-        "z_beta_90pct_power": Z_BETA_90,
-        "original_correlated_regime_claim": original_claim,
-        "results": out,
-    }, indent=2), encoding="utf-8")
+    out_path.write_text(
+        json.dumps(
+            {
+                "n_pairs": 90,
+                "z_alpha_2_two_sided_005": Z_ALPHA_2,
+                "z_beta_80pct_power": Z_BETA_80,
+                "z_beta_90pct_power": Z_BETA_90,
+                "original_correlated_regime_claim": original_claim,
+                "results": out,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"\nWritten: {out_path}")
 
 

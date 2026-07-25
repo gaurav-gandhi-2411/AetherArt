@@ -36,17 +36,15 @@ def load_by_key(path: Path, checkpoint_filter: str | None = None) -> dict[str, b
     out = {}
     for r in records:
         fname = Path(r["image_path"]).name
-        # filenames: {checkpoint}_{prompt_id}_{seed}.png or base_{prompt_id}_{seed}.png
-        parts = fname.replace(".png", "").split("_")
         if checkpoint_filter and not fname.startswith(checkpoint_filter):
             continue
         # key = prompt_id_seed (strip the checkpoint prefix and .png)
         if fname.startswith("published_"):
-            key = fname[len("published_"):-4]
+            key = fname[len("published_") : -4]
         elif fname.startswith("curated_"):
-            key = fname[len("curated_"):-4]
+            key = fname[len("curated_") : -4]
         elif fname.startswith("base_"):
-            key = fname[len("base_"):-4]
+            key = fname[len("base_") : -4]
         else:
             key = fname[:-4]
         out[key] = has_artifact(r)
@@ -59,11 +57,13 @@ def mcnemar_exact_p(b: int, c: int) -> float:
     if n == 0:
         return 1.0
     k = min(b, c)
-    p_one_side = sum(comb(n, i) for i in range(0, k + 1)) / (2 ** n)
+    p_one_side = sum(comb(n, i) for i in range(0, k + 1)) / (2**n)
     return min(1.0, 2 * p_one_side)
 
 
-def paired_proportion_stats(a: dict[str, bool], b: dict[str, bool], name_a: str, name_b: str) -> dict:
+def paired_proportion_stats(
+    a: dict[str, bool], b: dict[str, bool], name_a: str, name_b: str
+) -> dict:
     keys = sorted(set(a) & set(b))
     n = len(keys)
     # 2x2 discordant-pair table
@@ -79,20 +79,31 @@ def paired_proportion_stats(a: dict[str, bool], b: dict[str, bool], name_a: str,
     p_value = mcnemar_exact_p(only_a, only_b)
 
     print(f"\n=== {name_a} vs {name_b} (n={n} paired) ===")
-    print(f"  2x2: both-flagged={both_true}, only-{name_a}={only_a}, only-{name_b}={only_b}, neither={neither}")
+    print(
+        f"  2x2: both-flagged={both_true}, only-{name_a}={only_a}, "
+        f"only-{name_b}={only_b}, neither={neither}"
+    )
     print(f"  P(artifact | {name_a}) = {rate_a:.4f}")
     print(f"  P(artifact | {name_b}) = {rate_b:.4f}")
     print(f"  diff ({name_b} - {name_a}) = {diff:+.4f}")
     print(f"  McNemar exact p-value = {p_value:.4f}")
 
     return {
-        "n": n, "both_flagged": both_true, f"only_{name_a}": only_a, f"only_{name_b}": only_b,
-        "neither": neither, f"rate_{name_a}": round(rate_a, 4), f"rate_{name_b}": round(rate_b, 4),
-        "diff": round(diff, 4), "mcnemar_p": round(p_value, 4),
+        "n": n,
+        "both_flagged": both_true,
+        f"only_{name_a}": only_a,
+        f"only_{name_b}": only_b,
+        "neither": neither,
+        f"rate_{name_a}": round(rate_a, 4),
+        f"rate_{name_b}": round(rate_b, 4),
+        "diff": round(diff, 4),
+        "mcnemar_p": round(p_value, 4),
     }
 
 
-def mde_mcnemar(n: int, discordant_frac_guess: float = 0.15, alpha: float = 0.05, power: float = 0.8) -> float:
+def mde_mcnemar(
+    n: int, discordant_frac_guess: float = 0.15, alpha: float = 0.05, power: float = 0.8
+) -> float:
     """Approximate MDE for a paired-proportion (McNemar) design at given n, using the standard
     normal approximation: required discordant pairs ~ ((z_a/2 + z_b) / diff)^2 * p_discordant,
     inverted to solve for the detectable diff given n and an assumed discordant-pair fraction.
@@ -114,22 +125,33 @@ def main() -> None:
     assert len(published) == len(curated) == len(base) == 90
 
     results = {}
-    results["published_vs_curated"] = paired_proportion_stats(published, curated, "published", "curated")
+    results["published_vs_curated"] = paired_proportion_stats(
+        published, curated, "published", "curated"
+    )
     results["base_vs_published"] = paired_proportion_stats(base, published, "base", "published")
     results["base_vs_curated"] = paired_proportion_stats(base, curated, "base", "curated")
 
     n = 90
-    observed_discordant_frac = results["published_vs_curated"]["only_published"] / n + \
-        results["published_vs_curated"]["only_curated"] / n
+    observed_discordant_frac = (
+        results["published_vs_curated"]["only_published"] / n
+        + results["published_vs_curated"]["only_curated"] / n
+    )
     mde = mde_mcnemar(n, discordant_frac_guess=max(observed_discordant_frac, 0.05))
     print(f"\n=== Power/sensitivity (OCR binary metric, n={n} paired) ===")
-    print(f"Observed discordant-pair fraction (published-vs-curated): {observed_discordant_frac:.4f}")
+    print(
+        f"Observed discordant-pair fraction (published-vs-curated): {observed_discordant_frac:.4f}"
+    )
     print(f"Approx. MDE at 80% power, alpha=0.05 (two-sided): {mde:.4f}")
-    print(f"Compare to the independent-axis VLM rubric's MDE at n=90: ~0.037 (docs/MODEL_VERDICT.md SS4.7)")
+    print(
+        "Compare to the independent-axis VLM rubric's MDE at n=90: "
+        "~0.037 (docs/MODEL_VERDICT.md SS4.7)"
+    )
 
     results["power"] = {
-        "n": n, "observed_discordant_fraction": round(observed_discordant_frac, 4),
-        "approx_mde_80pct_power": round(mde, 4), "rubric_mde_for_comparison": 0.0374,
+        "n": n,
+        "observed_discordant_fraction": round(observed_discordant_frac, 4),
+        "approx_mde_80pct_power": round(mde, 4),
+        "rubric_mde_for_comparison": 0.0374,
     }
 
     out_path = ROOT / "reports" / "ocr_proportion_stats.json"

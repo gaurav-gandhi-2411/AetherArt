@@ -25,8 +25,12 @@ AXES = ("style_adherence", "figure_preservation", "artifact_absence")
 
 def main() -> None:
     records = json.loads(SOURCE_JSON.read_text())
-    assert len(records) == 180, f"expected 180 records (90 published + 90 curated), got {len(records)}"
-    assert all(not r.get("error") for r in records), "unresolved errors in the independent-regime dataset"
+    assert len(records) == 180, (
+        f"expected 180 records (90 published + 90 curated), got {len(records)}"
+    )
+    assert all(not r.get("error") for r in records), (
+        "unresolved errors in the independent-regime dataset"
+    )
     assert all(r.get("independent_calls") is not None for r in records), (
         "not all records have independent_calls scored yet - re-run "
         "scripts/_lora_ab_30prompt_independent.py for both checkpoints first"
@@ -41,8 +45,10 @@ def main() -> None:
     assert len(pairs) == 90, f"expected 90 matched pairs, got {len(pairs)}"
 
     print(f"n = {len(pairs)} paired prompt+seed matches\n")
-    print(f"{'Metric':<22} {'Published (mean)':>17} {'Curated (mean)':>15} "
-          f"{'Paired diff':>12} {'Paired SEM':>11} {'diff/SEM':>9}")
+    print(
+        f"{'Metric':<22} {'Published (mean)':>17} {'Curated (mean)':>15} "
+        f"{'Paired diff':>12} {'Paired SEM':>11} {'diff/SEM':>9}"
+    )
 
     results = {}
     for axis in AXES:
@@ -63,16 +69,24 @@ def main() -> None:
             "paired_sem": round(diff_sem, 4),
             "diff_over_sem": round(ratio, 3),
         }
-        print(f"{axis:<22} {pub_mean:>17.4f} {cur_mean:>15.4f} "
-              f"{diff_mean:>+12.4f} {diff_sem:>11.4f} {ratio:>9.3f}")
+        print(
+            f"{axis:<22} {pub_mean:>17.4f} {cur_mean:>15.4f} "
+            f"{diff_mean:>+12.4f} {diff_sem:>11.4f} {ratio:>9.3f}"
+        )
 
     out_path = ROOT / "reports" / "lora_ab_independent_stats.json"
-    out_path.write_text(json.dumps({
-        "n_pairs": len(pairs),
-        "scoring_regime": "independent single-axis (one Ollama call per axis)",
-        "source": str(SOURCE_JSON.relative_to(ROOT)),
-        "results": results,
-    }, indent=2), encoding="utf-8")
+    out_path.write_text(
+        json.dumps(
+            {
+                "n_pairs": len(pairs),
+                "scoring_regime": "independent single-axis (one Ollama call per axis)",
+                "source": str(SOURCE_JSON.relative_to(ROOT)),
+                "results": results,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"\nWritten: {out_path}")
 
 
