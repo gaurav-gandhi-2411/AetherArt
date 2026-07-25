@@ -192,8 +192,9 @@ def score_images(harness, image_paths: list[Path], prompt_text: str) -> list[flo
         if score is not None:
             scores.append(score)
         if (i + 1) % 20 == 0 or i == len(image_paths) - 1:
-            logger.info("[positive-control] [%d/%d] %s: %s",
-                        i + 1, len(image_paths), path.name, score)
+            logger.info(
+                "[positive-control] [%d/%d] %s: %s", i + 1, len(image_paths), path.name, score
+            )
     return scores
 
 
@@ -210,8 +211,13 @@ def unpaired_stats(sample_a: list[float], sample_b: list[float]) -> dict:
     sem = (var_a / n_a + var_b / n_b) ** 0.5
     ratio = diff / sem if sem else (float("inf") if diff != 0 else 0.0)
     return {
-        "n_a": n_a, "n_b": n_b, "mean_a": round(mean_a, 4), "mean_b": round(mean_b, 4),
-        "diff": round(diff, 4), "sem": round(sem, 4), "diff_over_sem": round(ratio, 3),
+        "n_a": n_a,
+        "n_b": n_b,
+        "mean_a": round(mean_a, 4),
+        "mean_b": round(mean_b, 4),
+        "diff": round(diff, 4),
+        "sem": round(sem, 4),
+        "diff_over_sem": round(ratio, 3),
         "mde_80pct_power": round((Z_ALPHA_2 + Z_BETA_80) * sem, 4),
         "mde_90pct_power": round((Z_ALPHA_2 + Z_BETA_90) * sem, 4),
         "passes_2xsem": diff > 0 and ratio > 2.0,
@@ -222,8 +228,11 @@ def load_base_scores(path: Path, checkpoint_filter: str | None) -> list[float]:
     records = json.loads(path.read_text(encoding="utf-8"))
     if checkpoint_filter is not None:
         records = [r for r in records if r.get("checkpoint") == checkpoint_filter]
-    return [r["independent_calls"]["style_adherence"] for r in records
-            if not r.get("error") and r.get("independent_calls")]
+    return [
+        r["independent_calls"]["style_adherence"]
+        for r in records
+        if not r.get("error") and r.get("independent_calls")
+    ]
 
 
 def main() -> None:
@@ -252,8 +261,10 @@ def main() -> None:
     ukiyo_e_real_scores = score_images(harness, ukiyo_e_real_paths, ukiyo_e_prompt)
     results["ukiyo_e"] = unpaired_stats(ukiyo_e_real_scores, ukiyo_e_base_scores)
 
-    logger.info("[positive-control] Scoring Pattachitra real images "
-                "(HISTORICAL/ukiyo-e-worded prompt, n=100)...")
+    logger.info(
+        "[positive-control] Scoring Pattachitra real images "
+        "(HISTORICAL/ukiyo-e-worded prompt, n=100)..."
+    )
     pattachitra_real_historical = score_images(
         harness, pattachitra_real_paths, historical_wrong_prompt_for_pattachitra
     )
@@ -261,8 +272,10 @@ def main() -> None:
         pattachitra_real_historical, pattachitra_base_scores
     )
 
-    logger.info("[positive-control] Scoring Pattachitra real images "
-                "(CORRECTED/Pattachitra-worded prompt, n=100)...")
+    logger.info(
+        "[positive-control] Scoring Pattachitra real images "
+        "(CORRECTED/Pattachitra-worded prompt, n=100)..."
+    )
     pattachitra_real_corrected = score_images(
         harness, pattachitra_real_paths, pattachitra_corrected_prompt
     )
@@ -273,11 +286,15 @@ def main() -> None:
     print("=== Judge style positive control (n unpaired) ===\n")
     for key, stats in results.items():
         print(f"--- {key} ---")
-        print(f"  real mean={stats['mean_a']:.4f} (n={stats['n_a']})  "
-              f"base mean={stats['mean_b']:.4f} (n={stats['n_b']})")
-        print(f"  diff={stats['diff']:+.4f}  SEM={stats['sem']:.4f}  "
-              f"diff/SEM={stats['diff_over_sem']:.3f}  "
-              f"MDE@80%={stats['mde_80pct_power']:.4f}  MDE@90%={stats['mde_90pct_power']:.4f}")
+        print(
+            f"  real mean={stats['mean_a']:.4f} (n={stats['n_a']})  "
+            f"base mean={stats['mean_b']:.4f} (n={stats['n_b']})"
+        )
+        print(
+            f"  diff={stats['diff']:+.4f}  SEM={stats['sem']:.4f}  "
+            f"diff/SEM={stats['diff_over_sem']:.3f}  "
+            f"MDE@80%={stats['mde_80pct_power']:.4f}  MDE@90%={stats['mde_90pct_power']:.4f}"
+        )
         print(f"  {'PASS' if stats['passes_2xsem'] else 'FAIL'} (>2xSEM threshold)\n")
 
     ukiyo_e_pass = results["ukiyo_e"]["passes_2xsem"]
@@ -286,28 +303,42 @@ def main() -> None:
 
     print("=== Verdict (decision rule fixed in advance - see module docstring) ===")
     if not ukiyo_e_pass:
-        print("Ukiyo-e (expected-pass case) FAILED. The control methodology itself is suspect - "
-              "do not trust any Pattachitra result from this run without fixing that first.")
+        print(
+            "Ukiyo-e (expected-pass case) FAILED. The control methodology itself is suspect - "
+            "do not trust any Pattachitra result from this run without fixing that first."
+        )
     elif pattachitra_prod_pass:
-        print("Unexpected: Pattachitra PASSED on the production (ukiyo-e-worded) prompt. "
-              "Re-examine before accepting - this was not the predicted outcome.")
+        print(
+            "Unexpected: Pattachitra PASSED on the production (ukiyo-e-worded) prompt. "
+            "Re-examine before accepting - this was not the predicted outcome."
+        )
     elif pattachitra_corr_pass:
-        print("Pattachitra FAILED on the production prompt but PASSED on the corrected prompt: "
-              "the judge is not blind to Pattachitra style - the deployed question was wrong. "
-              "Every existing Pattachitra style_adherence number is UNINFORMATIVE as recorded; "
-              "a re-score with the corrected prompt is required before any style-lift claim.")
+        print(
+            "Pattachitra FAILED on the production prompt but PASSED on the corrected prompt: "
+            "the judge is not blind to Pattachitra style - the deployed question was wrong. "
+            "Every existing Pattachitra style_adherence number is UNINFORMATIVE as recorded; "
+            "a re-score with the corrected prompt is required before any style-lift claim."
+        )
     else:
-        print("Pattachitra FAILED on BOTH the production and corrected prompts: the judge is "
-              "insensitive to Pattachitra style even when properly asked. Every existing "
-              "Pattachitra style_adherence number is UNINFORMATIVE for a different reason "
-              "(instrument blindness on this domain) - not evidence the adapter has no lift.")
+        print(
+            "Pattachitra FAILED on BOTH the production and corrected prompts: the judge is "
+            "insensitive to Pattachitra style even when properly asked. Every existing "
+            "Pattachitra style_adherence number is UNINFORMATIVE for a different reason "
+            "(instrument blindness on this domain) - not evidence the adapter has no lift."
+        )
 
-    OUT_JSON.write_text(json.dumps({
-        "results": results,
-        "ukiyo_e_pass": ukiyo_e_pass,
-        "pattachitra_production_prompt_pass": pattachitra_prod_pass,
-        "pattachitra_corrected_prompt_pass": pattachitra_corr_pass,
-    }, indent=2), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(
+            {
+                "results": results,
+                "ukiyo_e_pass": ukiyo_e_pass,
+                "pattachitra_production_prompt_pass": pattachitra_prod_pass,
+                "pattachitra_corrected_prompt_pass": pattachitra_corr_pass,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"\nWritten: {OUT_JSON}")
 
 
