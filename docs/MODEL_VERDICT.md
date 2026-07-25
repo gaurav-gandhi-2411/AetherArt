@@ -885,13 +885,62 @@ missing cells (`reports/pattachitra_ab_base_comparison.json`, checked directly).
 harness self-check (CUDA pre-flight health probe, per-record uniqueness assertion, degenerate-image
 detection, judge-response range validation — `scripts/model_verdict_harness.py`, 16 new tests) was
 added afterward so this class of silent corruption fails loudly instead of requiring a manual
-forensic audit to catch.
+forensic audit to catch. **Retroactively applied to every pre-existing report, not just new runs:**
+`scripts/scan_verdict_judge_ranges.py` scanned all 8 `reports/*.json` files carrying a judge-score
+field (`vlm_judge`/`independent_calls`/`original_single_call`) for values the new guard would have
+rejected (non-numeric, NaN, outside `[0, 1]`) — **1,044 records scanned, 0 violations.** Every
+number in this document, and the staged ukiyo-e HF card numbers, is confirmed clean under the new
+guard, not merely assumed clean by having predated it.
 
-**Conclusion: none of the four mechanical explanations accounts for the regression.** Checkpoint
-selection doesn't resolve it (worse, even), and the CUDA corruption is confirmed contained to
-68 failed *attempts* (0 corrupted successes) on one checkpoint, ruled out by direct pixel/visual
-audit rather than architectural reasoning alone — the finding survives and is written up below as
-a genuine result, not an eval artifact.
+**(5) Recipe overtraining (effective epochs, computed directly from the training logs, not
+assumed).** §7.2's own corrected finding — the raw `figure_preservation` diff is monotonic in
+steps (500: −0.0228 → 1000: −0.0444 → 1500: −0.0461) — is the signature of *progressive*
+overtraining, and checkpoint-500 (the earliest ever tested) is not evidence the effect starts at
+zero, only that it starts somewhere below 500 steps. This raises a distinct question from (1)–(4):
+is this a **style** verdict (the corpus/aesthetic doesn't LoRA-train cleanly) or a **recipe**
+verdict (the 1500-step schedule, carried over unchanged from ukiyo-e, overtrains a small corpus
+regardless of style)? Effective epochs, computed from the actual launch commands (not estimated):
+
+| Adapter | Images | Batch × grad-accum | Steps/epoch | Checkpoint | Steps | Effective epochs |
+|---|---|---|---|---|---|---|
+| Pattachitra curated | 100 | 1×4 (eff. batch 4) | 25 | 500 / 1000 / 1500 | 500 / 1000 / 1500 | **20 / 40 / 60** |
+| Ukiyo-e curated | 23 | 1×4 (eff. batch 4) | 5.75 | 1000 (selected/published) | 1000 | **≈174** |
+
+(`data/lora/pattachitra-curated/.../checkpoint-*` per `scripts/gcp_startup_pattachitra_train.sh`'s
+`--train_batch_size 1 --gradient_accumulation_steps 4 --max_train_steps {500,1000,1500} --rank 8`;
+ukiyo-e curated per its own `retrain.log`'s logged launch command — identical
+`--train_batch_size 1 --gradient_accumulation_steps 4 --max_train_steps 1500 --rank 8`, and
+`Num examples = 23` logged directly by the training script, not assumed from a file count.)
+
+Both figures are far above the 10–50-epoch range typically sufficient for style-LoRA convergence
+on a small, homogeneous corpus — **≈174 epochs for the published, currently-live ukiyo-e adapter is
+not a smaller version of the same problem, it is a substantially larger one** than even
+Pattachitra's worst-tested checkpoint (60 epochs). Because both adapters used the *identical*
+1500-step/batch-1/grad-accum-4 schedule regardless of corpus size (100 vs. 23 images — a 4.3×
+difference the recipe does not adjust for), the 1500-step recipe itself is a **shared suspect
+across both of this project's negative style-LoRA results**, not a Pattachitra-specific finding.
+This does not by itself prove overtraining caused the regression (a corpus/style effect is not
+ruled out either) — see the adapter-weight sweep below, which tests this directly and without
+retraining.
+
+**Adapter-weight sweep (zero-cost, no retraining) — checked whether a lower `adapter_weights`
+scale recovers `figure_preservation` while keeping a positive `style_adherence` lift.** If an
+operating point exists, the checkpoint is over-applied/overtrained rather than intrinsically
+broken; if none exists at any weight, the regression is not a dosage effect.
+`scripts/_pattachitra_weight_sweep.py` re-scores checkpoint-500 and checkpoint-1000 at weights
+0.3/0.5/0.7 (weight=1.0 reuses the already-audited §7.2(4) records) — **IN PROGRESS, results
+pending; this subsection will be updated with the operating-point table once the sweep completes.
+Not run on GCP, no spend, no training.**
+
+**Conclusion: none of the four *mechanical* explanations (1)-(4) accounts for the regression; (5)
+is a plausible recipe-level contributing factor under active test, pending the weight sweep above.**
+Checkpoint selection doesn't resolve it (worse, even), and the CUDA corruption is confirmed
+contained to 68 failed *attempts* (0 corrupted successes) on one checkpoint, ruled out by direct
+pixel/visual audit rather than architectural reasoning alone. **The finding — SDXL renders
+Pattachitra poorly and no tested checkpoint of this recipe closes that gap without a guardrail
+regression — stands as reported below**, with the open question of whether the guardrail
+regression specifically is a recipe artifact (fixable by a different step/epoch schedule) or an
+intrinsic style/corpus limitation being actively narrowed down, not left unresolved.
 
 ### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 
