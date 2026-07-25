@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from aetherart.gpu_hygiene import gpu_is_quiet
 from aetherart.hyper import HYPER_DEFAULTS, is_hyper_active, load_hyper_lora
 from aetherart.registry import ModelRegistry
 
@@ -95,6 +96,17 @@ class TestCombinedPathGPU:
 
         import numpy as np
         import torch
+
+        # This latency budget has flaked under GPU contention (another resident workload
+        # sharing the 8 GB card) in three separate sessions, each time mis-reported as a
+        # regression before being traced back to contention (docs/MODEL_VERDICT.md's
+        # CUDA-corruption and weight-sweep audits). Skip rather than assert a wall-clock number
+        # that contention alone can blow through 2-8x with no code change involved.
+        if not gpu_is_quiet():
+            pytest.skip(
+                "GPU not quiet (another workload holds significant VRAM) - the "
+                "latency budget is only a meaningful measurement uncontended"
+            )
 
         r = ModelRegistry()
         r.release_sdxl_base()
