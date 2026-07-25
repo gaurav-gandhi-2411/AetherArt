@@ -96,17 +96,29 @@ def build_source() -> list[dict]:
         if r.get("error") or r["checkpoint"] not in in_scope_checkpoints:
             continue
         weight = None if r["checkpoint"] == "base" else 1.0
-        source.append({
-            "checkpoint": r["checkpoint"], "weight": weight, "prompt_id": r["prompt_id"],
-            "prompt": r["prompt"], "seed": r["seed"], "image_path": r["image_path"],
-        })
+        source.append(
+            {
+                "checkpoint": r["checkpoint"],
+                "weight": weight,
+                "prompt_id": r["prompt_id"],
+                "prompt": r["prompt"],
+                "seed": r["seed"],
+                "image_path": r["image_path"],
+            }
+        )
     for r in sweep_records:
         if r.get("error"):
             continue
-        source.append({
-            "checkpoint": r["checkpoint"], "weight": r["weight"], "prompt_id": r["prompt_id"],
-            "prompt": r["prompt"], "seed": r["seed"], "image_path": r["image_path"],
-        })
+        source.append(
+            {
+                "checkpoint": r["checkpoint"],
+                "weight": r["weight"],
+                "prompt_id": r["prompt_id"],
+                "prompt": r["prompt"],
+                "seed": r["seed"],
+                "image_path": r["image_path"],
+            }
+        )
     return source
 
 
@@ -118,30 +130,43 @@ def main() -> None:
 
     results = load_partial()
     done = {
-        f"{r['checkpoint']}_{r['weight']}_{r['prompt_id']}_{r['seed']}" for r in results
+        f"{r['checkpoint']}_{r['weight']}_{r['prompt_id']}_{r['seed']}"
+        for r in results
         if not r.get("error")
     }
     stale_error_keys = {
-        f"{r['checkpoint']}_{r['weight']}_{r['prompt_id']}_{r['seed']}" for r in results
+        f"{r['checkpoint']}_{r['weight']}_{r['prompt_id']}_{r['seed']}"
+        for r in results
         if r.get("error")
     }
     if stale_error_keys:
-        logger.info("[rescore] Dropping %d stale errored record(s) for retry.",
-                     len(stale_error_keys))
+        logger.info(
+            "[rescore] Dropping %d stale errored record(s) for retry.", len(stale_error_keys)
+        )
     results = [r for r in results if not r.get("error")]
 
-    to_process = [src for src in source
-                  if f"{src['checkpoint']}_{src['weight']}_{src['prompt_id']}_{src['seed']}"
-                  not in done]
-    logger.info("[rescore] %d already done, %d remaining this run.",
-                len(source) - len(to_process), len(to_process))
+    to_process = [
+        src
+        for src in source
+        if f"{src['checkpoint']}_{src['weight']}_{src['prompt_id']}_{src['seed']}" not in done
+    ]
+    logger.info(
+        "[rescore] %d already done, %d remaining this run.",
+        len(source) - len(to_process),
+        len(to_process),
+    )
 
     for n_done, src in enumerate(to_process, start=1):
         key = f"{src['checkpoint']}_{src['weight']}_{src['prompt_id']}_{src['seed']}"
         record = {
-            "checkpoint": src["checkpoint"], "weight": src["weight"],
-            "prompt_id": src["prompt_id"], "prompt": src["prompt"], "seed": src["seed"],
-            "image_path": src["image_path"], "independent_calls": None, "error": None,
+            "checkpoint": src["checkpoint"],
+            "weight": src["weight"],
+            "prompt_id": src["prompt_id"],
+            "prompt": src["prompt"],
+            "seed": src["seed"],
+            "image_path": src["image_path"],
+            "independent_calls": None,
+            "error": None,
         }
         try:
             img = Image.open(src["image_path"])
@@ -156,8 +181,13 @@ def main() -> None:
         results.append(record)
         save_partial(results)
         if n_done % 10 == 0 or n_done == len(to_process):
-            logger.info("[rescore] [%d/%d] %s: %s",
-                        n_done, len(to_process), key, record["independent_calls"])
+            logger.info(
+                "[rescore] [%d/%d] %s: %s",
+                n_done,
+                len(to_process),
+                key,
+                record["independent_calls"],
+            )
 
     logger.info("[rescore] Done. %d total records.", len(results))
     harness.assert_unique_records(results, ("checkpoint", "weight", "prompt_id", "seed"))

@@ -59,19 +59,23 @@ def main() -> None:
 
     results = {}
     operating_points = []
-    print("=== Pattachitra adapter-weight sweep vs. sdxl_base "
-          "(n=90 paired each, where complete; uniform re-score, corrected style question) ===\n")
+    print(
+        "=== Pattachitra adapter-weight sweep vs. sdxl_base "
+        "(n=90 paired each, where complete; uniform re-score, corrected style question) ===\n"
+    )
 
     for ckpt in CHECKPOINTS:
         results[ckpt] = {}
         for weight in ALL_WEIGHTS:
             arm = {
-                f"{r['prompt_id']}_{r['seed']}": r for r in clean
+                f"{r['prompt_id']}_{r['seed']}": r
+                for r in clean
                 if r["checkpoint"] == ckpt and r.get("weight") == weight
             }
             if len(arm) < 90:
-                print(f"{ckpt} @ weight={weight}: only {len(arm)}/90 scored - "
-                      f"skipping (incomplete)\n")
+                print(
+                    f"{ckpt} @ weight={weight}: only {len(arm)}/90 scored - skipping (incomplete)\n"
+                )
                 continue
             keys = sorted(set(base) & set(arm))
             assert len(keys) == 90, f"{ckpt}@{weight}: expected 90 matched pairs, got {len(keys)}"
@@ -94,31 +98,43 @@ def main() -> None:
                 operating_points.append((ckpt, weight))
 
             print(f"--- {ckpt} @ weight={weight} ---")
-            print(f"{'Axis':<20}{'base':>9}{'arm':>9}{'diff':>10}{'SEM':>9}{'diff/SEM':>10}{'MDE@80%':>10}")
+            print(
+                f"{'Axis':<20}{'base':>9}{'arm':>9}{'diff':>10}{'SEM':>9}{'diff/SEM':>10}{'MDE@80%':>10}"
+            )
             for axis in AXES:
                 s = stats[axis]
-                print(f"{axis:<20}{s['base_mean']:>9.4f}{s['arm_mean']:>9.4f}{s['diff']:>+10.4f}"
-                      f"{s['sem']:>9.4f}{s['diff_over_sem']:>10.3f}{s['mde_80pct_power']:>10.4f}")
-            print(f"  figure_preservation non-inferior (>=-2.0xSEM): {fp_non_inferior}, "
-                  f"style_adherence significant positive (>+2.0xSEM): {sa_significant_positive} "
-                  f"-> {'OPERATING POINT' if is_operating_point else 'not viable'}\n")
+                print(
+                    f"{axis:<20}{s['base_mean']:>9.4f}{s['arm_mean']:>9.4f}{s['diff']:>+10.4f}"
+                    f"{s['sem']:>9.4f}{s['diff_over_sem']:>10.3f}{s['mde_80pct_power']:>10.4f}"
+                )
+            print(
+                f"  figure_preservation non-inferior (>=-2.0xSEM): {fp_non_inferior}, "
+                f"style_adherence significant positive (>+2.0xSEM): {sa_significant_positive} "
+                f"-> {'OPERATING POINT' if is_operating_point else 'not viable'}\n"
+            )
 
-    print("=== Joint curve (both axes together, per docs/WEIGHT_SWEEP_PREREGISTRATION.md - "
-          "never reported in isolation). fp MDE columns are required alongside every "
-          "non-inferiority claim per the same pre-registration - the >=-2xSEM screen is a "
-          "'failed to detect regression' test, not demonstrated non-inferiority. ===\n")
+    print(
+        "=== Joint curve (both axes together, per docs/WEIGHT_SWEEP_PREREGISTRATION.md - "
+        "never reported in isolation). fp MDE columns are required alongside every "
+        "non-inferiority claim per the same pre-registration - the >=-2xSEM screen is a "
+        "'failed to detect regression' test, not demonstrated non-inferiority. ===\n"
+    )
     for ckpt in CHECKPOINTS:
         if not results.get(ckpt):
             continue
         print(f"--- {ckpt} ---")
-        print(f"{'weight':>8}{'sa diff/SEM':>13}{'fp diff/SEM':>13}"
-              f"{'fp MDE@80%':>12}{'fp MDE@90%':>12}")
+        print(
+            f"{'weight':>8}{'sa diff/SEM':>13}{'fp diff/SEM':>13}"
+            f"{'fp MDE@80%':>12}{'fp MDE@90%':>12}"
+        )
         for weight_str in sorted(results[ckpt], key=float):
             stats = results[ckpt][weight_str]
             fp = stats["figure_preservation"]
-            print(f"{weight_str:>8}{stats['style_adherence']['diff_over_sem']:>13.3f}"
-                  f"{fp['diff_over_sem']:>13.3f}{fp['mde_80pct_power']:>12.4f}"
-                  f"{fp['mde_90pct_power']:>12.4f}")
+            print(
+                f"{weight_str:>8}{stats['style_adherence']['diff_over_sem']:>13.3f}"
+                f"{fp['diff_over_sem']:>13.3f}{fp['mde_80pct_power']:>12.4f}"
+                f"{fp['mde_90pct_power']:>12.4f}"
+            )
         print()
 
     print("=== Verdict ===")
@@ -131,9 +147,17 @@ def main() -> None:
         print("style_adherence-positive. The regression does not resolve by lowering adapter scale")
         print("- not a dosage/overtraining artifact recoverable this way.")
 
-    OUT_JSON.write_text(json.dumps({
-        "n_pairs": 90, "per_checkpoint_weight": results, "operating_points": operating_points,
-    }, indent=2), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(
+            {
+                "n_pairs": 90,
+                "per_checkpoint_weight": results,
+                "operating_points": operating_points,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"\nWritten: {OUT_JSON}")
 
 
