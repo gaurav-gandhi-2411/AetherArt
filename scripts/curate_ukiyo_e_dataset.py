@@ -77,7 +77,8 @@ def load_classifications() -> dict[str, dict]:
     if not CLASSIFICATIONS_PATH.exists():
         return {}
     try:
-        return {c["file_name"]: c for c in json.loads(CLASSIFICATIONS_PATH.read_text(encoding="utf-8"))}
+        raw = json.loads(CLASSIFICATIONS_PATH.read_text(encoding="utf-8"))
+        return {c["file_name"]: c for c in raw}
     except Exception:
         return {}
 
@@ -117,16 +118,31 @@ def main() -> None:
                 f"(confidence={verdict.get('confidence')}, location={verdict.get('location')})",
                 flush=True,
             )
-            classifications[rec["file_name"]] = {**rec, "vlm_verdict": verdict, "has_artifact": has_artifact}
+            classifications[rec["file_name"]] = {
+                **rec,
+                "vlm_verdict": verdict,
+                "has_artifact": has_artifact,
+            }
         except Exception as e:
-            print(f"[{i + 1}/{len(records)}] {rec['file_name']}: VLM call failed ({e}); keeping by default", flush=True)
-            classifications[rec["file_name"]] = {**rec, "vlm_verdict": None, "has_artifact": False}
+            print(
+                f"[{i + 1}/{len(records)}] {rec['file_name']}: VLM call failed "
+                f"({e}); keeping by default",
+                flush=True,
+            )
+            classifications[rec["file_name"]] = {
+                **rec,
+                "vlm_verdict": None,
+                "has_artifact": False,
+            }
 
         save_classifications(classifications)
 
     kept = [c for c in classifications.values() if not c["has_artifact"]]
     flagged = [c for c in classifications.values() if c["has_artifact"]]
-    print(f"\n=== Curation complete: {len(kept)} kept, {len(flagged)} flagged/excluded ===", flush=True)
+    print(
+        f"\n=== Curation complete: {len(kept)} kept, {len(flagged)} flagged/excluded ===",
+        flush=True,
+    )
 
     CURATED_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     with CURATED_METADATA.open("w", encoding="utf-8") as f:

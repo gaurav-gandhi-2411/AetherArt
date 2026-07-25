@@ -17,7 +17,8 @@ are saved per image so the threshold can be re-examined without re-running OCR.
 
 Usage:
     python scripts/detect_text_artifacts.py --manifest reports/_ocr_validation_sample.json
-    python scripts/detect_text_artifacts.py --dir outputs/verdict/lora_ab_30prompt_independent --out reports/text_artifact_detections_arms.json
+    python scripts/detect_text_artifacts.py --dir outputs/verdict/lora_ab_30prompt_independent \
+        --out reports/text_artifact_detections_arms.json
 """
 
 from __future__ import annotations
@@ -38,8 +39,7 @@ def build_reader():
 def detect(reader, image_path: str) -> dict:
     results = reader.readtext(image_path)
     detections = [
-        {"text": text, "confidence": round(float(conf), 4)}
-        for (_bbox, text, conf) in results
+        {"text": text, "confidence": round(float(conf), 4)} for (_bbox, text, conf) in results
     ]
     has_text = any(d["confidence"] >= CONF_THRESHOLD for d in detections)
     max_conf = max((d["confidence"] for d in detections), default=0.0)
@@ -88,9 +88,12 @@ def main() -> None:
         tmp = out_path.with_suffix(".tmp")
         tmp.write_text(json.dumps(results, indent=2), encoding="utf-8")
         tmp.replace(out_path)
-        print(f"[{i + 1}/{len(image_paths)}] {Path(img_path).name}: "
-              f"has_text={det['has_detected_text']} n_det={det['n_detections']} "
-              f"max_conf={det['max_confidence']:.3f}", flush=True)
+        print(
+            f"[{i + 1}/{len(image_paths)}] {Path(img_path).name}: "
+            f"has_text={det['has_detected_text']} n_det={det['n_detections']} "
+            f"max_conf={det['max_confidence']:.3f}",
+            flush=True,
+        )
 
     print(f"\nDone. {len(results)} total records. Written: {out_path}")
 
