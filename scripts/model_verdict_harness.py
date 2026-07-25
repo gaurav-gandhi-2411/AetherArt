@@ -40,8 +40,10 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import math
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -216,6 +218,109 @@ def score_vlm_judge(img: Image.Image, prompt: str) -> dict | None:
         except Exception as e:
             logger.warning("VLM judge call failed (axis=%s): %s", axis, e)
             return None
+    return validate_judge_scores(scores)
+
+
+# ── Harness integrity self-checks ────────────────────────────────────────
+# Three silent measurement bugs have surfaced across separate verdict runs (num_ctx judge
+# failures, a phantom VRAM counter, and a mid-run CUDA "illegal memory access" that poisoned
+# 68/90 records in one checkpoint's first attempt). Each was caught by manual, one-off
+# investigation after the fact. These checks make the same failure classes fail loudly, inline,
+# instead of silently writing poisoned records that a later analysis has to reconstruct.
+
+
+class DegenerateImageError(RuntimeError):
+    """Raised when a generated image matches a known corruption failure signature. Callers must
+    NOT catch this alongside ordinary generation errors — it aborts the run rather than being
+    recorded as a per-item error, because a corrupted CUDA context can poison every subsequent
+    generation in the same process, not just the one that happened to raise."""
+
+
+def check_cuda_health() -> None:
+    """Pre-flight probe: force a real CUDA kernel launch + readback and verify the result is
+    numerically correct before spending minutes loading a multi-GB pipeline onto a context that
+    may already be poisoned (e.g. left over from a crashed prior process sharing the same GPU).
+    No-ops on CPU-only environments. Raises RuntimeError on any failure or wrong result."""
+    if not torch.cuda.is_available():
+        return
+    try:
+        probe = torch.tensor([1.0, 2.0, 3.0], device="cuda")
+        result = (probe * 2.0).sum().item()
+        torch.cuda.synchronize()
+    except RuntimeError as e:
+        raise RuntimeError(
+            f"CUDA context health probe failed - GPU/driver context is unusable: {e}"
+        ) from e
+    if math.isnan(result) or not math.isclose(result, 12.0):
+        raise RuntimeError(
+            f"CUDA context health probe returned a corrupted result ({result}, expected 12.0) - "
+            "refusing to generate on a poisoned context"
+        )
+
+
+def detect_degenerate_image(
+    img: Image.Image, *, black_white_threshold: float = 0.5, min_std: float = 2.0
+) -> list[str]:
+    """Return a list of degeneracy issue names; empty means the image shows no known corruption
+    signature. This is NOT a style/quality judgment - it only catches the failure modes a
+    poisoned CUDA context or a broken generation call actually produces (NaN/Inf pixels, solid-
+    color collapse, near-uniform noise-free output), the same signature figure-dropout-from-
+    corruption would leave behind."""
+    arr = np.asarray(img.convert("RGB"), dtype=np.float64)
+    issues = []
+    if not np.isfinite(arr).all():
+        issues.append("non_finite_pixels")
+    pct_black = float((arr.sum(axis=-1) == 0).mean())
+    pct_white = float((arr.sum(axis=-1) == 765).mean())
+    if pct_black > black_white_threshold:
+        issues.append(f"mostly_black({pct_black:.0%})")
+    if pct_white > black_white_threshold:
+        issues.append(f"mostly_white({pct_white:.0%})")
+    if arr.std() < min_std:
+        issues.append(f"near_uniform(std={arr.std():.2f})")
+    return issues
+
+
+def assert_no_degenerate_image(img: Image.Image, context: str) -> None:
+    """Raises DegenerateImageError (never a plain Exception a caller's try/except could
+    silently absorb into an 'error' record) if img matches a known corruption signature."""
+    issues = detect_degenerate_image(img)
+    if issues:
+        raise DegenerateImageError(
+            f"Degenerate image detected for {context}: {issues} - aborting run rather than "
+            "writing a poisoned record"
+        )
+
+
+def assert_unique_records(results: list[dict], key_fields: tuple[str, ...]) -> None:
+    """Raise if any two non-errored records share the same key_fields composite key. Generalizes
+    the retry-duplicate bug found in scripts/_pattachitra_ab_base_comparison.py (a retry
+    appended a fresh record instead of replacing a stale errored one, producing 91 records
+    instead of 90) into a check every harness run applies to itself."""
+    keys = [tuple(r[f] for f in key_fields) for r in results if not r.get("error")]
+    dupes = {k: v for k, v in Counter(keys).items() if v > 1}
+    if dupes:
+        raise AssertionError(f"Duplicate records for key fields {key_fields}: {dupes}")
+
+
+def validate_judge_scores(
+    scores: dict | None, axes: tuple[str, ...] = VLM_JUDGE_AXES
+) -> dict | None:
+    """Validate a VLM judge response before it's accepted into the dataset. Returns scores
+    unchanged if every axis is present, numeric, and in [0.0, 1.0]; otherwise logs a warning and
+    returns None - matching score_vlm_judge's existing all-or-nothing failure semantics, so a
+    hallucinated out-of-range score (e.g. 1.5) can no longer silently pass through
+    `float(result[axis])` and corrupt downstream paired-diff stats."""
+    if scores is None:
+        return None
+    for axis in axes:
+        value = scores.get(axis)
+        if not isinstance(value, int | float) or isinstance(value, bool) or math.isnan(value):
+            logger.warning("Judge response invalid for axis %s: %r", axis, value)
+            return None
+        if not 0.0 <= value <= 1.0:
+            logger.warning("Judge response out of range for axis %s: %s", axis, value)
+            return None
     return scores
 
 
@@ -246,6 +351,7 @@ def run_generation_family(
     slowdown (54s -> 335s -> 380s per image, escalating), the same pathology documented in
     docs/LATENCY_ROOT_CAUSE.md. Deferring HPS avoids it entirely.
     """
+    check_cuda_health()
     out_json = REPORTS_DIR / f"verdict_{family}.json"
     img_dir = OUT_DIR / family
     img_dir.mkdir(parents=True, exist_ok=True)
@@ -283,6 +389,7 @@ def run_generation_family(
                 t0 = time.time()
                 img = gen_fn(pipe, prompt_entry["prompt"], seed, width, height)
                 latency = time.time() - t0
+                assert_no_degenerate_image(img, context=f"{family}:{key}")
 
                 img_path = img_dir / f"{prompt_entry['id']}_seed{seed}.png"
                 img.save(img_path)
@@ -293,6 +400,8 @@ def run_generation_family(
                 if "clip" in scorers:
                     record["clip_score"] = round(score_clip_one(img, prompt_entry["prompt"]), 4)
 
+            except DegenerateImageError:
+                raise
             except Exception as e:
                 logger.exception("[%s] Error on %s", family, key)
                 record["error"] = str(e)
@@ -311,6 +420,7 @@ def run_generation_family(
     elapsed = time.time() - t_start
     logger.info("[%s] Generation phase done. %d generated this run in %.1f min. Total: %d",
                 family, n_done_this_run, elapsed / 60, len(results))
+    assert_unique_records(results, ("prompt_id", "seed"))
 
     # ── Phase 2: release pipeline, score HPS on every image missing it ──
     if "hps" in scorers:
@@ -436,6 +546,7 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
     GPU-resident alongside the pipeline); phase 2 releases the pipeline, then scores VLM judge
     on every saved image.
     """
+    check_cuda_health()
     out_json = REPORTS_DIR / f"verdict_{label}.json"
     img_dir = OUT_DIR / label
     img_dir.mkdir(parents=True, exist_ok=True)
@@ -481,6 +592,7 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
                 t0 = time.time()
                 img = gen_ukiyo_e_lora(pipe, prompt_entry["prompt"], seed, 1024, 1024)
                 latency = time.time() - t0
+                assert_no_degenerate_image(img, context=f"{label}:{key}")
                 img_path = img_dir / f"{prompt_entry['id']}_seed{seed}.png"
                 img.save(img_path)
                 record["image_path"] = str(img_path)
@@ -495,6 +607,8 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
                 base_img = Image.open(base_img_path)
                 record["lpips_vs_base"] = round(score_lpips_pair(img, base_img), 6)
 
+            except DegenerateImageError:
+                raise
             except Exception as e:
                 logger.exception("[%s] Error on %s", label, key)
                 record["error"] = str(e)
@@ -510,6 +624,7 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
             )
 
     logger.info("[%s] Generation phase done. %d records total.", label, len(results))
+    assert_unique_records(results, ("prompt_id", "seed"))
 
     # ── Phase 2: release pipeline, then score VLM judge on every image missing it ──
     need_vlm = [r for r in results if not r.get("error") and r.get("vlm_judge") is None]
@@ -544,6 +659,7 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
     """Self-conditioned: canny-extract from sdxl_base's own saved output, same prompt/seed."""
     from aetherart.controlnet_sdxl import generate_sdxl_controlnet, preprocess_canny
 
+    check_cuda_health()
     out_json = REPORTS_DIR / "verdict_sdxl_controlnet_union.json"
     img_dir = OUT_DIR / "sdxl_controlnet_union"
     img_dir.mkdir(parents=True, exist_ok=True)
@@ -589,6 +705,7 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
                     width=1024, height=1024, seed=seed,
                 )
                 latency = time.time() - t0
+                assert_no_degenerate_image(img, context=f"sdxl_controlnet_union:{key}")
                 img_path = img_dir / f"{prompt_entry['id']}_seed{seed}.png"
                 img.save(img_path)
                 record["image_path"] = str(img_path)
@@ -596,6 +713,8 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
                 record.update(_img_stats(img))
                 record["clip_score"] = round(score_clip_one(img, prompt_entry["prompt"]), 4)
 
+            except DegenerateImageError:
+                raise
             except Exception as e:
                 logger.exception("[sdxl_controlnet_union] Error on %s", key)
                 record["error"] = str(e)
@@ -608,6 +727,7 @@ def run_controlnet_family(args: argparse.Namespace) -> None:
                         n_done, key, record.get("clip_score"), record.get("latency_s"))
 
     logger.info("[sdxl_controlnet_union] Generation phase done. %d records total.", len(results))
+    assert_unique_records(results, ("prompt_id", "seed"))
 
     # Defer HPS to a second pass, same rationale as run_generation_family: avoid the
     # generation-pipeline + HPS-model VRAM contention that caused 335-380s/image slowdowns.

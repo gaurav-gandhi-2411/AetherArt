@@ -820,14 +820,25 @@ best `style_adherence` diff/SEM.
 | curated1500 | **−2.234** (significant regression) | −7.226 | REGRESSED |
 
 **No checkpoint clears the guardrail — the regression is not a checkpoint-selection artifact.**
-It is present, and large (−5.5×SEM at minimum), from the *earliest* checkpoint tested (500 steps),
-rules out "checkpoint-1500 was simply overtrained" as a full explanation (checkpoint-1000 regresses
-*worse* than 1500, not better), and does not improve with proper selection the way ukiyo-e's did.
-`style_adherence` does show a monotonic within-run drift (500: mildly positive → 1000: mildly
+It is present, and large (−5.5×SEM at minimum), from the *earliest* checkpoint tested (500 steps) —
+even minimal training introduces it — and does not improve with proper selection the way ukiyo-e's
+did. `style_adherence` does show a monotonic within-run drift (500: mildly positive → 1000: mildly
 negative → 1500: significantly negative) consistent with some overtraining on that axis
 specifically — but the guardrail failure that would have blocked promotion under the ukiyo-e
 methodology is present at every checkpoint tested, so checkpoint selection changes nothing about
 the headline verdict.
+
+*A later audit checked the diff/SEM ordering directly rather than leaving it as an unexplained
+anomaly (prompted by: "checkpoint-1000 scoring worse than both 500 and 1500 isn't a training
+dynamic — genuine overtraining is monotonic in steps").* The **raw** `figure_preservation` diff
+(not normalized by SEM) is in fact monotonically non-decreasing in magnitude with more steps —
+500: −0.0228 → 1000: −0.0444 → 1500: −0.0461 (`reports/pattachitra_ab_stats.json`) — consistent
+with progressively worsening figure/subject dropout, not a training-dynamics reversal. The
+diff/SEM *ratio* ranks checkpoint-1000 (−7.768) as marginally worse than checkpoint-1500 (−7.226)
+only because checkpoint-1500's per-pair variance is higher (stdev of the 90 paired diffs: 0.0605
+vs. 0.0543) — an artifact of the SEM denominator, not evidence the underlying effect improved at
+1500. See §7.2(4): all three checkpoints were independently confirmed to come from verified-clean
+generation processes, so this is not a shared-corruption confound either.
 
 **(2) LoRA applied weight.** Verified directly against the ukiyo-e recipe, not assumed: the
 training script sets `lora_alpha = args.rank` internally
@@ -852,9 +863,35 @@ contributing factor for a future retrain with a cleaner token (e.g. `pattagraph`
 nonce token) to test — **not** a demonstrated mechanism, and not sufficient on its own to explain a
 −5.5-to-7.8×SEM effect present at every checkpoint.
 
-**Conclusion: none of the three mechanical explanations accounts for the regression.** Checkpoint
-selection doesn't resolve it (worse, even) — the finding survives and is written up below as a
-genuine result, not an eval artifact.
+**(4) CUDA context corruption mid-run (checkpoint-500).** The first `curated500` generation attempt
+crashed with `RuntimeError: CUDA error: an illegal memory access was encountered` after 22/90
+images, then failed all 68 remaining attempts in that process (a poisoned CUDA context fails every
+subsequent kernel launch). Checked, not assumed, on two axes: **(a) could the crash have corrupted
+the 22 images generated *before* it, in the same process?** File-mtime provenance identified
+exactly which 22 images preceded the crash; a pixel-level integrity audit (mean/std/min/max/NaN/
+pure-black/pure-white per image) found them statistically indistinguishable from confirmed-clean
+images from other processes (mean-of-means 120.78 vs. 120.26; zero NaN, zero pure-black/white
+pixels in either group), and direct visual inspection of the boundary images — including the very
+last image generated before the crash — showed clean, coherent, non-degenerate output. This also
+matches the architecture: an "illegal memory access" is a hard, fail-loud kernel-launch error: it
+does not retroactively corrupt data already copied off-GPU and written to disk by an earlier,
+already-completed iteration. **(b) base, curated1000, and curated1500** were each independently
+confirmed to come from a single, uninterrupted, zero-CUDA-error process (log grep for
+`traceback|cuda error|illegal memory access` → 0 matches, exactly one pipeline load, for each) — so
+only curated500 has any at-risk images, and those are confirmed clean. **No image regeneration was
+warranted.** The retry-duplicate script bug (§7.3) was separately verified fully clean: all four
+checkpoint sets contain exactly 90 unique `(prompt_id, seed)` records with zero duplicates and zero
+missing cells (`reports/pattachitra_ab_base_comparison.json`, checked directly). A permanent
+harness self-check (CUDA pre-flight health probe, per-record uniqueness assertion, degenerate-image
+detection, judge-response range validation — `scripts/model_verdict_harness.py`, 16 new tests) was
+added afterward so this class of silent corruption fails loudly instead of requiring a manual
+forensic audit to catch.
+
+**Conclusion: none of the four mechanical explanations accounts for the regression.** Checkpoint
+selection doesn't resolve it (worse, even), and the CUDA corruption is confirmed contained to
+68 failed *attempts* (0 corrupted successes) on one checkpoint, ruled out by direct pixel/visual
+audit rather than architectural reasoning alone — the finding survives and is written up below as
+a genuine result, not an eval artifact.
 
 ### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 
@@ -862,7 +899,10 @@ genuine result, not an eval artifact.
 `reports/pattachitra_ab_stats.json`. 0 errors across 270 generations and 810 independent VLM calls
 across all three checkpoints; one CUDA context corruption mid-run on the checkpoint-500 attempt and
 one script bug — a retry that appended a duplicate record instead of replacing the errored one —
-were both caught, root-caused, and fixed before this table was produced, not smoothed over.)
+were both caught, root-caused, and fixed before this table was produced, not smoothed over. A
+follow-up audit then specifically checked whether the pre-crash images or the fix itself left a
+residual artifact in this table — see §7.2(4): verified clean on both counts, no regeneration
+needed.)
 
 | Checkpoint | Endpoint | Base mean | Arm mean | Diff | SEM | diff/SEM | MDE@80% |
 |---|---|---|---|---|---|---|---|

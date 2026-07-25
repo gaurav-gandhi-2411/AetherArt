@@ -14,6 +14,8 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import numpy as np
+import pytest
 from PIL import Image
 
 
@@ -93,3 +95,149 @@ class TestVlmJudgeIsIndependentPerAxis:
             result = _mod.score_vlm_judge(img, "a test prompt")
 
         assert result is None
+
+    def test_out_of_range_axis_score_fails_the_whole_record(self):
+        """A judge hallucinating a value outside [0, 1] (e.g. 1.5) must not silently pass
+        through float(result[axis]) into the dataset - added after a CUDA-corruption audit
+        found no range check existed on the judge's raw response."""
+        img = Image.new("RGB", (8, 8))
+
+        def fake_post(url, json, timeout):
+            axis = next(a for a in _mod.VLM_JUDGE_AXES if f'"{a}"' in json["prompt"])
+            if axis == "figure_preservation":
+                resp = MagicMock()
+                resp.raise_for_status.return_value = None
+                resp.json.return_value = {"response": '{"figure_preservation": 1.5}'}
+                return resp
+            return _mock_ollama_response(axis)
+
+        with patch("requests.post", side_effect=fake_post):
+            result = _mod.score_vlm_judge(img, "a test prompt")
+
+        assert result is None
+
+
+class TestCudaHealthProbe:
+    """docs/MODEL_VERDICT.md's CUDA-corruption audit found no pre-flight check existed to catch
+    a poisoned CUDA context before spending minutes loading a pipeline onto it."""
+
+    def test_noop_when_cuda_unavailable(self):
+        with patch.object(_mod.torch.cuda, "is_available", return_value=False):
+            _mod.check_cuda_health()  # must not raise
+
+    def test_raises_on_broken_context(self):
+        cuda_error = RuntimeError("CUDA error: illegal memory access")
+        with (
+            patch.object(_mod.torch.cuda, "is_available", return_value=True),
+            patch.object(_mod.torch, "tensor", side_effect=cuda_error),
+            pytest.raises(RuntimeError, match="health probe failed"),
+        ):
+            _mod.check_cuda_health()
+
+    def test_raises_on_wrong_result(self):
+        mock_tensor = MagicMock()
+        mock_tensor.__mul__ = MagicMock(return_value=mock_tensor)
+        mock_tensor.sum.return_value = mock_tensor
+        mock_tensor.item.return_value = 99.0  # correct probe result is 12.0
+
+        with (
+            patch.object(_mod.torch.cuda, "is_available", return_value=True),
+            patch.object(_mod.torch, "tensor", return_value=mock_tensor),
+            patch.object(_mod.torch.cuda, "synchronize"),
+            pytest.raises(RuntimeError, match="corrupted result"),
+        ):
+            _mod.check_cuda_health()
+
+
+class TestDetectDegenerateImage:
+    """Pixel-level corruption signatures (NaN, solid-color collapse) are the failure mode a
+    poisoned CUDA context actually produces - this is not a style/quality judgment."""
+
+    def test_normal_varied_image_has_no_issues(self):
+        arr = np.random.default_rng(42).integers(0, 255, (64, 64, 3), dtype=np.uint8)
+        img = Image.fromarray(arr)
+        assert _mod.detect_degenerate_image(img) == []
+
+    def test_all_black_image_flagged(self):
+        img = Image.new("RGB", (32, 32), (0, 0, 0))
+        issues = _mod.detect_degenerate_image(img)
+        assert any(i.startswith("mostly_black") for i in issues)
+
+    def test_all_white_image_flagged(self):
+        img = Image.new("RGB", (32, 32), (255, 255, 255))
+        issues = _mod.detect_degenerate_image(img)
+        assert any(i.startswith("mostly_white") for i in issues)
+
+    def test_uniform_gray_image_flagged_near_uniform(self):
+        img = Image.new("RGB", (32, 32), (128, 128, 128))
+        issues = _mod.detect_degenerate_image(img)
+        assert any(i.startswith("near_uniform") for i in issues)
+
+
+class TestAssertNoDegenerateImage:
+    def test_raises_degenerate_image_error_on_black_image(self):
+        img = Image.new("RGB", (32, 32), (0, 0, 0))
+        with pytest.raises(_mod.DegenerateImageError):
+            _mod.assert_no_degenerate_image(img, context="test:pat_001_42")
+
+    def test_no_raise_on_normal_image(self):
+        arr = np.random.default_rng(7).integers(0, 255, (64, 64, 3), dtype=np.uint8)
+        img = Image.fromarray(arr)
+        _mod.assert_no_degenerate_image(img, context="test:pat_001_42")  # must not raise
+
+
+class TestAssertUniqueRecords:
+    """Generalizes the retry-duplicate bug (a retry appended a fresh record instead of
+    replacing a stale errored one, producing 91 records instead of 90) into a check every
+    harness run applies to its own output."""
+
+    def test_no_dupes_does_not_raise(self):
+        results = [
+            {"prompt_id": "pat_001", "seed": 42, "error": None},
+            {"prompt_id": "pat_001", "seed": 43, "error": None},
+        ]
+        _mod.assert_unique_records(results, ("prompt_id", "seed"))  # must not raise
+
+    def test_duplicate_non_errored_record_raises(self):
+        results = [
+            {"prompt_id": "pat_001", "seed": 42, "error": None},
+            {"prompt_id": "pat_001", "seed": 42, "error": None},
+        ]
+        with pytest.raises(AssertionError, match="Duplicate"):
+            _mod.assert_unique_records(results, ("prompt_id", "seed"))
+
+    def test_errored_record_sharing_key_with_success_is_not_a_duplicate(self):
+        """A retry's successful record legitimately shares a key with its own stale errored
+        predecessor - that predecessor must have already been stripped by the caller, but this
+        check itself must not treat error+success as a collision."""
+        results = [
+            {"prompt_id": "pat_001", "seed": 42, "error": "RuntimeError: CUDA error"},
+            {"prompt_id": "pat_001", "seed": 42, "error": None},
+        ]
+        _mod.assert_unique_records(results, ("prompt_id", "seed"))  # must not raise
+
+
+class TestValidateJudgeScores:
+    def test_valid_scores_returned_unchanged(self):
+        scores = {"style_adherence": 0.9, "figure_preservation": 0.95, "artifact_absence": 1.0}
+        assert _mod.validate_judge_scores(scores) == scores
+
+    def test_none_input_returns_none(self):
+        assert _mod.validate_judge_scores(None) is None
+
+    def test_missing_axis_returns_none(self):
+        scores = {"style_adherence": 0.9, "figure_preservation": 0.95}
+        assert _mod.validate_judge_scores(scores) is None
+
+    def test_out_of_range_value_returns_none(self):
+        scores = {"style_adherence": 1.5, "figure_preservation": 0.95, "artifact_absence": 1.0}
+        assert _mod.validate_judge_scores(scores) is None
+
+    def test_non_numeric_value_returns_none(self):
+        scores = {"style_adherence": "high", "figure_preservation": 0.95, "artifact_absence": 1.0}
+        assert _mod.validate_judge_scores(scores) is None
+
+    def test_nan_value_returns_none(self):
+        scores = {"style_adherence": float("nan"), "figure_preservation": 0.95,
+                   "artifact_absence": 1.0}
+        assert _mod.validate_judge_scores(scores) is None

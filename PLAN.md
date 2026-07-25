@@ -57,7 +57,32 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25b)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25c)**
+
+- [x] **CUDA-corruption audit on the Pattachitra negative (2026-07-25c) — finding survives; one
+      prior claim corrected.** A skeptical re-audit specifically asked whether the CUDA "illegal
+      memory access" crash on the checkpoint-500 attempt (below) could have silently degraded the
+      22 images generated *before* the crash, not just the 68 failed attempts after it. Checked
+      directly, not assumed: file-mtime provenance identified the exact 22 at-risk images; a
+      pixel-level integrity audit (mean/std/NaN/pure-black/pure-white per image) found them
+      statistically indistinguishable from confirmed-clean images (zero NaN or black/white regions
+      in either group), and direct visual inspection of the boundary images — including the very
+      last image generated before the crash — showed clean, coherent output. `base`, `curated1000`,
+      `curated1500` were each independently confirmed to come from a single, zero-CUDA-error
+      process (log grep, one pipeline load each). **No regeneration was warranted.** Deduplication
+      re-verified directly: all four checkpoint sets (base/500/1000/1500) contain exactly 90 unique
+      `(prompt_id, seed)` records, zero duplicates. **One correction:** the prior write-up's claim
+      that "checkpoint-1000 regresses worse than 1500, ruling out simple overtraining" used the
+      diff/SEM *ratio*; the **raw** diff is actually monotonic in steps (−0.0228 → −0.0444 →
+      −0.0461) — 1500's higher ratio-denominator variance (not a smaller effect) is what inverted
+      the ranking. Corrected in `docs/MODEL_VERDICT.md` §7.2. **Added a permanent harness
+      self-check** (`scripts/model_verdict_harness.py`): a CUDA pre-flight health probe, a
+      per-record uniqueness assertion, degenerate-image detection (NaN/black/white/near-uniform)
+      that aborts the run rather than writing a poisoned record, and a judge-response range
+      validator (a hallucinated out-of-range score like 1.5 previously passed through uncaught) —
+      16 new tests, wired into all three `model_verdict_harness.py` family runners plus
+      `scripts/_pattachitra_ab_base_comparison.py`. Full suite: 254 passed, 8 skipped. No new
+      training or GCP work this session, as instructed.
 
 - [x] **Validated the Pattachitra negative before writing it up (2026-07-25b) — survives, with
       the full picture more nuanced than the single-checkpoint version.** A −7.226×SEM guardrail
