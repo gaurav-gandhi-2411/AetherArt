@@ -111,16 +111,21 @@ def main() -> None:
                   f"-> {'OPERATING POINT' if is_operating_point else 'not viable'}\n")
 
     print("=== Joint curve (both axes together, per docs/WEIGHT_SWEEP_PREREGISTRATION.md - "
-          "never reported in isolation) ===\n")
+          "never reported in isolation). fp MDE columns are required alongside every "
+          "non-inferiority claim per the same pre-registration - the >=-2xSEM screen is a "
+          "'failed to detect regression' test, not demonstrated non-inferiority. ===\n")
     for ckpt in CHECKPOINTS:
         if not results.get(ckpt):
             continue
         print(f"--- {ckpt} ---")
-        print(f"{'weight':>8}{'style_adherence diff/SEM':>28}{'figure_preservation diff/SEM':>32}")
+        print(f"{'weight':>8}{'sa diff/SEM':>13}{'fp diff/SEM':>13}"
+              f"{'fp MDE@80%':>12}{'fp MDE@90%':>12}")
         for weight_str in sorted(results[ckpt], key=float):
             stats = results[ckpt][weight_str]
-            print(f"{weight_str:>8}{stats['style_adherence']['diff_over_sem']:>28.3f}"
-                  f"{stats['figure_preservation']['diff_over_sem']:>32.3f}")
+            fp = stats["figure_preservation"]
+            print(f"{weight_str:>8}{stats['style_adherence']['diff_over_sem']:>13.3f}"
+                  f"{fp['diff_over_sem']:>13.3f}{fp['mde_80pct_power']:>12.4f}"
+                  f"{fp['mde_90pct_power']:>12.4f}")
         print()
 
     print("=== Verdict ===")

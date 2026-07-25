@@ -66,6 +66,122 @@ endpoint in this project — SEM on the 90 per-pair differences directly):
   `style_adherence` also collapses toward zero is explicitly **not** a counter-example to this
   conclusion — see the tautology guard above.
 
+## Predicted outcome (recorded 2026-07-25, before any sweep data is read)
+
+**A premise check before predicting anything:** the prompt for this amendment proposed
+`style_adherence = −2.234×SEM at weight=1.0` as the Pattachitra starting point. Checked against
+`reports/pattachitra_ab_stats.json` (already-published, pre-sweep data — reading this is not
+reading sweep output) — **that number belongs to checkpoint-1500, which is not part of this
+sweep.** The two checkpoints actually being swept have different, and much less extreme,
+`weight=1.0` starting points:
+
+| Checkpoint | `style_adherence` diff/SEM at weight=1.0 |
+|---|---|
+| curated500 | **+0.477** (not significant) |
+| curated1000 | **−0.789** (not significant) |
+| *curated1500 (not swept)* | *−2.234 (significant regression) — cited number, wrong checkpoint* |
+
+This correction does not weaken the underlying argument — if anything it sharpens it. At
+`weight=0`, `style_adherence` diff → 0 by construction (the tautology guard above). **Neither
+checkpoint's `weight=1.0` value (+0.477 or −0.789) is anywhere near the +2.0×SEM bar either** — so
+for the joint criterion to be satisfied at any interior weight (0.3/0.5/0.7), the `style_adherence`
+curve would have to rise *above both of its own boundary values* (the weight=0 value of 0 and the
+weight=1.0 value of +0.477 or −0.789) to cross +2.0×SEM somewhere in the middle. That is an
+interior peak — non-monotonic in weight — by construction of the endpoints, not an artifact of the
+specific (corrected) starting numbers.
+
+**Pre-registered prediction: no viable operating point for either checkpoint.** Given neither
+boundary value comes remotely close to +2.0×SEM, an interior weight clearing that bar would be a
+genuinely surprising result, not a natural interpolation between the two endpoints. **If the sweep
+finds one anyway, the non-monotonicity itself is the finding that requires an explanation — a
+mechanism for why an intermediate blend of the adapter and base model would produce a *stronger*
+style signal than either the full adapter or no adapter at all — and must be investigated and
+stated as such, not reported as a plain "operating point found" alongside the joint-curve table as
+if it were an expected result.** A found operating point that goes unexplained is not accepted at
+face value under this pre-registration.
+
+## Non-inferiority screen vs. demonstrated non-inferiority (fixed now)
+
+**The `figure_preservation diff/SEM >= -2.0` rule is a "failed to detect significant regression"
+screen, not formal demonstrated non-inferiority.** It is equivalent to failing to reject a null of
+"no regression" — which is a different and weaker claim than "regression is bounded below a
+clinically/practically irrelevant margin" (which would require a pre-specified non-inferiority
+margin and a one-sided test against it, not reused here). **Concretely: a real degradation up to
+the arm's own MDE can exist in the population and still pass this screen undetected**, because the
+test lacks the power to distinguish it from zero. The magnitude of that blind spot is
+checkpoint/weight-specific, not a single fixed number — checked against
+`reports/pattachitra_ab_stats.json` for the two checkpoints under test at `weight=1.0`:
+
+| Checkpoint | `figure_preservation` MDE @ 80% power (weight=1.0) | MDE @ 90% power |
+|---|---|---|
+| curated500 | 0.0115 | 0.0133 |
+| curated1000 | 0.0160 | 0.0185 |
+
+**Correction to a number floated in the same prompt as this amendment:** "~0.037" is *not* this
+guardrail's MDE — it is `docs/MODEL_VERDICT.md` §4.7's MDE for a *different* comparison entirely
+(ukiyo-e's arm-to-arm `artifact_absence` endpoint, curated vs. uncurated, a different axis, a
+different pair of arms, a different corpus). Citing it here would understate this guardrail's
+actual sensitivity by roughly 2–3×; the real blind-spot magnitude for the checkpoints this sweep
+tests is the smaller 0.0115–0.0185 range above. The sweep's own new weights (0.3/0.5/0.7) will
+each have their own MDE, computed from that arm's own per-pair variance — not assumed to match the
+`weight=1.0` figures above.
+
+**Reporting requirement (does not change the primary ±2×SEM rule — adds disclosure alongside
+it):** every non-inferiority claim in the sweep's results — i.e. every `(checkpoint, weight)`
+labeled "non-inferior" under the joint rule — must print its own computed MDE@80%/90% directly
+alongside the claim, not only in a separate per-weight detail block. A "non-inferior" label without
+its MDE printed in the same line is treated as incomplete reporting, not a clean pass.
+`scripts/compute_pattachitra_weight_sweep_stats.py`'s joint-curve summary table was extended to
+include the MDE columns for exactly this reason.
+
+## Judge style positive control (`scripts/judge_style_positive_control.py`) — pre-registered before running
+
+**Every `style_adherence` number this sweep will produce inherits whatever validity the underlying
+VLM judge question has.** Before trusting any of them — the sweep's, or any of the ones already in
+`docs/MODEL_VERDICT.md` §7 — the judge must be shown to actually recognize the target style at all.
+
+**Critical finding, discovered while writing the control (not a sweep result — direct code
+inspection of `scripts/model_verdict_harness.py`, committed before any positive-control data is
+read):** the `style_adherence` judge question is **hardcoded** to ask "does this image look like
+an authentic Ukiyo-e (Japanese woodblock print)," regardless of caller. `scripts/_pattachitra_ab_
+base_comparison.py` reuses this exact function unmodified. **Every Pattachitra `style_adherence`
+score ever recorded — all 360 records, the entire primary endpoint A of §7 — was generated by
+asking the judge whether the image looks like ukiyo-e, not Pattachitra.** This is a stronger,
+more specific defect than "the judge might be insensitive to Pattachitra" (the concern this
+control was originally commissioned to test): the production path never asks about Pattachitra's
+style at all. The control therefore tests two prompt variants for Pattachitra (the literal
+production prompt, and a corrected Pattachitra-worded one grounded in
+`docs/NEXT_MODEL_SPEC.md`'s own prior corpus-quality description — "flat colour, dense ornamental
+border, circular iconographic composition," not a newly-invented description) — full decision
+tree in the script's docstring, reproduced in summary:
+
+- Ukiyo-e must pass (real > base by >2×SEM, unpaired) or the control methodology itself is
+  suspect — checked first, before trusting anything about Pattachitra.
+- Pattachitra failing the *production* prompt but passing the *corrected* one demonstrates the
+  judge is not blind — the deployed question was simply wrong, and a re-score is required before
+  any style-lift claim.
+- Pattachitra failing *both* means the judge is insensitive to this domain regardless of wording —
+  a different failure mode, same practical conclusion: every existing number is uninformative.
+- Either way, **no existing Pattachitra `style_adherence` number is trusted as recorded** once
+  this bug is confirmed — this is not deferred to "if" the control fails; the bug's existence is
+  already independently established by reading the code, before any control data exists.
+
+**Corroborating, non-sufficient context — corrected count:** `artifact_absence` is pinned at
+exactly 1.0 with zero variance across all **360** Pattachitra records (checked directly against
+`reports/pattachitra_ab_base_comparison.json` — not "180," the figure this task was drafted with).
+A non-discriminating axis is *consistent with* judge insensitivity to this domain, but §7.5
+already offers a competing, equally plausible explanation (Pattachitra prompts genuinely don't
+evoke SDXL's text/artifact tendency the way ukiyo-e prompts do) — the ceiling alone cannot
+distinguish these two explanations. The positive control's `style_adherence` result is the
+decisive test; the `artifact_absence` ceiling is reported for context only, never as independent
+proof of judge blindness on its own.
+
+**Not run yet.** This makes ~223 new Ollama VLM calls (100 Pattachitra × 2 prompts + 23 ukiyo-e ×
+1 prompt) against images that already exist on disk — no new SDXL generation. Deferred until the
+weight sweep finishes and the GPU/Ollama are free, per this task's explicit constraint. Reported
+*before* the weight-sweep stats once both are available (`docs/MODEL_VERDICT.md` §7's positive
+control result gates how the sweep's own `style_adherence` numbers, at any weight, should be read).
+
 ## Required reporting format (fixed now)
 
 1. **`style_adherence` and `figure_preservation` are reported together as a function of weight —
