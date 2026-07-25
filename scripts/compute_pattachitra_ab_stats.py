@@ -47,10 +47,15 @@ def paired_stats(base: dict, arm: dict, keys: list[str]) -> dict:
         mde_80 = (Z_ALPHA_2 + Z_BETA_80) * sem
         mde_90 = (Z_ALPHA_2 + Z_BETA_90) * sem
         out[axis] = {
-            "base_mean": round(mean_b, 4), "arm_mean": round(mean_c, 4),
-            "diff": round(diff_mean, 4), "sem": round(sem, 4), "diff_over_sem": round(ratio, 3),
-            "ci95_lo": round(ci_lo, 4), "ci95_hi": round(ci_hi, 4),
-            "mde_80pct_power": round(mde_80, 4), "mde_90pct_power": round(mde_90, 4),
+            "base_mean": round(mean_b, 4),
+            "arm_mean": round(mean_c, 4),
+            "diff": round(diff_mean, 4),
+            "sem": round(sem, 4),
+            "diff_over_sem": round(ratio, 3),
+            "ci95_lo": round(ci_lo, 4),
+            "ci95_hi": round(ci_hi, 4),
+            "mde_80pct_power": round(mde_80, 4),
+            "mde_90pct_power": round(mde_90, 4),
         }
     return out
 
@@ -73,11 +78,15 @@ def main() -> None:
         all_results[ckpt] = stats
 
         print(f"--- {ckpt} ---")
-        print(f"{'Axis':<22}{'base':>9}{'arm':>9}{'diff':>10}{'SEM':>9}{'diff/SEM':>10}{'MDE@80%':>10}")
+        print(
+            f"{'Axis':<22}{'base':>9}{'arm':>9}{'diff':>10}{'SEM':>9}{'diff/SEM':>10}{'MDE@80%':>10}"
+        )
         for axis in AXES:
             s = stats[axis]
-            print(f"{axis:<22}{s['base_mean']:>9.4f}{s['arm_mean']:>9.4f}{s['diff']:>+10.4f}"
-                  f"{s['sem']:>9.4f}{s['diff_over_sem']:>10.3f}{s['mde_80pct_power']:>10.4f}")
+            print(
+                f"{axis:<22}{s['base_mean']:>9.4f}{s['arm_mean']:>9.4f}{s['diff']:>+10.4f}"
+                f"{s['sem']:>9.4f}{s['diff_over_sem']:>10.3f}{s['mde_80pct_power']:>10.4f}"
+            )
         fp = stats["figure_preservation"]
         regressed = fp["diff"] < 0 and fp["diff_over_sem"] < -2.0
         print(f"  figure_preservation guardrail: {'REGRESSED' if regressed else 'no regression'}\n")
@@ -105,17 +114,26 @@ def main() -> None:
         selected = None
     else:
         selected = max(eligible, key=lambda c: all_results[c]["style_adherence"]["diff_over_sem"])
-        print(f"\nSelected checkpoint: {selected} "
-              f"(style_adherence diff/SEM = {all_results[selected]['style_adherence']['diff_over_sem']:+.3f} "
-              f"among eligible checkpoints)")
+        selected_diff_over_sem = all_results[selected]["style_adherence"]["diff_over_sem"]
+        print(
+            f"\nSelected checkpoint: {selected} "
+            f"(style_adherence diff/SEM = {selected_diff_over_sem:+.3f} "
+            f"among eligible checkpoints)"
+        )
 
     out_path = ROOT / "reports" / "pattachitra_ab_stats.json"
-    out_path.write_text(json.dumps({
-        "n_pairs": 90,
-        "per_checkpoint": all_results,
-        "eligible_checkpoints": eligible,
-        "selected_checkpoint": selected,
-    }, indent=2), encoding="utf-8")
+    out_path.write_text(
+        json.dumps(
+            {
+                "n_pairs": 90,
+                "per_checkpoint": all_results,
+                "eligible_checkpoints": eligible,
+                "selected_checkpoint": selected,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"\nWritten: {out_path}")
 
 

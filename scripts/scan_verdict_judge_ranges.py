@@ -53,12 +53,16 @@ def scan_file(path: Path) -> list[dict]:
                 continue
             issues = scan_scores_dict(scores)
             if issues:
-                violations.append({
-                    "file": path.name, "index": i, "field": field,
-                    "key": f"{record.get('checkpoint', record.get('family', ''))}"
-                           f"_{record.get('prompt_id')}_{record.get('seed')}",
-                    "issues": issues,
-                })
+                violations.append(
+                    {
+                        "file": path.name,
+                        "index": i,
+                        "field": field,
+                        "key": f"{record.get('checkpoint', record.get('family', ''))}"
+                        f"_{record.get('prompt_id')}_{record.get('seed')}",
+                        "issues": issues,
+                    }
+                )
     return violations
 
 

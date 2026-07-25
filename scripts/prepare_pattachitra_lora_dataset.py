@@ -45,10 +45,12 @@ MANUAL_EXCLUDE: set[str] = {
     "Patachitra artist at work.jpg",
     "Patachitra artists work with immense care and passion.jpg",
     "Pattachitra artist at work in Odisha, India.jpg",
-    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4284.JPG",
-    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4285.JPG",
-    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4286.JPG",
-    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4291.JPG",
+    # Real source filenames below exceed the line-length limit - not splittable without
+    # altering the literal string content, which must match the actual files on disk exactly.
+    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4284.JPG",  # noqa: E501
+    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4285.JPG",  # noqa: E501
+    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4286.JPG",  # noqa: E501
+    "Patua - International Kolkata Book Fair 2013 - Milan Mela Complex - Kolkata 2013-02-03 4291.JPG",  # noqa: E501
     "Raghurajpur Artist.JPG",
     "The Paintings on Betel nut (Areca nut) by the artists of Raghurajpur.JPG",
 }
@@ -99,9 +101,14 @@ def main() -> None:
     clean_filenames = [c["file_name"] for c in classifications if not c["flagged"]]
     assert len(clean_filenames) == 111, f"expected 111 clean images, got {len(clean_filenames)}"
     clean_filenames = [f for f in clean_filenames if f not in MANUAL_EXCLUDE]
-    print(f"Clean per automated pre-check: 111; after manual QA exclusion of "
-          f"{len(MANUAL_EXCLUDE)} documentary/genre-mismatch photos: {len(clean_filenames)}", flush=True)
-    assert len(clean_filenames) == 100, f"expected 100 images after manual exclusion, got {len(clean_filenames)}"
+    print(
+        f"Clean per automated pre-check: 111; after manual QA exclusion of "
+        f"{len(MANUAL_EXCLUDE)} documentary/genre-mismatch photos: {len(clean_filenames)}",
+        flush=True,
+    )
+    assert len(clean_filenames) == 100, (
+        f"expected 100 images after manual exclusion, got {len(clean_filenames)}"
+    )
 
     img_dir = OUT_DIR / "images"
     if not args.dry_run:
@@ -109,7 +116,7 @@ def main() -> None:
 
     records: list[dict] = []
     missing = []
-    for i, fname in enumerate(sorted(clean_filenames)):
+    for fname in sorted(clean_filenames):
         src_path = SRC_IMAGES_DIR / fname
         if not src_path.exists():
             missing.append(fname)
@@ -119,7 +126,8 @@ def main() -> None:
         try:
             img = Image.open(src_path).convert("RGB")
         except Exception as e:
-            print(f"  decode error on {fname.encode('ascii', 'replace').decode('ascii')}: {e}", flush=True)
+            safe_name = fname.encode("ascii", "replace").decode("ascii")
+            print(f"  decode error on {safe_name}: {e}", flush=True)
             missing.append(fname)
             continue
 
@@ -132,8 +140,11 @@ def main() -> None:
 
         records.append({"file_name": f"images/{out_filename}", "text": caption})
         if len(records) % 10 == 0 or len(records) == 1:
-            print(f"  [{len(records):3d}/{len(clean_filenames)}] "
-                  f"{fname.encode('ascii', 'replace').decode('ascii')} -> {out_filename}", flush=True)
+            safe_name = fname.encode("ascii", "replace").decode("ascii")
+            print(
+                f"  [{len(records):3d}/{len(clean_filenames)}] {safe_name} -> {out_filename}",
+                flush=True,
+            )
 
     print(f"\nProcessed {len(records)} images, {len(missing)} missing/failed.", flush=True)
     if missing:
