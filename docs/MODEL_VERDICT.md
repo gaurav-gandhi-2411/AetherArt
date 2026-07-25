@@ -862,20 +862,29 @@ for this section). Selection rule (fixed before seeing the checkpoint-1000/500 n
 checkpoints where `figure_preservation` does not regress >2×SEM vs. base, select the one with the
 best `style_adherence` diff/SEM.
 
+**`style_adherence` values in this table predate the judge-question-bug discovery (§7.2 Addendum
+below) and are shown here exactly as originally measured, with their status flagged inline —
+not silently updated in place, so the audit trail stays honest about what was known when.**
+
 | Checkpoint | `style_adherence` diff/SEM | `figure_preservation` diff/SEM | Guardrail |
 |---|---|---|---|
-| curated500 | +0.477 (not significant) | **−5.532** | REGRESSED |
-| curated1000 | −0.789 (not significant) | **−7.768** (worst of the three) | REGRESSED |
-| curated1500 | **−2.234** (significant regression) | −7.226 | REGRESSED |
+| curated500 | ~~+0.477 (not significant)~~ **VOID (wrong question) → resolved −2.996, §7.3** | **−5.532** | REGRESSED |
+| curated1000 | ~~−0.789 (not significant)~~ **VOID (wrong question) → resolved −4.603, §7.3** | **−7.768** (worst of the three) | REGRESSED |
+| curated1500 | ~~−2.234 (significant regression)~~ **VOID (wrong question) — NOT resolved, out of the weight sweep's scope** | −7.226 | REGRESSED |
 
 **No checkpoint clears the guardrail — the regression is not a checkpoint-selection artifact.**
 It is present, and large (−5.5×SEM at minimum), from the *earliest* checkpoint tested (500 steps) —
 even minimal training introduces it — and does not improve with proper selection the way ukiyo-e's
-did. `style_adherence` does show a monotonic within-run drift (500: mildly positive → 1000: mildly
-negative → 1500: significantly negative) consistent with some overtraining on that axis
-specifically — but the guardrail failure that would have blocked promotion under the ukiyo-e
-methodology is present at every checkpoint tested, so checkpoint selection changes nothing about
-the headline verdict.
+did. ~~`style_adherence` does show a monotonic within-run drift (500: mildly positive → 1000:
+mildly negative → 1500: significantly negative) consistent with some overtraining on that axis
+specifically~~ — **this specific claim rested entirely on the void numbers above and does not
+survive: the resolved values (500: −2.996×SEM, 1000: −4.603×SEM) show both already significantly
+*negative*, not a mild-to-strong drift starting from positive; 1500 remains unresolved so no
+three-point trend claim can be made at all.** The guardrail failure that would have blocked
+promotion under the ukiyo-e methodology is present at every checkpoint tested regardless, so
+checkpoint selection changes nothing about the headline verdict — if anything, the resolved
+`style_adherence` numbers make that conclusion more decisive, not less, since 500 and 1000 are
+now confirmed regressions too, not near-null effects.
 
 *A later audit checked the diff/SEM ordering directly rather than leaving it as an unexplained
 anomaly (prompted by: "checkpoint-1000 scoring worse than both 500 and 1500 isn't a training
