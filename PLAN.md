@@ -57,7 +57,35 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25f)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25g)**
+
+- [x] **Withdrew the void-based sweep prediction; eliminated 100% of the sweep's wasted VLM
+      scoring; capped the remaining work as diagnostic (2026-07-25g).** (1) The sweep's
+      predicted outcome in `docs/WEIGHT_SWEEP_PREREGISTRATION.md` rested entirely on two
+      `weight=1.0` `style_adherence` values now confirmed VOID by the judge-prompt bug —
+      **withdrawn explicitly**, not left standing. Chose withdrawal over re-deriving now: the
+      re-derivation is possible independent of the running sweep, but would need new Ollama
+      calls while the GPU was occupied and would duplicate the uniform re-score already planned
+      for once it's free. The structural argument (weight=0 trivially equals 0, so an interior
+      peak above +2×SEM is inherently non-monotonic) survives; the specific numbers and
+      conclusion do not. (2) Confirmed generation/scoring are cleanly separable in
+      `scripts/_pattachitra_weight_sweep.py` and **disabled inline scoring entirely** — every
+      score the sweep would produce was going to be discarded by the uniform re-score plan
+      regardless. Stopped the already-running `curated500` process (its old in-memory code
+      wouldn't have picked up the fix) and relaunched: verified the resume logic picked up
+      exactly where its 100 already-generated, disk-persisted images left off — no regeneration,
+      no duplicates, no generation work lost, only the now-pointless scoring skipped. This also
+      removes the sweep's Ollama/SDXL VRAM-contention step entirely (no `ollama stop` needed
+      between checkpoints anymore — the sweep never calls Ollama now). (3) Recorded in
+      `docs/MODEL_VERDICT.md` §7.2 that **the publication decision is already settled** by
+      `figure_preservation` (−5.5 to −7.8×SEM at `weight=1.0`, domain-neutral, unaffected by the
+      judge bug) — no sweep or positive-control result can publish this adapter. Remaining work
+      capped at exactly two diagnostic questions (does a low-weight operating point exist; can
+      the judge perceive Pattachitra style at all) — explicitly not a license for further
+      retrains or corpus work. §7's full finalization (including a standalone four-bug
+      methodology finding: `num_ctx`, phantom VRAM counter, CUDA context corruption, hardcoded
+      judge question) remains gated on the GPU freeing, the positive control, and the uniform
+      re-score.
 
 - [x] **Fixed the judge-prompt bug properly; scoped its blast radius per-axis; triaged the
       running sweep (2026-07-25f). NEW BUG CLASS for this project — semantically wrong but
