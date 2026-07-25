@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "project": "aetherart",
+  "docs": "https://github.com/gaurav-gandhi-2411/gg-portfolio#autonomous-metric-refresh",
+  "metrics": [
+    {
+      "id": "aetherart:vram",
+      "label": "Full SDXL + LoRA pipeline, 8GB consumer-GPU budget",
+      "value": "6.2GB peak VRAM",
+      "source_file": "docs/lab_notebook.md",
+      "source_line": 266,
+      "commit_sha": "dbde03d7b93f707531f4021113e662ac3994965c",
+      "measured_at": "2026-06-01"
+    }
+  ]
+}
