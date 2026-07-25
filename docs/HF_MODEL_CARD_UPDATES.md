@@ -1,9 +1,25 @@
 # Ready-to-apply HF model card updates — `aetherart-ukiyo-sdxl` and `aetherart-ukiyo-sd21`
 
-**Status: prepared, NOT applied.** Blocked on a read-only HF token (`api.whoami()` confirms
-`role: read`) — apply once GG supplies a write-scoped token (classic **Write** role, or a
-fine-grained token scoped to `aetherart-ukiyo-sdxl` + `aetherart-ukiyo-sd21` with **Write**
-repo-content permission).
+**Status: prepared, NOT applied — and the `style_adherence` figures below are now PROVISIONAL,
+do not apply as written even once a write token exists.** Blocked on a read-only HF token
+(`api.whoami()` confirms `role: read`) — that block was never the only gate; a second,
+independent one now applies regardless of token status.
+
+**PROVISIONAL marking (2026-07-25) — top finding, escalated per
+`docs/WEIGHT_SWEEP_PREREGISTRATION.md`'s judge positive-control:** ukiyo-e was run as the
+expected-pass case validating the `style_adherence` judge (real curated ukiyo-e training images
+vs. `sdxl_base`'s own generated ukiyo-e-styled outputs, n=23 vs. n=90, unpaired). **It FAILED:**
+real reference art scored 0.9239 vs. `sdxl_base`'s 0.9389 — a *negative*, non-significant diff
+(diff/SEM = −1.507, `reports/judge_style_positive_control.json`). The rubric cannot reliably tell
+real, authentic ukiyo-e woodblock prints apart from SDXL's own generated attempts at the style.
+**Every `style_adherence` number below (the "measured style-adherence lift," the +0.0100/2.82×SEM
+and +0.0056/1.68×SEM figures, and the "Net read" bullet's style-lift framing) is UNSUPPORTED by
+an instrument shown unable to discriminate on this exact axis for this exact domain — mark
+PROVISIONAL, do not publish even once a write token arrives, until this is resolved.** The
+`artifact_absence` numbers (−0.0500/3.49×SEM, −0.0422/3.11×SEM, 0.9222 base) are **unaffected** —
+`artifact_absence`'s question is domain-neutral (checked directly, no style name in the template)
+and was not part of what this control tested or found wanting. See `docs/MODEL_VERDICT.md`'s
+methodology section for the full result and interpretation.
 
 **The curated-retrain "promotion" is still WITHDRAWN and NOT re-uploaded** (`docs/MODEL_VERDICT.md`
 §4.6): the arm-to-arm `artifact_absence` diff (+0.0078, 0.583×SEM) does not clear the
@@ -42,19 +58,24 @@ instruction it is **not softened** — the regression is real, measured, and sta
     style" and the WikiArt source images' embedded captions/signatures/script that produced the
     style signal the adapter learned; it is a real, measured tradeoff of using this adapter, not
     fully "mitigated" by the default negative prompt.
-  - **What the adapter buys in exchange: a measured style-adherence lift over `sdxl_base` alone**
-    — a curated-training-set retrain lifts `style_adherence` +0.0100 over base (2.82× SEM); the
-    published checkpoint (unfiltered training set) lifts it +0.0056 (1.68× SEM, not itself
-    significant at this n). `sdxl_base` already scores 0.9389 on `style_adherence` for
-    ukiyo-e-styled prompts from its own pretraining, so headroom for any adapter to add is small.
-  - **Net read:** this adapter's main value is a modest, mostly-below-noise style lift over what
-    `sdxl_base` already renders unassisted, at the cost of a real, larger, and statistically
-    significant increase in embedded-text artifacts. Whether that trade is worth it depends on the
-    use case — for artifact-sensitive generations, consider `sdxl_base` alone with an explicit
-    "ukiyo-e style" prompt, or add this adapter and screen outputs for text artifacts
-    downstream. A follow-up retrain-and-eval attempt investigating whether more aggressive
-    dataset curation or a different training recipe can close this gap is tracked in
-    `docs/NEXT_MODEL_SPEC.md`, not yet completed.
+  - **[PROVISIONAL — do not publish this bullet as written; see the status note at the top of
+    this file] What the adapter buys in exchange: a measured style-adherence lift over
+    `sdxl_base` alone** — a curated-training-set retrain lifts `style_adherence` +0.0100 over
+    base (2.82× SEM); the published checkpoint (unfiltered training set) lifts it +0.0056
+    (1.68× SEM, not itself significant at this n). `sdxl_base` already scores 0.9389 on
+    `style_adherence` for ukiyo-e-styled prompts from its own pretraining, so headroom for any
+    adapter to add is small. **A positive control found this rubric cannot distinguish real
+    ukiyo-e art from `sdxl_base`'s own generated attempts (diff/SEM = −1.507, non-significant) —
+    these lift numbers are not confirmed to be measuring a real style-adherence signal at all.**
+  - **[PROVISIONAL, same caveat] Net read:** this adapter's main value is a modest,
+    mostly-below-noise style lift over what `sdxl_base` already renders unassisted, at the cost of
+    a real, larger, and statistically significant increase in embedded-text artifacts (the
+    artifact-cost half of this sentence is NOT provisional — only the style-lift half is).
+    Whether that trade is worth it depends on the use case — for artifact-sensitive generations,
+    consider `sdxl_base` alone with an explicit "ukiyo-e style" prompt, or add this adapter and
+    screen outputs for text artifacts downstream. A follow-up retrain-and-eval attempt
+    investigating whether more aggressive dataset curation or a different training recipe can
+    close this gap is tracked in `docs/NEXT_MODEL_SPEC.md`, not yet completed.
   - Full methodology and numbers: `docs/MODEL_VERDICT.md` §4.6–§4.9 in the
     [AetherArt GitHub repo](https://github.com/gaurav-gandhi-2411/AetherArt).
 ```

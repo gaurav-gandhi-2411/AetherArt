@@ -57,7 +57,27 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25g)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25h)**
+
+- [x] **TOP FINDING: the judge-question positive control FAILED for ukiyo-e — every
+      `style_adherence` number in §4 and the staged HF card text is now PROVISIONAL
+      (2026-07-25h).** `scripts/judge_style_positive_control.py` run after the weight sweep
+      completed (540/540, 0 errors) and the GPU freed. Ukiyo-e was the expected-pass case meant
+      to validate the control: real curated training art (n=23) vs. `sdxl_base`'s own generated
+      attempts (n=90) should score higher on `style_adherence` if the judge can tell real from
+      generated. **It did not** — diff=−0.0150, SEM=0.0099, diff/SEM=**−1.507** (wrong-signed,
+      not just non-significant). Per the pre-committed escalation rule: HALTED the ukiyo-e
+      publication path, marked every `style_adherence` figure in `docs/MODEL_VERDICT.md` §4
+      (new §4.10) and `docs/HF_MODEL_CARD_UPDATES.md` PROVISIONAL — do not publish even once a
+      write token exists. `artifact_absence` (the actual regression finding driving the "not
+      promoted" verdict) is unaffected — domain-neutral question, confirmed unrelated to this
+      control. **Not general judge blindness** — Pattachitra's own positive control, run in the
+      same pass, passed dramatically (diff=+0.4437, diff/SEM=**+12.005** on the corrected
+      question vs. −1.504 on the historical wrong one) — confirming the judge can discriminate
+      style sharply when the question is right and the domain isn't already well-represented in
+      SDXL's own pretraining (a plausible, unverified explanation for ukiyo-e's ceiling effect,
+      not investigated further per the diagnostic scope cap). Continuing to Q3-Q5 for the
+      Pattachitra diagnostic per the pre-committed rule.
 
 - [x] **Withdrew the void-based sweep prediction; eliminated 100% of the sweep's wasted VLM
       scoring; capped the remaining work as diagnostic (2026-07-25g).** (1) The sweep's

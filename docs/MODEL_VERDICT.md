@@ -718,6 +718,55 @@ recall/precision explicitly disclosed wherever it's cited. Per the task's own fr
 local instrument was found this pass; §4.7's ~1,963-sample requirement stands as the actual path
 to full resolution, and remains impractical at zero-cost-local scale.
 
+### 4.10 Positive control on the `style_adherence` judge — FAILED for ukiyo-e; every style_adherence number above is PROVISIONAL
+
+**Top finding (2026-07-25), escalated per a pre-committed decision rule, not discovered after the
+fact and rationalized:** `scripts/judge_style_positive_control.py` tested whether the VLM judge's
+`style_adherence` axis can tell real, authentic reference art apart from `sdxl_base`'s own
+generated attempts at the same style — ukiyo-e was run as the *expected-pass* case meant to
+validate the control itself (23 real curated training images vs. 90 `sdxl_base` generations,
+unpaired, same paired-diff/SEM-family methodology adapted for two independent samples).
+
+**It failed.** Real ukiyo-e art scored 0.9239 vs. `sdxl_base`'s 0.9389 — `diff = −0.0150`,
+`SEM = 0.0099`, `diff/SEM = −1.507` (`reports/judge_style_positive_control.json`). Not merely
+underpowered: the sign is wrong. Real reference prints did not score higher than SDXL's generated
+imitations; if anything the point estimate runs the other way, though not significantly so.
+
+**Consequence, applied exactly as pre-registered, not softened:** `style_adherence` cannot be
+trusted to discriminate real ukiyo-e style from `sdxl_base`'s generated attempts. **Every
+`style_adherence` number in §4 above — the +0.0100/2.82×SEM and +0.0056/1.68×SEM "style lift"
+figures (§4.6, §4.8), the `sdxl_base` 0.9389 reference score, and the "modest style lift" framing
+in §4.8's summary — is downstream of an instrument shown unable to discriminate on this exact
+axis for this exact domain, and is marked PROVISIONAL, not retracted outright (the numbers are not
+known to be *wrong*, only no longer *supported* as measuring a real signal).** This does **not**
+retroactively affect `artifact_absence` (§4.6, §4.8's primary regression finding, or §4.9) — that
+axis's question is domain-neutral (checked directly: no style name in its template) and was not
+part of what this control tested. **`docs/HF_MODEL_CARD_UPDATES.md` is updated with matching
+PROVISIONAL markers — the staged style-adherence card text must not be published even once a
+write-scoped token exists, until this is resolved.**
+
+**Why this is reported as a standalone finding, not folded into "underpowered":** §4.7 already
+established the arm-to-arm `style_adherence`/`artifact_absence` comparisons were statistically
+underpowered at this `n` — a *quantity* problem. This is a different, more fundamental *validity*
+problem: the instrument may not measure the intended construct on this domain at all, at any `n`.
+More samples would not fix a judge that cannot discriminate real from generated in the first
+place.
+
+**Not proven to be general judge blindness — Pattachitra's own positive control passed
+dramatically in the same run** (real Pattachitra art vs. `sdxl_base`, corrected question:
+`diff = +0.4437`, `diff/SEM = +12.005` — see §7's judge-question-bug section). The failure is
+specific to ukiyo-e's comparison, not evidence the judge is globally unable to do style
+discrimination. A plausible, unverified explanation: ukiyo-e is a well-represented style in
+SDXL's own pretraining data, so its unconditioned generations may already be highly convincing on
+this specific axis, leaving little headroom to separate "authentic" from "generated but
+stylistically excellent" — a ceiling effect, not necessarily an instrument defect. This is offered
+as a hypothesis, not investigated further here; doing so would extend past this audit's diagnostic
+scope.
+
+**No retraining, no re-evaluation follows from this finding in this pass.** The published
+ukiyo-e checkpoint's status is unchanged (§4.6 already withdrew its promotion on other grounds);
+this finding adds a caveat to the *disclosed cost/benefit numbers*, not a new action item.
+
 ---
 
 ## 5. Per-family verdict

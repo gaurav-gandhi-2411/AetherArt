@@ -1,0 +1,43 @@
+{
+  "results": {
+    "ukiyo_e": {
+      "n_a": 23,
+      "n_b": 90,
+      "mean_a": 0.9239,
+      "mean_b": 0.9389,
+      "diff": -0.015,
+      "sem": 0.0099,
+      "diff_over_sem": -1.507,
+      "mde_80pct_power": 0.0278,
+      "mde_90pct_power": 0.0322,
+      "passes_2xsem": false
+    },
+    "pattachitra_production_prompt": {
+      "n_a": 100,
+      "n_b": 90,
+      "mean_a": 0.2975,
+      "mean_b": 0.3533,
+      "diff": -0.0558,
+      "sem": 0.0371,
+      "diff_over_sem": -1.504,
+      "mde_80pct_power": 0.104,
+      "mde_90pct_power": 0.1203,
+      "passes_2xsem": false
+    },
+    "pattachitra_corrected_prompt": {
+      "n_a": 100,
+      "n_b": 90,
+      "mean_a": 0.797,
+      "mean_b": 0.3533,
+      "diff": 0.4437,
+      "sem": 0.037,
+      "diff_over_sem": 12.005,
+      "mde_80pct_power": 0.1035,
+      "mde_90pct_power": 0.1198,
+      "passes_2xsem": true
+    }
+  },
+  "ukiyo_e_pass": false,
+  "pattachitra_production_prompt_pass": false,
+  "pattachitra_corrected_prompt_pass": true
+}

@@ -207,11 +207,40 @@ distinguish these two explanations. The positive control's `style_adherence` res
 decisive test; the `artifact_absence` ceiling is reported for context only, never as independent
 proof of judge blindness on its own.
 
-**Not run yet.** This makes ~223 new Ollama VLM calls (100 Pattachitra × 2 prompts + 23 ukiyo-e ×
-1 prompt) against images that already exist on disk — no new SDXL generation. Deferred until the
-weight sweep finishes and the GPU/Ollama are free, per this task's explicit constraint. Reported
-*before* the weight-sweep stats once both are available (`docs/MODEL_VERDICT.md` §7's positive
-control result gates how the sweep's own `style_adherence` numbers, at any weight, should be read).
+**RUN 2026-07-25, after the weight sweep finished and the GPU/Ollama freed — result
+(`reports/judge_style_positive_control.json`):**
+
+| Domain / prompt | real mean (n) | base mean (n) | diff | SEM | diff/SEM | Verdict |
+|---|---|---|---|---|---|---|
+| ukiyo-e (production = only prompt) | 0.9239 (23) | 0.9389 (90) | −0.0150 | 0.0099 | **−1.507** | **FAIL** |
+| Pattachitra, historical/production (wrong) prompt | 0.2975 (100) | 0.3533 (90) | −0.0558 | 0.0371 | −1.504 | FAIL |
+| Pattachitra, corrected prompt | 0.7970 (100) | 0.3533 (90) | **+0.4437** | 0.0370 | **+12.005** | **PASS** |
+
+**Applying the pre-registered decision tree exactly as fixed above:** ukiyo-e — the expected-pass
+case validating the control itself — **FAILED**. Per the pre-committed rule, this is escalated,
+not absorbed: the rubric's `style_adherence` axis cannot reliably distinguish real, authentic
+ukiyo-e woodblock prints from `sdxl_base`'s own generated attempts at the style (the diff is not
+just non-significant, it is the wrong sign — real art scored marginally *lower*). Every
+`style_adherence` number in `docs/MODEL_VERDICT.md` §4 and every figure staged in
+`docs/HF_MODEL_CARD_UPDATES.md` is downstream of an instrument now shown unable to discriminate on
+this exact axis for this exact domain — marked PROVISIONAL in both documents, not published even
+once a write-scoped HF token exists, until this is resolved.
+
+Independently, Pattachitra's own result confirms the rubric is not broken *in general*: the
+corrected prompt produces an enormous, unambiguous discrimination (diff/SEM = +12.0) between real
+Pattachitra reference art and `sdxl_base`'s attempts, while the same real images scored under the
+historical wrong (ukiyo-e-worded) question show no such discrimination (diff/SEM = −1.5,
+consistent with "real Pattachitra art doesn't look like ukiyo-e either," not evidence of instrument
+blindness to Pattachitra specifically). **Per the pre-registered rule for this exact case
+("mark them uninformative-by-instrument... still continue Q3-Q5 for the Pattachitra diagnostic"):
+the Pattachitra diagnostic proceeds** — its own positive control passed cleanly, independent of
+ukiyo-e's failure. A plausible (not proven) explanation for the asymmetry: ukiyo-e is a
+well-represented, frequently-reproduced style in SDXL's pretraining data, so its own unconditioned
+generations may already be highly convincing on this specific axis, leaving little headroom for a
+judge to separate "real" from "generated but stylistically excellent" — Pattachitra, a much
+less-represented folk-art style, does not have this ceiling effect. This is offered as a plausible
+mechanism, not verified further here — the diagnostic scope (per the standing directive's
+TERMINATION rules) does not extend to investigating it.
 
 ## Required reporting format (fixed now)
 
