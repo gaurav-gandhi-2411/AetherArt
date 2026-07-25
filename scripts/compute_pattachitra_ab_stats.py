@@ -38,7 +38,7 @@ def paired_stats(base: dict, arm: dict, keys: list[str]) -> dict:
     for axis in AXES:
         b = [base[k]["independent_calls"][axis] for k in keys]
         c = [arm[k]["independent_calls"][axis] for k in keys]
-        diffs = [ci - bi for ci, bi in zip(c, b)]
+        diffs = [ci - bi for ci, bi in zip(c, b, strict=True)]
         mean_b, mean_c = statistics.fmean(b), statistics.fmean(c)
         diff_mean = statistics.fmean(diffs)
         sem = statistics.stdev(diffs) / (len(diffs) ** 0.5) if statistics.stdev(diffs) else 0.0
