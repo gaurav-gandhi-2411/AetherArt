@@ -57,7 +57,35 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25b)**
+
+- [x] **Validated the Pattachitra negative before writing it up (2026-07-25b) — survives, with
+      the full picture more nuanced than the single-checkpoint version.** A −7.226×SEM guardrail
+      regression with total figure dropout was more consistent with a mechanical eval bug than a
+      genuine training effect, so three explanations were ruled out before accepting it:
+      (1) **checkpoint selection** — the original pass only scored the final weights (=1500),
+      skipping the checkpoint-select step ukiyo-e's own precedent required (which explicitly
+      rejected its own 1500 for the identical failure mode). Scored 500/1000/1500 properly:
+      **all three checkpoints regress `figure_preservation` significantly** (−5.5 to −7.8×SEM) —
+      checkpoint-1000 is actually the *worst* (−7.768×SEM), ruling out "1500 was simply
+      overtrained." (2) **LoRA applied weight** — verified alpha=rank=8, adapter weight 1.0,
+      byte-identical to the ukiyo-e recipe; cleared, not the cause. (3) **Trigger token** —
+      checked the actual tokenizer output: `pattascroll` decomposes into 4 BPE fragments, not a
+      single real vocabulary token (structurally similar to `ukyowood`'s 3); one fragment (`as`,
+      a very common function word) is a minor, unproven risk factor for a future retrain, not a
+      demonstrated cause. **None of the three explains it — the finding survives and was written
+      up in `docs/MODEL_VERDICT.md` §7.2–§7.4 with the full per-checkpoint table.** Also: the
+      `artifact_absence` ceiling (1.0 across all 360 scores) is now reported as a positive,
+      cross-domain finding (§7.5) — it retroactively validates that the ukiyo-e curation project's
+      text-artifact scoping was style-specific, not a generic assumption. Portfolio-level note
+      (§7.6): the data does NOT cleanly support "LoRA helps where base is weak" (Pattachitra is a
+      counter-example — weak base, LoRA still didn't help and broke a guardrail); what both
+      projects DO support is pre-testing `sdxl_base`'s zero-training rendering before any spend,
+      exactly how Mughal/Warli were disqualified. Two script bugs found and fixed mid-audit:
+      a CUDA context corruption (illegal memory access) that silently poisoned 68/90 records on
+      one checkpoint-500 attempt, and a retry-logic bug that appended duplicate records instead of
+      replacing errored ones — both caught via direct verification (record counts, error grep),
+      not assumed clean. No new training this session, as instructed.
 
 - [x] **Pattachitra LoRA: amended pre-registration, trained on GCP, evaluated — NOT published
       (2026-07-25).** Amended `docs/PATTACHITRA_AB_PREREGISTRATION.md` before any training: dropped

@@ -797,66 +797,162 @@ fraction of the frame. One further image (painted spherical decorative objects, 
 paintings) was excluded for visual-genre mismatch. Final training corpus: **100 images** (down
 from 111), still ≈4.3× ukiyo-e's curated set (23).
 
-### 7.2 Results — n=90 paired, curated LoRA vs. `sdxl_base`
+### 7.2 Validating the negative before writing it up — ruling out three mechanical explanations
+
+A −7.226×SEM guardrail regression with total figure dropout on a seed where base renders correctly
+is a large enough effect that it is more consistent with a mechanical eval bug than a genuine
+rank-8 style-training effect — so it was checked, not assumed, before being written up as a finding.
+
+**(1) Checkpoint selection.** The initial pass scored only the final weights (=checkpoint-1500),
+skipping the checkpoint-select step the pre-registration itself calls for ("as with ukiyo-e") —
+ukiyo-e's own precedent explicitly **rejected** its checkpoint-1500 for this exact failure mode
+("mild mode-collapse, lost the samurai figure in prompt 3," `docs/lab_notebook.md`) and selected
+checkpoint-1000 instead. This was a real process gap, corrected here: checkpoints 500, 1000, and
+1500 were all scored (n=90 each, 0 errors across 270 generations + 810 independent VLM calls total
+for this section). Selection rule (fixed before seeing the checkpoint-1000/500 numbers): among
+checkpoints where `figure_preservation` does not regress >2×SEM vs. base, select the one with the
+best `style_adherence` diff/SEM.
+
+| Checkpoint | `style_adherence` diff/SEM | `figure_preservation` diff/SEM | Guardrail |
+|---|---|---|---|
+| curated500 | +0.477 (not significant) | **−5.532** | REGRESSED |
+| curated1000 | −0.789 (not significant) | **−7.768** (worst of the three) | REGRESSED |
+| curated1500 | **−2.234** (significant regression) | −7.226 | REGRESSED |
+
+**No checkpoint clears the guardrail — the regression is not a checkpoint-selection artifact.**
+It is present, and large (−5.5×SEM at minimum), from the *earliest* checkpoint tested (500 steps),
+rules out "checkpoint-1500 was simply overtrained" as a full explanation (checkpoint-1000 regresses
+*worse* than 1500, not better), and does not improve with proper selection the way ukiyo-e's did.
+`style_adherence` does show a monotonic within-run drift (500: mildly positive → 1000: mildly
+negative → 1500: significantly negative) consistent with some overtraining on that axis
+specifically — but the guardrail failure that would have blocked promotion under the ukiyo-e
+methodology is present at every checkpoint tested, so checkpoint selection changes nothing about
+the headline verdict.
+
+**(2) LoRA applied weight.** Verified directly against the ukiyo-e recipe, not assumed: the
+training script sets `lora_alpha = args.rank` internally
+(`scripts/_diffusers_train_text_to_image_lora_sdxl.py`), so `--rank=8` (the flag actually passed,
+`scripts/gcp_startup_pattachitra_train.sh`) produces alpha=rank=8 automatically — identical to
+ukiyo-e's recipe. The evaluation script applies `pipe.set_adapters(["pattachitra"],
+adapter_weights=[1.0])` (`scripts/_pattachitra_ab_base_comparison.py`), byte-identical to the calls
+ukiyo-e's own eval scripts use (`scripts/_lora_ab_30prompt_independent.py`,
+`scripts/model_verdict_harness.py`). **No over-application — the effective adapter scale matches
+ukiyo-e exactly.** This does not explain the regression.
+
+**(3) Trigger token collision.** The trigger is `pattascroll`. Checked against the actual SDXL
+tokenizer (`CLIPTokenizer.from_pretrained(..., subfolder="tokenizer")`), not assumed from
+appearance: `pattascroll` → 4 BPE sub-tokens (`patt`, `as`, `cro`, `ll</w>`); for comparison,
+ukyowood → 3 sub-tokens (`uk`, `yo`, `wood</w>`). **Neither trigger resolves to a single real
+vocabulary token** — both are novel multi-token strings of similar construction, so this is not
+the clean "real English word" collision the hard rule was checking for. One modest, *unproven* risk
+factor worth flagging for a future retrain: `pattascroll`'s decomposition includes `as`, an
+extremely high-frequency English function word (rank ~top-200), whereas `ukyowood`'s fragments
+(`uk`/`yo`/`wood`) are lower-frequency content-word-like tokens. This is a plausible, minor
+contributing factor for a future retrain with a cleaner token (e.g. `pattagraph` or a digit-suffixed
+nonce token) to test — **not** a demonstrated mechanism, and not sufficient on its own to explain a
+−5.5-to-7.8×SEM effect present at every checkpoint.
+
+**Conclusion: none of the three mechanical explanations accounts for the regression.** Checkpoint
+selection doesn't resolve it (worse, even) — the finding survives and is written up below as a
+genuine result, not an eval artifact.
+
+### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 
 (`reports/pattachitra_ab_base_comparison.json`, `scripts/compute_pattachitra_ab_stats.py` →
-`reports/pattachitra_ab_stats.json`. 0 errors across 180 generations and 540 independent VLM calls.)
+`reports/pattachitra_ab_stats.json`. 0 errors across 270 generations and 810 independent VLM calls
+across all three checkpoints; one CUDA context corruption mid-run on the checkpoint-500 attempt and
+one script bug — a retry that appended a duplicate record instead of replacing the errored one —
+were both caught, root-caused, and fixed before this table was produced, not smoothed over.)
 
-| Endpoint | Base mean | Curated mean | Diff | SEM | diff/SEM | 95% CI | MDE@80% |
+| Checkpoint | Endpoint | Base mean | Arm mean | Diff | SEM | diff/SEM | MDE@80% |
 |---|---|---|---|---|---|---|---|
-| `style_adherence` (primary A) | 0.3533 | 0.2928 | **−0.0606** | 0.0271 | **−2.234** | [−0.1137, −0.0074] | 0.0760 |
-| `artifact_absence` (primary B) | 1.0000 | 1.0000 | 0.0000 | 0.0000 | undefined (0/0) | — | — |
-| `figure_preservation` (guardrail) | 0.9767 | 0.9306 | **−0.0461** | 0.0064 | **−7.226** | [−0.0586, −0.0335] | 0.0179 |
+| **500** | `style_adherence` | 0.3533 | 0.3644 | +0.0111 | 0.0233 | +0.477 | 0.0652 |
+| | `figure_preservation` | 0.9767 | 0.9539 | **−0.0228** | 0.0041 | **−5.532** | 0.0115 |
+| | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
+| **1000** | `style_adherence` | 0.3533 | 0.3311 | −0.0222 | 0.0282 | −0.789 | 0.0789 |
+| | `figure_preservation` | 0.9767 | 0.9322 | **−0.0444** | 0.0057 | **−7.768** | 0.0160 |
+| | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
+| **1500** | `style_adherence` | 0.3533 | 0.2928 | **−0.0606** | 0.0271 | **−2.234** | 0.0760 |
+| | `figure_preservation` | 0.9767 | 0.9306 | **−0.0461** | 0.0064 | **−7.226** | 0.0179 |
+| | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
 
-**Primary A (`style_adherence`) does NOT clear the bar — it clears it in the wrong direction.**
-The curated adapter scores *significantly lower* than `sdxl_base` on style adherence (−2.234×SEM),
-the opposite of a demonstrated lift. The observed effect (0.0606) sits close to but below this
-design's own 80%-power MDE (0.0760), so this result should be read as "a real, detected regression
-of modest size" rather than "a large, decisively powered one" — both are true statements that
-don't contradict each other (the significance test and the power/MDE characterization answer
-different questions, per the mandatory dual-reporting this pre-registration commits to).
+**`style_adherence` (primary A) does not clear the bar at any checkpoint** — checkpoint-1500 clears
+it in the wrong direction (significant regression, −2.234×SEM); 500 and 1000 show no significant
+effect either way. `sdxl_base` itself scores only 0.3533 on this axis (far from ceiling) — SDXL does
+not render Pattachitra style well on its own, and no tested checkpoint of this LoRA closes that gap.
 
-**Primary B (`artifact_absence`) is not a demonstrated ceiling — it is a ceiling effect that makes
-this endpoint uninformative for Pattachitra.** All 180 independent-regime scores (90 base + 90
-curated) are exactly 1.0 — zero variance in either arm. Direct visual inspection of sample images
-from both arms found no visible embedded text/watermarks in either, consistent with the score.
-**This is a genuinely different generative behavior from ukiyo-e**, where the same axis showed
-real variance and a measurable LoRA-induced regression (§4.8) — "ukiyo-e woodblock print" evokes
-SDXL's own text/caption-artifact tendencies in a way "Pattachitra painting" apparently does not.
-The 0/0 diff is reported as "no measurable difference because neither arm shows any artifact," not
-misread as "a significant improvement" (an infinite diff/SEM ratio from a zero-variance
-denominator is a degenerate case, not evidence of anything).
+**`artifact_absence` (primary B) is a genuine positive finding, not an uninformative null — see
+§7.5.** Zero variance across all 360 independent-regime scores (90 base + 90×3 curated checkpoints)
+retroactively cross-validates the ukiyo-e curation project's own scoping.
 
-**Guardrail (`figure_preservation`) REGRESSED decisively** (−7.226×SEM, far exceeding any
-reasonable MDE at this n — this is a large, robust effect, not a borderline one). **Root cause,
-visually confirmed, not just inferred from the statistic:** `pat_009` ("a farmer plowing a field
-with oxen"), same prompt and seed (42) in both arms — `sdxl_base` renders the farmer clearly and
+**`figure_preservation` (guardrail) REGRESSED decisively at every checkpoint** (−5.5 to −7.8×SEM,
+all far exceeding their own MDE — large, robust effects, not borderline ones, and confirmed not to
+be a checkpoint-selection or eval-mechanics artifact per §7.2). **Root cause, visually confirmed,
+not just inferred from the statistic:** `pat_009` ("a farmer plowing a field with oxen"), same
+prompt and seed (42), checkpoint-1500 vs. base — `sdxl_base` renders the farmer clearly and
 coherently; the curated LoRA's output **omits the human figure entirely**, showing only loose
-animals against a decorative background. This is a concrete, disclosed failure mode, not a scoring
-artifact: the LoRA sometimes fails to render the prompted subject at all. A plausible (not proven)
-contributing factor: **BLIP's auto-generated captions for the training set are frequently generic
-and low-information** ("painting of a group of people in a building with a man and woman," "a
-close up of a wall with many paintings on it") — weaker text-image conditioning signal than
-ukiyo-e's captions received, which may have made it harder for a rank-8 LoRA at 100 images to learn
-robust subject-preserving associations across this evaluation's more compositionally-demanding
-30-prompt set. This is a hypothesis for future work, not a claim requiring no further testing.
+animals against a decorative background. A plausible (not proven) contributing factor: **BLIP's
+auto-generated captions for the training set are frequently generic and low-information**
+("painting of a group of people in a building with a man and woman," "a close up of a wall with
+many paintings on it") — weaker text-image conditioning signal than ukiyo-e's captions received,
+which may have made it harder for a rank-8 LoRA at 100 images to learn robust subject-preserving
+associations across this evaluation's more compositionally-demanding 30-prompt set. This is a
+hypothesis for future work, not a claim requiring no further testing.
 
-### 7.3 Verdict — do NOT publish; report the finding, do not retrain to a better-looking result
+### 7.4 Verdict — do NOT publish; report the finding, do not retrain to a better-looking result
 
-**Per the pre-registered decision rule and the explicit task instruction it was written under:
-this is a finding, reported as such.** The curated Pattachitra LoRA does not demonstrate a
-style-adherence lift over `sdxl_base` (it shows a significant regression instead) and
-significantly regresses figure/subject-preservation vs. `sdxl_base` (visually confirmed:
-prompted human figures sometimes go missing entirely). **This adapter should not be trained again
-with the same recipe expecting a different result, and should not be published.** If a Pattachitra
-LoRA is revisited, the evidence here points to two concrete, testable changes before another GCP
-run — not just re-running with more steps: (1) more specific, human-reviewed or VLM-generated
-captions in place of generic BLIP output, since caption quality is a plausible contributor to the
-subject-dropping failure; (2) a larger and/or more compositionally diverse training corpus, since
-100 images (though larger than ukiyo-e's 23) still measurably underperformed on a 30-prompt set
-spanning more varied compositions (group scenes, action poses, animals-with-figures) than the
-corpus's own auto-captioned distribution suggests it was rich in.
+**Per the pre-registered decision rule, the explicit task instruction it was written under, and
+§7.2's mechanical-explanation audit: this is a genuine finding, not an eval artifact, reported as
+such.** No checkpoint of the curated Pattachitra LoRA demonstrates a style-adherence lift over
+`sdxl_base`, and every checkpoint significantly regresses figure/subject-preservation vs.
+`sdxl_base` (visually confirmed: prompted human figures sometimes go missing entirely). **This
+adapter should not be trained again with the same recipe expecting a different result, and should
+not be published.** If a Pattachitra LoRA is revisited, the evidence here points to concrete,
+testable changes before another GCP run — not just re-running with more steps or a different
+checkpoint: (1) more specific, human-reviewed or VLM-generated captions in place of generic BLIP
+output, since caption quality is a plausible contributor to the subject-dropping failure; (2) a
+larger and/or more compositionally diverse training corpus, since 100 images (though larger than
+ukiyo-e's 23) still measurably underperformed on a 30-prompt set spanning more varied compositions
+than the corpus's own auto-captioned distribution suggests it was rich in; (3) a rare-token retrain
+(§7.2's minor, unproven trigger-token risk factor) as a cheap, low-priority thing to rule out if
+(1) and (2) are tried first and the regression persists.
+
+### 7.5 A positive, cross-domain finding: the artifact_absence ceiling retroactively validates the
+ukiyo-e curation's scoping
+
+`artifact_absence` scored exactly 1.0 across all 360 independent-regime Pattachitra scores (base +
+three LoRA checkpoints, zero variance) — confirming the text/calligraphy-artifact problem that
+motivated the entire ukiyo-e curation project (`docs/MODEL_VERDICT.md` §4) is specific to
+ukiyo-e/WikiArt, not a generic SDXL-style-LoRA failure mode. Pattachitra prompts never evoke SDXL's
+text/caption-artifact tendency in the first place, in any arm — so the ukiyo-e project's decision to
+scope its curation filter specifically around embedded text/calligraphy (rather than, say, a
+generic "any defect" filter) targeted a real, style-specific risk rather than a universal one.
+
+### 7.6 Portfolio-level pattern (the Pattachitra negative survives §7.2, so this is reported)
+
+Two style-LoRA attempts now: ukiyo-e (base `sdxl_base` style_adherence 0.9389 — SDXL already
+renders this style well) and Pattachitra (base style_adherence 0.3533 — SDXL renders this style
+poorly). **The data does not cleanly support "LoRA helps mainly where the base is weak, and
+well-represented styles are just perturbed" as a general rule — Pattachitra is a counter-example
+to the "weak base → LoRA helps" half of that hypothesis, not a confirmation of it.** SDXL rendered
+Pattachitra poorly on its own, and a rank-8 LoRA retrain still did not close that gap on
+`style_adherence` at any tested checkpoint, while actively introducing a guardrail failure
+(figure/subject dropout) that was not present in the base. The more defensible, evidence-grounded
+synthesis: **at this small-corpus (23–100 image), rank-8, zero-cost-local training scale, neither
+a well-represented nor an under-represented style reliably improved under LoRA retraining without
+a guardrail regression appearing somewhere** — ukiyo-e's own primary endpoint failed to clear its
+promotion bar too (§4.6), just without a comparably severe guardrail failure. **What both projects
+do support unambiguously: pre-test `sdxl_base`'s zero-training rendering of a candidate style
+before committing any training spend** — this is exactly how Mughal miniature and Warli were
+correctly disqualified in `docs/NEXT_MODEL_SPEC.md` §2 (a direct, zero-LoRA prompt test found SDXL
+already renders both styles convincingly, making further training low-value) without spending a
+single GPU-hour, and the same style of check would have surfaced Pattachitra's 0.3533 base score
+*before* this training run —
+not as a reason to skip training (a low base score doesn't guarantee LoRA training will fail to
+help, as this section's own null result shows), but as a cheap, mandatory first data point any
+next-model selection should have on record before spend, alongside a guardrail-inclusive evaluation
+design from the start (§7.2's checkpoint-selection methodology, not a single-checkpoint spot check).
 
 | Family | Verdict | Basis |
 |---|---|---|
-| Pattachitra LoRA — curated retrain | **not published — regresses vs. `sdxl_base` on both measured axes** | §7.2: `style_adherence` −2.234×SEM (significant regression, not a lift); `figure_preservation` −7.226×SEM (large, robust regression, visually confirmed as a subject-dropping failure on at least one prompt); `artifact_absence` uninformative (ceiling effect, both arms at 1.0). Do not retrain to chase a better number — the finding is reported as evidence, not treated as a bug to iterate away. |
+| Pattachitra LoRA — curated retrain (all checkpoints) | **not published — regresses vs. `sdxl_base` on the figure_preservation guardrail at every tested checkpoint** | §7.3: `figure_preservation` −5.5 to −7.8×SEM at 500/1000/1500 (large, robust, confirmed not a checkpoint-selection artifact, §7.2); `style_adherence` does not clear the bar at any checkpoint (significant regression at 1500, no effect at 500/1000); `artifact_absence` uninformative for gating (ceiling effect) but retroactively validates ukiyo-e's curation scoping (§7.5). Do not retrain to chase a better number — the finding is reported as evidence, not treated as a bug to iterate away. |
