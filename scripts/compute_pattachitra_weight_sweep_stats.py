@@ -1,19 +1,23 @@
 #!/usr/bin/env python
 """Pattachitra adapter-weight sweep stats - tests whether a lower `adapter_weights` scale
 recovers `figure_preservation` while keeping a positive `style_adherence` lift over `sdxl_base`,
-per docs/MODEL_VERDICT.md SS7.2(5)'s overtraining/recipe hypothesis. Weight=1.0 reuses the
-already-generated, CUDA-corruption-audited records in reports/pattachitra_ab_base_comparison.json
-(SS7.2(4)) rather than the sweep's own output. Weights 0.3/0.5/0.7 come from
-reports/pattachitra_weight_sweep.json (scripts/_pattachitra_weight_sweep.py).
+per docs/MODEL_VERDICT.md SS7.2(5)'s overtraining/recipe hypothesis.
+
+Single source of truth: reports/pattachitra_uniform_rescore.json
+(scripts/rescore_pattachitra_uniform.py) - every weight (0.3/0.5/0.7/1.0) and `base` are scored
+in one uniform pass with the corrected PATTACHITRA_STYLE_QUESTION, so no number here is a mix of
+the old (void) hardcoded-ukiyo-e scoring and new corrected scoring.
 
 Same paired-diff/SEM/MDE methodology as scripts/compute_pattachitra_ab_stats.py - reused directly
 (imported, not reimplemented) so both reports are computed identically.
 
-An "operating point" is a (checkpoint, weight) where figure_preservation does not regress vs. base
-by more than 2xSEM AND style_adherence's diff is positive (even if not significant) - i.e. the
-adapter is no longer actively harming subject preservation while still nudging style in the right
-direction. If none exists at any tested weight, the regression is not a dosage/overtraining
-artifact recoverable by lowering the adapter scale.
+An "operating point" is a (checkpoint, weight) where BOTH conditions hold at the same weight
+(docs/WEIGHT_SWEEP_PREREGISTRATION.md's joint criterion, guarding the weight->0 tautology):
+style_adherence diff/SEM > +2.0 (significant lift) AND figure_preservation diff/SEM >= -2.0
+(non-inferior). If none exists at any tested weight, the regression is not a dosage/overtraining
+artifact recoverable by lowering the adapter scale - and per the standing directive, no result
+here reopens the publication decision either way (already settled by figure_preservation at
+weight=1.0).
 
 Usage:
     python scripts/compute_pattachitra_weight_sweep_stats.py
@@ -27,11 +31,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-BASE_JSON = ROOT / "reports" / "pattachitra_ab_base_comparison.json"
-SWEEP_JSON = ROOT / "reports" / "pattachitra_weight_sweep.json"
+UNIFORM_RESCORE_JSON = ROOT / "reports" / "pattachitra_uniform_rescore.json"
 OUT_JSON = ROOT / "reports" / "pattachitra_weight_sweep_stats.json"
 CHECKPOINTS = ("curated500", "curated1000")
-SWEEP_WEIGHTS = (0.3, 0.5, 0.7)
+ALL_WEIGHTS = (0.3, 0.5, 0.7, 1.0)
 AXES = ("style_adherence", "figure_preservation")
 
 
@@ -48,34 +51,24 @@ def _import_ab_stats():
 def main() -> None:
     ab_stats = _import_ab_stats()
 
-    all_records = json.loads(BASE_JSON.read_text(encoding="utf-8"))
-    base = {f"{r['prompt_id']}_{r['seed']}": r for r in all_records if r["checkpoint"] == "base"}
+    all_records = json.loads(UNIFORM_RESCORE_JSON.read_text(encoding="utf-8"))
+    clean = [r for r in all_records if not r.get("error") and r.get("independent_calls")]
+
+    base = {f"{r['prompt_id']}_{r['seed']}": r for r in clean if r["checkpoint"] == "base"}
     assert len(base) == 90, f"expected 90 base records, got {len(base)}"
-
-    weight1_by_ckpt = {
-        ckpt: {f"{r['prompt_id']}_{r['seed']}": r for r in all_records if r["checkpoint"] == ckpt}
-        for ckpt in CHECKPOINTS
-    }
-
-    sweep_records = (
-        json.loads(SWEEP_JSON.read_text(encoding="utf-8")) if SWEEP_JSON.exists() else []
-    )
 
     results = {}
     operating_points = []
     print("=== Pattachitra adapter-weight sweep vs. sdxl_base "
-          "(n=90 paired each, where complete) ===\n")
+          "(n=90 paired each, where complete; uniform re-score, corrected style question) ===\n")
 
     for ckpt in CHECKPOINTS:
         results[ckpt] = {}
-        for weight in (*SWEEP_WEIGHTS, 1.0):
-            if weight == 1.0:
-                arm = weight1_by_ckpt[ckpt]
-            else:
-                arm = {
-                    f"{r['prompt_id']}_{r['seed']}": r for r in sweep_records
-                    if r["checkpoint"] == ckpt and r.get("weight") == weight
-                }
+        for weight in ALL_WEIGHTS:
+            arm = {
+                f"{r['prompt_id']}_{r['seed']}": r for r in clean
+                if r["checkpoint"] == ckpt and r.get("weight") == weight
+            }
             if len(arm) < 90:
                 print(f"{ckpt} @ weight={weight}: only {len(arm)}/90 scored - "
                       f"skipping (incomplete)\n")
