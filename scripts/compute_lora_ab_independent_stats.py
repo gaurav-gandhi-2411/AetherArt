@@ -54,7 +54,7 @@ def main() -> None:
     for axis in AXES:
         pub_scores = [p["published"]["independent_calls"][axis] for p in pairs]
         cur_scores = [p["curated"]["independent_calls"][axis] for p in pairs]
-        diffs = [c - p for c, p in zip(cur_scores, pub_scores)]
+        diffs = [c - p for c, p in zip(cur_scores, pub_scores, strict=True)]
 
         pub_mean = statistics.fmean(pub_scores)
         cur_mean = statistics.fmean(cur_scores)
