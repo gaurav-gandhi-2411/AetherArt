@@ -1182,9 +1182,15 @@ oversight, per the standing directive's cap against extending into additional ch
 | **1000** | `style_adherence` **(resolved)** | 0.8883 | 0.7883 | **−0.1000** | 0.0217 | **−4.603** | 0.0609 |
 | | `figure_preservation` | 0.9767 | 0.9322 | **−0.0444** | 0.0057 | **−7.768** | 0.0160 |
 | | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
-| **1500** | `style_adherence` **(VOID — out of scope, see note above)** | 0.3533 | 0.2928 | −0.0606 | 0.0271 | −2.234 | 0.0760 |
+| **1500** | `style_adherence` **(VOID — out of scope, see note above)** | ~~0.3533~~ | ~~0.2928~~ | ~~−0.0606~~ | ~~0.0271~~ | ~~−2.234~~ | ~~0.0760~~ |
 | | `figure_preservation` | 0.9767 | 0.9306 | **−0.0461** | 0.0064 | **−7.226** | 0.0179 |
 | | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
+
+*(Checkpoint 1500's entire `style_adherence` row — including base mean — is struck through, not just
+the diff: 1500 was never part of the uniform re-score's paired sample, so its base-mean pairing
+predates the corrected question and does not carry the resolved 0.8883 figure that 500/1000 share.
+Left as void rather than backfilled with 0.8883, since that base-mean figure was never actually
+re-measured against a checkpoint-1500 pairing.)*
 
 **`style_adherence` (primary A) — RESOLVED for 500/1000, now trustworthy, and it does not clear
 the bar at either checkpoint — in the wrong direction, and more decisively than the original
