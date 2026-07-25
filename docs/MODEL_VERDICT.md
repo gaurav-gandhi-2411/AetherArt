@@ -912,16 +912,25 @@ ukiyo-e curated per its own `retrain.log`'s logged launch command — identical
 `--train_batch_size 1 --gradient_accumulation_steps 4 --max_train_steps 1500 --rank 8`, and
 `Num examples = 23` logged directly by the training script, not assumed from a file count.)
 
-Both figures are far above the 10–50-epoch range typically sufficient for style-LoRA convergence
-on a small, homogeneous corpus — **≈174 epochs for the published, currently-live ukiyo-e adapter is
-not a smaller version of the same problem, it is a substantially larger one** than even
-Pattachitra's worst-tested checkpoint (60 epochs). Because both adapters used the *identical*
-1500-step/batch-1/grad-accum-4 schedule regardless of corpus size (100 vs. 23 images — a 4.3×
-difference the recipe does not adjust for), the 1500-step recipe itself is a **shared suspect
-across both of this project's negative style-LoRA results**, not a Pattachitra-specific finding.
-This does not by itself prove overtraining caused the regression (a corpus/style effect is not
-ruled out either) — see the adapter-weight sweep below, which tests this directly and without
-retraining.
+**Tightened claim — do not overstate what the 500-step datapoint supports.** Pattachitra's
+checkpoint-500 sits at **20 effective epochs — *inside* the 10–50-epoch band typically sufficient
+for style-LoRA convergence** on a small, homogeneous corpus — and it already regresses
+`figure_preservation` by −5.532×SEM vs. `sdxl_base`. Overtraining is a plausible explanation for
+the *monotonic worsening* from checkpoint-500 to checkpoint-1500 (20→60 epochs, −5.5×SEM→
+−7.2×SEM) — more steps beyond an already-present effect compounding it is consistent with the
+data — **but it does not explain the regression already present at an in-band epoch count.**
+Whatever produces the −5.5×SEM baseline effect at 20 epochs is not "too many epochs," and needs a
+separate explanation (a corpus/caption/style effect per §7.3's hypotheses, or an
+over-application-at-any-epoch-count effect — the adapter-weight sweep below tests dosage directly
+and independently of step count). Ukiyo-e's ≈174 effective epochs — nearly 9× checkpoint-500's
+count and far outside the convergence band on any accounting — remains the **stronger**
+overtraining candidate of the two, and the 1500-step/batch-1/grad-accum-4 schedule is a legitimate
+concern to revisit for *that* adapter specifically. The identical-schedule-across-differing-corpus-
+size observation (100 vs. 23 images, a 4.3× difference the recipe does not adjust for) does **not**,
+by itself, establish the schedule as *the* explanation for Pattachitra's regression — only as a
+plausible contributor to how much worse it gets as steps increase, not to why it is already
+non-zero at 20 epochs. The two adapters' overtraining evidence is asymmetric, not a single shared
+verdict, and is reported as such.
 
 **Adapter-weight sweep (zero-cost, no retraining) — checked whether a lower `adapter_weights`
 scale recovers `figure_preservation` while keeping a positive `style_adherence` lift.** If an

@@ -57,7 +57,37 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25c)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25d)**
+
+- [x] **Pre-registered the weight-sweep decision rule; tightened the epoch claim; fixed a
+      flaky latency test (2026-07-25d) — doc/analysis only, GPU untouched (a background
+      adapter-weight sweep was running throughout; only read-only `mem_get_info`/process-alive
+      checks were used, never its result data before this commit).** (1) **Pre-registration**
+      (`docs/WEIGHT_SWEEP_PREREGISTRATION.md`): guards the tautology that adapter weight → 0
+      trivially recovers `figure_preservation` by converging to `sdxl_base` while the style lift
+      also vanishes, so recovery on that axis alone is not evidence of a usable adapter. Requires
+      a joint criterion at the same weight — `style_adherence` diff/SEM > +2.0 (reusing the
+      original Pattachitra pre-registration's own threshold) AND `figure_preservation` diff/SEM
+      ≥ −2.0 (the existing §7 guardrail, not a new lenient margin) — with "no viable operating
+      point" pre-committed as the conclusion if no weight clears both.
+      `scripts/compute_pattachitra_weight_sweep_stats.py` was corrected to implement this exact
+      rule (previously checked `style_adherence diff > 0`, a materially weaker bar) before being
+      run against complete data. (2) **Epoch claim tightened**
+      (`docs/MODEL_VERDICT.md` §7.2(5)): checkpoint-500's 20 effective epochs sits *inside* the
+      typical 10–50-epoch convergence band yet already regresses `figure_preservation`
+      (−5.532×SEM) — overtraining plausibly explains the *monotonic worsening* 500→1500 but does
+      NOT explain the baseline regression already present at an in-band epoch count. Ukiyo-e's
+      ≈174 epochs remains the stronger overtraining candidate of the two; the two adapters'
+      evidence is asymmetric, not a single shared verdict. (3) **Flaky-test fix**
+      (`test_combined_path_nf4_hyper_within_budget`, failed under GPU contention in three
+      separate sessions): added `gpu_is_quiet()` (`aetherart/gpu_hygiene.py`, 5 new mocked unit
+      tests) — a `torch.cuda.mem_get_info()`-based contention check with a 500 MB threshold — and
+      the test now skips rather than asserts a wall-clock budget when the GPU isn't uncontended.
+      Verified live against the actually-running sweep: the test correctly skipped. Chose
+      skip-on-contention over recalibrating the budget from a measured distribution because
+      gathering that distribution would itself require dedicated GPU time, which this task
+      explicitly ruled out. §7's verdict framing and the dense-checkpoint-retrain proposal remain
+      gated on the sweep, as instructed — not touched this checkpoint.
 
 - [x] **CUDA-corruption audit on the Pattachitra negative (2026-07-25c) — finding survives; one
       prior claim corrected.** A skeptical re-audit specifically asked whether the CUDA "illegal
