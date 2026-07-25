@@ -1000,16 +1000,45 @@ axes for the same defect class, as this finding demands — neither `figure_pres
 re-scoring with `PATTACHITRA_STYLE_QUESTION` before it can be trusted in either direction. The
 `figure_preservation` guardrail finding — the actual, stated reason this adapter is not published —
 is **unaffected** and stands on its own; it was never dependent on the `style_adherence` numbers.
-**Consequence for the running weight sweep:** the fix was committed while `curated500`'s generation
-was still in progress and `curated1000` had not yet started; `curated500`'s already-running process
-holds the old (buggy) code in memory and will score its `style_adherence` wrong exactly like the
-existing data (its saved *images* are unaffected — see the CUDA-corruption audit's established
-principle that scoring bugs don't retroactively corrupt already-written image files), while
-`curated1000`, launched fresh after `curated500` exits, will pick up the fix automatically. Both
-checkpoints' `style_adherence` will nonetheless be **re-scored uniformly** from the saved images
-once the sweep completes, so the reported numbers come from one consistent method, not a mix of
-old-bug and new-fix scoring. §7.4's verdict is not finalized until the judge positive control and
-the re-score both land (`docs/WEIGHT_SWEEP_PREREGISTRATION.md`).
+
+**The publication decision is already settled and does not wait on any of the remaining work below.**
+`figure_preservation` regresses −5.5 to −7.8×SEM vs. `sdxl_base` at `weight=1.0` on a
+**domain-neutral question, confirmed unaffected by the judge-prompt bug** — this alone is
+sufficient to not publish, independent of what `style_adherence`, the weight sweep, or the judge
+positive control eventually show. **No outcome of the remaining work can publish this adapter** —
+a discovered low-weight operating point would characterize *how* the adapter fails differently
+(over-applied vs. intrinsically broken), not *whether* it fails the guardrail at the scale it has
+actually been evaluated at (`weight=1.0`, the only scale a real product would deploy at). The
+remaining work is **diagnostic, not decisional**, and is explicitly capped at exactly two
+questions, no further:
+
+1. **Does a low-weight operating point exist?** (the adapter-weight sweep, below) — informs
+   whether a future retrain attempt, if one is ever authorized, should investigate dosage as a
+   contributing factor. Does not reopen whether to publish the `weight=1.0` checkpoints evaluated
+   in §7.3.
+2. **Can the judge perceive Pattachitra style at all, under either question wording?** (the
+   positive control, `scripts/judge_style_positive_control.py`) — informs whether
+   `style_adherence` is recoverable by re-scoring or void for a second, independent reason
+   (instrument blindness). Does not change the `figure_preservation` verdict either way.
+
+**Explicitly out of scope for this diagnostic pass:** no further retrain, no corpus rework, no
+additional checkpoint or hyperparameter sweep beyond the two questions above. If either diagnostic
+surfaces a genuinely promising lead (e.g. a real operating point), that is a candidate for a
+*future*, separately-authorized attempt — not something to chase further within this pass.
+
+**Consequence for the running weight sweep, updated after this task's own changes:** the sweep's
+inline VLM scoring has been disabled entirely (both checkpoints now generate-only — see
+`scripts/_pattachitra_weight_sweep.py`'s docstring) — every score, for every axis, at every
+weight including `weight=1.0`, will come from one later, uniform re-score pass over the saved
+images, using `PATTACHITRA_STYLE_QUESTION`. This replaces the earlier plan (letting `curated500`
+finish scoring under the old buggy code, then re-scoring anyway) with a cleaner one: the
+already-in-flight sweep process was stopped and relaunched with scoring disabled once the fix
+landed — its 100 already-generated images at that point were preserved and resumed from (verified:
+the relaunched process picked up exactly where the JSON left off, generating no duplicates), so no
+generation work was lost, only the now-pointless scoring work was skipped going forward. §7.4's
+verdict text below is not finalized until the judge positive control and the uniform re-score both
+land (`docs/WEIGHT_SWEEP_PREREGISTRATION.md`) — but the **decision** (not published) already does
+not depend on either.
 
 ### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 

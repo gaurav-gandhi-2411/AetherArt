@@ -100,6 +100,37 @@ stated as such, not reported as a plain "operating point found" alongside the jo
 if it were an expected result.** A found operating point that goes unexplained is not accepted at
 face value under this pre-registration.
 
+## Prediction WITHDRAWN (2026-07-25, following the judge-prompt bug — see `docs/MODEL_VERDICT.md` §7.2 addendum)
+
+**The prediction above rests entirely on the two `weight=1.0` `style_adherence` values, +0.477
+(curated500) and −0.789 (curated1000). Both were produced by `score_vlm_judge`'s then-hardcoded
+"does this look like ukiyo-e" question, applied to Pattachitra images — the same bug that voided
+all 360 existing Pattachitra `style_adherence` scores. Those two numbers are VOID, not merely
+suspect. A prediction built on void inputs is not a weaker prediction; it is not a prediction at
+all. Withdrawn, not left standing.**
+
+**Choice made — (a), withdraw explicitly, not (b) re-derive now:** re-deriving before reading the
+0.3/0.5/0.7 results is possible in principle (the `weight=1.0` arm reuses
+`reports/pattachitra_ab_base_comparison.json`'s already-generated images, independent of the
+currently-running sweep's own output), but doing so now would require new Ollama VLM calls while
+the sweep is still running and the GPU is occupied — the same constraint this whole audit has
+held to since the sweep began. It would also pre-empt and duplicate the uniform re-score already
+planned for when the GPU frees (all four weights, all three axes, one consistent pass — see the
+"remaining work" section below), for no benefit: there is no decision or action that depends on
+having the corrected prediction *before* that re-score happens anyway. (b) is reserved for a
+situation where the re-derivation is cheap, independent, and blocks something — none of which
+applies here.
+
+**What survives, and what doesn't:** the *structural* argument — `weight=0` trivially equals 0 by
+construction, so any interior weight clearing +2.0×SEM requires a non-monotonic peak above both of
+its own boundary values — is a property of the tautology itself and holds regardless of which
+specific numbers eventually fill in the `weight=1.0` boundary. The *specific* numbers (+0.477,
+−0.789) and the *concrete* conclusion drawn from them ("no viable operating point") do not survive
+and are not asserted going forward. **No replacement prediction is recorded now.** The corrected
+prediction will be re-derived from the corrected `weight=1.0` `style_adherence` values as the first
+step of the uniform re-score below, before the 0.3/0.5/0.7 corrected results are read — the same
+discipline this section originally committed to, just re-executed once valid inputs exist.
+
 ## Non-inferiority screen vs. demonstrated non-inferiority (fixed now)
 
 **The `figure_preservation diff/SEM >= -2.0` rule is a "failed to detect significant regression"
