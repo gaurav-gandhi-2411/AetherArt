@@ -103,8 +103,10 @@ class TestCombinedPathGPU:
         # CUDA-corruption and weight-sweep audits). Skip rather than assert a wall-clock number
         # that contention alone can blow through 2-8x with no code change involved.
         if not gpu_is_quiet():
-            pytest.skip("GPU not quiet (another workload holds significant VRAM) - the "
-                        "latency budget is only a meaningful measurement uncontended")
+            pytest.skip(
+                "GPU not quiet (another workload holds significant VRAM) - the "
+                "latency budget is only a meaningful measurement uncontended"
+            )
 
         r = ModelRegistry()
         r.release_sdxl_base()
