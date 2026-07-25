@@ -16,7 +16,8 @@ Usage (from repo root, after `gcloud compute scp <instance>:<remote_path> <local
     python scripts/gcp_verify_before_teardown.py <local_path> --min-bytes N
 
 For a JSON records file (list of dicts, e.g. reports/*.json from this project's harnesses):
-    python scripts/gcp_verify_before_teardown.py reports/lora_ab_30prompt.json --min-records 180 --no-errors
+    python scripts/gcp_verify_before_teardown.py reports/lora_ab_30prompt.json \
+        --min-records 180 --no-errors
 
 Exits 0 (safe to delete the instance) only if every requested check passes. Exits 1 and prints
 exactly what failed otherwise - never silently proceeds.
@@ -33,12 +34,23 @@ from pathlib import Path
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("local_path", type=Path, help="Local file that was just scp'd down")
-    ap.add_argument("--min-bytes", type=int, default=1,
-                     help="Minimum file size in bytes (default: 1, i.e. just non-empty)")
-    ap.add_argument("--min-records", type=int, default=None,
-                     help="If set, parse local_path as JSON (a list) and require at least this many records")
-    ap.add_argument("--no-errors", action="store_true",
-                     help="If set with --min-records, also require every record's 'error' field to be falsy")
+    ap.add_argument(
+        "--min-bytes",
+        type=int,
+        default=1,
+        help="Minimum file size in bytes (default: 1, i.e. just non-empty)",
+    )
+    ap.add_argument(
+        "--min-records",
+        type=int,
+        default=None,
+        help="If set, parse local_path as JSON (a list) and require at least this many records",
+    )
+    ap.add_argument(
+        "--no-errors",
+        action="store_true",
+        help="If set with --min-records, also require every record's 'error' field to be falsy",
+    )
     args = ap.parse_args()
 
     failures: list[str] = []
@@ -75,9 +87,11 @@ def main() -> int:
             print(f"  - {f}")
         return 1
 
-    print(f"PASS: {args.local_path} verified ({size} bytes"
-          + (f", {args.min_records}+ records, 0 errors" if args.min_records is not None else "")
-          + ") — safe to tear down the source instance.")
+    print(
+        f"PASS: {args.local_path} verified ({size} bytes"
+        + (f", {args.min_records}+ records, 0 errors" if args.min_records is not None else "")
+        + ") — safe to tear down the source instance."
+    )
     return 0
 
 
