@@ -981,24 +981,68 @@ plausible contributor to how much worse it gets as steps increase, not to why it
 non-zero at 20 epochs. The two adapters' overtraining evidence is asymmetric, not a single shared
 verdict, and is reported as such.
 
-**Adapter-weight sweep (zero-cost, no retraining) — checked whether a lower `adapter_weights`
-scale recovers `figure_preservation` while keeping a positive `style_adherence` lift.** If an
-operating point exists, the checkpoint is over-applied/overtrained rather than intrinsically
-broken; if none exists at any weight, the regression is not a dosage effect.
-`scripts/_pattachitra_weight_sweep.py` re-scores checkpoint-500 and checkpoint-1000 at weights
-0.3/0.5/0.7 (weight=1.0 reuses the already-audited §7.2(4) records) — **IN PROGRESS, results
-pending; this subsection will be updated with the operating-point table once the sweep completes.
-Not run on GCP, no spend, no training.**
+**Adapter-weight sweep (zero-cost, local only, no retraining) — RESULT: four operating points
+found, all below the deployed weight, none at or above it.** Checked whether a lower
+`adapter_weights` scale recovers `figure_preservation` while keeping a genuine, significant
+`style_adherence` lift over `sdxl_base` — the joint criterion pre-registered in
+`docs/WEIGHT_SWEEP_PREREGISTRATION.md` (`style_adherence` diff/SEM `> +2.0` AND
+`figure_preservation` diff/SEM `>= -2.0`, at the same weight), computed from a uniform re-score of
+every weight (0.3/0.5/0.7/1.0) on all three axes with the corrected `PATTACHITRA_STYLE_QUESTION`
+(`scripts/rescore_pattachitra_uniform.py` → `reports/pattachitra_uniform_rescore.json`,
+810 images, 0 errors; `scripts/compute_pattachitra_weight_sweep_stats.py` →
+`reports/pattachitra_weight_sweep_stats.json`):
+
+| Checkpoint | Weight | `style_adherence` diff/SEM | `figure_preservation` diff/SEM | fp MDE@80% | Operating point? |
+|---|---|---|---|---|---|
+| curated500 | 0.3 | **+3.622** | +0.754 | 0.0083 | **YES** |
+| curated500 | 0.5 | **+3.482** | +2.080 | 0.0082 | **YES** |
+| curated500 | 0.7 | +1.348 | −0.491 | 0.0095 | no (style not significant) |
+| curated500 | 1.0 | −2.996 | −5.402 | 0.0115 | no (both axes fail) |
+| curated1000 | 0.3 | **+2.688** | +0.424 | 0.0073 | **YES** |
+| curated1000 | 0.5 | **+3.482** | +1.422 | 0.0088 | **YES** |
+| curated1000 | 0.7 | −0.306 | −1.153 | 0.0095 | no (both axes fail) |
+| curated1000 | 1.0 | −4.603 | −7.540 | 0.0159 | no (both axes fail) |
+
+**This means the checkpoint is over-applied at `weight=1.0` (the only scale it has ever been
+evaluated or would be deployed at), not intrinsically incapable of a positive characterization —
+at a lower blend weight, the adapter delivers a real, significant style lift (not the trivial
+weight→0 tautology the pre-registration guarded against) while `figure_preservation` does not
+regress and in fact modestly *improves* over `sdxl_base` at weights 0.3–0.5.**
+
+**The pre-registration required an explanation for a non-monotonic interior peak, not a bare
+report of one — here it is.** Raw `style_adherence` arm means for `curated500`: weight 0.3 →
+0.9072, weight 0.5 → **0.9167 (the peak)**, weight 0.7 → 0.9000, weight 1.0 → 0.8472 — *below*
+`sdxl_base`'s own 0.8883 at full weight. The curve rises from the (implied, by construction)
+weight=0 value of 0.8883, peaks at weight=0.5, then falls below even the no-adapter baseline by
+weight=1.0. **Plausible mechanism (offered as a hypothesis grounded in this audit's own evidence,
+not independently verified further — doing so would exceed this diagnostic's scope):** LoRA
+weight scaling linearly interpolates the effective model between `sdxl_base` (weight=0) and the
+fully-applied adapter (weight=1.0). If the adapter's learned delta carries a comparatively robust,
+generalizable *stylistic* signal (decorative border, palette, compositional layout — plausibly
+learnable from a 100-image corpus even with generic BLIP captions, §7.3) alongside a comparatively
+noisy, less generalizable *figure-rendering* signal (plausibly harder to learn robustly from the
+same corpus, and consistent with §7.2(5)'s effective-epoch finding that this checkpoint is
+overtrained relative to its corpus size), a partial blend would be expected to average in the
+stylistic signal — which dominates at low-to-moderate weight — while diluting the noisier
+figure-rendering signal's ability to override `sdxl_base`'s own more robustly-trained figure
+prior. Only near full weight does the adapter's own (comparatively weaker) figure-rendering
+behavior dominate the blend, degrading both axes together. This is consistent with, and does not
+contradict, §7.2(5)'s epoch analysis — it characterizes *how* overtraining manifests (a
+weight-dependent tradeoff) rather than replacing that finding.
 
 **Conclusion: none of the four *mechanical* explanations (1)-(4) accounts for the regression; (5)
-is a plausible recipe-level contributing factor under active test, pending the weight sweep above.**
+is confirmed a genuine recipe-level contributing factor — the checkpoint is over-applied at the
+deployed weight, not intrinsically incapable of a positive characterization at a lower one.**
 Checkpoint selection doesn't resolve it (worse, even), and the CUDA corruption is confirmed
 contained to 68 failed *attempts* (0 corrupted successes) on one checkpoint, ruled out by direct
-pixel/visual audit rather than architectural reasoning alone. **The finding — SDXL renders
-Pattachitra poorly and no tested checkpoint of this recipe closes that gap without a guardrail
-regression — stands as reported below**, with the open question of whether the guardrail
-regression specifically is a recipe artifact (fixable by a different step/epoch schedule) or an
-intrinsic style/corpus limitation being actively narrowed down, not left unresolved.
+pixel/visual audit rather than architectural reasoning alone. **The finding — at `weight=1.0`,
+the only scale this adapter has been evaluated at or would be deployed at, SDXL+adapter regresses
+`figure_preservation` decisively and does not demonstrate a `style_adherence` lift — stands
+exactly as reported below. This diagnostic does not reopen that verdict** (per the standing
+directive's explicit cap): a genuine operating point at `weight=0.3–0.5` is a finding about the
+*recipe*, informing whether a future, separately-authorized retrain attempt should investigate
+adapter-weight tuning as a contributing factor — it is not grounds to publish, redeploy, or
+retrain within this pass.
 
 ### 7.2 Addendum — a sixth issue found, of a different kind: `style_adherence` (endpoint A) is VOID
 
@@ -1089,6 +1133,21 @@ verdict text below is not finalized until the judge positive control and the uni
 land (`docs/WEIGHT_SWEEP_PREREGISTRATION.md`) — but the **decision** (not published) already does
 not depend on either.
 
+**RESOLVED (2026-07-25/26): both the judge positive control and the uniform re-score have now
+run.** `scripts/judge_style_positive_control.py` tested whether the judge can discriminate
+Pattachitra style at all, before trusting any corrected number: real curated Pattachitra training
+art (n=100) vs. `sdxl_base`'s own generated attempts (n=90), unpaired. **PASS, decisively:**
+`diff = +0.4437`, `SEM = 0.0370`, `diff/SEM = +12.005` — real Pattachitra art scores far above
+`sdxl_base`'s attempts when asked the corrected question, and far above the same real images
+scored under the historical wrong (ukiyo-e-worded) question (`diff/SEM = −1.504` there — no
+discrimination, consistent with "real Pattachitra art doesn't look like ukiyo-e either," not
+instrument blindness to Pattachitra). **The judge is not blind to Pattachitra style — the deployed
+question was simply wrong, and is now fixed.** `style_adherence` is **no longer void** — every
+number in §7.3's table below and the weight-sweep table above comes from the uniform re-score
+(`reports/pattachitra_uniform_rescore.json`, 810 images, 0 errors), scored once, consistently,
+with the corrected question. See §7 Methodology (below §7.6) for how this and the ukiyo-e control
+failure fit into a standalone finding about this project's measurement practices.
+
 ### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 
 (`reports/pattachitra_ab_base_comparison.json`, `scripts/compute_pattachitra_ab_stats.py` →
@@ -1100,30 +1159,36 @@ follow-up audit then specifically checked whether the pre-crash images or the fi
 residual artifact in this table — see §7.2(4): verified clean on both counts, no regeneration
 needed.)
 
-**`style_adherence` rows below are marked VOID per the §7.2 addendum above — the judge was asked
-about ukiyo-e, not Pattachitra, for every one of these numbers. Not deleted; not to be read as
-either a pass or a fail until re-scored.**
+**`style_adherence` for checkpoints 500 and 1000 is RESOLVED below — re-scored uniformly with
+`PATTACHITRA_STYLE_QUESTION` (`reports/pattachitra_uniform_rescore.json`). Checkpoint 1500 is
+NOT part of the weight sweep's scope (it was never swept, by the original design decision) and
+remains VOID — not re-scored in this pass; this is a deliberate, disclosed scope boundary, not an
+oversight, per the standing directive's cap against extending into additional checkpoints.**
 
 | Checkpoint | Endpoint | Base mean | Arm mean | Diff | SEM | diff/SEM | MDE@80% |
 |---|---|---|---|---|---|---|---|
-| **500** | `style_adherence` **(VOID)** | 0.3533 | 0.3644 | +0.0111 | 0.0233 | +0.477 | 0.0652 |
+| **500** | `style_adherence` **(resolved)** | 0.8883 | 0.8472 | **−0.0411** | 0.0137 | **−2.996** | 0.0384 |
 | | `figure_preservation` | 0.9767 | 0.9539 | **−0.0228** | 0.0041 | **−5.532** | 0.0115 |
 | | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
-| **1000** | `style_adherence` **(VOID)** | 0.3533 | 0.3311 | −0.0222 | 0.0282 | −0.789 | 0.0789 |
+| **1000** | `style_adherence` **(resolved)** | 0.8883 | 0.7883 | **−0.1000** | 0.0217 | **−4.603** | 0.0609 |
 | | `figure_preservation` | 0.9767 | 0.9322 | **−0.0444** | 0.0057 | **−7.768** | 0.0160 |
 | | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
-| **1500** | `style_adherence` **(VOID)** | 0.3533 | 0.2928 | **−0.0606** | 0.0271 | **−2.234** | 0.0760 |
+| **1500** | `style_adherence` **(VOID — out of scope, see note above)** | 0.3533 | 0.2928 | −0.0606 | 0.0271 | −2.234 | 0.0760 |
 | | `figure_preservation` | 0.9767 | 0.9306 | **−0.0461** | 0.0064 | **−7.226** | 0.0179 |
 | | `artifact_absence` | 1.0000 | 1.0000 | 0.0000 | 0.0000 | 0/0 | 0.0000 |
 
-**`style_adherence` (primary A) — VOID, see §7.2 addendum. The paragraph below describes what this
-table appeared to show before that finding; it is preserved for the record, not as a standing
-claim.** ~~`style_adherence` does not clear the bar at any checkpoint — checkpoint-1500 clears it
-in the wrong direction (significant regression, −2.234×SEM); 500 and 1000 show no significant
-effect either way. `sdxl_base` itself scores only 0.3533 on this axis (far from ceiling) — SDXL
-does not render Pattachitra style well on its own, and no tested checkpoint of this LoRA closes
-that gap.~~ **None of this can be trusted as a style-adherence finding until re-scored with
-`PATTACHITRA_STYLE_QUESTION` — it may equally be an artifact of asking about the wrong style.**
+**`style_adherence` (primary A) — RESOLVED for 500/1000, now trustworthy, and it does not clear
+the bar at either checkpoint — in the wrong direction, and more decisively than the original
+(void) numbers suggested:** checkpoint-500 regresses −2.996×SEM (previously an insignificant
++0.477×SEM under the wrong question); checkpoint-1000 regresses −4.603×SEM (previously −0.789×SEM,
+also insignificant). Both are large, individually-significant regressions once measured with the
+correct question — `sdxl_base` itself scores 0.8883 on the corrected axis (a genuinely different,
+higher reference point than the void 0.3533 figure, which measured something else entirely: "does
+this look like ukiyo-e"). **The corrected picture is not "no effect either way" (the void numbers'
+apparent story) — it is a real, significant style-adherence regression at the deployed
+`weight=1.0`, consistent in direction with the `figure_preservation` guardrail failure.** See the
+weight-sweep table in §7.2(5) above for the full picture: this regression is dosage-dependent and
+resolves at lower adapter weights, which the void numbers could never have shown.
 
 **`artifact_absence` (primary B) is a genuine positive finding, not an uninformative null — see
 §7.5.** Zero variance across all 360 independent-regime scores (90 base + 90×3 curated checkpoints)
@@ -1146,26 +1211,31 @@ hypothesis for future work, not a claim requiring no further testing.
 ### 7.4 Verdict — do NOT publish; report the finding, do not retrain to a better-looking result
 
 **Per the pre-registered decision rule, the explicit task instruction it was written under, and
-§7.2's mechanical-explanation audit: the `figure_preservation` guardrail finding is genuine, not
-an eval artifact, reported as such — the style-adherence half of this verdict is VOID per the
-§7.2 addendum and not part of this conclusion until re-scored.** ~~No checkpoint of the curated
-Pattachitra LoRA demonstrates a style-adherence lift over `sdxl_base`,~~ **(VOID — measured by
-asking about ukiyo-e; not confirmed, not refuted)** and every checkpoint significantly regresses
-figure/subject-preservation vs. `sdxl_base` (visually confirmed: prompted human figures sometimes
-go missing entirely — **this half is unaffected and stands**). **This adapter should not be
-published under the current, incomplete evidence** — not published *because* it demonstrably
-regresses figure preservation, independent of whatever the pending style-adherence re-score shows.
-**Do not retrain to chase a better-looking style-adherence number once the re-score lands** — a
-re-score is not a retrain, and this verdict's `figure_preservation` reasoning does not change based
-on it. If a Pattachitra LoRA is revisited, the evidence here points to concrete,
-testable changes before another GCP run — not just re-running with more steps or a different
-checkpoint: (1) more specific, human-reviewed or VLM-generated captions in place of generic BLIP
-output, since caption quality is a plausible contributor to the subject-dropping failure; (2) a
-larger and/or more compositionally diverse training corpus, since 100 images (though larger than
+§7.2's mechanical-explanation audit: both halves of this verdict are now confirmed, not one
+pending.** At `weight=1.0` — the only scale this adapter has been evaluated at or would be
+deployed at — **neither checkpoint demonstrates a style-adherence lift over `sdxl_base`; both
+significantly *regress* it** (checkpoint-500: −2.996×SEM; checkpoint-1000: −4.603×SEM, §7.3,
+resolved via the corrected-question uniform re-score), and every checkpoint significantly
+regresses figure/subject-preservation vs. `sdxl_base` (visually confirmed: prompted human figures
+sometimes go missing entirely). **This adapter should not be published — at the deployed weight,
+it fails on both endpoints, not just the guardrail.** **Do not retrain to chase a better-looking
+number from this finding alone** — the finding is reported as evidence, not treated as a bug to
+iterate away. If a Pattachitra LoRA is revisited, the evidence here points to concrete, testable
+changes before another GCP run — not just re-running with more steps or a different checkpoint:
+(1) **adapter-weight tuning at deployment time, ahead of any retrain** — §7.2(5)'s weight sweep
+found genuine operating points at `weight=0.3–0.5` for both checkpoints (`style_adherence`
+diff/SEM up to +3.6, `figure_preservation` non-regressed and even modestly improved), all
+achievable with the *already-trained* checkpoints at zero additional cost; this is the cheapest,
+most immediately actionable lever and does not require a new training run at all; (2) more
+specific, human-reviewed or VLM-generated captions in place of generic BLIP output, since caption
+quality is a plausible contributor to the subject-dropping failure at full weight; (3) a larger
+and/or more compositionally diverse training corpus, since 100 images (though larger than
 ukiyo-e's 23) still measurably underperformed on a 30-prompt set spanning more varied compositions
-than the corpus's own auto-captioned distribution suggests it was rich in; (3) a rare-token retrain
+than the corpus's own auto-captioned distribution suggests it was rich in; (4) a rare-token retrain
 (§7.2's minor, unproven trigger-token risk factor) as a cheap, low-priority thing to rule out if
-(1) and (2) are tried first and the regression persists.
+(2) and (3) are tried first and the regression persists. **None of (1)–(4) is authorized or
+attempted in this pass** — reported as the evidence-grounded next step for a future,
+separately-authorized session, per the standing directive's cap on this diagnostic's scope.
 
 ### 7.5 A positive, cross-domain finding: the artifact_absence ceiling retroactively validates the
 ukiyo-e curation's scoping
@@ -1180,40 +1250,82 @@ generic "any defect" filter) targeted a real, style-specific risk rather than a 
 
 ### 7.6 Portfolio-level pattern (the Pattachitra `figure_preservation` negative survives §7.2, so this is reported)
 
-**The style-adherence half of this section's argument is VOID per the §7.2 addendum — Pattachitra's
-0.3533 base score and every downstream comparison built on it were measured by asking the judge
-about ukiyo-e, not Pattachitra. Preserved below for the record, not as a standing claim; the
-`figure_preservation`-based portfolio pattern (guardrail regression on both projects) is
-unaffected and is what this section's practical recommendation actually rests on.**
+**Both sides of this section's cross-project `style_adherence` comparison now carry a caveat, for
+different reasons — resolved on the Pattachitra side, still open on the ukiyo-e side.**
+Pattachitra's base score is now **resolved** (0.8883, corrected question, §7.3) — no longer void.
+Ukiyo-e's own comparator figure (`sdxl_base` `style_adherence` 0.9389, §4) asked the *correct*
+question for its domain, so it was never affected by the Pattachitra judge-question bug — **but
+§4.10's positive control separately found the judge cannot reliably discriminate real ukiyo-e art
+from `sdxl_base`'s generated attempts on this exact axis**, which is a different, independent
+reason the ukiyo-e-side number is itself provisional. This section's numeric comparison is
+therefore stated with both caveats disclosed, not presented as two clean, comparable figures.
 
-~~Two style-LoRA attempts now: ukiyo-e (base `sdxl_base` style_adherence 0.9389 — SDXL already
-renders this style well) and Pattachitra (base style_adherence 0.3533 — SDXL renders this style
-poorly). The data does not cleanly support "LoRA helps mainly where the base is weak, and
-well-represented styles are just perturbed" as a general rule — Pattachitra is a counter-example
-to the "weak base → LoRA helps" half of that hypothesis, not a confirmation of it. SDXL rendered
-Pattachitra poorly on its own, and a rank-8 LoRA retrain still did not close that gap on
-`style_adherence` at any tested checkpoint,~~ **(VOID — none of this style-adherence comparison can
-be trusted until Pattachitra is re-scored with `PATTACHITRA_STYLE_QUESTION`)**, while actively
-introducing a guardrail failure (figure/subject dropout) that was not present in the base — **this
-clause is unaffected: it rests on `figure_preservation`, not `style_adherence`.** The more
-defensible, evidence-grounded synthesis, restricted to what survives: **at this small-corpus
-(23–100 image), rank-8, zero-cost-local training scale, a guardrail regression appeared in both
-projects' `figure_preservation`/artifact-based endpoints** — ukiyo-e's own primary endpoint failed
-to clear its
-promotion bar too (§4.6), just without a comparably severe guardrail failure. **What both projects
-do support unambiguously: pre-test `sdxl_base`'s zero-training rendering of a candidate style
-before committing any training spend** — this is exactly how Mughal miniature and Warli were
-correctly disqualified in `docs/NEXT_MODEL_SPEC.md` §2 (a direct, zero-LoRA prompt test found SDXL
-already renders both styles convincingly, making further training low-value) without spending a
-single GPU-hour, and the same style of check would have surfaced *a* Pattachitra base score
-**(the actual 0.3533 figure is VOID per the §7.2 addendum — the point about pre-testing before
-spend stands regardless of what the correctly-measured number turns out to be)** *before* this
-training run —
-not as a reason to skip training (a low base score doesn't guarantee LoRA training will fail to
-help, as this section's own null result shows), but as a cheap, mandatory first data point any
-next-model selection should have on record before spend, alongside a guardrail-inclusive evaluation
-design from the start (§7.2's checkpoint-selection methodology, not a single-checkpoint spot check).
+With that caveat: ukiyo-e (base `sdxl_base` `style_adherence` 0.9389 — SDXL already renders this
+style well, though see §4.10) and Pattachitra (base `style_adherence` 0.8883, resolved — SDXL
+renders this style reasonably, closer to ukiyo-e's own base score than the original void 0.3533
+figure suggested). **A rank-8 LoRA retrain did not close either gap — both checkpoints
+significantly *regress* `style_adherence` at the deployed `weight=1.0`** (§7.3: −2.996×SEM,
+−4.603×SEM), while actively introducing a guardrail failure (figure/subject dropout) not present
+in the base. **The more defensible, evidence-grounded synthesis:** at this small-corpus
+(23–100 image), rank-8, zero-cost-local training scale, a guardrail-type regression appeared in
+both projects at full adapter weight — ukiyo-e's own primary endpoint failed to clear its
+promotion bar too (§4.6), just without a comparably severe guardrail failure, and (unlike ukiyo-e)
+Pattachitra's regression is recoverable at a lower adapter weight (§7.2(5)) — a portfolio-level
+difference worth flagging: the two projects' negatives are not identical in character, one
+(Pattachitra) is dosage-dependent and the other (ukiyo-e) has not been tested at partial weight.
+**What both projects do support unambiguously: pre-test `sdxl_base`'s zero-training rendering of a
+candidate style before committing any training spend** — this is exactly how Mughal miniature and
+Warli were correctly disqualified in `docs/NEXT_MODEL_SPEC.md` §2 (a direct, zero-LoRA prompt test
+found SDXL already renders both styles convincingly, making further training low-value) without
+spending a single GPU-hour, and the same style of check would have surfaced Pattachitra's now-
+resolved 0.8883 base score *before* this training run — **a materially different, and materially
+more important, data point than the void 0.3533 figure that originally motivated training a
+Pattachitra adapter at all.** SDXL was not rendering Pattachitra poorly (the premise the original
+model selection reasoned from) — it was already rendering it reasonably well, at a score much
+closer to ukiyo-e's own well-represented-style baseline than the wrong-question measurement
+suggested. This does not retroactively prove training was unwarranted (a good base score doesn't
+guarantee a LoRA will fail to add value, as ukiyo-e's own more modest gap shows), but it is a
+materially different starting premise than the one this project actually trained against, and is
+disclosed as such rather than left standing uncorrected. The practical lesson stands regardless of
+which number is correct: a cheap, mandatory first data point any next-model selection should have
+on record, measured with the *right* question, before spend — alongside a guardrail-inclusive
+evaluation design from the start (§7.2's checkpoint-selection methodology, not a single-checkpoint
+spot check).
 
 | Family | Verdict | Basis |
 |---|---|---|
-| Pattachitra LoRA — curated retrain (all checkpoints) | **not published — regresses vs. `sdxl_base` on the figure_preservation guardrail at every tested checkpoint** | §7.3: `figure_preservation` −5.5 to −7.8×SEM at 500/1000/1500 (large, robust, confirmed not a checkpoint-selection artifact, §7.2); `style_adherence` is **VOID** (§7.2 addendum — measured by asking about ukiyo-e, not Pattachitra; not confirmed, not refuted, pending re-score); `artifact_absence` uninformative for gating (ceiling effect) but retroactively validates ukiyo-e's curation scoping (§7.5). Do not retrain to chase a better number — the finding is reported as evidence, not treated as a bug to iterate away. |
+| Pattachitra LoRA — curated retrain, weight=1.0 (deployed/evaluated scale, all checkpoints) | **not published — regresses vs. `sdxl_base` on both `figure_preservation` and (resolved) `style_adherence` at every tested checkpoint** | §7.3: `figure_preservation` −5.5 to −7.8×SEM at 500/1000/1500 (large, robust, confirmed not a checkpoint-selection artifact, §7.2); `style_adherence` **resolved** for 500/1000 (−2.996×SEM, −4.603×SEM; 1500 remains void, out of scope) after the judge-question bug fix; `artifact_absence` uninformative for gating (ceiling effect) but retroactively validates ukiyo-e's curation scoping (§7.5). **A genuine operating point exists at `weight=0.3–0.5` (§7.2(5))** — informs a possible future, separately-authorized attempt; does not change this verdict at the deployed weight. Do not retrain to chase a better number — the finding is reported as evidence, not treated as a bug to iterate away. |
+
+### 7.7 Methodology finding: four silent measurement failures across one evaluation project
+
+**This is reported as a standalone, portfolio-worthy result about evaluating generative models,
+not as a footnote to the Pattachitra verdict above.** Over the course of this single evaluation
+project, four independent measurement failures were found — each silent (produced no error, no
+crash, no obviously-wrong output at the time), each capable of standing unnoticed as a real
+finding if unaudited, and three of the four caught only by going back and auditing a *prior audit's
+own conclusion*, not by any check running at measurement time. A fourth check now exists
+specifically because these three did not generalize to catching the fourth.
+
+| # | Bug | Discovered by | What it would have caused, unaudited |
+|---|---|---|---|
+| 1 | **`num_ctx` judge failures** — Ollama's default served context window (4096 tokens) is too small for a judge prompt plus a high-resolution image's token count. | A real `400 exceeds the available context size` error, hit during Pattachitra corpus curation — not predicted or assumed in advance. | Every judge call for a sufficiently large prompt+image would fail outright — not a wrong score, a **missing** one — silently reducing `n` for whichever records happened to exceed the window, understating true sample size without a corresponding downward revision of any confidence claim. |
+| 2 | **Phantom VRAM counter** — `torch.cuda.max_memory_allocated()` reported an identical `11.186 GB` peak across three separate runs on an 8.589 GB local card, a physically impossible reading. | Manual forensic investigation (`docs/LATENCY_ROOT_CAUSE.md`), triggered by an unexplained 5.6× latency variance — not by any automated check. Root cause: a stale, never-reset counter (missing `reset_peak_memory_stats()`, since fixed in `scripts/eval.py`) carrying over a peak from an earlier, larger run (plausibly a contended GCP L4, not the local card at all). | Taken at face value, "every run used 11.186 GB" would have been reported as a hardware-fit finding for a card that cannot physically hold that much — a false capacity/fit conclusion built on a number that was never really being measured fresh each run. |
+| 3 | **CUDA context corruption** — a `curated500` generation attempt crashed with `RuntimeError: CUDA error: an illegal memory access was encountered` after 22/90 images; the poisoned context then failed all 68 remaining attempts in the same process. | Caught by a *skeptical re-audit of a prior turn's own conclusion* — the prior turn had already accepted the Pattachitra `figure_preservation` finding; this turn specifically asked whether the crash could have silently degraded the 22 images generated *before* it. | Left unaudited, the working assumption would have been "the crash only cost 68 failed attempts, nothing else" — an assumption never actually verified, resting on architectural reasoning ("a crash can't retroactively corrupt already-saved data") rather than the direct pixel-level/visual confirmation this project actually did. |
+| 4 | **Hardcoded judge question** — `style_adherence`'s judge prompt was hardcoded to ask about ukiyo-e regardless of caller; Pattachitra scripts reused it unmodified, so all 360 Pattachitra `style_adherence` records asked about the wrong style. | Direct code inspection while *designing a positive-control script* — found before any Pattachitra-domain result from that control was read, not by any of the three integrity checks (CUDA health probe, degenerate-image detection, uniqueness assertion, judge-range validation) built after bug #3. All four of those checks passed cleanly on every one of the 360 affected records. | A confidently-reported "no style-adherence lift, and no significant effect either way" finding — a plausible-looking null result that was in fact measuring an entirely different question, indistinguishable from a real null without the code-level check that finally caught it. |
+
+**The pattern, not just the count, is the finding.** Bugs #2 and #3 were caught by manual,
+one-off forensic investigation triggered by something looking *anomalous* (an impossible number,
+a suspicious effect size) — they depended on a human noticing something felt wrong enough to dig
+in. Bug #4 was caught by neither an anomaly nor an automated check — it was caught by directly
+reading the source code of the measurement instrument itself while building an unrelated new
+tool, a discovery mode none of the other three shared. **Every automated integrity check this
+project built in response to bugs #1–#3 (CUDA health probe, degenerate-image detection,
+uniqueness assertion, judge-score range validation) checks *value* validity — is the response
+well-formed, in-range, non-degenerate — and none of them can catch a *well-formed, in-range,
+syntactically valid answer to the wrong question*.** This is a distinct defect class from
+everything those checks were built to catch, and one general lesson from this project is that it
+likely needs its own class of check (e.g., an automated audit that the actual request text sent
+to an LLM/VLM judge matches the domain under test) rather than assuming better value-validation
+alone will eventually catch it. No such check exists yet; adding one is noted here as a candidate
+for future harness work, not implemented in this diagnostic pass — implementing it would extend
+past this session's capped scope.
