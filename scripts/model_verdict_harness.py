@@ -77,11 +77,16 @@ VLM_MODEL = "qwen2.5vl:7b"
 # the judge's style_adherence/figure_preservation scores. Independent-axis scoring is now this
 # harness's default, not an opt-in variant — see tests/test_model_verdict_harness.py for the
 # regression test asserting one Ollama call per axis.
+#
+# "style_adherence" is deliberately NOT a fixed template here. A style question is inherently
+# domain-specific (asking "does this look like Ukiyo-e" is meaningless for a Pattachitra image),
+# and this harness previously hardcoded the Ukiyo-e question for every caller — a bug found only
+# by direct code inspection, after it had already silently produced 360 wrong-question
+# Pattachitra scores (docs/MODEL_VERDICT.md SS7's judge positive-control finding). The harness
+# holds no domain knowledge: every caller of score_vlm_judge must pass its own `style_question`
+# explicitly (no default), so a missing style fails loudly (TypeError) instead of silently
+# reusing whatever domain happened to be hardcoded last.
 SINGLE_AXIS_JUDGE_PROMPTS: dict[str, str] = {
-    "style_adherence": """You are judging a single image against one question only.
-Question: does this image look like an authentic Ukiyo-e (Japanese woodblock print) - flat
-color planes, characteristic line work, traditional palette?
-Respond with ONLY a JSON object: {{"style_adherence": <float 0.0-1.0>}}""",
     "figure_preservation": """You are judging a single image against one question only.
 Question: are the subjects/figures in this image anatomically coherent and recognizable (not
 melted, distorted, or missing)? The image was generated from this prompt: "{prompt}"
@@ -195,13 +200,19 @@ def _ollama_generate_json(prompt_text: str, b64_image: str) -> dict:
     return json.loads(resp.json()["response"])
 
 
-def score_vlm_judge(img: Image.Image, prompt: str) -> dict | None:
+def score_vlm_judge(img: Image.Image, prompt: str, *, style_question: str) -> dict | None:
     """Independent single-axis scoring: one Ollama call per axis (3 total per image), each call
     seeing only that axis's question — no other axis is named or implied. Returns the same
     {"style_adherence": ..., "figure_preservation": ..., "artifact_absence": ...} shape the
     prior single-call design returned, so callers/downstream JSON consumers are unaffected.
     Returns None (whole record) if any one axis call fails, matching prior all-or-nothing
     failure semantics.
+
+    style_question: the complete, self-contained style_adherence question for the caller's own
+    domain (e.g. "does this image look like an authentic Ukiyo-e (Japanese woodblock print) -
+    flat color planes, characteristic line work, traditional palette?"). Required, no default —
+    this harness holds no domain knowledge of its own (see SINGLE_AXIS_JUDGE_PROMPTS's comment
+    for why a hardcoded default previously produced 360 wrong-question Pattachitra scores).
     """
     import io
 
@@ -211,7 +222,14 @@ def score_vlm_judge(img: Image.Image, prompt: str) -> dict | None:
 
     scores: dict[str, float] = {}
     for axis in VLM_JUDGE_AXES:
-        prompt_text = SINGLE_AXIS_JUDGE_PROMPTS[axis].format(prompt=prompt)
+        if axis == "style_adherence":
+            prompt_text = (
+                "You are judging a single image against one question only.\n"
+                f"Question: {style_question}\n"
+                'Respond with ONLY a JSON object: {"style_adherence": <float 0.0-1.0>}'
+            )
+        else:
+            prompt_text = SINGLE_AXIS_JUDGE_PROMPTS[axis].format(prompt=prompt)
         try:
             result = _ollama_generate_json(prompt_text, b64)
             scores[axis] = float(result[axis])
@@ -522,6 +540,10 @@ def build_ukiyo_e_lora_sdxl():
 
 UKIYO_E_NEGATIVE = "text, watermark, calligraphy, signature, words, letters"
 UKIYO_E_TRIGGER = "ukyowood"
+UKIYO_E_STYLE_QUESTION = (
+    "does this image look like an authentic Ukiyo-e (Japanese woodblock print) - flat color "
+    "planes, characteristic line work, traditional palette?"
+)
 
 
 def gen_ukiyo_e_lora(pipe, prompt, seed, width, height):
@@ -640,7 +662,9 @@ def run_ukiyo_e_lora_family(args: argparse.Namespace, adapter_path: Path | None,
         logger.info("[%s] Scoring VLM judge for %d images...", label, len(need_vlm))
         for i, r in enumerate(need_vlm):
             img = Image.open(r["image_path"])
-            r["vlm_judge"] = score_vlm_judge(img, r["prompt"])
+            r["vlm_judge"] = score_vlm_judge(
+                img, r["prompt"], style_question=UKIYO_E_STYLE_QUESTION
+            )
             save_partial(out_json, results)
             if (i + 1) % 10 == 0 or i == len(need_vlm) - 1:
                 logger.info("[%s] VLM [%d/%d] %s_%s: vlm=%s",

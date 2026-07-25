@@ -40,6 +40,9 @@ def _mock_ollama_response(axis: str) -> MagicMock:
     return resp
 
 
+TEST_STYLE_QUESTION = "does this image look like an authentic Test-Domain style?"
+
+
 class TestVlmJudgeIsIndependentPerAxis:
     def test_scores_one_image_with_exactly_three_calls(self):
         """One Ollama call per axis (3 total) — never one call for all three axes."""
@@ -57,7 +60,7 @@ class TestVlmJudgeIsIndependentPerAxis:
             return _mock_ollama_response(axis)
 
         with patch("requests.post", side_effect=fake_post) as mock_post:
-            result = _mod.score_vlm_judge(img, "a test prompt")
+            result = _mod.score_vlm_judge(img, "a test prompt", style_question=TEST_STYLE_QUESTION)
 
         assert mock_post.call_count == 3
         assert result == {
@@ -67,8 +70,10 @@ class TestVlmJudgeIsIndependentPerAxis:
         }
 
     def test_each_axis_prompt_names_only_itself(self):
-        """Static check on the prompt templates themselves, independent of any mocking —
-        catches a regression even if a future refactor changes how calls are dispatched."""
+        """Static check on the domain-neutral prompt templates (figure_preservation,
+        artifact_absence — style_adherence is no longer a fixed template, see
+        TestStyleQuestionIsNeverHardcoded), independent of any mocking — catches a regression
+        even if a future refactor changes how calls are dispatched."""
         for axis, template in _mod.SINGLE_AXIS_JUDGE_PROMPTS.items():
             rendered = template.format(prompt="irrelevant")
             other_axes = [a for a in _mod.VLM_JUDGE_AXES if a != axis]
@@ -92,7 +97,7 @@ class TestVlmJudgeIsIndependentPerAxis:
             return _mock_ollama_response(axis)
 
         with patch("requests.post", side_effect=fake_post):
-            result = _mod.score_vlm_judge(img, "a test prompt")
+            result = _mod.score_vlm_judge(img, "a test prompt", style_question=TEST_STYLE_QUESTION)
 
         assert result is None
 
@@ -112,9 +117,95 @@ class TestVlmJudgeIsIndependentPerAxis:
             return _mock_ollama_response(axis)
 
         with patch("requests.post", side_effect=fake_post):
-            result = _mod.score_vlm_judge(img, "a test prompt")
+            result = _mod.score_vlm_judge(img, "a test prompt", style_question=TEST_STYLE_QUESTION)
 
         assert result is None
+
+
+class TestStyleQuestionIsNeverHardcoded:
+    """Regression suite for the bug found in docs/MODEL_VERDICT.md SS7's judge positive-control
+    audit: style_adherence's question was hardcoded to ask about Ukiyo-e regardless of caller,
+    silently producing 360 wrong-question Pattachitra scores. This is a NEW bug class for this
+    project — semantically wrong but syntactically valid (a well-formed request, a well-formed
+    in-range response, a real, working Ollama call) — invisible to every integrity self-check
+    added after the CUDA-corruption audit (CUDA health probe, degenerate-image detection,
+    uniqueness assertion, judge-score range validation), because none of those check whether the
+    *question itself* is correct for the domain being scored. These tests close that specific
+    gap: they assert the judge question actually asked matches the domain under test, not just
+    that some well-formed question was asked."""
+
+    def _capture_style_adherence_prompt(self, style_question: str) -> str:
+        img = Image.new("RGB", (8, 8))
+        captured = {}
+
+        def fake_post(url, json, timeout):
+            axis = next(a for a in _mod.VLM_JUDGE_AXES if f'"{a}"' in json["prompt"])
+            if axis == "style_adherence":
+                captured["prompt"] = json["prompt"]
+            return _mock_ollama_response(axis)
+
+        with patch("requests.post", side_effect=fake_post):
+            _mod.score_vlm_judge(img, "a test prompt", style_question=style_question)
+        return captured["prompt"]
+
+    def test_style_question_is_required_with_no_default(self):
+        """No default to silently fall back to - a caller that forgets to pass a style fails
+        loudly (TypeError) rather than reusing whatever domain was hardcoded last."""
+        img = Image.new("RGB", (8, 8))
+        with pytest.raises(TypeError, match="style_question"):
+            _mod.score_vlm_judge(img, "a test prompt")
+
+    def test_judge_question_contains_the_domain_under_test(self):
+        """The actual text sent to Ollama for the style_adherence axis must contain the
+        caller-supplied style_question verbatim - proves the parameter is threaded through, not
+        a decorative no-op."""
+        prompt_sent = self._capture_style_adherence_prompt(
+            "does this image look like an authentic Pattachitra painting?"
+        )
+        assert "Pattachitra" in prompt_sent
+
+    def test_different_domains_produce_different_questions(self):
+        """Two different style_question values must produce two different requests - if this
+        failed, some hardcoded text would be overriding the parameter, exactly like the
+        original bug."""
+        ukiyo_e_prompt = self._capture_style_adherence_prompt("does this look like Ukiyo-e?")
+        pattachitra_prompt = self._capture_style_adherence_prompt(
+            "does this look like Pattachitra?"
+        )
+        assert ukiyo_e_prompt != pattachitra_prompt
+        assert "Ukiyo-e" in ukiyo_e_prompt
+        assert "Pattachitra" not in ukiyo_e_prompt
+        assert "Pattachitra" in pattachitra_prompt
+        assert "Ukiyo-e" not in pattachitra_prompt
+
+    def test_no_leftover_style_name_for_an_unrelated_domain(self):
+        """Behavioral check for the same defect class the original bug belonged to: if any style
+        name were still hardcoded anywhere in score_vlm_judge's prompt construction (e.g.
+        silently appended alongside the caller's text, not just replaced by it), it would leak
+        into a request even when the caller names a completely unrelated domain. This targets the
+        actual attack surface (the request Ollama receives) rather than source text, which would
+        also flag legitimate documentation examples (e.g. this file's own docstrings mention
+        Ukiyo-e/Pattachitra by name as illustrations)."""
+        prompt_sent = self._capture_style_adherence_prompt(
+            "does this image look like an authentic Bauhaus poster?"
+        )
+        lowered = prompt_sent.lower()
+        for leftover in ("ukiyo", "woodblock", "pattachitra", "pattascroll"):
+            assert leftover not in lowered, (
+                f"found leftover hardcoded {leftover!r} in a request for an unrelated domain"
+            )
+
+    def test_figure_preservation_and_artifact_absence_are_domain_neutral(self):
+        """Audited for the same defect class, per the task that found the style_adherence bug:
+        neither of the other two axes' fixed templates may name a style either. Both currently
+        pass (this is a regression guard, not a report of a second bug)."""
+        forbidden_style_names = ["ukiyo", "woodblock", "pattachitra", "pattascroll"]
+        for axis in ("figure_preservation", "artifact_absence"):
+            template = _mod.SINGLE_AXIS_JUDGE_PROMPTS[axis].lower()
+            for name in forbidden_style_names:
+                assert name not in template, (
+                    f"{axis}'s template must not hardcode a style name (found {name!r})"
+                )
 
 
 class TestCudaHealthProbe:

@@ -57,7 +57,50 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25e)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25f)**
+
+- [x] **Fixed the judge-prompt bug properly; scoped its blast radius per-axis; triaged the
+      running sweep (2026-07-25f). NEW BUG CLASS for this project — semantically wrong but
+      syntactically valid, invisible to every integrity self-check built so far.** (1)
+      **Triage:** confirmed by reading `scripts/_pattachitra_weight_sweep.py` directly that
+      generated images are persisted to disk (`img.save()`) in a phase entirely separate from,
+      and prior to, VLM scoring — the bug is in scoring, not generation. Decision: **let the
+      sweep run to completion, do not kill it.** All `style_adherence` output from this run is
+      void; plan is to re-score from the saved images with the corrected prompt, no
+      regeneration. (2) **Fixed properly:** `model_verdict_harness.py`'s `score_vlm_judge` now
+      requires an explicit `style_question` keyword-only argument with no default — the harness
+      itself carries zero style-domain knowledge. Every caller updated:
+      `run_ukiyo_e_lora_family` and two historical ukiyo-e-only scripts
+      (`_lora_ab_30prompt_independent.py`, `_lora_ab_base_comparison.py`) now pass
+      `UKIYO_E_STYLE_QUESTION`; `_pattachitra_ab_base_comparison.py` and
+      `_pattachitra_weight_sweep.py` now pass `PATTACHITRA_STYLE_QUESTION` (grounded in
+      `docs/NEXT_MODEL_SPEC.md`'s own prior corpus description, not invented). **Audited the
+      other two axes for the same defect class, as required:** `figure_preservation` and
+      `artifact_absence`'s fixed templates were checked directly and confirmed domain-neutral
+      (no style name in either) — both survive. A fourth, older, already-superseded script
+      (`_lora_ab_30prompt.py`, the pre-independent-axis single-call design withdrawn in §4)
+      hardcodes "Ukiyo-e" in its own separate, non-shared prompt — correct for what it was, since
+      it was never reused for a different domain; left as-is, noted for the record, not fixed
+      (dead code, not a live bug). 9 new regression tests
+      (`TestStyleQuestionIsNeverHardcoded`) assert: no default exists (TypeError if omitted); the
+      actual Ollama request contains the caller's stated domain; two domains produce two
+      different requests; no leftover style name appears for an unrelated domain; and the other
+      two axes stay domain-neutral. 27/27 harness tests pass. (3) **Blast radius scoped
+      per-axis in `docs/MODEL_VERDICT.md` §7.2 addendum, marked VOID not deleted:**
+      `style_adherence` — VOID for all 360 Pattachitra records (wrong question: asked about
+      ukiyo-e); ukiyo-e's own `style_adherence` numbers (§4, the HF card) are UNAFFECTED (that
+      was always the correct question for that domain). `figure_preservation` and
+      `artifact_absence` survive for both domains (domain-neutral templates). Every downstream
+      claim built on the voided axis (§7.3's table rows, §7.4's verdict text, §7.6's portfolio
+      pattern) is marked VOID inline (strikethrough + note), not deleted — the fact that it was
+      measured wrong is itself part of the record. The `figure_preservation` guardrail finding —
+      the actual, stated reason the adapter isn't published — is unaffected and stands alone.
+      **Side effect of fixing mid-sweep:** `curated500`'s already-running process holds the old
+      buggy code in memory and will still score `style_adherence` wrong when it reaches that
+      phase (its images are unaffected); `curated1000`, not yet launched, will pick up the fix
+      automatically as a fresh process. Both will be re-scored uniformly from saved images
+      regardless, so the final numbers come from one consistent method. §7.4's verdict and the
+      retrain proposal remain gated on the (not yet run) judge positive control and re-score.
 
 - [x] **Amended the sweep pre-registration; discovered the judge's `style_adherence` question is
       hardcoded to ukiyo-e (2026-07-25e) — doc/script only, GPU untouched; sweep still running.**
