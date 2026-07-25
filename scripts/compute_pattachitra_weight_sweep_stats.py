@@ -87,9 +87,16 @@ def main() -> None:
 
             fp = stats["figure_preservation"]
             sa = stats["style_adherence"]
-            fp_non_inferior = not (fp["diff"] < 0 and fp["diff_over_sem"] < -2.0)
-            sa_positive = sa["diff"] > 0
-            is_operating_point = fp_non_inferior and sa_positive
+            # Joint criterion per docs/WEIGHT_SWEEP_PREREGISTRATION.md, fixed BEFORE this script
+            # was run against complete sweep data: recovering figure_preservation alone is
+            # guaranteed by construction as weight -> 0 (the model converges to sdxl_base) and is
+            # NOT evidence of a usable adapter on its own - both conditions must hold at the same
+            # weight. Both thresholds reuse existing project thresholds, not new ones invented for
+            # this sweep: +2xSEM is PATTACHITRA_AB_PREREGISTRATION.md's own primary-endpoint bar;
+            # -2xSEM is the same figure_preservation guardrail already in force throughout SS7.
+            sa_significant_positive = sa["diff_over_sem"] > 2.0
+            fp_non_inferior = fp["diff_over_sem"] >= -2.0
+            is_operating_point = fp_non_inferior and sa_significant_positive
             if is_operating_point:
                 operating_points.append((ckpt, weight))
 
@@ -99,9 +106,22 @@ def main() -> None:
                 s = stats[axis]
                 print(f"{axis:<20}{s['base_mean']:>9.4f}{s['arm_mean']:>9.4f}{s['diff']:>+10.4f}"
                       f"{s['sem']:>9.4f}{s['diff_over_sem']:>10.3f}{s['mde_80pct_power']:>10.4f}")
-            print(f"  figure_preservation non-inferior: {fp_non_inferior}, "
-                  f"style_adherence positive: {sa_positive} -> "
-                  f"{'OPERATING POINT' if is_operating_point else 'not viable'}\n")
+            print(f"  figure_preservation non-inferior (>=-2.0xSEM): {fp_non_inferior}, "
+                  f"style_adherence significant positive (>+2.0xSEM): {sa_significant_positive} "
+                  f"-> {'OPERATING POINT' if is_operating_point else 'not viable'}\n")
+
+    print("=== Joint curve (both axes together, per docs/WEIGHT_SWEEP_PREREGISTRATION.md - "
+          "never reported in isolation) ===\n")
+    for ckpt in CHECKPOINTS:
+        if not results.get(ckpt):
+            continue
+        print(f"--- {ckpt} ---")
+        print(f"{'weight':>8}{'style_adherence diff/SEM':>28}{'figure_preservation diff/SEM':>32}")
+        for weight_str in sorted(results[ckpt], key=float):
+            stats = results[ckpt][weight_str]
+            print(f"{weight_str:>8}{stats['style_adherence']['diff_over_sem']:>28.3f}"
+                  f"{stats['figure_preservation']['diff_over_sem']:>32.3f}")
+        print()
 
     print("=== Verdict ===")
     if operating_points:
