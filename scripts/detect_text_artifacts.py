@@ -78,7 +78,7 @@ def main() -> None:
             results = []
     done = {r["image_path"] for r in results}
 
-    for i, (item, img_path) in enumerate(zip(items, image_paths)):
+    for i, (item, img_path) in enumerate(zip(items, image_paths, strict=True)):
         if img_path in done:
             continue
         det = detect(reader, img_path)
