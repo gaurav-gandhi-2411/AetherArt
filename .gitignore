@@ -46,6 +46,11 @@ data/lora/
 reports/eval_results_20260531*.json
 reports/eval_results_20260531*.md
 
+# One-off latency diagnostic scratch output (docs/LATENCY_ROOT_CAUSE.md cites these by
+# file:line as raw evidence, but they are throwaway instrumentation runs, not a durable
+# report — matches the scripts/_*.py convention for scoped diagnostic scripts below)
+reports/_latency_diag*
+
 # LoRA checkpoint visual comparison outputs — large PNGs, out of scope for source control
 reports/lora_checkpoint_eval_sdxl/
 
