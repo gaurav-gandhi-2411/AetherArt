@@ -57,7 +57,27 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-26a)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-26b)**
+
+- [x] **Symmetric Pattachitra control PASSES; PROVISIONAL lifted; Pattachitra publication
+      RECOMMENDED at weight 0.3–0.5, card drafted (2026-07-26b).** The interim FAIL from
+      2026-07-26a's base-arm fix (real Pattachitra art scoring below `sdxl_base`'s own
+      Pattachitra-*prompted* attempts, −3.781×SEM) used the same real-vs-domain-prompted-synthetic
+      design already ruled mis-specified for ukiyo-e in the same round. Re-tested with the
+      identical off-style-contrast design that passed for ukiyo-e (real Pattachitra art vs. real
+      ukiyo-e art, and vs. generic non-styled `sdxl_base`, both under `PATTACHITRA_STYLE_QUESTION`,
+      pre-registered before running): **PASS on both, decisively** — diff/SEM = +17.951 (vs. real
+      ukiyo-e art) and +28.659 (vs. generic `sdxl_base`), both far exceeding their own MDE. The
+      judge is confirmed able to perceive Pattachitra style; the interim FAIL reflected a design
+      confound (real art scored below domain-prompted synthetic specifically — logged as a
+      candidate SIXTH defect class, `docs/MODEL_VERDICT.md` §7.7), not general instrument
+      blindness. Per the pre-registered rule: PROVISIONAL lifted from every Pattachitra
+      `style_adherence` number, including the weight-sweep's four confirmed operating points
+      (both checkpoints, weight 0.3/0.5). **Publication reassessed and proposed** (not published —
+      HF token still read-only): recommend `adapter_weights=[0.3]`–`[0.5]`, NOT the library
+      default of 1.0, where the same adapter measurably regresses both axes. Card drafted in
+      `docs/HF_PATTACHITRA_CARD_DRAFT.md`. No retrain, no new checkpoints, no new domain — scoped
+      exactly to publishing the two already-trained checkpoints at a documented low weight.
 
 - [x] **FIFTH measurement-defect class found: inconsistent reference arms across two analyses of
       the same data (2026-07-26a).** `sdxl_base`'s Pattachitra `style_adherence` mean was reported
