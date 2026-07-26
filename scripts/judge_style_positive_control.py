@@ -304,6 +304,32 @@ def main() -> None:
         ukiyo_e_real_scores, generic_base_as_ukiyoe_contrast
     )
 
+    # --- Symmetric Pattachitra control, mirroring ukiyo-e's redesigned control exactly (roles
+    # reversed): real Pattachitra art vs. two off-style contrasts, all under
+    # PATTACHITRA_STYLE_QUESTION. `pattachitra_real_corrected` (scored above, same question, same
+    # run) is reused as the real-Pattachitra arm -- not a cross-run reuse of stale data (the bug
+    # this script exists to avoid), just using one already-fresh score list within this single
+    # pass, exactly as `ukiyo_e_real_scores` is reused across both of ukiyo-e's contrasts above.
+    logger.info(
+        "[positive-control] Scoring real ukiyo-e art as Pattachitra off-style contrast A (n=23)..."
+    )
+    ukiyo_e_real_as_pattachitra_contrast = score_images(
+        harness, ukiyo_e_real_paths, pattachitra_corrected_prompt
+    )
+    results["pattachitra_vs_real_ukiyo_e"] = unpaired_stats(
+        pattachitra_real_corrected, ukiyo_e_real_as_pattachitra_contrast
+    )
+
+    logger.info(
+        "[positive-control] Scoring generic sdxl_base as Pattachitra off-style contrast B (n=90)..."
+    )
+    generic_base_as_pattachitra_contrast = score_images(
+        harness, generic_base_paths, pattachitra_corrected_prompt
+    )
+    results["pattachitra_vs_generic_sdxl_base"] = unpaired_stats(
+        pattachitra_real_corrected, generic_base_as_pattachitra_contrast
+    )
+
     print("=== Judge style positive control, revised (n unpaired) ===\n")
     for key, stats in results.items():
         print(f"--- {key} ---")
@@ -322,10 +348,13 @@ def main() -> None:
     ukiyo_e_vs_pattachitra_pass = results["ukiyo_e_vs_real_pattachitra"]["passes_2xsem"]
     ukiyo_e_vs_generic_pass = results["ukiyo_e_vs_generic_sdxl_base"]["passes_2xsem"]
     ukiyo_e_pass_both = ukiyo_e_vs_pattachitra_pass and ukiyo_e_vs_generic_pass
+    pattachitra_vs_ukiyoe_pass = results["pattachitra_vs_real_ukiyo_e"]["passes_2xsem"]
+    pattachitra_vs_generic_pass = results["pattachitra_vs_generic_sdxl_base"]["passes_2xsem"]
+    pattachitra_pass_both = pattachitra_vs_ukiyoe_pass and pattachitra_vs_generic_pass
 
     print(
         "=== Verdict (decision rules fixed in advance -- see module docstring and "
-        "docs/WEIGHT_SWEEP_PREREGISTRATION.md's two amendments) ==="
+        "docs/WEIGHT_SWEEP_PREREGISTRATION.md's amendments) ==="
     )
     print(
         f"Pattachitra corrected-prompt row, base-arm confound fixed: "
@@ -349,6 +378,27 @@ def main() -> None:
             "Ukiyo-e FAILS at least one off-style contrast: PROVISIONAL stands -- the judge "
             "still cannot reliably discriminate ukiyo-e style even under a fair contrast."
         )
+    print(
+        f"Pattachitra (symmetric control) vs. real ukiyo-e (contrast A): "
+        f"{'PASS' if pattachitra_vs_ukiyoe_pass else 'FAIL'}"
+    )
+    print(
+        f"Pattachitra (symmetric control) vs. generic sdxl_base (contrast B): "
+        f"{'PASS' if pattachitra_vs_generic_pass else 'FAIL'}"
+    )
+    if pattachitra_pass_both:
+        print(
+            "Pattachitra PASSES both off-style contrasts under the SAME method that passed for "
+            "ukiyo-e: the judge perceives Pattachitra style under a fair test. PROVISIONAL "
+            "lifted from every Pattachitra style_adherence number, including the weight-sweep "
+            "operating points."
+        )
+    else:
+        print(
+            "Pattachitra FAILS at least one off-style contrast even under the same method that "
+            "passed for ukiyo-e: PROVISIONAL stands. This is the final finding for this domain "
+            "-- no further control design is tried."
+        )
 
     OUT_JSON.write_text(
         json.dumps(
@@ -358,6 +408,9 @@ def main() -> None:
                 "ukiyo_e_vs_real_pattachitra_pass": ukiyo_e_vs_pattachitra_pass,
                 "ukiyo_e_vs_generic_sdxl_base_pass": ukiyo_e_vs_generic_pass,
                 "ukiyo_e_pass_both_contrasts": ukiyo_e_pass_both,
+                "pattachitra_vs_real_ukiyo_e_pass": pattachitra_vs_ukiyoe_pass,
+                "pattachitra_vs_generic_sdxl_base_pass": pattachitra_vs_generic_pass,
+                "pattachitra_pass_both_contrasts": pattachitra_pass_both,
                 "note": (
                     "The historical/production-prompt Pattachitra row (real=0.2975 n=100, "
                     "base=0.3533 n=90, diff/SEM=-1.504, FAIL) is retained from the original run "

@@ -35,11 +35,38 @@
       "mde_80pct_power": 0.0789,
       "mde_90pct_power": 0.0913,
       "passes_2xsem": true
+    },
+    "pattachitra_vs_real_ukiyo_e": {
+      "n_a": 100,
+      "n_b": 23,
+      "mean_a": 0.796,
+      "mean_b": 0.2261,
+      "diff": 0.5699,
+      "sem": 0.0317,
+      "diff_over_sem": 17.951,
+      "mde_80pct_power": 0.0889,
+      "mde_90pct_power": 0.1029,
+      "passes_2xsem": true
+    },
+    "pattachitra_vs_generic_sdxl_base": {
+      "n_a": 100,
+      "n_b": 90,
+      "mean_a": 0.796,
+      "mean_b": 0.0472,
+      "diff": 0.7488,
+      "sem": 0.0261,
+      "diff_over_sem": 28.659,
+      "mde_80pct_power": 0.0732,
+      "mde_90pct_power": 0.0847,
+      "passes_2xsem": true
     }
   },
   "pattachitra_corrected_prompt_fixed_pass": false,
   "ukiyo_e_vs_real_pattachitra_pass": true,
   "ukiyo_e_vs_generic_sdxl_base_pass": true,
   "ukiyo_e_pass_both_contrasts": true,
+  "pattachitra_vs_real_ukiyo_e_pass": true,
+  "pattachitra_vs_generic_sdxl_base_pass": true,
+  "pattachitra_pass_both_contrasts": true,
   "note": "The historical/production-prompt Pattachitra row (real=0.2975 n=100, base=0.3533 n=90, diff/SEM=-1.504, FAIL) is retained from the original run and NOT recomputed here -- both of its arms were already scored under the same (wrong) question, so it was never confounded, only mislabeled when reused a second time for the corrected-prompt row. See docs/WEIGHT_SWEEP_PREREGISTRATION.md's amendment for the full account."
 }

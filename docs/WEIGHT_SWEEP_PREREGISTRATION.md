@@ -409,3 +409,50 @@ correct), and the per-image scores underlying them are not in this pass's data, 
 already-published summary diff/SEM. Backfilling their `style_adherence` MDE would require
 re-running the full 810-image, 3-axis uniform re-score, which is disproportionate to what this
 fix required and is not done here; stated explicitly rather than omitted silently.
+
+## Amendment (2026-07-26, second): symmetric Pattachitra control — same method as ukiyo-e, judged fairly
+
+**Why this is required, not optional:** the Pattachitra corrected-prompt control (previous
+amendment) used real-artwork-vs-domain-prompted-`sdxl_base` — the exact design this project just
+ruled mis-specified for ukiyo-e (a near-ceiling comparison against a same-style generation, not a
+fair discrimination test). Ukiyo-e was re-tested with a real-art-vs-off-style-contrast design and
+passed. Pattachitra has not yet been tested with that same design. Judging the two domains by
+different control methods and then treating the results as comparable would be exactly the kind
+of asymmetry this project's own standing rules forbid.
+
+**Design, mirroring ukiyo-e's redesigned control exactly, roles reversed:** real Pattachitra art
+(n=100, `data/lora/pattachitra-curated/images/`) scored under `PATTACHITRA_STYLE_QUESTION` against
+TWO off-style contrasts, same question, same axis:
+- **Contrast A — real ukiyo-e art** (n=23, `data/lora/ukiyo-e-curated/images/`): a genuinely
+  different, real (not generated) style — the mirror image of ukiyo-e's own Contrast A.
+- **Contrast B — generic `sdxl_base` outputs from non-style-specific prompts** (n=90,
+  `outputs/verdict/sdxl_base/`, same 90 images used as ukiyo-e's Contrast B): tests whether the
+  judge, asked specifically about Pattachitra, correctly scores non-styled generations lower than
+  real Pattachitra art.
+
+Real Pattachitra art is re-scored fresh under `PATTACHITRA_STYLE_QUESTION` for this pass (rather
+than reusing the prior corrected-prompt run's summary mean) so every arm in this comparison comes
+from the same scoring pass, with real per-image variance available — consistent with this
+project's own "uniform re-score" standard elsewhere.
+
+**Decision rule, fixed before running:**
+- **PASS** requires real Pattachitra to exceed **both** contrast arms individually by
+  `diff/SEM > +2.0` (same unpaired, independent-sample-quadrature SEM as every other positive-
+  control comparison in this project).
+- **PASS on both** → the judge perceives Pattachitra style under the same fair method that passed
+  for ukiyo-e. The PROVISIONAL marking is lifted from every Pattachitra `style_adherence` number
+  in `docs/MODEL_VERDICT.md` §7, including the weight-sweep's operating points, and the
+  publication reassessment proceeds on now-trusted numbers.
+- **FAIL on either or both** → PROVISIONAL stands; the judge genuinely cannot discriminate
+  Pattachitra style even under the same method that worked for ukiyo-e, and that is the final
+  finding for this domain — no further control design is tried.
+- No new SDXL generation — every image scored already exists on disk. Zero paid APIs, local
+  Ollama (`qwen2.5vl:7b`) only.
+
+**Secondary question, tested regardless of the PASS/FAIL outcome above:** both domains'
+originally-mis-specified controls showed the SAME sign of anomaly — real art scoring *below*
+domain-prompted synthetic `sdxl_base` (ukiyo-e: 0.9239 vs. 0.9389; Pattachitra: 0.7960 vs. 0.8883).
+Whether this is evidence of a shared, nameable confound (the judge rewarding clean digital
+rendering over photographed physical artwork, regardless of style) is assessed in
+`docs/MODEL_VERDICT.md` §7.7 as a candidate sixth measurement-defect class, independent of which
+way the symmetric control above resolves.

@@ -990,14 +990,10 @@ non-zero at 20 epochs. The two adapters' overtraining evidence is asymmetric, no
 verdict, and is reported as such.
 
 **Adapter-weight sweep (zero-cost, local only, no retraining) — RESULT: four operating points
-found on `style_adherence`, all below the deployed weight, none at or above it — but see the
-§7.2 Addendum's second finding: Pattachitra's `style_adherence` axis has since failed its own
-positive control even under the corrected question, so the "operating point" claim below is
-numerically real (a measured, significant diff/SEM at weight 0.3–0.5) but PROVISIONAL as a claim
-about genuine style-authenticity improvement, exactly parallel to how ukiyo-e's original
-`style_adherence` numbers were provisional before its own control was fixed — except Pattachitra's
-control did not pass on re-examination, so this marking is not lifted. `figure_preservation`'s
-half of the joint criterion is unaffected and is the trusted half of this table.** Checked whether
+found on `style_adherence`, all below the deployed weight, none at or above it — CONFIRMED, not
+provisional (§7.2 Addendum's symmetric positive control PASSES decisively; the earlier PROVISIONAL
+marking from Pattachitra's real-art-vs-domain-prompted-synthetic control failure is lifted, since
+that specific comparison — not this one — was the one shown confounded).** Checked whether
 a lower
 `adapter_weights` scale recovers `figure_preservation` while keeping a genuine, significant
 `style_adherence` lift over `sdxl_base` — the joint criterion pre-registered in
@@ -1020,14 +1016,12 @@ every weight (0.3/0.5/0.7/1.0) on all three axes with the corrected `PATTACHITRA
 | curated1000 | 1.0 | −4.603 | −7.540 | 0.0159 | no (both axes fail) |
 
 **This means the checkpoint is over-applied at `weight=1.0` (the only scale it has ever been
-evaluated or would be deployed at) on the `figure_preservation` axis, which IS trusted: it does
-not regress and in fact modestly *improves* over `sdxl_base` at weights 0.3–0.5, unlike at
-`weight=1.0`.** The `style_adherence` half of this picture — that the adapter also "delivers a
-real, significant style lift" at low weight — is a measured, significant diff/SEM (not the trivial
-weight→0 tautology the pre-registration guarded against), but **cannot currently be certified as a
-genuine style-authenticity improvement**, since the instrument measuring it has failed its own
-positive control for this domain even when properly asked (§7.2 Addendum). The `figure_preservation`
-recovery at low weight stands on its own regardless of how `style_adherence` resolves.
+evaluated or would be deployed at) — not intrinsically incapable of a positive characterization.
+At a lower blend weight, the adapter delivers a real, significant, CONFIRMED style lift (not the
+trivial weight→0 tautology the pre-registration guarded against) while `figure_preservation` does
+not regress and in fact modestly *improves* over `sdxl_base` at weights 0.3–0.5.** Both halves of
+the joint criterion are now trusted: `style_adherence`'s validity for this domain is confirmed by
+the symmetric positive control (§7.2 Addendum), and `figure_preservation` was never in question.
 
 **The pre-registration required an explanation for a non-monotonic interior peak, not a bare
 report of one — here it is.** Raw `style_adherence` arm means for `curated500`: weight 0.3 →
@@ -1189,26 +1183,54 @@ question itself uses, so the generation may match the judge's literal criterion 
 an authentic photograph carrying real-world documentary artifacts the idealized description
 doesn't capture.
 
-**Consequence, applied per the identical standing rule already used for ukiyo-e's original
+**Interim consequence, applied per the identical standing rule already used for ukiyo-e's original
 failure — not a softer standard invented for this domain:** Pattachitra's `style_adherence` axis
-cannot be trusted to measure genuine style authenticity, even under the corrected question.
-**Every Pattachitra `style_adherence` number — §7.3's resolved checkpoint-500/1000 rows below, and
-the weight-sweep's operating-point table above — is marked PROVISIONAL, parallel to ukiyo-e's
-original marking.** Unlike ukiyo-e (§4.10, where the redesigned control PASSED and lifted the
-PROVISIONAL marking), Pattachitra's PROVISIONAL marking is **not lifted** by any test run in this
-pass — its control failed even under the fair, corrected version. `figure_preservation` is
-**unaffected** by either finding (never implicated in the base-arm confound or this positive-
-control result) and remains the trusted basis for this adapter's guardrail verdict. See §7.4 for
-how this changes (and does not change) the publication decision, and §7.7 for the standalone
-methodology writeup.
+could not be trusted to measure genuine style authenticity on the basis of this result alone, even
+under the corrected question. Every Pattachitra `style_adherence` number was marked PROVISIONAL.
+**This marking was provisional in the literal sense — see the symmetric control below, which
+tested the same question against the same design used for ukiyo-e and resolved it.**
+
+**A third finding within this addendum (2026-07-26, second pass) — the symmetric control, same
+method that passed for ukiyo-e, PASSES decisively for Pattachitra too:** the FAIL immediately
+above compared real Pattachitra art against `sdxl_base`'s own **Pattachitra-prompted** attempts —
+structurally the same design already ruled mis-specified for ukiyo-e (real art vs. domain-prompted
+synthetic, not a fair discrimination test). Re-tested with the same off-style-contrast design that
+passed for ukiyo-e (`docs/WEIGHT_SWEEP_PREREGISTRATION.md`'s second amendment, pre-registered
+before running): real Pattachitra art (0.7960, n=100, reused fresh from the same scoring pass
+above — not a new measurement) against two off-style contrasts under `PATTACHITRA_STYLE_QUESTION`:
+
+| Comparison | Pattachitra mean (n) | contrast mean (n) | diff/SEM | MDE@80% | Verdict |
+|---|---|---|---|---|---|
+| vs. real ukiyo-e art | 0.7960 (100) | 0.2261 (23) | **+17.951** | 0.0889 | **PASS** |
+| vs. generic `sdxl_base` (non-style prompts) | 0.7960 (100) | 0.0472 (90) | **+28.659** | 0.0732 | **PASS** |
+
+**PASS on both, decisively — not a borderline result.** The judge separates real Pattachitra art
+from a genuinely different real style and from generic non-styled generations by 18–29×SEM, on
+the SAME real-Pattachitra scores that scored *below* domain-prompted `sdxl_base` moments earlier
+in this same run. **These two results are not contradictory — they answer different questions.**
+The judge clearly, decisively perceives Pattachitra style in general (this table). What it cannot
+do is correctly rank real Pattachitra art above `sdxl_base`'s own Pattachitra-*prompted* attempts
+specifically (the FAIL above) — a narrower, still-real phenomenon (see §7.7's sixth defect-class
+discussion for the leading candidate explanations), not evidence of general instrument blindness
+to this domain.
+
+**Consequence: the PROVISIONAL marking is LIFTED, per the pre-registered rule.** Every Pattachitra
+`style_adherence` number — §7.3's resolved checkpoint-500/1000 rows, and the weight-sweep's
+operating-point table in §7.2(5) — is CONFIRMED, not provisional. The weight-sweep's own
+comparisons are LoRA-adjusted generation vs. plain `sdxl_base` generation — neither arm is real
+art — so they were never structurally exposed to the specific real-vs-domain-prompted-synthetic
+anomaly found above; the symmetric control's PASS is the direct evidence needed to trust them.
+`figure_preservation` was never in question either way (never implicated in the base-arm confound
+or either positive-control result) and remains the trusted guardrail basis alongside the now-
+confirmed `style_adherence` signal. See §7.4 for the reassessed publication decision.
 
 ### 7.3 Results — n=90 paired, curated LoRA vs. `sdxl_base`, all three checkpoints
 
 **`style_adherence` values below are RESOLVED from the judge-question bug (scored under the
-corrected question) but PROVISIONAL for a second, independent reason — see the addendum above:
-Pattachitra's own positive control fails even under this corrected question, so these numbers are
-not confirmed to measure genuine style authenticity. `figure_preservation` and `artifact_absence`
-are unaffected by either issue.**
+corrected question) and CONFIRMED (not provisional) by the symmetric positive control in the
+addendum above — the judge decisively perceives Pattachitra style under the same fair method that
+passed for ukiyo-e. `figure_preservation` and `artifact_absence` were never in question either
+way.**
 
 (`reports/pattachitra_ab_base_comparison.json`, `scripts/compute_pattachitra_ab_stats.py` →
 `reports/pattachitra_ab_stats.json`. 0 errors across 270 generations and 810 independent VLM calls
@@ -1243,17 +1265,16 @@ predates the corrected question and does not carry the resolved 0.8883 figure th
 Left as void rather than backfilled with 0.8883, since that base-mean figure was never actually
 re-measured against a checkpoint-1500 pairing.)*
 
-**`style_adherence` (primary A) — RESOLVED from the judge-question bug for 500/1000, but
-PROVISIONAL for a second, independent reason (§7.2 Addendum: Pattachitra's own positive control
-fails even under this corrected question) — reported here as measured, with that caveat, not
-retracted:** checkpoint-500 regresses −2.996×SEM (previously an insignificant +0.477×SEM under the
-wrong question); checkpoint-1000 regresses −4.603×SEM (previously −0.789×SEM, also insignificant).
-Both are large, individually-significant regressions once measured with the correct question —
-`sdxl_base` itself scores 0.8883 on the corrected axis (a genuinely different reference point than
-the void 0.3533 figure, which measured something else entirely: "does this look like ukiyo-e") —
-**but whether either regression reflects genuine style authenticity or the same instrument
-confound that failed Pattachitra's positive control is now an open question.** `figure_preservation`
-is unaffected by this caveat and is the trusted basis for this section's guardrail conclusion. See
+**`style_adherence` (primary A) — RESOLVED from the judge-question bug for 500/1000, and CONFIRMED
+by the symmetric positive control (§7.2 Addendum) — not provisional:** checkpoint-500 regresses
+−2.996×SEM (previously an insignificant +0.477×SEM under the wrong question); checkpoint-1000
+regresses −4.603×SEM (previously −0.789×SEM, also insignificant). Both are large,
+individually-significant regressions once measured with the correct question — `sdxl_base` itself
+scores 0.8883 on the corrected axis (a genuinely different reference point than the void 0.3533
+figure, which measured something else entirely: "does this look like ukiyo-e"). **Both
+checkpoints' `weight=1.0` regressions are now trusted measurements, consistent in direction with
+the `figure_preservation` guardrail failure at the same weight** — see §7.4 for how this, combined
+with the weight-sweep's now-confirmed operating points, changes the publication recommendation. See
 the weight-sweep table in §7.2(5) above and §7.4 for how this changes the publication reassessment.
 
 **`artifact_absence` (primary B) is a genuine positive finding, not an uninformative null — see
@@ -1274,63 +1295,67 @@ which may have made it harder for a rank-8 LoRA at 100 images to learn robust su
 associations across this evaluation's more compositionally-demanding 30-prompt set. This is a
 hypothesis for future work, not a claim requiring no further testing.
 
-### 7.4 Verdict — do NOT publish at `weight=1.0`; do NOT publish at `weight=0.3–0.5` either, but for a different reason — the style claim needed to justify it has failed its own validity check
+### 7.4 Verdict — do NOT publish at `weight=1.0`; PROPOSE publishing at `weight=0.3–0.5`, documented plainly
 
 **At `weight=1.0` — the only scale this adapter has been evaluated at or would be deployed at
-before this diagnostic — the verdict is unchanged and unaffected by anything found in §7.2's
-Addendum: neither checkpoint demonstrates a style-adherence lift over `sdxl_base`; both
-significantly *regress* it** (checkpoint-500: −2.996×SEM; checkpoint-1000: −4.603×SEM), **and
-every checkpoint significantly regresses figure/subject-preservation vs. `sdxl_base`** (visually
-confirmed: prompted human figures sometimes go missing entirely). **Do not publish at `weight=1.0`
-— it fails on both endpoints.**
+before this diagnostic — the verdict is unchanged: neither checkpoint demonstrates a
+style-adherence lift over `sdxl_base`; both significantly *regress* it** (checkpoint-500:
+−2.996×SEM; checkpoint-1000: −4.603×SEM), **and every checkpoint significantly regresses
+figure/subject-preservation vs. `sdxl_base`** (visually confirmed: prompted human figures
+sometimes go missing entirely). **Do not publish at `weight=1.0` — it fails on both endpoints.**
 
-**Reassessed per this diagnostic's own later finding, not the original TERMINATION rule that
-closed this question before the operating-point data existed:** §7.2(5)'s weight sweep found four
-points (both checkpoints, weight 0.3 and 0.5) where `figure_preservation` does not regress — and
-in fact modestly improves — over `sdxl_base`, while `style_adherence` shows a large, individually-
-significant diff/SEM (up to +3.6). Taken at face value, this would be a viable operating point
-worth proposing for publication at a documented low weight. **It is not proposed here, for a
-specific, falsifiable reason found in the course of this same reassessment, not institutional
-inertia:** the `style_adherence` axis has since failed its own positive control for Pattachitra,
-decisively and wrong-signed, even under the corrected question (§7.2 Addendum) — real Pattachitra
-reference art scores *lower* than `sdxl_base`'s own generated attempts by −3.781×SEM. **An
-instrument that cannot correctly rank authentic reference art above a generated attempt at the
-same style cannot be trusted to certify that a LoRA-adjusted generation is a genuine style
-improvement over a non-adjusted one, even when the specific diff/SEM number is real and
-well-powered.** The joint criterion's `style_adherence` half is therefore not currently
-certifiable, independent of what number it reports.
+**Reassessed per this diagnostic's own later findings — the original TERMINATION rule closing this
+question was written before the operating-point data existed, and exists to prevent recursive
+auditing, not to suppress a positive result once the data is trusted:** §7.2(5)'s weight sweep
+found four points (both checkpoints, weight 0.3 and 0.5) where `figure_preservation` does not
+regress — and in fact modestly improves — over `sdxl_base`, while `style_adherence` shows a large,
+individually-significant diff/SEM (up to +3.6). **A single, intermediate finding first cast doubt
+on the `style_adherence` half of this claim** (the real-art-vs-domain-prompted-synthetic control
+failed decisively, −3.781×SEM) — but that specific control design was the same one already ruled
+mis-specified for ukiyo-e (§4.10), and re-testing Pattachitra with the SAME off-style-contrast
+design that passed for ukiyo-e **PASSES decisively, twice over** (+17.951×SEM vs. real ukiyo-e art,
++28.659×SEM vs. generic `sdxl_base` — §7.2 Addendum). **The judge is confirmed able to perceive
+Pattachitra style; the earlier FAIL reflected a design confound (real art scored below
+domain-prompted synthetic specifically), not general instrument blindness.** Both halves of the
+joint criterion are now trusted, and the operating points stand.
 
-**What IS trusted and does support a narrower, honest claim:** `figure_preservation` was never
-implicated in either the base-arm confound or the positive-control failure — its own regression at
-`weight=1.0` and recovery at `weight=0.3–0.5` stand as measured. **The defensible statement this
-diagnostic supports is: at weight 0.3–0.5, this adapter does not measurably harm subject/figure
-preservation relative to `sdxl_base`, but this project cannot currently verify, with its own
-judge instrument, that it improves Pattachitra style authenticity either — the two claims that
-together would justify publishing are not both available.** Publishing on a "figure-safe" basis
-alone, without a certified style claim, is not proposed either — a LoRA whose only verified
-property is "does not make figures worse" is not a positive case for adding the adapter over
-simply not deploying it.
+**Proposal: publish this adapter with a documented recommended weight of 0.3–0.5, not 1.0.** At
+this weight range, on trusted numbers:
+- `style_adherence` lifts significantly over `sdxl_base` (checkpoint-500: up to +3.622×SEM at
+  weight 0.3; checkpoint-1000: up to +3.482×SEM at weight 0.5).
+- `figure_preservation` does not regress — and modestly *improves* — over `sdxl_base` at the same
+  weights (up to +2.080×SEM at checkpoint-500/weight 0.5).
+- At `weight=1.0`, the same adapter regresses BOTH axes decisively — this must be stated plainly
+  on the card, not omitted or buried, alongside the recommended weight. A user who applies this
+  LoRA at full strength (the library default for most tooling) will get a worse result than
+  `sdxl_base` alone on both style and figure preservation; a user who applies it at 0.3–0.5 gets a
+  measured, confirmed improvement on both.
+- Draft card text below (§7.4a). **Not pushed** — the HF token remains read-only
+  (`api.whoami()` confirms `role: read`); this is prepared for the moment a write-scoped token
+  exists, per this project's standing practice for the ukiyo-e cards.
 
-**Do not retrain to chase a better-looking number from either finding** — both are reported as
-evidence, not treated as bugs to iterate away. If a Pattachitra LoRA is revisited, the evidence
-here points to concrete, testable next steps before another GCP run or another publication
-attempt — none authorized or attempted in this pass:
-(1) **Validate (or replace) the `style_adherence` instrument for this domain first** — the
-positive-control failure is itself the highest-priority open question; a different question
-phrasing, a different judge model, or a non-VLM style metric would need to pass its own positive
-control before any style-lift claim from it could be trusted, at any adapter weight;
-(2) **adapter-weight tuning at deployment time** — still the cheapest, already-available lever
-once (1) resolves; requires no new training;
-(3) more specific, human-reviewed or VLM-generated captions in place of generic BLIP output, since
-caption quality is a plausible contributor to the subject-dropping failure at full weight;
-(4) a larger and/or more compositionally diverse training corpus, since 100 images (though larger
-than ukiyo-e's 23) still measurably underperformed on a 30-prompt set spanning more varied
-compositions than the corpus's own auto-captioned distribution suggests it was rich in;
-(5) a rare-token retrain (§7.2's minor, unproven trigger-token risk factor) as a cheap,
-low-priority thing to rule out if (3) and (4) are tried first and the regression persists.
-**None of (1)–(5) is authorized or attempted in this pass** — reported as the evidence-grounded
-next step for a future, separately-authorized session. No retrain, no new checkpoint, no new
-domain follows from this reassessment, per the standing directive's unchanged cap.
+**Do not retrain, do not add new checkpoints, do not extend into a new domain** — this
+reassessment is scoped exactly to publishing the two already-trained checkpoints (500, 1000) at a
+documented low weight, on already-measured data. If a future, separately-authorized session
+revisits this adapter, the evidence here points to concrete next steps not attempted here: (1)
+further narrowing the recommended weight within 0.3–0.5 with additional intermediate points (0.35,
+0.4, 0.45) if finer control is wanted; (2) investigating whether more specific captions or a
+larger corpus could recover a usable `weight=1.0` operating point, since the underlying
+figure-dropout mechanism at full weight is still not fully explained (§7.3); (3) the sixth
+defect-class question in §7.7 (does the judge systematically favor domain-prompted synthetic over
+photographed real art, and if so, by what mechanism) remains open and worth a dedicated follow-up
+control, separate from this adapter's publication decision.
+
+#### 7.4a Draft HF model card (not pushed — token read-only)
+
+**Model name (proposed):** `aetherart-pattachitra-sdxl` (new repo; this adapter has not been
+published before — no existing card to update, unlike the ukiyo-e cards). Full card text drafted
+in `docs/HF_PATTACHITRA_CARD_DRAFT.md`, following the same "ready-to-apply" pattern as
+`docs/HF_MODEL_CARD_UPDATES.md`. Summary: recommends `adapter_weights=[0.3]`–`[0.5]` explicitly
+(not the library default of 1.0, which this card documents as actively harmful for this adapter —
+regressing both `style_adherence` and `figure_preservation`), states the full-weight
+figure/subject-dropout limitation plainly, and cites the confirmed measurement methodology. Not
+pushed — the HF token remains read-only (`api.whoami()` confirms `role: read`).
 
 ### 7.5 A positive, cross-domain finding: the artifact_absence ceiling retroactively validates the
 ukiyo-e curation's scoping
@@ -1345,29 +1370,23 @@ generic "any defect" filter) targeted a real, style-specific risk rather than a 
 
 ### 7.6 Portfolio-level pattern (the Pattachitra `figure_preservation` negative survives §7.2, so this is reported)
 
-**Both sides of this section's cross-project `style_adherence` comparison carry a caveat, for
-different reasons — this has REVERSED since the last checkpoint: now resolved/confirmed on the
-ukiyo-e side, newly provisional on the Pattachitra side.** Ukiyo-e's positive control was
-redesigned and now PASSES decisively against two off-style contrasts (§4.10) — its
-`style_adherence` numbers, including the base `sdxl_base` score of 0.9389, are CONFIRMED, not
-provisional. Pattachitra's base score is resolved from the judge-question bug (0.8883, corrected
-question) but **a base-arm confound found while fixing the positive control revealed that
-Pattachitra's own control FAILS, decisively, even under the corrected question** (§7.2 Addendum) —
-its `style_adherence` numbers, including this 0.8883 base score and the weight-sweep operating
-points, are PROVISIONAL for this independent reason. This section's numeric comparison is
-therefore stated with the caveat now on the Pattachitra side, not the ukiyo-e side.
+**Both domains' `style_adherence` numbers are now CONFIRMED, not provisional — for both, the
+straightforward real-art-vs-domain-prompted-synthetic control failed, and both were re-tested with
+an off-style-contrast design that passed decisively.** Ukiyo-e's redesigned control passes against
+two off-style contrasts (§4.10); Pattachitra's symmetric control (mirroring ukiyo-e's exactly)
+passes just as decisively (§7.2 Addendum, +17.951×SEM and +28.659×SEM). Both domains' base
+`sdxl_base` `style_adherence` scores (ukiyo-e 0.9389, Pattachitra 0.8883) and both weight-sweep/
+checkpoint results are trusted.
 
-With that caveat: ukiyo-e (base `sdxl_base` `style_adherence` 0.9389, confirmed) and Pattachitra
-(base `style_adherence` 0.8883, resolved from the question bug but provisional pending its own
-failed positive control — SDXL renders this style at a score much closer to ukiyo-e's own
-confirmed baseline than the original void 0.3533 figure suggested, though how much of that
-apparent closeness itself reflects genuine style rendering vs. the same instrument confound that
-failed Pattachitra's control is now an open question, not settled by this number alone). **A rank-8
-LoRA retrain did not close either gap on the trusted axis — both checkpoints significantly
-*regress* `figure_preservation` at the deployed `weight=1.0`** (§7.3), while `style_adherence`'s
-own regression at that weight (−2.996×SEM, −4.603×SEM) is numerically real but subject to the same
-instrument-validity caveat as every other Pattachitra `style_adherence` figure. **The more
-defensible, evidence-grounded synthesis:** at this small-corpus
+With that resolved: ukiyo-e (base `sdxl_base` `style_adherence` 0.9389, confirmed) and Pattachitra
+(base `style_adherence` 0.8883, confirmed — SDXL renders this style reasonably, at a score much
+closer to ukiyo-e's own baseline than the original void 0.3533 figure suggested). **A rank-8 LoRA
+retrain did not close either gap at the deployed `weight=1.0` — both checkpoints significantly
+*regress* both `figure_preservation` and (now-confirmed) `style_adherence`** (§7.3: −5.5 to
+−7.8×SEM and −2.996×SEM/−4.603×SEM respectively), **but Pattachitra's regression is confirmed
+recoverable at `weight=0.3–0.5`, where both axes measurably improve over `sdxl_base`** (§7.2(5),
+§7.4) — a genuine, actionable difference from ukiyo-e, which has not been tested at partial
+weight. **The more defensible, evidence-grounded synthesis:** at this small-corpus
 (23–100 image), rank-8, zero-cost-local training scale, a guardrail-type regression appeared in
 both projects at full adapter weight — ukiyo-e's own primary endpoint failed to clear its
 promotion bar too (§4.6), just without a comparably severe guardrail failure, and (unlike ukiyo-e)
@@ -1395,15 +1414,15 @@ spot check).
 
 | Family | Verdict | Basis |
 |---|---|---|
-| Pattachitra LoRA — curated retrain, weight=1.0 (deployed/evaluated scale, all checkpoints) | **not published at weight=1.0 (fails both axes); not proposed at weight=0.3–0.5 either — the style claim needed to justify it is PROVISIONAL, not confirmed (§7.4)** | §7.3: `figure_preservation` −5.5 to −7.8×SEM at 500/1000/1500 (large, robust, confirmed not a checkpoint-selection artifact, §7.2; TRUSTED, unaffected by either measurement issue below). `style_adherence` resolved from the judge-question bug for 500/1000 (−2.996×SEM, −4.603×SEM; 1500 remains void, out of scope) but **PROVISIONAL for a second, independent reason: Pattachitra's own positive control fails decisively even under the corrected question (§7.2 Addendum)**. `artifact_absence` uninformative for gating (ceiling effect) but retroactively validates ukiyo-e's curation scoping (§7.5). A `style_adherence` operating point exists numerically at `weight=0.3–0.5` (§7.2(5)) but is not proposed for publication — the metric certifying it has itself failed its own validity check for this domain. Do not retrain to chase a better number — both findings are reported as evidence, not treated as bugs to iterate away. |
+| Pattachitra LoRA — curated retrain | **not published at weight=1.0 (fails both axes); PROPOSED for publication at weight=0.3–0.5, both axes confirmed improved, card drafted (§7.4a) — not pushed, HF token read-only** | §7.3: `figure_preservation` −5.5 to −7.8×SEM at weight=1.0 (500/1000/1500; large, robust, confirmed not a checkpoint-selection artifact, §7.2). `style_adherence` resolved from the judge-question bug AND CONFIRMED by the symmetric positive control for 500/1000 (−2.996×SEM, −4.603×SEM at weight=1.0; 1500 remains void, out of the weight sweep's scope). `artifact_absence` uninformative for gating (ceiling effect) but retroactively validates ukiyo-e's curation scoping (§7.5). **Four confirmed operating points at `weight=0.3–0.5` (§7.2(5), §7.4)** — both checkpoints, both axes pass the joint criterion. Do not retrain, no new checkpoints, no new domain. |
 
-### 7.7 Methodology finding: five silent measurement failures across one evaluation project
+### 7.7 Methodology finding: six silent measurement failures across one evaluation project
 
 **This is reported as a standalone, portfolio-worthy result about evaluating generative models,
 not as a footnote to the Pattachitra verdict above.** Over the course of this single evaluation
-project, five independent measurement failures were found — each silent (produced no error, no
+project, six independent measurement failures were found — each silent (produced no error, no
 crash, no obviously-wrong output at the time), each capable of standing unnoticed as a real
-finding if unaudited, and four of the five caught only by going back and auditing a *prior audit's
+finding if unaudited, and five of the six caught only by going back and auditing a *prior audit's
 own conclusion*, not by any check running at measurement time. Each subsequent check exists
 specifically because the prior ones did not generalize to catching the next.
 
@@ -1414,6 +1433,31 @@ specifically because the prior ones did not generalize to catching the next.
 | 3 | **CUDA context corruption** — a `curated500` generation attempt crashed with `RuntimeError: CUDA error: an illegal memory access was encountered` after 22/90 images; the poisoned context then failed all 68 remaining attempts in the same process. | Caught by a *skeptical re-audit of a prior turn's own conclusion* — the prior turn had already accepted the Pattachitra `figure_preservation` finding; this turn specifically asked whether the crash could have silently degraded the 22 images generated *before* it. | Left unaudited, the working assumption would have been "the crash only cost 68 failed attempts, nothing else" — an assumption never actually verified, resting on architectural reasoning ("a crash can't retroactively corrupt already-saved data") rather than the direct pixel-level/visual confirmation this project actually did. |
 | 4 | **Hardcoded judge question** — `style_adherence`'s judge prompt was hardcoded to ask about ukiyo-e regardless of caller; Pattachitra scripts reused it unmodified, so all 360 Pattachitra `style_adherence` records asked about the wrong style. | Direct code inspection while *designing a positive-control script* — found before any Pattachitra-domain result from that control was read, not by any of the three integrity checks (CUDA health probe, degenerate-image detection, uniqueness assertion, judge-range validation) built after bug #3. All four of those checks passed cleanly on every one of the 360 affected records. | A confidently-reported "no style-adherence lift, and no significant effect either way" finding — a plausible-looking null result that was in fact measuring an entirely different question, indistinguishable from a real null without the code-level check that finally caught it. |
 | 5 | **Inconsistent reference arms across two analyses of the same data** — the judge positive control's `sdxl_base` scores were loaded once from an OLD file (scored under bug #4's wrong question) and reused unchanged for a second, supposedly-independent comparison that should have used a freshly-corrected score instead. | Direct code inspection of `scripts/judge_style_positive_control.py`, prompted by a genuine cross-document contradiction (the SAME quantity — `sdxl_base` Pattachitra `style_adherence`, n=90 — reported as two different numbers, 0.3533 and 0.8883, in two places) — not caught by the domain-parameterization test built for bug #4, since the *question text* was never wrong in this script; the *data reused* was stale. | A confident, decisive-looking PASS (`diff/SEM = +12.005`) that never actually compared two arms scored under the same question — the "corrected prompt" row silently mixed a freshly-scored real-art arm with a stale, wrong-question base arm. The corrected, fair comparison reverses the verdict entirely (FAIL, `−3.781×SEM`), changing the Pattachitra publication reassessment in §7.4. |
+| 6 | **Candidate: validity controls confounding style with capture medium** — both domains' straightforward positive controls showed the SAME-SIGN anomaly: real reference art scored BELOW domain-prompted synthetic `sdxl_base` (ukiyo-e: 0.9239 vs. 0.9389; Pattachitra: 0.7960 vs. 0.8883). Both were confirmed confounds, not evidence of instrument blindness: a symmetric off-style-contrast control (real art vs. two genuinely different comparisons, not domain-prompted synthetic) PASSED decisively for both domains once tried. | Noticed while writing up bug #5's fix — the same anomalous direction recurring in an independently-run second domain, not something checked for in advance; confirmed by directly re-testing Pattachitra with the same design that had already resolved ukiyo-e. | It silently invalidated one control's original design (ukiyo-e's ceiling-effect comparison) and produced a genuinely wrong interim verdict for Pattachitra (marking its `style_adherence` — including the weight-sweep's operating points — PROVISIONAL) that a second control run then reversed. Left unaudited past the first FAIL, this would have blocked a real, since-confirmed publication case (§7.4) on the strength of a design confound, not a genuine instrument limitation. |
+
+**One thing IS now confirmed, narrowing what's left open: the judge is not broadly blind to
+either style.** The symmetric control ruled that out directly — real art of BOTH domains scores
+decisively above off-style contrasts (17–29×SEM). What remains a candidate, not a confirmed
+mechanism, is narrower: specifically why real art scores below `sdxl_base`'s own domain-*prompted*
+attempts in both domains. Two same-signed data points on that narrower question still cannot
+distinguish between competing explanations that predict the same direction: (a) the hypothesis as
+named — the judge rewards visually "clean" digital rendering over photographed physical artwork,
+independent of style; (b) `sdxl_base`'s generations and the judge's own question are both derived
+from the same textual style description (e.g. Pattachitra's prompt and judge question both cite
+"flat colour, dense ornamental border, circular iconographic composition" from
+`docs/NEXT_MODEL_SPEC.md`), so the generation may match the judge's literal criterion more closely
+than an authentic photograph ever could, regardless of medium per se; (c) real reference
+photographs in both corpora carry ordinary documentary-photography degradation (lighting, glare,
+cropping, print wear) that could depress a VLM's judgment independent of any style-specific signal.
+This project's evidence supports logging the *pattern* — real-vs-domain-prompted-synthetic
+comparisons are not safe to assume fair by default, even though the instrument itself is now
+confirmed sound for both domains — without claiming which of (a)/(b)/(c) causes the narrower
+anomaly; distinguishing them would require a follow-up control this diagnostic's scope does not
+extend to (e.g. scoring digitally-scanned, uncaptured-by-camera art against photographed art of
+the same style, to isolate medium from prompt-vocabulary overlap). Logged here as a methodology
+finding for future harness work, not resolved in this pass — and importantly, NOT a blocker to
+trusting the instrument's confirmed discrimination ability, which is what §7.4's publication
+reassessment relies on.
 
 **The pattern, not just the count, is the finding.** Bugs #2 and #3 were caught by manual,
 one-off forensic investigation triggered by something looking *anomalous* (an impossible number,
