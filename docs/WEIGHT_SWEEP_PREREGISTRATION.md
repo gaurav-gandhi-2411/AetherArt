@@ -212,9 +212,17 @@ proof of judge blindness on its own.
 
 | Domain / prompt | real mean (n) | base mean (n) | diff | SEM | diff/SEM | Verdict |
 |---|---|---|---|---|---|---|
-| ukiyo-e (production = only prompt) | 0.9239 (23) | 0.9389 (90) | −0.0150 | 0.0099 | **−1.507** | **FAIL** |
-| Pattachitra, historical/production (wrong) prompt | 0.2975 (100) | 0.3533 (90) | −0.0558 | 0.0371 | −1.504 | FAIL |
-| Pattachitra, corrected prompt | 0.7970 (100) | 0.3533 (90) | **+0.4437** | 0.0370 | **+12.005** | **PASS** |
+| ukiyo-e (production = only prompt) | 0.9239 (23) | 0.9389 (90) | −0.0150 | 0.0099 | **−1.507** | **FAIL** — superseded, see the 2026-07-26 amendments below |
+| Pattachitra, historical/production (wrong) prompt | 0.2975 (100) | 0.3533 (90) | −0.0558 | 0.0371 | −1.504 | FAIL — retained, not superseded |
+| Pattachitra, corrected prompt | 0.7970 (100) | 0.3533 (90) | **+0.4437** | 0.0370 | **+12.005** | ~~PASS~~ **SUPERSEDED — base-arm confound, see the 2026-07-26 amendments below; corrected re-run FAILS (−3.781×SEM)** |
+
+**This table is the historical record of the original run, kept as-is for the audit trail — it
+is NOT the current verdict for ukiyo-e or the Pattachitra corrected-prompt row.** Both amendments
+below (2026-07-26) supersede rows of this table: ukiyo-e's FAIL turned out to be a ceiling-effect
+confound in the original design, since resolved with a PASS on a redesigned control; the
+Pattachitra corrected-prompt PASS turned out to rest on a stale, unfixed base score, since
+reversed to FAIL on the corrected re-run. See the "RESULTS" section further below for the current,
+superseding numbers.
 
 **Applying the pre-registered decision tree exactly as fixed above:** ukiyo-e — the expected-pass
 case validating the control itself — **FAILED**. Per the pre-committed rule, this is escalated,
@@ -271,3 +279,133 @@ would not retroactively change the epoch computation. Both are reported on their
 `docs/MODEL_VERDICT.md` §7.2. No training, no GCP spend, and no HF publish action is triggered by
 this sweep regardless of outcome — those remain blocked on the read-only token and on GG's
 approval per this project's standing rules, independent of these results.
+
+## Amendment (2026-07-26): base-arm confound found in the positive control — fixed and re-run
+
+**Finding, confirmed by direct code inspection of `scripts/judge_style_positive_control.py`
+(not inference from the repeated 0.3533 figure alone, though that was the first flag):**
+`load_base_scores(PATTACHITRA_BASE_JSON, checkpoint_filter="base")` is called ONCE and its result
+(`pattachitra_base_scores`) is reused, unchanged, for BOTH the "production/historical prompt" row
+AND the "corrected prompt" row of the positive-control table. That base score comes from
+`reports/pattachitra_ab_base_comparison.json` — the OLD, pre-fix file, scored entirely under the
+hardcoded wrong (ukiyo-e-worded) question. **The "corrected prompt" row's reported PASS
+(`diff/SEM = +12.005`) therefore never compared two arms scored under the same question — it
+compared real Pattachitra art scored under the corrected question against `sdxl_base` scored
+under the historical wrong question.** This is a base-arm confound, not a finding about the
+adapter or the judge's ability to perceive Pattachitra style under a fair test.
+
+**This is a distinct defect from bug #4 (`docs/MODEL_VERDICT.md` §7.7)** — the harness-level
+`style_question` parameterization fix (which this control script itself correctly uses, per
+caller) does not catch a *script* that loads one arm's data once and reuses it across two
+supposedly-independent comparisons. Logged in `PLAN.md` as a fifth measurement-defect class:
+inconsistent reference arms across two analyses of the same underlying data.
+
+**By contrast, `scripts/rescore_pattachitra_uniform.py` — the source of the weight-sweep's
+`sdxl_base` mean of 0.8883 — is confirmed NOT to have this defect**: its `build_source()`
+explicitly includes `checkpoint == "base"` records and its `main()` loop calls
+`harness.score_vlm_judge(img, ..., style_question=PATTACHITRA_STYLE_QUESTION)` for every record
+in scope, base included — every one of the 90 base images is genuinely, freshly scored under the
+corrected question in that pass. **The weight-sweep's 8 operating-point rows do not need
+recomputation; only the positive control's "corrected prompt" row does.**
+
+**Fix and re-run plan, pre-registered before running:**
+- The control's "corrected prompt" row is recomputed with BOTH arms scored under
+  `PATTACHITRA_STYLE_QUESTION`: the 100 real Pattachitra images (already the right arm, re-run
+  fresh since no prior per-image scores are available to reuse) and — the actual fix — a fresh
+  scoring pass of the same 90 `sdxl_base` Pattachitra images used everywhere else in this section,
+  now under the corrected question instead of the stale historical one.
+- The "historical/production prompt" row is NOT re-run: both of its arms were already internally
+  consistent (real art and `sdxl_base`, both scored under the same wrong question) — that
+  comparison was never confounded, only mislabeled as validating the "corrected" condition when
+  reused a second time.
+- Decision rule (unchanged from the original pre-registration): PASS requires
+  `diff/SEM > +2.0` (unpaired, independent-sample quadrature SEM), diff in the expected direction
+  (real > `sdxl_base`).
+
+## Amendment (2026-07-26): ukiyo-e control redesigned — original comparison was a ceiling-effect confound, not a validity test
+
+**The original ukiyo-e row compared real ukiyo-e art (0.9239) against `sdxl_base` outputs
+generated from ukiyo-e-worded prompts (0.9389)** — i.e. the "control" arm was itself asked to look
+like ukiyo-e, on a style this project has already documented (§4.10) as strongly represented in
+SDXL's own pretraining. That is a near-ceiling discrimination task ("real ukiyo-e vs. SDXL's own
+highly-convincing attempt at ukiyo-e"), not a test of whether the judge can recognize ukiyo-e style
+at all. The `−1.507` FAIL is real and stands as a measurement, but it does not by itself establish
+"the judge cannot perceive ukiyo-e" — a judge could fail this exact comparison while still being
+perfectly able to tell ukiyo-e apart from something that looks nothing like it.
+
+**Redesigned control (pre-registered here, before running):** real ukiyo-e art (n=23,
+`data/lora/ukiyo-e-curated/images/`) scored under `UKIYO_E_STYLE_QUESTION` (unchanged — no bug
+exists in this question, before or after the harness fix) against TWO independent off-style
+contrast arms, same question, same axis:
+- **Contrast A — real Pattachitra art** (n=100, `data/lora/pattachitra-curated/images/`): a
+  genuinely different, real (not generated) style. Tests whether the judge, asked specifically
+  about ukiyo-e, correctly scores authentic non-ukiyo-e art lower than authentic ukiyo-e art.
+- **Contrast B — generic `sdxl_base` outputs from non-style-specific prompts** (n=90,
+  `outputs/verdict/sdxl_base/`, the canonical 30-prompt PartiPrompts set × 3 seeds, no style word
+  in any prompt): tests whether the judge correctly scores images that were never asked to look
+  like any particular style lower than real ukiyo-e art — an independent check that doesn't share
+  Contrast A's "different real style" framing.
+
+**Decision rule, fixed before running:**
+- **PASS** requires real ukiyo-e to exceed **both** contrast arms individually by
+  `diff/SEM > +2.0` (same unpaired, independent-sample-quadrature SEM as every other positive-
+  control comparison in this project). Passing one contrast but not the other is reported as a
+  partial result, not rounded up to PASS.
+- **PASS on both** → the judge perceives ukiyo-e style under a fair (non-ceiling) test. The
+  §4.10 PROVISIONAL marking is lifted from `docs/MODEL_VERDICT.md` §4 and
+  `docs/HF_MODEL_CARD_UPDATES.md`, and the original ceiling-effect comparison is recorded as the
+  reason the earlier control was mis-specified, not retracted as if it were simply wrong data.
+- **FAIL on either or both** → PROVISIONAL stands; the judge genuinely cannot reliably
+  discriminate ukiyo-e style even under a fair contrast, and that is the finding, not softened.
+- No new SDXL generation for this control — every image scored already exists on disk. Zero paid
+  APIs, local Ollama (`qwen2.5vl:7b`) only, per standing rules.
+
+## RESULTS (2026-07-26, run after both amendments above were committed) — `reports/judge_style_positive_control.json`
+
+| Comparison | arm A mean (n) | arm B mean (n) | diff | SEM | diff/SEM | MDE@80% | MDE@90% | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| Pattachitra corrected prompt, base-arm confound **fixed** | real=0.7960 (100) | `sdxl_base`=0.8883 (90) | **−0.0923** | 0.0244 | **−3.781** | 0.0684 | 0.0792 | **FAIL — wrong-signed, decisive** |
+| Ukiyo-e vs. real Pattachitra art (contrast A) | ukiyo-e=0.9239 (23) | Pattachitra=0.2975 (100) | +0.6264 | 0.0250 | **+25.062** | 0.0700 | 0.0810 | **PASS** |
+| Ukiyo-e vs. generic `sdxl_base` (contrast B) | ukiyo-e=0.9239 (23) | generic=0.2033 (90) | +0.7206 | 0.0282 | **+25.580** | 0.0789 | 0.0913 | **PASS** |
+
+**Ukiyo-e: PASS on both contrasts, decisively.** The judge separates real ukiyo-e art from both a
+genuinely different real style and from generic non-styled generations by >25×SEM in each case —
+nowhere close to a borderline result. **Per the pre-registered rule, the §4.10 PROVISIONAL marking
+is lifted** — the original `−1.507` FAIL is now understood as a ceiling-effect artifact of testing
+against ukiyo-e-*prompted* `sdxl_base` specifically, not evidence the judge cannot perceive ukiyo-e.
+
+**Pattachitra: FAIL, and not merely non-significant — wrong-signed and decisive.** Once both arms
+are scored under the identical corrected question, real Pattachitra reference art scores **lower**
+than `sdxl_base`'s own Pattachitra-prompted generations (0.7960 vs. 0.8883), by `3.781×SEM` — an
+effect (`0.0923`) that clears its own MDE@80% (`0.0684`), so this is a well-powered result, not an
+underpowered null. **This is the base-arm-confound fix applied to what is, structurally, exactly
+Pattachitra's own positive control** — real target-style art vs. `sdxl_base`'s attempts at that
+style, same fair question both arms. It fails. **Consequence, applied per the same standing rule
+already used for ukiyo-e's original failure (not a new, softer standard invented for this
+domain):** Pattachitra's `style_adherence` axis — including the weight-sweep's operating-point
+numbers in `docs/MODEL_VERDICT.md` §7.2(5), which used this exact question and this exact base
+score — cannot be trusted to measure genuine style authenticity for this domain, even when asked
+the corrected question. Every Pattachitra `style_adherence` number is now marked **PROVISIONAL**,
+parallel to ukiyo-e's original marking, for the same underlying reason: a positive control failure
+on this exact axis for this exact domain. Unlike ukiyo-e, this PROVISIONAL marking is **not**
+lifted by any further test run in this diagnostic pass — Pattachitra's control failed even under
+the fair, corrected version.
+
+**A plausible (unverified, not investigated further per this diagnostic's scope) explanation for
+both the ukiyo-e ceiling effect and this new Pattachitra reversal sharing a common mechanism:**
+`sdxl_base`'s own generations are prompted with the exact words used to construct the judge
+question ("Pattachitra," "flat colour, dense ornamental border, circular iconographic
+composition" derived from the same corpus-quality description that seeded the prompt set) — the
+generation and the judge question may be drawing on the same textual description, producing an
+image that matches the judge's own criterion more literally/cleanly than an authentic photograph
+of real folk art, which carries real-world documentary artifacts (lighting, wear, glare, framing)
+the idealized description doesn't capture. This would predict exactly what was observed: real art
+scoring *below* a generation that was prompted toward the same description the judge checks for.
+
+**MDE note (Task 4 of the follow-up directive):** MDE@80%/90% is reported above for these three
+NEW comparisons. It is NOT backfilled for the weight-sweep's 8 existing operating-point rows in
+`docs/MODEL_VERDICT.md` §7.2(5) — those rows were not recomputed (their base arm was already
+correct), and the per-image scores underlying them are not in this pass's data, only their
+already-published summary diff/SEM. Backfilling their `style_adherence` MDE would require
+re-running the full 810-image, 3-axis uniform re-score, which is disproportionate to what this
+fix required and is not done here; stated explicitly rather than omitted silently.

@@ -57,7 +57,34 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-25h)**
+**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-26a)**
+
+- [x] **FIFTH measurement-defect class found: inconsistent reference arms across two analyses of
+      the same data (2026-07-26a).** `sdxl_base`'s Pattachitra `style_adherence` mean was reported
+      as two different, contradictory numbers in two places: `0.3533` in the judge positive
+      control's "corrected prompt" row, `0.8883` in the weight-sweep stats — same model, axis,
+      n=90, supposedly the same corrected question. Root-caused by direct code inspection, not
+      inference from the repeated figure alone: `scripts/judge_style_positive_control.py` loaded
+      the base arm's scores ONCE (`load_base_scores`, from the OLD pre-fix
+      `pattachitra_ab_base_comparison.json`, scored under the hardcoded wrong ukiyo-e question)
+      and reused that same value, unchanged, for BOTH the historical-prompt row (where reuse is
+      correct — both arms consistently wrong-question) AND the corrected-prompt row (where reuse
+      is a bug — the base arm was never actually re-scored under the corrected question there).
+      `scripts/rescore_pattachitra_uniform.py`, by contrast, genuinely re-scores the base arm
+      fresh under the corrected question — confirmed by reading its `build_source()`/`main()`
+      directly — making its `0.8883` the correct value; the weight-sweep's 8 operating-point rows
+      did not need recomputation. **Why this defect class is distinct from bug #4 (hardcoded
+      question, `docs/MODEL_VERDICT.md` §7.7):** bug #4 is one script asking the wrong question of
+      every caller; this is a *different* script correctly asking the right question of one arm
+      but then silently reusing a *different, older* arm's data for a second, supposedly-
+      independent comparison. Domain-parameterization tests (checking `style_question` is never
+      defaulted) do not catch this — the question passed to the judge was never wrong in this
+      script; the *data reused* was stale. Fixed: `scripts/judge_style_positive_control.py` now
+      scores the base arm fresh, per comparison, no cross-run reuse. See
+      `docs/WEIGHT_SWEEP_PREREGISTRATION.md`'s amendment for the full account and the
+      accompanying ukiyo-e control redesign (the original ukiyo-e row was a ceiling-effect
+      confound — real art vs. ukiyo-e-*prompted* `sdxl_base` — not a fair discrimination test;
+      replaced with two off-style contrasts, same question throughout).
 
 - [x] **TOP FINDING: the judge-question positive control FAILED for ukiyo-e — every
       `style_adherence` number in §4 and the staged HF card text is now PROVISIONAL

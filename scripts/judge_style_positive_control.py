@@ -3,6 +3,25 @@
 before any `style_adherence` number derived from it is trusted, per
 docs/WEIGHT_SWEEP_PREREGISTRATION.md.
 
+REVISION (2026-07-26), fixing two defects found in the original run — see
+docs/WEIGHT_SWEEP_PREREGISTRATION.md's two amendments, both pre-registered before this revised
+script was run:
+
+1. **Base-arm confound (a fifth measurement-defect class, PLAN.md):** the original script loaded
+   `reports/pattachitra_ab_base_comparison.json`'s base-arm scores ONCE and reused them, unchanged,
+   for both the historical-prompt row AND the corrected-prompt row. Those scores were computed
+   under the OLD hardcoded wrong (ukiyo-e-worded) question — reusing them for the corrected-prompt
+   row meant that row never actually compared two arms scored under the same question. Fixed here:
+   the corrected-prompt row scores the base arm fresh, under the corrected question, exactly like
+   `scripts/rescore_pattachitra_uniform.py` already correctly does for the weight sweep (confirmed
+   by reading that script directly — its base arm is NOT affected by this bug).
+2. **Ukiyo-e ceiling-effect confound:** the original ukiyo-e row compared real ukiyo-e art against
+   `sdxl_base` outputs from UKIYO-E-WORDED prompts — a near-ceiling task, not a validity test.
+   Replaced with two off-style contrasts (real Pattachitra art; generic non-style-specific
+   `sdxl_base` outputs), both scored under the SAME `UKIYO_E_STYLE_QUESTION` as the real-ukiyo-e
+   arm, so the comparison is actually testing discrimination against something that looks
+   different, not against another convincing same-style generation.
+
 DO NOT RUN until the weight sweep (scripts/_pattachitra_weight_sweep.py) has finished and the GPU
 is free — this makes ~223 new Ollama VLM calls, and Ollama serves `qwen2.5vl:7b` on the same GPU
 the sweep's SDXL pipeline is using (confirmed: `nvidia-smi --query-compute-apps` shows
@@ -116,8 +135,14 @@ OUT_JSON = ROOT / "reports" / "judge_style_positive_control.json"
 
 PATTACHITRA_REAL_DIR = ROOT / "data" / "lora" / "pattachitra-curated" / "images"
 UKIYO_E_REAL_DIR = ROOT / "data" / "lora" / "ukiyo-e-curated" / "images"
-PATTACHITRA_BASE_JSON = ROOT / "reports" / "pattachitra_ab_base_comparison.json"
-UKIYO_E_BASE_JSON = ROOT / "reports" / "lora_ab_base_comparison.json"
+# sdxl_base Pattachitra-prompted outputs (checkpoint=="base" arm of the original ab comparison) --
+# scored fresh here under the corrected question, the fix for the base-arm confound (see module
+# docstring). Filenames only, not the historical JSON, since that file only ever recorded scores
+# under the wrong question.
+PATTACHITRA_BASE_IMAGES_DIR = ROOT / "outputs" / "verdict" / "pattachitra_ab_base_comparison"
+# Generic sdxl_base outputs from the canonical 30-prompt PartiPrompts set (no style word in any
+# prompt) -- Contrast B for the redesigned ukiyo-e control.
+GENERIC_SDXL_BASE_DIR = ROOT / "outputs" / "verdict" / "sdxl_base"
 
 Z_ALPHA_2 = 1.96
 Z_BETA_80 = 0.8416
@@ -224,71 +249,67 @@ def unpaired_stats(sample_a: list[float], sample_b: list[float]) -> dict:
     }
 
 
-def load_base_scores(path: Path, checkpoint_filter: str | None) -> list[float]:
-    records = json.loads(path.read_text(encoding="utf-8"))
-    if checkpoint_filter is not None:
-        records = [r for r in records if r.get("checkpoint") == checkpoint_filter]
-    return [
-        r["independent_calls"]["style_adherence"]
-        for r in records
-        if not r.get("error") and r.get("independent_calls")
-    ]
-
-
 def main() -> None:
     harness = _import_harness()
 
     pattachitra_real_paths = sorted(PATTACHITRA_REAL_DIR.glob("*.jpg"))
     ukiyo_e_real_paths = sorted(UKIYO_E_REAL_DIR.glob("*.jpg"))
+    pattachitra_base_paths = sorted(PATTACHITRA_BASE_IMAGES_DIR.glob("base_pat_*.png"))
+    generic_base_paths = sorted(GENERIC_SDXL_BASE_DIR.glob("pp_*.png"))
     assert len(pattachitra_real_paths) == 100, f"expected 100, got {len(pattachitra_real_paths)}"
     assert len(ukiyo_e_real_paths) == 23, f"expected 23, got {len(ukiyo_e_real_paths)}"
-
-    pattachitra_base_scores = load_base_scores(PATTACHITRA_BASE_JSON, checkpoint_filter="base")
-    ukiyo_e_base_scores = load_base_scores(UKIYO_E_BASE_JSON, checkpoint_filter=None)
-    assert len(pattachitra_base_scores) == 90, f"expected 90, got {len(pattachitra_base_scores)}"
-    assert len(ukiyo_e_base_scores) == 90, f"expected 90, got {len(ukiyo_e_base_scores)}"
+    assert len(pattachitra_base_paths) == 90, f"expected 90, got {len(pattachitra_base_paths)}"
+    assert len(generic_base_paths) == 90, f"expected 90, got {len(generic_base_paths)}"
 
     ukiyo_e_prompt = _wrap_style_question(harness.UKIYO_E_STYLE_QUESTION)
-    # Same text as ukiyo_e_prompt - see the constant's own comment for why this is not a
-    # transcription error. Named separately so the two roles this text plays (correct for
-    # ukiyo-e, historically wrong for Pattachitra) read as distinct in the results below.
-    historical_wrong_prompt_for_pattachitra = ukiyo_e_prompt
     pattachitra_corrected_prompt = _wrap_style_question(PATTACHITRA_STYLE_QUESTION)
 
     results = {}
 
-    logger.info("[positive-control] Scoring ukiyo-e real images (production prompt, n=23)...")
-    ukiyo_e_real_scores = score_images(harness, ukiyo_e_real_paths, ukiyo_e_prompt)
-    results["ukiyo_e"] = unpaired_stats(ukiyo_e_real_scores, ukiyo_e_base_scores)
-
-    logger.info(
-        "[positive-control] Scoring Pattachitra real images "
-        "(HISTORICAL/ukiyo-e-worded prompt, n=100)..."
-    )
-    pattachitra_real_historical = score_images(
-        harness, pattachitra_real_paths, historical_wrong_prompt_for_pattachitra
-    )
-    results["pattachitra_production_prompt"] = unpaired_stats(
-        pattachitra_real_historical, pattachitra_base_scores
-    )
-
-    logger.info(
-        "[positive-control] Scoring Pattachitra real images "
-        "(CORRECTED/Pattachitra-worded prompt, n=100)..."
-    )
+    # --- Fix 1: Pattachitra corrected-prompt row, both arms under the SAME corrected question ---
+    logger.info("[positive-control] Scoring Pattachitra real images (CORRECTED prompt, n=100)...")
     pattachitra_real_corrected = score_images(
         harness, pattachitra_real_paths, pattachitra_corrected_prompt
     )
-    results["pattachitra_corrected_prompt"] = unpaired_stats(
-        pattachitra_real_corrected, pattachitra_base_scores
+    logger.info(
+        "[positive-control] Scoring Pattachitra sdxl_base images "
+        "(CORRECTED prompt, n=90 -- the base-arm confound fix)..."
+    )
+    pattachitra_base_corrected = score_images(
+        harness, pattachitra_base_paths, pattachitra_corrected_prompt
+    )
+    results["pattachitra_corrected_prompt_fixed"] = unpaired_stats(
+        pattachitra_real_corrected, pattachitra_base_corrected
     )
 
-    print("=== Judge style positive control (n unpaired) ===\n")
+    # --- Fix 2: redesigned ukiyo-e control, two off-style contrasts, same question throughout ---
+    logger.info("[positive-control] Scoring ukiyo-e real images (n=23)...")
+    ukiyo_e_real_scores = score_images(harness, ukiyo_e_real_paths, ukiyo_e_prompt)
+
+    logger.info(
+        "[positive-control] Scoring real Pattachitra art as ukiyo-e off-style contrast A (n=100)..."
+    )
+    pattachitra_real_as_ukiyoe_contrast = score_images(
+        harness, pattachitra_real_paths, ukiyo_e_prompt
+    )
+    results["ukiyo_e_vs_real_pattachitra"] = unpaired_stats(
+        ukiyo_e_real_scores, pattachitra_real_as_ukiyoe_contrast
+    )
+
+    logger.info(
+        "[positive-control] Scoring generic sdxl_base as ukiyo-e off-style contrast B (n=90)..."
+    )
+    generic_base_as_ukiyoe_contrast = score_images(harness, generic_base_paths, ukiyo_e_prompt)
+    results["ukiyo_e_vs_generic_sdxl_base"] = unpaired_stats(
+        ukiyo_e_real_scores, generic_base_as_ukiyoe_contrast
+    )
+
+    print("=== Judge style positive control, revised (n unpaired) ===\n")
     for key, stats in results.items():
         print(f"--- {key} ---")
         print(
-            f"  real mean={stats['mean_a']:.4f} (n={stats['n_a']})  "
-            f"base mean={stats['mean_b']:.4f} (n={stats['n_b']})"
+            f"  arm_a mean={stats['mean_a']:.4f} (n={stats['n_a']})  "
+            f"arm_b mean={stats['mean_b']:.4f} (n={stats['n_b']})"
         )
         print(
             f"  diff={stats['diff']:+.4f}  SEM={stats['sem']:.4f}  "
@@ -297,43 +318,54 @@ def main() -> None:
         )
         print(f"  {'PASS' if stats['passes_2xsem'] else 'FAIL'} (>2xSEM threshold)\n")
 
-    ukiyo_e_pass = results["ukiyo_e"]["passes_2xsem"]
-    pattachitra_prod_pass = results["pattachitra_production_prompt"]["passes_2xsem"]
-    pattachitra_corr_pass = results["pattachitra_corrected_prompt"]["passes_2xsem"]
+    pattachitra_fixed_pass = results["pattachitra_corrected_prompt_fixed"]["passes_2xsem"]
+    ukiyo_e_vs_pattachitra_pass = results["ukiyo_e_vs_real_pattachitra"]["passes_2xsem"]
+    ukiyo_e_vs_generic_pass = results["ukiyo_e_vs_generic_sdxl_base"]["passes_2xsem"]
+    ukiyo_e_pass_both = ukiyo_e_vs_pattachitra_pass and ukiyo_e_vs_generic_pass
 
-    print("=== Verdict (decision rule fixed in advance - see module docstring) ===")
-    if not ukiyo_e_pass:
+    print(
+        "=== Verdict (decision rules fixed in advance -- see module docstring and "
+        "docs/WEIGHT_SWEEP_PREREGISTRATION.md's two amendments) ==="
+    )
+    print(
+        f"Pattachitra corrected-prompt row, base-arm confound fixed: "
+        f"{'PASS' if pattachitra_fixed_pass else 'FAIL'}"
+    )
+    print(
+        f"Ukiyo-e vs. real Pattachitra (contrast A): "
+        f"{'PASS' if ukiyo_e_vs_pattachitra_pass else 'FAIL'}"
+    )
+    print(
+        f"Ukiyo-e vs. generic sdxl_base (contrast B): "
+        f"{'PASS' if ukiyo_e_vs_generic_pass else 'FAIL'}"
+    )
+    if ukiyo_e_pass_both:
         print(
-            "Ukiyo-e (expected-pass case) FAILED. The control methodology itself is suspect - "
-            "do not trust any Pattachitra result from this run without fixing that first."
-        )
-    elif pattachitra_prod_pass:
-        print(
-            "Unexpected: Pattachitra PASSED on the production (ukiyo-e-worded) prompt. "
-            "Re-examine before accepting - this was not the predicted outcome."
-        )
-    elif pattachitra_corr_pass:
-        print(
-            "Pattachitra FAILED on the production prompt but PASSED on the corrected prompt: "
-            "the judge is not blind to Pattachitra style - the deployed question was wrong. "
-            "Every existing Pattachitra style_adherence number is UNINFORMATIVE as recorded; "
-            "a re-score with the corrected prompt is required before any style-lift claim."
+            "Ukiyo-e PASSES both off-style contrasts: the judge perceives ukiyo-e style under a "
+            "fair, non-ceiling test. The SS4.10 PROVISIONAL marking is lifted."
         )
     else:
         print(
-            "Pattachitra FAILED on BOTH the production and corrected prompts: the judge is "
-            "insensitive to Pattachitra style even when properly asked. Every existing "
-            "Pattachitra style_adherence number is UNINFORMATIVE for a different reason "
-            "(instrument blindness on this domain) - not evidence the adapter has no lift."
+            "Ukiyo-e FAILS at least one off-style contrast: PROVISIONAL stands -- the judge "
+            "still cannot reliably discriminate ukiyo-e style even under a fair contrast."
         )
 
     OUT_JSON.write_text(
         json.dumps(
             {
                 "results": results,
-                "ukiyo_e_pass": ukiyo_e_pass,
-                "pattachitra_production_prompt_pass": pattachitra_prod_pass,
-                "pattachitra_corrected_prompt_pass": pattachitra_corr_pass,
+                "pattachitra_corrected_prompt_fixed_pass": pattachitra_fixed_pass,
+                "ukiyo_e_vs_real_pattachitra_pass": ukiyo_e_vs_pattachitra_pass,
+                "ukiyo_e_vs_generic_sdxl_base_pass": ukiyo_e_vs_generic_pass,
+                "ukiyo_e_pass_both_contrasts": ukiyo_e_pass_both,
+                "note": (
+                    "The historical/production-prompt Pattachitra row (real=0.2975 n=100, "
+                    "base=0.3533 n=90, diff/SEM=-1.504, FAIL) is retained from the original run "
+                    "and NOT recomputed here -- both of its arms were already scored under the "
+                    "same (wrong) question, so it was never confounded, only mislabeled when "
+                    "reused a second time for the corrected-prompt row. See "
+                    "docs/WEIGHT_SWEEP_PREREGISTRATION.md's amendment for the full account."
+                ),
             },
             indent=2,
         ),
