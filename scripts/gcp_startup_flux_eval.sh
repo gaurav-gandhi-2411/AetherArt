@@ -196,7 +196,13 @@ peak_gb = torch.cuda.max_memory_allocated() / 1e9
 print(f"PROBE gen_s={gen_s:.1f} peak_vram_gb={peak_gb:.2f}")
 PYEOF
 
-PROBE_GEN_S=$(grep -oP 'PROBE gen_s=\K[0-9.]+' "$PROBE_LOG" | tail -1)
+# `|| true` here is load-bearing too, same reasoning as the probe pipelines above: under
+# `set -o pipefail`, grep finding NO match (exactly the case this fallback exists to handle —
+# the probe crashed and never printed a gen_s line) exits 1, and `set -e` would abort the whole
+# script right here, one line before the `-z "$PROBE_GEN_S"` check below even runs. Confirmed via
+# a real run: this exact line killed the script on a genuine bf16+offload OOM even after the
+# probe pipelines themselves were fixed to tolerate failure.
+PROBE_GEN_S=$(grep -oP 'PROBE gen_s=\K[0-9.]+' "$PROBE_LOG" | tail -1) || true
 echo "=== Probe result: gen_s=${PROBE_GEN_S:-FAILED} ==="
 
 USE_QUANTIZED=0
@@ -239,7 +245,7 @@ gen_s = time.time() - t0
 peak_gb = torch.cuda.max_memory_allocated() / 1e9
 print(f"PROBE_Q gen_s={gen_s:.1f} peak_vram_gb={peak_gb:.2f}")
 PYEOF
-    PROBE_Q_GEN_S=$(grep -oP 'PROBE_Q gen_s=\K[0-9.]+' "$PROBE_LOG" | tail -1)
+    PROBE_Q_GEN_S=$(grep -oP 'PROBE_Q gen_s=\K[0-9.]+' "$PROBE_LOG" | tail -1) || true
     if [ -z "$PROBE_Q_GEN_S" ]; then
         echo "FATAL: NF4-quantized probe also failed (no measurement) — both loading configs are" >&2
         echo "non-viable on this GPU. Not launching the full 90-image run against a config known" >&2
