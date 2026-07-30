@@ -16,6 +16,18 @@
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
 \usepackage{microtype}
 \usepackage{enumitem}
+\usepackage{newunicodechar}
+
+% Pandoc emits these as literal Unicode characters (the source markdown uses them as
+% ordinary prose, e.g. "MDE ~= 0.0374"); the base text font (Latin Modern, loaded via
+% lmodern/fontspec above) has no glyph for them, which a real tectonic compile confirmed
+% via "Missing character" warnings before this fix existed. Mapping each to its LaTeX
+% math-mode equivalent here, once, means body_content.tex/abstract_body.tex can be freely
+% regenerated from source (build.sh) with no per-occurrence hand-patch ever required
+% again -- including for symbols introduced by future edits this file has never seen.
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
 
 % This paper's own section numbers (e.g. "4.1"-"4.6", "5.1"-"5.2") are hard-coded as
 % literal text in every heading, matching docs/paper/measurement_defects.md exactly.

@@ -161,12 +161,24 @@ omitted silently.
 
 ## 4. Format conversion — verification
 
-Converted to the same LaTeX toolchain as AgentGauge (pandoc → hand-patch → tectonic).
-Full build notes: `docs/paper/latex/README.md`.
+Converted to the same base toolchain as AgentGauge (pandoc → tectonic), packaged as
+`docs/paper/latex/build.sh` rather than a manual sequence. **Only `abstract_source.md`,
+`main.tex`, and `build.sh` are tracked; `abstract_body.tex`, `body_content.tex`, and
+`main.pdf` are gitignored, generated-on-demand build output** (revised after this pass's
+first draft, which committed and hand-patched the generated files directly — see
+`docs/paper/latex/README.md`'s intro section for why that was reverted: a hand-retyped
+copy of the abstract drifted 3 characters from its source during this very pass, which
+is the exact failure mode tracking generated output invites). Full build notes:
+`docs/paper/latex/README.md`.
 
 **Verified directly, not assumed:**
-- `tectonic main.tex` compiles clean: 0 errors, 0 missing-character warnings (after 4
-  hand-patches — see README), 12 pages, `main.pdf` produced (96.5 KB).
+- `./build.sh` regenerates `abstract_body.tex`/`body_content.tex`/`main.pdf` from
+  scratch and compiles clean: 0 errors, 0 missing-character warnings, 12 pages,
+  `main.pdf` produced (~94 KB). No hand-patching step exists in this pipeline —
+  `main.tex` loads `newunicodechar` to map the 3 problem symbols (`≈`, `≥`, `≤`) once in
+  the preamble, confirmed by regenerating `body_content.tex` fresh and checking it
+  still contains the raw, unpatched Unicode characters while the compiled PDF renders
+  them correctly (page-render check, not just a clean compile).
 - All 4 tables (§3 taxonomy, §5.1 regime, §5.2 checkpoint, §9 provenance) render as
   properly-formatted `longtable`s with visible rules and correctly wrapped cell text —
   confirmed by rendering all 12 pages to PNG (150 DPI) and visually inspecting the
@@ -211,11 +223,15 @@ itself before proceeding, rather than assuming the described behavior is still c
    common choice if no other preference exists.
    *Confirms success:* wizard advances to file upload.
 
-4. **Upload files.** Upload the full contents of `docs/paper/latex/`:
-   `main.tex`, `abstract_body.tex`, `body_content.tex` (do **not** upload `main.pdf` —
-   arXiv compiles the PDF itself from the `.tex` sources; uploading a pre-built PDF
-   alongside `.tex` sources can confuse arXiv's own TeX Live-based compiler, which may
-   not exactly match tectonic's output).
+4. **Upload files.** Run `./build.sh` in `docs/paper/latex/` first (it regenerates
+   `abstract_body.tex`/`body_content.tex`/`main.pdf` from tracked source — these three
+   are gitignored, not committed, so a fresh checkout won't have them yet). Then upload
+   exactly `main.tex`, `abstract_body.tex`, and `body_content.tex` (do **not** upload
+   `main.pdf` — arXiv compiles the PDF itself from the `.tex` sources; uploading a
+   pre-built PDF alongside `.tex` sources can confuse arXiv's own TeX Live-based
+   compiler, which may not exactly match tectonic's output) and do **not** upload
+   `abstract_source.md` or `build.sh` — those are this repo's internal build tooling,
+   not part of the paper's `.tex` source tree arXiv expects.
    *Confirms success:* arXiv's own compile step (their TeX Live, not tectonic) succeeds
    and produces a preview PDF. **Check this preview carefully** — arXiv's TeX Live
    engine is not tectonic; a paper that compiles clean under tectonic can still warn or
@@ -277,8 +293,16 @@ then replace the `TO FILL after upload` placeholder already sitting in the portf
 
 ## 6. Files produced by this pass
 
-- `docs/paper/latex/main.tex`, `abstract_body.tex`, `body_content.tex`, `main.pdf`,
-  `README.md` — submission-ready LaTeX source + compiled PDF + build notes.
+**Tracked:**
+- `docs/paper/latex/main.tex` — hand-authored LaTeX entry point (title, preamble,
+  `\input` directives).
+- `docs/paper/latex/abstract_source.md` — hand-maintained source for the compressed
+  arXiv abstract (§2).
+- `docs/paper/latex/build.sh` — regenerates the generated files below from source.
+- `docs/paper/latex/README.md` — build notes and the tracked/generated rationale.
 - `docs/paper/arxiv_submission_prep.md` — this document.
+
+**Generated, gitignored, not committed** (run `./build.sh` to produce them):
+`docs/paper/latex/abstract_body.tex`, `body_content.tex`, `main.pdf`.
 
 Nothing was submitted, uploaded, or transmitted to arxiv.org by this pass.
