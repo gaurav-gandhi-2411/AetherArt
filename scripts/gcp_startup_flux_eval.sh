@@ -64,6 +64,22 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 echo "=== FLUX.1-schnell verdict eval starting at $(date) ==="
 echo "Instance: ${INSTANCE_NAME} | Zone: ${ZONE} | Project: ${PROJECT}"
+
+# ── Gated-repo read token ─────────────────────────────────────────────────────
+# FLUX.1-schnell is gated on HF (Apache-2.0 license, but still requires the account to accept
+# the gate + an authenticated token). Read from instance metadata (set via
+# `gcloud compute instances add-metadata --metadata=hf-read-token=...` at launch time from the
+# operator's local .env, never committed to this script or the repo) rather than embedding the
+# value in this file's source text. This is a DIFFERENT token from the aetherart publish flow's
+# write-scoped HF_TOKEN (which stays local-only and is never sent to this instance at all) — set
+# only as HF_READ_TOKEN, matching aetherart/flux_pipeline.py's explicit lookup. Never echoed.
+export HF_READ_TOKEN=$(curl -sf -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/hf-read-token")
+if [ -z "$HF_READ_TOKEN" ]; then
+    echo "FATAL: hf-read-token metadata key not set on this instance — cannot pull the gated FLUX.1-schnell repo." >&2
+    exit 1
+fi
+echo "HF_READ_TOKEN present (length=${#HF_READ_TOKEN} chars, value not logged)."
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || echo "WARNING: nvidia-smi failed"
 ${PYTHON} -c "import torch; print(f'torch {torch.__version__}, CUDA {torch.version.cuda}, device={torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}')"
 echo "=== Free disk ==="

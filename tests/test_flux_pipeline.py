@@ -4,6 +4,27 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+FAKE_READ_TOKEN = "hf_fake_read_token_for_tests"
+
+
+@pytest.fixture(autouse=True)
+def _hf_read_token_env(monkeypatch):
+    """FLUX.1-schnell is gated — every loader requires HF_READ_TOKEN (see _hf_read_token()).
+    Set a fake value for every test in this module so loader tests exercise the token-plumbing
+    path rather than the missing-token error path (that error path gets its own test below)."""
+    monkeypatch.setenv("HF_READ_TOKEN", FAKE_READ_TOKEN)
+
+
+class TestHfReadToken:
+    def test_raises_when_hf_read_token_unset(self, monkeypatch):
+        monkeypatch.delenv("HF_READ_TOKEN", raising=False)
+        from aetherart.flux_pipeline import _hf_read_token
+
+        with pytest.raises(RuntimeError, match="HF_READ_TOKEN is not set"):
+            _hf_read_token()
+
 
 class TestLoadFluxSchnell:
     def _run_load(self, mock_pipe_cls):
@@ -24,7 +45,7 @@ class TestLoadFluxSchnell:
         result = self._run_load(mock_pipe_cls)
 
         mock_pipe_cls.from_pretrained.assert_called_once_with(
-            FLUX_SCHNELL_MODEL, torch_dtype=torch.bfloat16
+            FLUX_SCHNELL_MODEL, torch_dtype=torch.bfloat16, token=FAKE_READ_TOKEN
         )
         assert result is mock_pipe_instance
 
@@ -77,17 +98,20 @@ class TestLoadFluxSchnellQuantized:
         assert t_kwargs["quantization_config"].load_in_4bit is True
         assert t_kwargs["quantization_config"].bnb_4bit_quant_type == "nf4"
         assert t_kwargs["torch_dtype"] == torch.bfloat16
+        assert t_kwargs["token"] == FAKE_READ_TOKEN
 
         # T5 text encoder loaded with NF4 quantization from the "text_encoder_2" subfolder.
         _, te_kwargs = mock_text_encoder_cls.from_pretrained.call_args
         assert te_kwargs["subfolder"] == "text_encoder_2"
         assert te_kwargs["quantization_config"].load_in_4bit is True
         assert te_kwargs["quantization_config"].bnb_4bit_quant_type == "nf4"
+        assert te_kwargs["token"] == FAKE_READ_TOKEN
 
         # Pipeline built from the quantized components and moved to GPU — no CPU offload call.
         _, pipe_kwargs = mock_pipe_cls.from_pretrained.call_args
         assert pipe_kwargs["transformer"] is mock_transformer
         assert pipe_kwargs["text_encoder_2"] is mock_text_encoder
+        assert pipe_kwargs["token"] == FAKE_READ_TOKEN
         mock_pipe_instance.to.assert_called_once_with("cuda")
         mock_pipe_instance.enable_model_cpu_offload.assert_not_called()
         assert result is mock_pipe_instance

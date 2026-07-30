@@ -12,15 +12,36 @@ machine's ~25.5GB free disk at measurement time — a disk-space blocker that pr
 question entirely, so bf16+cpu-offload below is diffusers' documented low-VRAM path but has NOT
 been empirically GPU-verified on this machine. Revisit with more free disk before the actual eval
 run.
+
+Auth note: FLUX.1-schnell is a gated HF repo (license Apache-2.0, but still requires the
+account to click "Agree" on the model page, plus an authenticated token). This project's
+HF_TOKEN is a fine-grained token scoped ONLY to write access on the three published aetherart
+repos and cannot read third-party gated repos. A separate HF_READ_TOKEN (account-wide read
+scope) is used here instead, explicitly, never implicitly picked up from the environment by
+huggingface_hub's default HF_TOKEN lookup — every from_pretrained call below passes it
+explicitly as `token=`.
 """
 
 from __future__ import annotations
 
 import gc
+import os
 
 from .logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def _hf_read_token() -> str:
+    token = os.environ.get("HF_READ_TOKEN")
+    if not token:
+        raise RuntimeError(
+            "HF_READ_TOKEN is not set — FLUX.1-schnell is a gated repo and needs an "
+            "account-wide read token (separate from the write-scoped HF_TOKEN used to "
+            "publish the three aetherart adapters)."
+        )
+    return token
+
 
 try:
     from diffusers import FluxPipeline
@@ -56,7 +77,9 @@ def load_flux_schnell() -> FluxPipeline:
         raise RuntimeError("diffusers is not installed; cannot load FLUX pipeline")
 
     logger.info("Loading FLUX.1-schnell from '%s'...", FLUX_SCHNELL_MODEL)
-    pipe = FluxPipeline.from_pretrained(FLUX_SCHNELL_MODEL, torch_dtype=torch.bfloat16)
+    pipe = FluxPipeline.from_pretrained(
+        FLUX_SCHNELL_MODEL, torch_dtype=torch.bfloat16, token=_hf_read_token()
+    )
     pipe.enable_model_cpu_offload()
     logger.info("Enabled model CPU offload")
     logger.info("FLUX.1-schnell pipeline ready")
@@ -83,12 +106,14 @@ def load_flux_schnell_quantized() -> FluxPipeline:
     logger.info(
         "Loading FLUX.1-schnell (NF4-quantized transformer + T5) from '%s'...", FLUX_SCHNELL_MODEL
     )
+    read_token = _hf_read_token()
     quant_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4")
     transformer = FluxTransformer2DModel.from_pretrained(
         FLUX_SCHNELL_MODEL,
         subfolder="transformer",
         quantization_config=quant_config,
         torch_dtype=torch.bfloat16,
+        token=read_token,
     )
 
     text_encoder_quant_config = TransformersBitsAndBytesConfig(
@@ -99,6 +124,7 @@ def load_flux_schnell_quantized() -> FluxPipeline:
         subfolder="text_encoder_2",
         quantization_config=text_encoder_quant_config,
         torch_dtype=torch.bfloat16,
+        token=read_token,
     )
 
     pipe = FluxPipeline.from_pretrained(
@@ -106,6 +132,7 @@ def load_flux_schnell_quantized() -> FluxPipeline:
         transformer=transformer,
         text_encoder_2=text_encoder_2,
         torch_dtype=torch.bfloat16,
+        token=read_token,
     )
     pipe.to("cuda")
     logger.info("FLUX.1-schnell (NF4-quantized) pipeline ready, GPU-resident (no CPU offload)")
