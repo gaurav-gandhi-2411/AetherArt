@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fontspec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{calc}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+% This paper's own section numbers (e.g. "4.1"-"4.6", "5.1"-"5.2") are hard-coded as
+% literal text in every heading, matching docs/paper/measurement_defects.md exactly.
+% Disabling LaTeX's automatic numbering here (rather than "fixing" the numbering) is the
+% format-only-preserving choice -- renumbering would be a content change, not a formatting one.
+\setcounter{secnumdepth}{-5}
+
+% Pandoc's tight-list marker (used throughout the converted body).
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\title{Five Silent Measurement-Validity Failures in a Generative-Model Evaluation Project}
+\author{Gaurav Gandhi \\ \textit{Independent Researcher}}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{abstract_body.tex}
+\end{abstract}
+
+\input{body_content.tex}
+
+\end{document}
