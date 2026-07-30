@@ -286,8 +286,14 @@ echo "=== Starting eval at $(date) — see ${INNER_LOG} for step-by-step progres
 nohup ${PYTHON} scripts/model_verdict_harness.py --family flux_schnell ${RESUME_FLAG} \
     > >(tr '\r' '\n' > "$INNER_LOG") 2> >(tr '\r' '\n' >> "$INNER_LOG") &
 EVAL_PID=$!
-wait "$EVAL_PID"
-EVAL_EXIT=$?
+# Same species of bug as the two probe fixes above: under `set -e`, `wait` returning non-zero
+# would abort the script AT this line, before `EVAL_EXIT=$?` could ever capture it — skipping
+# the partial-results push and the graceful-failure branch below entirely. `|| EVAL_EXIT=$?`
+# (not a bare `|| true`, which would have thrown away the real exit code by the time the next
+# line ran `$?`) captures the actual code inline while keeping the overall command's own status
+# 0 for `set -e`'s purposes.
+EVAL_EXIT=0
+wait "$EVAL_PID" || EVAL_EXIT=$?
 
 kill "$PUSH_LOG_PID" 2>/dev/null || true
 echo "=== Eval process exited with code ${EVAL_EXIT} at $(date) ==="
