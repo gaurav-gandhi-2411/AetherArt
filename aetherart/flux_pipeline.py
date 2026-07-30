@@ -27,6 +27,19 @@ try:
 except Exception:  # pragma: no cover
     FluxPipeline = None  # type: ignore[assignment, misc]
 
+try:
+    from diffusers import BitsAndBytesConfig, FluxTransformer2DModel
+except Exception:  # pragma: no cover
+    BitsAndBytesConfig = None  # type: ignore[assignment, misc]
+    FluxTransformer2DModel = None  # type: ignore[assignment, misc]
+
+try:
+    from transformers import BitsAndBytesConfig as TransformersBitsAndBytesConfig
+    from transformers import T5EncoderModel
+except Exception:  # pragma: no cover
+    TransformersBitsAndBytesConfig = None  # type: ignore[assignment, misc]
+    T5EncoderModel = None  # type: ignore[assignment, misc]
+
 FLUX_SCHNELL_MODEL = "black-forest-labs/FLUX.1-schnell"
 
 
@@ -47,6 +60,55 @@ def load_flux_schnell() -> FluxPipeline:
     pipe.enable_model_cpu_offload()
     logger.info("Enabled model CPU offload")
     logger.info("FLUX.1-schnell pipeline ready")
+    return pipe
+
+
+def load_flux_schnell_quantized() -> FluxPipeline:
+    """Load FLUX.1-schnell with the transformer and T5 text encoder NF4 4-bit quantized
+    (bitsandbytes), no CPU offload — the whole pipeline stays GPU-resident.
+
+    Alternate to load_flux_schnell() above: added after the GCP eval run's own probe measured
+    bf16+cpu-offload as too slow for a 90-image run (see scripts/gcp_startup_flux_eval.sh's
+    probe step and its logged before/after numbers) — CPU offload pays a large per-step
+    host<->device transfer cost that NF4 quantization avoids by fitting the whole model
+    (12B params, ~half the footprint of bf16) resident in the L4's 24GB VRAM instead.
+    """
+    import torch
+
+    if FluxPipeline is None or FluxTransformer2DModel is None:
+        raise RuntimeError("diffusers is not installed; cannot load FLUX pipeline")
+    if T5EncoderModel is None:
+        raise RuntimeError("transformers is not installed; cannot load FLUX T5 text encoder")
+
+    logger.info(
+        "Loading FLUX.1-schnell (NF4-quantized transformer + T5) from '%s'...", FLUX_SCHNELL_MODEL
+    )
+    quant_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4")
+    transformer = FluxTransformer2DModel.from_pretrained(
+        FLUX_SCHNELL_MODEL,
+        subfolder="transformer",
+        quantization_config=quant_config,
+        torch_dtype=torch.bfloat16,
+    )
+
+    text_encoder_quant_config = TransformersBitsAndBytesConfig(
+        load_in_4bit=True, bnb_4bit_quant_type="nf4"
+    )
+    text_encoder_2 = T5EncoderModel.from_pretrained(
+        FLUX_SCHNELL_MODEL,
+        subfolder="text_encoder_2",
+        quantization_config=text_encoder_quant_config,
+        torch_dtype=torch.bfloat16,
+    )
+
+    pipe = FluxPipeline.from_pretrained(
+        FLUX_SCHNELL_MODEL,
+        transformer=transformer,
+        text_encoder_2=text_encoder_2,
+        torch_dtype=torch.bfloat16,
+    )
+    pipe.to("cuda")
+    logger.info("FLUX.1-schnell (NF4-quantized) pipeline ready, GPU-resident (no CPU offload)")
     return pipe
 
 
