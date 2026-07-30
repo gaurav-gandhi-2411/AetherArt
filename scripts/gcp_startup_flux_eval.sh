@@ -159,7 +159,16 @@ gcloud storage cp "$LOG_FILE" "${GCS_BUCKET}/flux_eval_run.log" || true
 # exactly that omission (a stale counter falsely reporting a physically-impossible peak carried
 # over from an earlier run).
 PROBE_LOG="/tmp/flux_loading_probe.log"
-${PYTHON} - <<'PYEOF' 2>&1 | tee "$PROBE_LOG"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# `|| true` on both probe pipelines below is load-bearing, not cosmetic: this script runs under
+# `set -e -o pipefail` (top of file), so a Python-side crash (e.g. CUDA OOM, a real failure this
+# probe is specifically designed to catch and fall back from) would otherwise abort the ENTIRE
+# script right here, before the `-z "$PROBE_GEN_S"` fallback-to-quantized branch below ever runs.
+# Confirmed via a real run: bf16+cpu-offload OOM'd (the 23.78GB transformer module doesn't fit as
+# a single resident unit in the L4's ~22GB usable VRAM, even with the rest of the pipeline
+# offloaded to CPU — CPU offload swaps whole modules, not layers) and the missing `|| true` here
+# killed the script before it could try the NF4-quantized fallback at all.
+${PYTHON} - <<'PYEOF' 2>&1 | tee "$PROBE_LOG" || true
 import time
 import torch
 import sys
@@ -203,7 +212,7 @@ fi
 
 if [ "$USE_QUANTIZED" = "1" ]; then
     echo "=== Probing NF4-quantized loader for comparison ==="
-    ${PYTHON} - <<'PYEOF' 2>&1 | tee -a "$PROBE_LOG"
+    ${PYTHON} - <<'PYEOF' 2>&1 | tee -a "$PROBE_LOG" || true
 import time
 import torch
 import sys
@@ -230,6 +239,14 @@ gen_s = time.time() - t0
 peak_gb = torch.cuda.max_memory_allocated() / 1e9
 print(f"PROBE_Q gen_s={gen_s:.1f} peak_vram_gb={peak_gb:.2f}")
 PYEOF
+    PROBE_Q_GEN_S=$(grep -oP 'PROBE_Q gen_s=\K[0-9.]+' "$PROBE_LOG" | tail -1)
+    if [ -z "$PROBE_Q_GEN_S" ]; then
+        echo "FATAL: NF4-quantized probe also failed (no measurement) — both loading configs are" >&2
+        echo "non-viable on this GPU. Not launching the full 90-image run against a config known" >&2
+        echo "to fail. See ${PROBE_LOG} (already pushed to GCS) for the actual error." >&2
+        exit 1
+    fi
+    echo "=== NF4-quantized probe measured ${PROBE_Q_GEN_S}s/image — using it for the full run ==="
     export AETHERART_FLUX_LOADER=quantized
     echo "=== Using NF4-quantized loader (AETHERART_FLUX_LOADER=quantized) for full run ==="
 else
