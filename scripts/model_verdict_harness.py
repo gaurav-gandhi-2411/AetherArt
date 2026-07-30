@@ -6,7 +6,7 @@ Scores every commercially-usable AetherArt model family on the SAME 30-prompt se
 SDXL Turbo (non-commercial ADD license, legacy-gated — not a product candidate).
 
 Families and their metrics:
-  - sd21_base, sdxl_base, hyper_4step, hyper_8step, sdxl_controlnet_union:
+  - sd21_base, sdxl_base, hyper_4step, hyper_8step, sdxl_controlnet_union, flux_schnell:
         CLIP + HPS (ImageReward excluded — confirmed broken on this environment,
         ImportError: apply_chunking_to_forward removed from current transformers;
         not fabricated, not worked around here).
@@ -732,6 +732,29 @@ def run_ukiyo_e_lora_family(
     logger.info("[%s] Done. %d records total.", label, len(results))
 
 
+def build_flux_schnell():
+    from aetherart.flux_pipeline import load_flux_schnell
+
+    return load_flux_schnell()
+
+
+def gen_flux_schnell(pipe, prompt, seed, width, height):
+    """FLUX.1-schnell is distilled and guidance-free: num_inference_steps=4, guidance_scale=0.0
+    per diffusers' own FluxPipeline docstring example (pipeline_flux.py's EXAMPLE_DOC_STRING),
+    not guessed. Do not reuse GUIDANCE_DEFAULT (7.5) here — that value is for the CFG-based
+    SD/SDXL families above and would be wrong for a guidance-distilled model."""
+    gen = torch.Generator(device="cuda" if torch.cuda.is_available() else "cpu").manual_seed(seed)
+    out = pipe(
+        prompt,
+        num_inference_steps=4,
+        guidance_scale=0.0,
+        width=width,
+        height=height,
+        generator=gen,
+    )
+    return out.images[0]
+
+
 def build_sdxl_controlnet_union():
     from aetherart.controlnet_sdxl import load_sdxl_controlnet_pipeline
 
@@ -877,6 +900,9 @@ FAMILIES = {
         "hyper_8step", build_hyper("8step"), gen_hyper("8step"), ["clip", "hps"], 1024, 1024, args
     ),
     "sdxl_controlnet_union": run_controlnet_family,
+    "flux_schnell": lambda args: run_generation_family(
+        "flux_schnell", build_flux_schnell, gen_flux_schnell, ["clip", "hps"], 1024, 1024, args
+    ),
     "ukiyo_e_lora_sdxl": lambda args: run_ukiyo_e_lora_family(args, None, "ukiyo_e_lora_sdxl"),
     "ukiyo_e_lora_sdxl_curated": lambda args: run_ukiyo_e_lora_family(
         args,
