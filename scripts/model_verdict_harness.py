@@ -733,6 +733,17 @@ def run_ukiyo_e_lora_family(
 
 
 def build_flux_schnell():
+    """Loader selectable via AETHERART_FLUX_LOADER=bf16_offload (default) | quantized. Set by
+    scripts/gcp_startup_flux_eval.sh after a measured one-image probe of both configs picks
+    whichever is fast enough for the full 90-image run — see that script's probe step for the
+    measured numbers behind the choice on any given run."""
+    import os
+
+    loader = os.environ.get("AETHERART_FLUX_LOADER", "bf16_offload")
+    if loader == "quantized":
+        from aetherart.flux_pipeline import load_flux_schnell_quantized
+
+        return load_flux_schnell_quantized()
     from aetherart.flux_pipeline import load_flux_schnell
 
     return load_flux_schnell()
