@@ -187,6 +187,13 @@ and remains open, per §6. Revisiting that specific claim would need a small tar
 check, not another full aggregate run; nothing in this evaluation blocks that from being done
 cheaply later if it becomes a real product need.
 
+**This result also retroactively validates `hyper_4step` as the lineup's default route** — stated
+as a measured comparison against one specific 12B model on one specific benchmark, not a general
+claim about model quality: `hyper_4step` holds its own against FLUX.1-schnell (ties on CLIP,
+wins on HPS at +2.408×SEM) at roughly 1/4.6 the latency (6.7s vs. 31.0s/image) and within this
+project's 8.59GB deployment target, where FLUX.1-schnell cannot run under any configuration
+measured here.
+
 ---
 
 ## 8. Reproducibility and provenance
