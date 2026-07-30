@@ -529,3 +529,11 @@ more than 2.5×SEM under corrected scoring, and a "loses to base" verdict on a f
 adapter that reversed to "viable and publishable" once evaluated at more than one weight. Neither
 reversal was found by a check running automatically at measurement time; both were found by
 treating an already-accepted result as something still worth auditing.
+
+---
+
+## Acknowledgments
+
+The evaluation work and this paper's preparation were carried out using Claude Code
+(Anthropic). The author is responsible for all claims, verification, and conclusions in
+this paper.
