@@ -57,7 +57,41 @@
 
 ---
 
-**Phase 8 — Cross-family model verdict (in progress, checkpoint 2026-07-26b)**
+**Phase 8 — Cross-family model verdict (checkpoint 2026-07-30)**
+
+- [x] **Methodology paper drafted, portfolio site updated, FLUX.1-schnell evaluated and
+      rejected on measured evidence (2026-07-30).** Three-item session:
+      (1) `docs/paper/measurement_defects.md` — standalone writeup of §7.7's five confirmed
+      silent measurement-validity defects (taxonomy: value-validity, catchable by automated
+      checks, vs. semantic-validity, not), the two concrete verdict reversals they produced, and
+      the sixth anomaly kept explicit as a candidate, not a finding. Independently fact-checked
+      against source, zero discrepancies.
+      (2) `gg-portfolio` PR #27 (merged): AetherArt case-study page updated with the 3 published
+      HF models + live download counts (HF API, 30-day rolling — labeled precisely, not
+      presented as cumulative), the weight-sweep reversal, the withdrawn ukiyo-e promotion, and
+      the 5-defect finding. Design-reviewer requested trimming result-row density; applied.
+      Portfolio's shared working tree was mid-edit by a concurrent session on another branch —
+      moved to an isolated git worktree rather than risk collision; that session's work was
+      untouched.
+      (3) `docs/FLUX_EVALUATION.md` — scored on the canonical 30-prompt×3-seed set (n=90, 0
+      errors, CLIP+HPS). **Recommendation: skip.** Ties/loses to `hyper_4step` (this project's
+      own adopted default) on both axes while running ~4.6× slower, and requires ≥16GB VRAM
+      under the only loading config that worked (NF4-quantized) — bf16+cpu-offload OOMs
+      deterministically because the 23.78GB transformer module doesn't fit as a single resident
+      unit even with the rest offloaded, a hard mismatch with this project's own 8.59GB local
+      deployment target. FLUX.2-Klein's assumed Apache-2.0 license was wrong (`license:other`,
+      custom BFL) — corrected before use, not repeated. FLUX.1-schnell is also gated on HF
+      despite its real Apache-2.0 license — required a separate, broader `HF_READ_TOKEN`
+      (GG accepted the gate + provisioned it mid-session), kept explicitly separate from the
+      write-scoped `HF_TOKEN` the three published adapters use. Found and fixed three real
+      `set -e`/`pipefail` bugs in the GCP startup script during orchestration (a probe failure
+      silently skipping its own fallback logic, twice over, then a third pre-empted before it
+      could bite) — same species of silent-failure defect this session's own methodology paper
+      is about. GCP: ~1.2h billed compute across repeated L4 zone stockouts (`us-central1-a`,
+      `us-west1-a/-b/-c`, `us-central1-b/-c`, `us-east4-a`) before landing a successful run,
+      ~$1.30–1.50 estimated (public list pricing, not a fetched billing export) against the $25
+      cap. Zero instances/disks/addresses remain — confirmed after `gcp_verify_before_teardown.py`
+      passed (90 records, 0 errors).
 
 - [x] **Symmetric Pattachitra control PASSES; PROVISIONAL lifted; Pattachitra publication
       RECOMMENDED at weight 0.3–0.5, card drafted (2026-07-26b).** The interim FAIL from
