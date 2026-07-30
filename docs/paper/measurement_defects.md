@@ -68,8 +68,11 @@ clean-looking pipeline more as it accumulates more checks.
 Section 2 describes the evaluation harness and the pre-registration discipline this project used
 throughout. Section 3 gives the taxonomy distinguishing value-validity from semantic-validity
 defects. Section 4 reports each of the five defects: mechanism, discovery path, and the
-consequence had it gone unaudited. Section 5 reports the two concrete verdict reversals this
-project's defects produced, with the numbers on both sides of each reversal. Section 6 discusses
+consequence had it gone unaudited. Section 4.6 reports three further, confirmed bugs found later in a different subsystem (GCP
+shell orchestration) — corroborating evidence that the taxonomy generalizes beyond VLM judging,
+explicitly not a sixth/seventh/eighth entry in the five-defect count. Section 5 reports the two
+concrete verdict reversals this project's defects produced, with the numbers on both sides of
+each reversal. Section 6 discusses
 the pattern across all five — specifically, why each automated check built in response to one
 defect failed to generalize to the next. Section 7 reports the sixth, unresolved candidate
 anomaly. Section 8 states limitations plainly. Section 9 gives the reproducibility/provenance
@@ -125,13 +128,23 @@ code inspection, prompted by different triggers (see §6).
 | Value-validity | Context-window truncation, phantom VRAM counter, CUDA corruption | Yes | Range/null checks, physical-plausibility bounds, degenerate-output detection, uniqueness assertions |
 | Semantic-validity | Hardcoded judge question, stale reused reference arm | No | Direct source inspection of the instrument; domain-parameterization tests (assert the actual request text names the caller's stated domain); cross-report reconciliation (assert the same logical quantity — same model, axis, `n` — agrees everywhere it's reported, or traces to one shared source) |
 
+**This taxonomy is not scoped to VLM judging specifically, though every defect above happens to
+come from that harness.** §4.6 reports three further confirmed bugs from a later, unrelated
+subsystem (GCP shell orchestration, no VLM/judge/HF involvement at all) that fit the
+semantic-validity description precisely — a well-formed-looking outcome (a captured exit code, an
+apparently-completed script) that silently answers a different question than the one relied on.
+Those three are corroborating evidence for the taxonomy's generality, not a sixth/seventh/eighth
+entry in the table above — the table's row count and the paper's "five" stay as reported in §4.
+
 ---
 
 ## 4. Findings — Five Defect Classes
 
 Each subsection follows the same structure: what the defect was, how it was actually found, and
 what wrong conclusion it would have produced if it had gone unaudited. Full detail and code
-references are in `docs/MODEL_VERDICT.md` §7.7 (source table this section expands).
+references are in `docs/MODEL_VERDICT.md` §7.7 (source table this section expands). §§4.1–4.5
+are the five; §4.6, despite the section number, is corroborating evidence from a separate
+subsystem, not a sixth member of this section's own title count.
 
 ### 4.1 Defect 1 — Judge context-window truncation (value-validity)
 
@@ -253,6 +266,69 @@ publication reassessment downstream (§5.2).
 **Fix.** `judge_style_positive_control.py` now scores the base arm fresh, per comparison, with no
 cross-run reuse.
 
+### 4.6 Corroborating evidence from a different subsystem — not a sixth defect, not counted among the five
+
+**This subsection reports three additional, confirmed bugs found in a later, separate piece of
+work on this project (orchestrating a GCP evaluation run for a sixth model family, FLUX.1-schnell)
+— and explicitly does not add them to the five above.** The paper's title and count (§1, §10) are
+unchanged; these three are reported here because they recurred in a *different subsystem* — bash
+shell orchestration, with no VLM judge, no Ollama, and no HF model card involved at all — during
+the writeup of the five defects above, which is evidence the underlying pattern is not an artifact
+specific to one VLM-judge harness.
+
+**The bugs.** A GCP startup script (`scripts/gcp_startup_flux_eval.sh`) probes one loading
+config, and falls back to a second (NF4-quantized) config if the first fails or is too slow — a
+correctly-designed safety net, written and reviewed before any real run. All three bugs are the
+identical mechanism recurring at three points in the same script: the script runs under `set -e
+-o pipefail`, and at each point a failure that the fallback logic was specifically written to
+handle instead silently defeated that logic by terminating the whole script one line before the
+fallback check could run.
+
+1. The probe's Python process OOM'd on a real GCP L4 run (a genuine, reproducible CUDA
+   out-of-memory error — the 23.78GB transformer module doesn't fit as a single resident unit in
+   ~22GB usable VRAM even with the rest of the pipeline offloaded, confirmed twice). That OOM
+   propagated through a piped `tee` command with no `|| true`, and `pipefail` turned the
+   pipeline's exit status non-zero, aborting the entire script under `set -e` before the
+   already-written "if the probe produced no result, use the fallback" check ever ran.
+2. Fixing (1) was not sufficient: the very next line, `grep -oP '...' | tail -1`, *also* exits
+   non-zero under `pipefail` when grep finds no match — which is exactly what happens when the
+   probe crashed and never printed a result, the one case this whole fallback exists to handle.
+   This was found only by re-running the fixed script on GCP and watching it die at the identical
+   point again, one line further in.
+3. A third instance was caught by direct review of an in-progress fix, before it was ever
+   deployed: capturing the main harness process's exit code as `wait "$EVAL_PID"; EVAL_EXIT=$?`
+   has the identical `set -e` exposure as (1) and (2) — a non-zero `wait` would abort the script
+   before `EVAL_EXIT=$?` could run. The naive fix (`wait "$EVAL_PID" || true`) was drafted, then
+   caught as wrong on re-reading it: `|| true` makes the *whole compound command* succeed, so the
+   next line's `$?` would read `true`'s own exit code (0) instead of the harness's real one — a
+   well-formed, in-range, entirely plausible-looking "success" signal that would have silently
+   reported every harness failure as a success, exactly the semantic-validity pattern defects 4
+   and 5 describe (§3), just one line away from shipping. Fixed instead with `EVAL_EXIT=0; wait
+   "$EVAL_PID" || EVAL_EXIT=$?`, which preserves the real code.
+
+**Precise count, not inflated.** These are three confirmed, verified bugs (the mechanism for each
+is definitively understood, with no ambiguity — unlike §7's candidate sixth anomaly, which remains
+genuinely unresolved among three competing hypotheses). But they are not uniform in how they were
+caught, and that distinction matters and is stated rather than smoothed over: (1) and (2) were
+each confirmed by a *live failure* on the actual GCP run — the script visibly died both times, and
+the second failure was only found because the first fix was tested for real, not assumed
+sufficient. (3) never manifested in any run; it was caught by re-reading a draft fix before
+deploying it, the same discovery mode as defect 4 (§4.4) — direct code inspection prior to reading
+any result. Two live-failure instances plus one pre-deployment catch is reported as exactly that,
+not rounded up to "three equivalent occurrences" and not merged into the candidate sixth class,
+which is a different kind of open question (an unresolved measurement anomaly) rather than a
+verified control-flow bug.
+
+**Why this strengthens the paper rather than padding it.** All three are the identical mechanism
+(`set -e`/`pipefail` silently defeating fallback logic written for exactly the failure that
+triggers it) recurring in a subsystem with zero overlap with the VLM-judge harness that produced
+defects 1–5 — different language considerations (bash control flow, not a judge prompt or a
+Python score), different failure surface (a safety net for a GPU OOM, not a style question or a
+reused reference score), same underlying shape: an automated safeguard that looks like it will
+catch a known failure mode, and silently doesn't. That recurrence in an unrelated subsystem is
+evidence the pattern is a property of how automated safeguards get defeated, not a quirk of one
+project's one evaluation harness — addressed further in §6 and §8.
+
 ---
 
 ## 5. Reversals as Evidence
@@ -344,6 +420,17 @@ to one shared source, before either is used in a downstream conclusion. No such 
 implemented; it is logged here as a candidate for future harness work, not a completed
 mitigation.
 
+**A fifth discovery mode, found in the corroborating GCP-script bugs (§4.6): re-reading a draft
+fix before it ships, rather than after a live failure.** Two of §4.6's three bugs were caught the
+same way defects 2 and 3 were — a real failure, watched directly, on an actual run. The third was
+caught differently again: not by an anomaly, not by a contradiction, but by re-reading an
+about-to-ship one-line fix and recognizing it would silently report a failure as a success. This
+is close to defect 4's mode (direct code inspection before any result is read) but distinct in
+timing — defect 4 was caught while building an unrelated tool; this one was caught by
+double-checking the very fix meant to close a bug just found, which is a narrower and more
+replicable habit (review your own fix before running it, not just after it fails) than "notice
+something looks off while working on something else."
+
 ---
 
 ## 7. A Sixth, Unresolved Anomaly (Candidate, Not a Finding)
@@ -377,7 +464,11 @@ prompt-vocabulary overlap).
 - **n=1 project.** All five defects and the sixth candidate come from a single evaluation
   project, with one VLM judge (`qwen2.5vl:7b`, local, zero-cost) and two style-adapter domains.
   Whether this defect *rate* (five in one project) or this defect *taxonomy* generalizes to other
-  generative-model evaluation pipelines is not tested here and should not be assumed.
+  generative-model evaluation pipelines is not tested here and should not be assumed. §4.6's three
+  corroborating bugs are one data point in favor of the *taxonomy* generalizing beyond VLM judging
+  specifically (they recur in bash orchestration code with no judge involved) — this is still
+  n=1 at the project level, and does not extend to a claim about defect rate, or about any
+  pipeline this project has not touched.
 - **VLM-judge dependence.** Every defect and every fix is scoped to a VLM-as-judge scoring
   design. A pipeline using a different scoring method entirely (human raters, a different
   automated metric family) would not necessarily exhibit the same failure modes, though the
@@ -385,6 +476,14 @@ prompt-vocabulary overlap).
 - **The sixth anomaly is explicitly not a finding.** §7's pattern has two same-signed data
   points, not an isolated mechanism — it is reported as an open methodology question, not a
   confirmed defect class, and should not be cited as a sixth entry in the defect table (§3, §4).
+- **§4.6's three GCP-script bugs are not a sixth/seventh/eighth defect either, for a different
+  reason than the candidate anomaly above.** They are fully confirmed (the mechanism for each is
+  definitively understood, unlike §7's genuinely open question) but deliberately kept out of the
+  paper's count because they come from a different subsystem in a later, separate piece of work —
+  reported as corroborating evidence for the taxonomy's generality (§3, §4.6), not folded into
+  "five." Within those three, two were confirmed by a live, reproduced failure and one was caught
+  by re-reading a draft fix before it ran — that distinction is stated in §4.6 rather than
+  presenting all three as equivalent-strength evidence.
 - **Discovery survivorship.** All five defects were, by construction, found — this project has no
   way to bound how many additional silent defects of a similar or different kind were not found.
   The taxonomy in §3 describes what was caught and by what mechanism; it is not a claim that these
@@ -407,6 +506,7 @@ Every defect and figure in this draft traces to a specific section of
 | Pattachitra weight-sweep operating points (0.3/0.5, both checkpoints) | `docs/MODEL_VERDICT.md` §7.4, `docs/WEIGHT_SWEEP_PREREGISTRATION.md` |
 | Symmetric control reversal (+17.951×SEM, +28.659×SEM) | `docs/MODEL_VERDICT.md` §7.2 Addendum, §7.4 |
 | Sixth-anomaly figures (0.9239/0.9389, 0.7960/0.8883) | `docs/MODEL_VERDICT.md` §7.7 row 6 |
+| §4.6's three GCP-script bugs (probe-pipeline, grep-extraction, EVAL_EXIT-capture) | `scripts/gcp_startup_flux_eval.sh` git history, commits `f012d16`, `7174875`, `fe4899d`; `docs/FLUX_EVALUATION.md` §4 |
 
 This draft is not itself pre-registered — it is a retrospective methodology writeup of decisions
 and results that were each pre-registered individually, at the time, in the documents listed

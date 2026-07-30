@@ -72,7 +72,10 @@
       the 5-defect finding. Design-reviewer requested trimming result-row density; applied.
       Portfolio's shared working tree was mid-edit by a concurrent session on another branch —
       moved to an isolated git worktree rather than risk collision; that session's work was
-      untouched.
+      untouched. **This incident is the motivating case for a new global rule** (`~/.claude/CLAUDE.md`
+      rule 56a, added 2026-07-30): default to `git worktree add` over the shared checkout whenever
+      another session may be active in the same repo, checked via `git status`/`git branch
+      --show-current` at the start of work.
       (3) `docs/FLUX_EVALUATION.md` — scored on the canonical 30-prompt×3-seed set (n=90, 0
       errors, CLIP+HPS). **Recommendation: skip.** Ties/loses to `hyper_4step` (this project's
       own adopted default) on both axes while running ~4.6× slower, and requires ≥16GB VRAM
