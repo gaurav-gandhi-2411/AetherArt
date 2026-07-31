@@ -1,31 +1,43 @@
 name: Eval Gate
 
-# SEMANTICS: this is a post-merge REGRESSION DETECTOR on `main` (+ nightly), not a per-PR
-# blocker. A regression can still land on main via a normal merge — it is CAUGHT within a day
-# (next push-to-main run, or the nightly cron at worst), not PREVENTED at merge time the way a
-# required pull_request check would be. That is a deliberate tradeoff, not an oversight:
+# SEMANTICS: this is a post-merge REGRESSION DETECTOR on `main`, not a per-PR blocker. A
+# regression can still land on main via a normal merge — it is CAUGHT within a day (the
+# nightly cron), not PREVENTED at merge time the way a required pull_request check would be.
+# That is a deliberate tradeoff, not an oversight:
 #
 # NOT wired to pull_request: a measured, real run (docs/LATENCY_ROOT_CAUSE.md) shows a single
 # SD 2.1 / DPM / 30-step CPU generation takes ~162s on a modern laptop CPU; 30 prompts is
 # therefore ~80+ minutes, likely longer on a 2-core GitHub-hosted runner. Blocking every PR on
 # that is impractical without GPU CI (a separate infra decision, not made here). Instead this
-# runs post-merge (push to main) plus nightly, so a regression is caught within a day of landing
-# rather than shipping silently forever — the audit finding this closes
+# runs nightly, so a regression is caught within a day of landing rather than shipping
+# silently forever — the audit finding this closes
 # (docs/MODEL_AUDIT.md §4: CLIP/HPS/IR measured but never gated).
+#
+# NOT wired to push (removed 2026-07-31): it was, but on an actively-pushed branch a new push
+# lands well inside the ~80+ minute run, and `concurrency.cancel-in-progress: true` groups
+# push and schedule events on the same ref together -- so a later push doesn't just cancel its
+# own predecessor, it also kills a nightly cron run still in flight (confirmed: the
+# 2026-07-30T08:13 UTC cron run was still executing at 09:25 when a push arrived and cancelled
+# it, 72+ minutes in). Net effect measured over 46 runs (2026-07-23 through 2026-07-30): 43
+# cancelled, 3 reached the end and failed on an unrelated bug (missing matplotlib dependency,
+# fixed in requirements-dev.txt below) -- zero ever completed and asserted. The push trigger
+# never once did its job; it only starved the nightly cron of the runtime it needs. Nightly +
+# manual dispatch is the honest cadence at this runtime.
 #
 # Revisit: if GPU-backed CI runners become available (self-hosted or a paid GitHub-hosted GPU
 # tier), move this to pull_request so regressions are prevented at merge, not just detected
 # after.
 on:
-  push:
-    branches: [ main ]
   schedule:
     - cron: "0 6 * * *"   # 06:00 UTC daily
   workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # false (not the default true): a nightly run and a manual workflow_dispatch could still
+  # collide on the same ref; if they do, queue and run both rather than silently dropping one
+  # the way the removed push trigger silently dropped every nightly run it overlapped.
+  cancel-in-progress: false
 
 jobs:
   clip-regression-gate:
