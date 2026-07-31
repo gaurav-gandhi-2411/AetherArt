@@ -36,6 +36,15 @@ name: Eval Gate
 # to the baseline's 30 -- `--num-images 30` restores the ORIGINAL n the threshold was built
 # from, it is not a new/different n, so no threshold recomputation is needed or done.
 #
+# NOTE: --num-images 30 only pins the COUNT of prompts, not their IDENTITY -- reordering
+# eval_prompts.yaml or editing its first 30 entries would keep this step green while silently
+# measuring a different set. scripts/check_eval_gate.py separately pins and asserts a content
+# hash of the exact 30 baseline prompts (BASELINE_PROMPT_SET_SHA256) to catch that; a mismatch
+# fails the "Check CLIP score" step below loudly, before any mean/SEM comparison runs. If you
+# are intentionally changing the first 30 prompts, you must run a fresh baseline and recompute
+# the mean, SEM, AND that hash together -- see the comment above BASELINE_PROMPT_SET_SHA256 in
+# check_eval_gate.py for exactly how. Do not edit that hash on its own.
+#
 # Chunked generation steps, not one step (added 2026-07-31): GitHub Actions does not expose
 # a step's log CONTENT via the API/gh CLI while it's still running (confirmed directly:
 # `gh api .../actions/jobs/{id}/logs` returns BlobNotFound/404 mid-run, only resolves after
