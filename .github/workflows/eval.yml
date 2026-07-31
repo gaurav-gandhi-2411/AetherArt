@@ -24,6 +24,18 @@ name: Eval Gate
 # never once did its job; it only starved the nightly cron of the runtime it needs. Nightly +
 # manual dispatch is the honest cadence at this runtime.
 #
+# --num-images 30 (added 2026-07-31): scripts/eval_prompts.yaml has grown from 30 to 90
+# prompts since the baseline (reports/eval_results_20260425_124153.json, prompts_count: 30)
+# was frozen, but this workflow never pinned a prompt count -- so every run was silently
+# generating against all 90 current prompts (3x the baseline's own n), not the 30 the
+# threshold in check_eval_gate.py was computed from. A verification run on this fix
+# (gaurav-gandhi-2411/AetherArt run 30595559538) confirmed it directly: log line
+# "Progress: 30/90 done | 172 min elapsed | ETA ~344 min" before the 180-min job timeout
+# killed it -- full completion at that rate would take ~5.7 hours, regardless of trigger.
+# eval_prompts.yaml's first 30 entries (pp_001..pp_030) are confirmed byte-identical in ID
+# to the baseline's 30 -- `--num-images 30` restores the ORIGINAL n the threshold was built
+# from, it is not a new/different n, so no threshold recomputation is needed or done.
+#
 # Revisit: if GPU-backed CI runners become available (self-hosted or a paid GitHub-hosted GPU
 # tier), move this to pull_request so regressions are prevented at merge, not just detected
 # after.
@@ -42,7 +54,11 @@ concurrency:
 jobs:
   clip-regression-gate:
     runs-on: ubuntu-22.04
-    timeout-minutes: 180
+    # 240 (was 180): the 162s/image figure in docs/LATENCY_ROOT_CAUSE.md was measured on a
+    # modern laptop CPU. The verification run for the --num-images fix below measured
+    # 343.5s/image on this repo's actual GitHub-hosted runner -- 30 images at that rate is
+    # ~172 min alone, before install/setup/chart/upload overhead, too close to a 180-min cap.
+    timeout-minutes: 240
 
     env:
       # Pinned model revisions — an audit finding (docs/MODEL_AUDIT.md §1) was that no
@@ -86,6 +102,7 @@ jobs:
             --steps 30 \
             --scorers clip \
             --seed 42 \
+            --num-images 30 \
             --run-id "ci-${{ github.run_id }}"
         # HPS/ImageReward are deliberately excluded here (--scorers clip only): both have
         # documented crash bugs (docs/lab_notebook.md:246-250,269 — Windows pyarrow SIGSEGV,
