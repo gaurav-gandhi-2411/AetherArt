@@ -1,36 +1,79 @@
 name: Eval Gate
 
-# SEMANTICS: this is a post-merge REGRESSION DETECTOR on `main` (+ nightly), not a per-PR
-# blocker. A regression can still land on main via a normal merge — it is CAUGHT within a day
-# (next push-to-main run, or the nightly cron at worst), not PREVENTED at merge time the way a
-# required pull_request check would be. That is a deliberate tradeoff, not an oversight:
+# SEMANTICS: this is a post-merge REGRESSION DETECTOR on `main`, not a per-PR blocker. A
+# regression can still land on main via a normal merge — it is CAUGHT within a day (the
+# nightly cron), not PREVENTED at merge time the way a required pull_request check would be.
+# That is a deliberate tradeoff, not an oversight:
 #
 # NOT wired to pull_request: a measured, real run (docs/LATENCY_ROOT_CAUSE.md) shows a single
 # SD 2.1 / DPM / 30-step CPU generation takes ~162s on a modern laptop CPU; 30 prompts is
 # therefore ~80+ minutes, likely longer on a 2-core GitHub-hosted runner. Blocking every PR on
 # that is impractical without GPU CI (a separate infra decision, not made here). Instead this
-# runs post-merge (push to main) plus nightly, so a regression is caught within a day of landing
-# rather than shipping silently forever — the audit finding this closes
+# runs nightly, so a regression is caught within a day of landing rather than shipping
+# silently forever — the audit finding this closes
 # (docs/MODEL_AUDIT.md §4: CLIP/HPS/IR measured but never gated).
+#
+# NOT wired to push (removed 2026-07-31): it was, but on an actively-pushed branch a new push
+# lands well inside the ~80+ minute run, and `concurrency.cancel-in-progress: true` groups
+# push and schedule events on the same ref together -- so a later push doesn't just cancel its
+# own predecessor, it also kills a nightly cron run still in flight (confirmed: the
+# 2026-07-30T08:13 UTC cron run was still executing at 09:25 when a push arrived and cancelled
+# it, 72+ minutes in). Net effect measured over 46 runs (2026-07-23 through 2026-07-30): 43
+# cancelled, 3 reached the end and failed on an unrelated bug (missing matplotlib dependency,
+# fixed in requirements-dev.txt below) -- zero ever completed and asserted. The push trigger
+# never once did its job; it only starved the nightly cron of the runtime it needs. Nightly +
+# manual dispatch is the honest cadence at this runtime.
+#
+# --num-images 30 (added 2026-07-31): scripts/eval_prompts.yaml has grown from 30 to 90
+# prompts since the baseline (reports/eval_results_20260425_124153.json, prompts_count: 30)
+# was frozen, but this workflow never pinned a prompt count -- so every run was silently
+# generating against all 90 current prompts (3x the baseline's own n), not the 30 the
+# threshold in check_eval_gate.py was computed from. A verification run on this fix
+# (gaurav-gandhi-2411/AetherArt run 30595559538) confirmed it directly: log line
+# "Progress: 30/90 done | 172 min elapsed | ETA ~344 min" before the 180-min job timeout
+# killed it -- full completion at that rate would take ~5.7 hours, regardless of trigger.
+# eval_prompts.yaml's first 30 entries (pp_001..pp_030) are confirmed byte-identical in ID
+# to the baseline's 30 -- `--num-images 30` restores the ORIGINAL n the threshold was built
+# from, it is not a new/different n, so no threshold recomputation is needed or done.
+#
+# Chunked generation steps, not one step (added 2026-07-31): GitHub Actions does not expose
+# a step's log CONTENT via the API/gh CLI while it's still running (confirmed directly:
+# `gh api .../actions/jobs/{id}/logs` returns BlobNotFound/404 mid-run, only resolves after
+# the step finishes) -- so a single ~3hr generation step was a black box with no way to check
+# "how far along is this" short of waiting for it to finish or time out. What IS live and
+# API-queryable at any point is step *boundaries* (`gh run view --json jobs` correctly
+# reflects pending/in_progress/completed per step in real time). Splitting the 30-prompt run
+# into 6 steps of 5 prompts each, chained via eval.py's existing --resume + a fixed --run-id
+# (it already accumulates a partial-results file keyed by run_id and skips completed combos
+# -- built for crash recovery, reused here for planned checkpointing), turns that black box
+# into 6 externally-observable checkpoints. Cost: eval.py reloads the model + CLIP scorer
+# once per chunk instead of once total -- measured at ~6.2s each from a warm HF cache
+# (run 30595559538: Loading model 01:13:26.9 -> Model loaded 01:13:27.8 -> CLIP scorer ready
+# 01:13:33.1), so 6 chunks adds ~35s total against a ~3hr run.
 #
 # Revisit: if GPU-backed CI runners become available (self-hosted or a paid GitHub-hosted GPU
 # tier), move this to pull_request so regressions are prevented at merge, not just detected
 # after.
 on:
-  push:
-    branches: [ main ]
   schedule:
     - cron: "0 6 * * *"   # 06:00 UTC daily
   workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # false (not the default true): a nightly run and a manual workflow_dispatch could still
+  # collide on the same ref; if they do, queue and run both rather than silently dropping one
+  # the way the removed push trigger silently dropped every nightly run it overlapped.
+  cancel-in-progress: false
 
 jobs:
   clip-regression-gate:
     runs-on: ubuntu-22.04
-    timeout-minutes: 180
+    # 240 (was 180): the 162s/image figure in docs/LATENCY_ROOT_CAUSE.md was measured on a
+    # modern laptop CPU. The verification run for the --num-images fix below measured
+    # 343.5s/image on this repo's actual GitHub-hosted runner -- 30 images at that rate is
+    # ~172 min alone, before install/setup/chart/upload overhead, too close to a 180-min cap.
+    timeout-minutes: 240
 
     env:
       # Pinned model revisions — an audit finding (docs/MODEL_AUDIT.md §1) was that no
@@ -67,19 +110,79 @@ jobs:
           pip install -e .
           pip install -r requirements-dev.txt
 
-      - name: Run frozen SD 2.1 30-prompt / seed-42 baseline (DPM, 30 steps, CLIP-only)
+      # Frozen SD 2.1 / seed-42 baseline (DPM, 30 steps, CLIP-only), chunked into 6 steps of 5
+      # prompts each (pp_001..pp_030 — confirmed identical to the baseline's own 30 prompt
+      # IDs) so step-level progress is externally observable — see the top-of-file comment.
+      # HPS/ImageReward are deliberately excluded (--scorers clip only): both have documented
+      # crash bugs (docs/lab_notebook.md:246-250,269 — Windows pyarrow SIGSEGV, headless-Linux
+      # hpsv2 tkinter import crash) that are not yet patched. Extend to
+      # `--scorers clip,hps,imagereward` once PLAN.md tracks those fixes as landed.
+      # TODO(PR 14 follow-up): add HPS/ImageReward once docs/lab_notebook.md:246-250,269 are fixed.
+      - name: Generate batch 1/6 (prompts pp_001-pp_005 of 30)
         run: |
           python scripts/eval.py \
             --schedulers DPM \
             --steps 30 \
             --scorers clip \
             --seed 42 \
+            --prompts-subset pp_001,pp_002,pp_003,pp_004,pp_005 \
+            --resume \
             --run-id "ci-${{ github.run_id }}"
-        # HPS/ImageReward are deliberately excluded here (--scorers clip only): both have
-        # documented crash bugs (docs/lab_notebook.md:246-250,269 — Windows pyarrow SIGSEGV,
-        # headless-Linux hpsv2 tkinter import crash) that are not yet patched. Extend this gate
-        # to `--scorers clip,hps,imagereward` once PLAN.md tracks those fixes as landed.
-        # TODO(PR 14 follow-up): add HPS/ImageReward once docs/lab_notebook.md:246-250,269 are fixed.
+
+      - name: Generate batch 2/6 (prompts pp_006-pp_010 of 30)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --prompts-subset pp_006,pp_007,pp_008,pp_009,pp_010 \
+            --resume \
+            --run-id "ci-${{ github.run_id }}"
+
+      - name: Generate batch 3/6 (prompts pp_011-pp_015 of 30)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --prompts-subset pp_011,pp_012,pp_013,pp_014,pp_015 \
+            --resume \
+            --run-id "ci-${{ github.run_id }}"
+
+      - name: Generate batch 4/6 (prompts pp_016-pp_020 of 30)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --prompts-subset pp_016,pp_017,pp_018,pp_019,pp_020 \
+            --resume \
+            --run-id "ci-${{ github.run_id }}"
+
+      - name: Generate batch 5/6 (prompts pp_021-pp_025 of 30)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --prompts-subset pp_021,pp_022,pp_023,pp_024,pp_025 \
+            --resume \
+            --run-id "ci-${{ github.run_id }}"
+
+      - name: Generate batch 6/6 (prompts pp_026-pp_030 of 30)
+        run: |
+          python scripts/eval.py \
+            --schedulers DPM \
+            --steps 30 \
+            --scorers clip \
+            --seed 42 \
+            --prompts-subset pp_026,pp_027,pp_028,pp_029,pp_030 \
+            --resume \
+            --run-id "ci-${{ github.run_id }}"
 
       - name: Check CLIP score against the SEM-derived regression threshold
         run: |

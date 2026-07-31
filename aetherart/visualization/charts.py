@@ -466,7 +466,11 @@ class ChartCanvas:
         """
         try:
             self.fig.canvas.draw()
-            renderer = self.fig.canvas.get_renderer()
+            # Figure.canvas is statically typed as the abstract FigureCanvasBase, which does
+            # not declare get_renderer -- every concrete backend actually attached at runtime
+            # (Agg, and the interactive ones) does implement it. Known matplotlib stub gap,
+            # not a real type error.
+            renderer = self.fig.canvas.get_renderer()  # type: ignore[attr-defined]
             bbox = self.ax.title.get_window_extent(renderer=renderer)
             inv = self.ax.transData.inverted()
             _, y_bottom = inv.transform((bbox.x0, bbox.y0))

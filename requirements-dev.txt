@@ -10,6 +10,12 @@ mypy==1.16.0
 # (Modal SDK is not a production runtime dependency)
 modal==1.4.3
 
+# eval chart generation — scripts/eval.py's generate_charts() imports this; never listed
+# here before, so it was silently satisfied by the local conda env and every CI run that
+# reached the chart-generation step failed with ModuleNotFoundError (46-run history,
+# 2026-07-23 through 2026-07-30). Version matches requirements-lock.txt:68.
+matplotlib==3.10.6
+
 # eval-only scorer deps — eval harness only, NOT production runtime
 # These packages have unresolvable pip conflicts so they are NOT listed as direct
 # pip install targets here; they are managed in .github/workflows/ci.yml.

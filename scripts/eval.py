@@ -471,7 +471,9 @@ def parse_args() -> argparse.Namespace:
         help=f"Comma-separated step counts (default: {','.join(str(s) for s in DEFAULT_STEPS)})",
     )
     p.add_argument(
-        "--prompts-subset", default=None, help="Comma-separated prompt IDs to run (default: all 30)"
+        "--prompts-subset",
+        default=None,
+        help="Comma-separated prompt IDs to run (default: all prompts in eval_prompts.yaml)",
     )
     p.add_argument(
         "--seed", type=int, default=DEFAULT_SEED, help=f"Global RNG seed (default: {DEFAULT_SEED})"
