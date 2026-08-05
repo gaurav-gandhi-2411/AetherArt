@@ -272,6 +272,22 @@ class TestGatePromptIdentityCli:
         assert "identity mismatch" not in result.stdout
         assert "PASS" in result.stdout
 
+    def test_identity_check_emits_its_own_success_line_on_match(self, tmp_path):
+        """The identity check must log its own PASS line, distinct from the mean/SEM PASS
+        line below it -- otherwise a silently-skipped check and one that actually ran and
+        matched produce identical output, which is the observability gap this test guards."""
+        baseline = self._make_baseline(tmp_path)
+        candidate = tmp_path / "candidate.json"
+        _write_eval_json_matching_baseline_prompts(candidate, [0.320] * 30)
+
+        result = self._run_gate(candidate, baseline)
+
+        assert result.returncode == 0, result.stdout + result.stderr
+        expected_hash_prefix = _mod.BASELINE_PROMPT_SET_SHA256[:16]
+        assert (
+            f"PASS: baseline prompt-set identity check ({expected_hash_prefix}" in result.stdout
+        ), result.stdout
+
     def test_reordered_first_30_fails_loudly_not_silently(self, tmp_path):
         baseline = self._make_baseline(tmp_path)
         candidate = tmp_path / "candidate.json"

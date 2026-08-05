@@ -160,6 +160,8 @@ def main() -> None:
         )
         sys.exit(1)
 
+    print(f"PASS: baseline prompt-set identity check ({candidate_prompt_hash[:16]}...)")
+
     baseline_mean, baseline_sem, baseline_n = compute_baseline(
         args.baseline, args.scheduler, args.steps
     )
