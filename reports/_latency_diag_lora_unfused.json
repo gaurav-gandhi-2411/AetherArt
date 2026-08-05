@@ -1,0 +1,44 @@
+[
+  {
+    "run_index": 0,
+    "prompt_id": "pp_001",
+    "prompt": "artificial intelligence",
+    "wall_start": 1784353252.6136491,
+    "wall_end": 1784353267.213428,
+    "total_latency_s": 14.6,
+    "n_step_callbacks": 20,
+    "encode_plus_step0_s": 6.044,
+    "per_step_deltas_s": [
+      0.309,
+      0.307,
+      0.316,
+      0.348,
+      0.297,
+      0.304,
+      0.312,
+      0.334,
+      0.335,
+      0.327,
+      0.322,
+      0.332,
+      0.32,
+      0.329,
+      0.339,
+      0.311,
+      0.308,
+      0.323,
+      0.309
+    ],
+    "mean_step_s": 0.32,
+    "max_step_s": 0.348,
+    "decode_and_postproc_s": 2.475,
+    "vram": {
+      "pre_run_driver_free_gb": 7.462,
+      "post_run_driver_free_gb": 7.392,
+      "peak_allocated_gb": 5.385,
+      "peak_reserved_gb": 5.706,
+      "end_allocated_gb": 0.009
+    },
+    "error": null
+  }
+]

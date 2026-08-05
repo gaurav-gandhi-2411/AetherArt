@@ -1,0 +1,15 @@
+======================================================================
+PHASE 1 — IMAGE GENERATION
+  SDXL + fp16-fix VAE + Ukiyo-e LoRA | 1024x1024 | seed 42
+  Strategy: pipe.to('cuda') + attention_slicing(1) + fuse_lora()
+======================================================================
+Stale image dir cleared — fresh generation guaranteed.
+Loading madebyollin/sdxl-vae-fp16-fix...
+Loading stabilityai/stable-diffusion-xl-base-1.0...
+xformers not available (Refer to https://github.com/facebookresearch/xformers for more information on how to install xformers); continuing with attention_slicing(1).
+Pipeline loaded to CUDA.
+Loading LoRA: C:\Users\gaura\ml-projects\AetherArt\data\lora\ukiyo-e\ukiyo-e-sdxl-lora.safetensors
+LoRA loaded and fused.
+  [p1] 1423.4s — 1024x1024 px — ukyowood ukiyo-e woodblock print of Mount Fuji at sunse
+  [p2] 1543.0s — 1024x1024 px — ukyowood ukiyo-e print of a crane over ocean waves
+  [p3] 1126.8s — 1024x1024 px — ukyowood ukiyo-e woodblock print of a samurai in a bamb

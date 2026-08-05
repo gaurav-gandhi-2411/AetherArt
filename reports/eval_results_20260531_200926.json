@@ -1,0 +1,79 @@
+{
+  "run_id": "20260531_200926",
+  "run_date": "2026-05-31T20:09:26",
+  "config": {
+    "schedulers": [
+      "DPM"
+    ],
+    "steps": [
+      20
+    ],
+    "prompts_count": 3,
+    "seed": 42,
+    "model": "sdxl",
+    "total_combos": 3,
+    "scorers": [
+      "lpips",
+      "clip",
+      "imagereward",
+      "hps"
+    ]
+  },
+  "results": [
+    {
+      "prompt_id": "pp_001",
+      "prompt": "artificial intelligence",
+      "category": "Abstract",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 20,
+      "seed": 42,
+      "clip_score": 0.2436,
+      "hps_score": 0.189941,
+      "image_reward_score": null,
+      "lpips_score": 0.0,
+      "latency_s": 1215.59,
+      "vram_peak_gb": 11.186,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_001\\DPM\\20steps.png",
+      "timestamp": "2026-05-31T20:09:51",
+      "error": null
+    },
+    {
+      "prompt_id": "pp_002",
+      "prompt": "a shiba inu",
+      "category": "Animals",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 20,
+      "seed": 42,
+      "clip_score": 0.1678,
+      "hps_score": 0.08136,
+      "image_reward_score": null,
+      "lpips_score": 0.0,
+      "latency_s": 307.5,
+      "vram_peak_gb": 11.186,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_002\\DPM\\20steps.png",
+      "timestamp": "2026-05-31T20:30:07",
+      "error": null
+    },
+    {
+      "prompt_id": "pp_003",
+      "prompt": "a dragon",
+      "category": "Animals",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 20,
+      "seed": 42,
+      "clip_score": 0.2855,
+      "hps_score": 0.19165,
+      "image_reward_score": null,
+      "lpips_score": 0.0,
+      "latency_s": 302.69,
+      "vram_peak_gb": 11.186,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_003\\DPM\\20steps.png",
+      "timestamp": "2026-05-31T20:35:15",
+      "error": null
+    }
+  ],
+  "completed_at": "2026-05-31T20:49:52.387267"
+}

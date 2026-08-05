@@ -1,0 +1,10 @@
+[11:10:47] Environment: {"torch_version": "2.5.1+cu124", "cuda_available": true, "gpu_name": "NVIDIA GeForce RTX 3070 Laptop GPU", "gpu_total_mem_gb": 8.589}
+[11:10:47] Loading SDXL pipeline via AetherModel.init(model_choice='sdxl') (exact production path: aetherart/model.py -> aetherart/sdxl_pipeline.py)...
+[11:10:50] Model load complete: backend=local load_time_s=2.96
+[11:10:50] Active scheduler: DPMSolverMultistepScheduler
+[11:10:50] Loading LoRA from data/lora/ukiyo-e/ukiyo-e-sdxl-lora.safetensors (fuse=False)...
+[11:10:52] LoRA loaded WITHOUT fusing (unfused hooks + offload hooks, per scripts/eval.py:626-628's documented ~30x/step slowdown).
+[11:10:52] Post-load VRAM: allocated=0.000GB reserved=0.000GB driver_free=7.462GB driver_total=8.589GB
+[11:10:52] --- Run 1/1: pp_001 ('artificial intelligence') ---
+[11:11:07]   latency=14.60s encode+step0=6.044s mean_step=0.32s max_step=0.348s decode=2.475s peak_alloc=5.385GB peak_reserved=5.706GB driver_free_pre=7.462GB driver_free_post=7.392GB
+[11:11:07] === Done: 1 runs, results at reports\_latency_diag_lora_unfused.json ===

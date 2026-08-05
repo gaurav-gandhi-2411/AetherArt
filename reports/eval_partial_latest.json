@@ -1,0 +1,78 @@
+{
+  "run_id": "local-validation-1",
+  "run_date": "2026-07-18T12:24:25",
+  "config": {
+    "schedulers": [
+      "DPM"
+    ],
+    "steps": [
+      30
+    ],
+    "prompts_count": 3,
+    "seed": 42,
+    "model": "sd-2.1",
+    "total_combos": 3,
+    "scorers": [
+      "clip"
+    ],
+    "width": 512,
+    "height": 512,
+    "negative_prompt": ""
+  },
+  "results": [
+    {
+      "prompt_id": "pp_001",
+      "prompt": "artificial intelligence",
+      "category": "Abstract",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 30,
+      "seed": 42,
+      "clip_score": 0.2459,
+      "hps_score": null,
+      "image_reward_score": null,
+      "lpips_score": null,
+      "latency_s": 22.19,
+      "vram_peak_gb": 4.503,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_001\\DPM\\30steps.png",
+      "timestamp": "2026-07-18T12:24:30",
+      "error": null
+    },
+    {
+      "prompt_id": "pp_002",
+      "prompt": "a shiba inu",
+      "category": "Animals",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 30,
+      "seed": 42,
+      "clip_score": 0.3337,
+      "hps_score": null,
+      "image_reward_score": null,
+      "lpips_score": null,
+      "latency_s": 8.85,
+      "vram_peak_gb": 4.503,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_002\\DPM\\30steps.png",
+      "timestamp": "2026-07-18T12:24:53",
+      "error": null
+    },
+    {
+      "prompt_id": "pp_003",
+      "prompt": "a dragon",
+      "category": "Animals",
+      "expected_difficulty": "easy",
+      "scheduler": "DPM",
+      "steps": 30,
+      "seed": 42,
+      "clip_score": 0.287,
+      "hps_score": null,
+      "image_reward_score": null,
+      "lpips_score": null,
+      "latency_s": 8.74,
+      "vram_peak_gb": 4.503,
+      "image_path": "C:\\Users\\gaura\\ml-projects\\AetherArt\\outputs\\eval\\pp_003\\DPM\\30steps.png",
+      "timestamp": "2026-07-18T12:25:02",
+      "error": null
+    }
+  ]
+}

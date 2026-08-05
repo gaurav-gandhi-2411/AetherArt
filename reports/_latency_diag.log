@@ -1,0 +1,26 @@
+[11:04:52] Environment: {"torch_version": "2.5.1+cu124", "cuda_available": true, "gpu_name": "NVIDIA GeForce RTX 3070 Laptop GPU", "gpu_total_mem_gb": 8.589}
+[11:04:52] Loading SDXL pipeline via AetherModel.init(model_choice='sdxl') (exact production path: aetherart/model.py -> aetherart/sdxl_pipeline.py)...
+[11:04:55] Model load complete: backend=local load_time_s=3.05
+[11:04:55] Active scheduler: DPMSolverMultistepScheduler
+[11:04:56] Post-load VRAM: allocated=0.000GB reserved=0.000GB driver_free=7.462GB driver_total=8.589GB
+[11:04:56] --- Run 1/10: pp_001 ('artificial intelligence') ---
+[11:05:15]   latency=18.31s encode+step0=9.393s mean_step=0.297s max_step=0.331s decode=3.265s peak_alloc=5.361GB peak_reserved=5.692GB driver_free_pre=7.462GB driver_free_post=7.392GB
+[11:05:15] --- Run 2/10: pp_002 ('a shiba inu') ---
+[11:05:26]   latency=10.96s encode+step0=2.669s mean_step=0.291s max_step=0.312s decode=2.767s peak_alloc=5.361GB peak_reserved=5.692GB driver_free_pre=7.392GB driver_free_post=7.39GB
+[11:05:26] --- Run 3/10: pp_003 ('a dragon') ---
+[11:05:36]   latency=10.66s encode+step0=2.41s mean_step=0.302s max_step=0.338s decode=2.514s peak_alloc=5.361GB peak_reserved=5.694GB driver_free_pre=7.39GB driver_free_post=7.388GB
+[11:05:36] --- Run 4/10: pp_001 ('artificial intelligence') ---
+[11:05:47]   latency=10.80s encode+step0=2.541s mean_step=0.294s max_step=0.329s decode=2.676s peak_alloc=5.361GB peak_reserved=5.694GB driver_free_pre=7.388GB driver_free_post=7.392GB
+[11:05:47] --- Run 5/10: pp_002 ('a shiba inu') ---
+[11:05:58]   latency=10.74s encode+step0=2.552s mean_step=0.295s max_step=0.329s decode=2.579s peak_alloc=5.361GB peak_reserved=5.692GB driver_free_pre=7.392GB driver_free_post=7.388GB
+[11:05:58] --- Run 6/10: pp_003 ('a dragon') ---
+[11:06:09]   latency=11.33s encode+step0=2.816s mean_step=0.3s max_step=0.352s decode=2.819s peak_alloc=5.361GB peak_reserved=5.694GB driver_free_pre=7.388GB driver_free_post=7.388GB
+[11:06:09] --- Run 7/10: pp_001 ('artificial intelligence') ---
+[11:06:17]   latency=7.41s encode+step0=2.272s mean_step=0.169s max_step=0.223s decode=1.919s peak_alloc=5.361GB peak_reserved=5.694GB driver_free_pre=7.388GB driver_free_post=7.386GB
+[11:06:17] --- Run 8/10: pp_002 ('a shiba inu') ---
+[11:06:23]   latency=6.44s encode+step0=1.813s mean_step=0.146s max_step=0.164s decode=1.858s peak_alloc=5.361GB peak_reserved=5.694GB driver_free_pre=7.386GB driver_free_post=7.386GB
+[11:06:23] --- Run 9/10: pp_003 ('a dragon') ---
+[11:06:30]   latency=6.52s encode+step0=1.783s mean_step=0.153s max_step=0.189s decode=1.831s peak_alloc=5.361GB peak_reserved=5.692GB driver_free_pre=7.386GB driver_free_post=7.392GB
+[11:06:30] --- Run 10/10: pp_001 ('artificial intelligence') ---
+[11:06:36]   latency=6.50s encode+step0=1.774s mean_step=0.152s max_step=0.193s decode=1.838s peak_alloc=5.361GB peak_reserved=5.692GB driver_free_pre=7.392GB driver_free_post=7.388GB
+[11:06:36] === Done: 10 runs, results at C:\Users\gaura\ml-projects\AetherArt\reports\_latency_diag.json ===
