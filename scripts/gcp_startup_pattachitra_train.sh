@@ -7,9 +7,14 @@
 # is a safety net for orphaned-cost prevention, not a substitute for that local verification).
 set -euo pipefail
 
-PROJECT="aetherart-497918"
+PROJECT="aetherart-prod-260814"
 INSTANCE_NAME=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/name" -H "Metadata-Flavor: Google")
 ZONE=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/zone" -H "Metadata-Flavor: Google" | awk -F/ '{print $NF}')
+# Intentionally cross-project: aetherart-prod-260814 has no GCS bucket provisioned yet (confirmed
+# via `gcloud storage buckets list --project=aetherart-prod-260814`, 0 items, 2026-08-16), so this
+# compute-only instance still writes results to the old project's bucket. Needs a separate
+# decision (create a bucket in aetherart-prod-260814 vs. keep writing cross-project deliberately)
+# before this is stale rather than intentional — see Item 114 discussion.
 GCS_BUCKET="gs://aetherart-497918-training"
 BRANCH="chore/model-verdict-audit"
 LOG_FILE="/tmp/train_run.log"
