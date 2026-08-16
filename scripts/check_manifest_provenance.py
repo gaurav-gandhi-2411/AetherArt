@@ -14,6 +14,7 @@ live-run citation can't be re-verified from history the way a committed file
 can. Anything else -- a path that doesn't exist, or exists but isn't tracked
 -- is a hard failure.
 """
+
 from __future__ import annotations
 
 import json
