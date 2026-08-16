@@ -122,7 +122,7 @@ torch==2.5.1+cu124
 torchaudio==2.5.1
 torchvision==0.20.1
 tqdm==4.67.1
-transformers==4.56.2
+transformers==5.15.0
 typer==0.17.4
 typing-inspection==0.4.1
 tzdata==2025.2

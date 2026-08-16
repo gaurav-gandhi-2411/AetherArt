@@ -5,7 +5,7 @@
 #   for HF Space); local dev can use opencv-python (superset, same cv2 module).
 gradio==5.46.1
 diffusers==0.35.1
-transformers==4.56.2
+transformers==5.15.0
 accelerate==1.10.1
 huggingface_hub[hf_xet]==0.35.0
 safetensors==0.6.2
