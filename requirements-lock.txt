@@ -83,7 +83,7 @@ pillow==11.3.0
 platformdirs==4.4.0
 pluggy==1.6.0
 propcache==0.4.1
-protobuf==6.32.1
+protobuf==7.35.1
 psutil==7.1.0
 pyarrow==24.0.0
 pycodestyle==2.14.0
