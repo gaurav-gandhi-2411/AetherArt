@@ -11,7 +11,7 @@
 # v3: Auto-detect INSTANCE_NAME and ZONE from GCP metadata server (zone-agnostic)
 set -euo pipefail
 
-PROJECT="review-iq-prod"
+PROJECT="aetherart-prod-260814"
 # Auto-detect instance name and zone from GCP metadata server (works in any zone)
 INSTANCE_NAME=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/name" -H "Metadata-Flavor: Google")
 ZONE=$(curl -sf "http://metadata.google.internal/computeMetadata/v1/instance/zone" -H "Metadata-Flavor: Google" | awk -F/ '{print $NF}')
