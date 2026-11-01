@@ -56,7 +56,7 @@ LoRA (Low-Rank Adaptation) fine-tunes large models without retraining them from 
 - SD 2.1 version: [gauravgandhi2411/aetherart-ukiyo-sd21](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sd21) (6.4 MB, 512×512)
 - SDXL version: [gauravgandhi2411/aetherart-ukiyo-sdxl](https://huggingface.co/gauravgandhi2411/aetherart-ukiyo-sdxl) (45 MB, 1024×1024)
 
-Checkpoint selected from a 500/1000/1500 sweep scored by HPSv2.1 + ImageReward — see [`reports/lora_checkpoint_eval_sdxl/checkpoint-1000_grid.png`](reports/lora_checkpoint_eval_sdxl/checkpoint-1000_grid.png) for the winning-checkpoint grid.
+Checkpoint selected visually from a 500/1000/1500 sweep (four fixed prompts at seed 42, [`reports/lora_training_summary_sdxl.md`](reports/lora_training_summary_sdxl.md#checkpoint-selection)) — see [`reports/lora_checkpoint_eval_sdxl/checkpoint-1000_grid.png`](reports/lora_checkpoint_eval_sdxl/checkpoint-1000_grid.png) for the winning-checkpoint grid.
 
 ### Controllable generation: ControlNet
 
